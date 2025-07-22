@@ -1,5 +1,7 @@
 export default function Editor() {
     return (
-        <p>Editor</p>
+        <main className="flex justify-center items-center min-h-screen">
+            <p>Editor</p>
+        </main>
     )
 }

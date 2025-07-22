@@ -1,11 +1,15 @@
-import { createContext, useContext } from "react"
+import { createContext, useContext } from 'react'
 
 export const LoginContext = createContext<{
   email: string
   setEmail: (email: string) => void
+  password: string
+  setPassword: (password: string) => void
 }>({
-  email: "",
+  email: '',
   setEmail: () => {},
+  password: '',
+  setPassword: () => {}
 })
 
 export const useLogin = () => useContext(LoginContext)
