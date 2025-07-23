@@ -1,38 +1,52 @@
 'use client'
 
-import { AlertTriangle, ArrowRight, LoaderCircle, Mail } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { AlertTriangle, Mail } from 'lucide-react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
-import { useLogin } from '../lib/LoginContext'
+import CredentialsInput from '../ui/components/CredentialsInput'
+import SubmitButton from '../ui/components/SubmitButton'
+import { simulateCheck } from '../lib/actions'
 
 export default function Login(){  
-  const {email,setEmail} = useLogin()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isFocussedEmail, setIsFocussedEmail] = useState(false)
-  const router = useRouter()
+  const [isFocussedEmail, setIsFocussedEmail] = useState(true)
+  const { replace } = useRouter()
 
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
         setMessage('')
-      }, 1500)
+      }, 2000)
       return () => clearTimeout(timer)
     }
   }, [message])
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault()
+
     setIsLoading(true)
 
     if (email) {
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        console.log('proceed to server checks.')
-        // Simulate DB Fetch
-        setTimeout(() => {
-          // UI Testing, bypass
-          router.push('/login/password')
-        }, 1000)
+        const response = await simulateCheck(email)
+
+        if (response.status === 'ok') {
+          const params = new URLSearchParams(searchParams)
+          params.set('email',email)
+
+          if (response.message === 'continue'){
+            replace(`${pathname}/password?${params.toString()}`)
+          }
+          // else (future) replace(`signup/password?${params.toString()}`)
+        } else {
+          setIsLoading(false)
+          setMessage(response.message)
+        }
+        
       } else {
         setIsLoading(false)
         setMessage('Invalid Email.')
@@ -43,18 +57,6 @@ export default function Login(){
     }
   }
 
-  const buttonClasses = [
-    'absolute right-2 top-[7px] border px-2 py-0.5 rounded-full focus:outline-none',
-    email
-      ? isFocussedEmail
-        ? 'bg-zinc-700 border-zinc-500'
-        : 'bg-zinc-800 border-zinc-600'
-      : isFocussedEmail
-        ? 'border-zinc-600'
-        : 'border-zinc-700',
-    !isLoading && 'cursor-pointer'
-  ].join(' ')
-
     return (
       <>
       <form
@@ -63,24 +65,20 @@ export default function Login(){
         onSubmit={(e) => handleSubmit(e)}
         noValidate
       >
-        <input
-          name='email'
-          className='w-full pr-12 border py-1.5 pl-3 rounded-full border-zinc-700 truncate focus:outline-none focus:bg-zinc-800 focus:border-zinc-600'
-          placeholder='Enter granted Email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onFocus={() => setIsFocussedEmail(true)}
-          onBlur={() => setIsFocussedEmail(false)}
+        <CredentialsInput
           type='email'
-          inputMode='email'
-          autoComplete='off'
+          value={email}
+          setValue={setEmail}
+          setIsFocussed={setIsFocussedEmail}
         />
-        <button type='submit' className={buttonClasses} disabled={isLoading}>
-            {isLoading ? <LoaderCircle className='animate-spin' size={18} /> : <ArrowRight size={18} />}
-        </button> 
+        <SubmitButton
+          value={email}
+          isFocussed={isFocussedEmail}
+          isLoading={isLoading}
+        />
       </form>
       {message ? 
-        <div className='flex gap-2.5 items-center animate-shake'>
+        <div className='flex gap-2.5 items-center'>
           <AlertTriangle size={14} className='text-red-400' />
           <p className='text-red-400'>{message}</p>
         </div>
