@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
 import CredentialsInput from '../ui/components/CredentialsInput'
 import SubmitButton from '../ui/components/SubmitButton'
-import { simulateCheck } from '../lib/actions'
+import { checkEmail } from '../lib/actions'
 
 export default function Login(){  
   const searchParams = useSearchParams()
@@ -32,28 +32,28 @@ export default function Login(){
 
     if (email) {
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        const response = await simulateCheck(email)
+        const result = await checkEmail(email)
 
-        if (response.status === 'ok') {
+        if (result.status === 'ok') {
           const params = new URLSearchParams(searchParams)
           params.set('email',email)
 
-          if (response.message === 'continue'){
+          if (result.message === 'continue'){
             replace(`${pathname}/password?${params.toString()}`)
+          } else {
+            replace(`signup/password?${params.toString()}`)
           }
-          // else (future) replace(`signup/password?${params.toString()}`)
         } else {
           setIsLoading(false)
-          setMessage(response.message)
+          setMessage(result.message)
         }
-        
       } else {
         setIsLoading(false)
         setMessage('Invalid Email.')
       }
     } else {
       setIsLoading(false)
-      setMessage('Email cannot be empty.')
+      setMessage('Email required.')
     }
   }
 
