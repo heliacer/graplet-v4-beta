@@ -11,8 +11,8 @@ export default function MyStuff() {
 
   return (
     <main className="flex justify-center items-center min-h-screen">
-      <div className="min-w-xl min-h-52 flex justify-between">
-        <div className="flex flex-col gap-4">
+      <div className="w-xl flex flex-wrap-reverse items-end justify-between gap-6 mx-10">
+        <div className="flex min-h-52 flex-col gap-4">
           <p className="text-xl">My Stuff</p>
           <p>Welcome, {session?.user?.name}</p>
           <Link className='flex items-center gap-2' href='/editor'>

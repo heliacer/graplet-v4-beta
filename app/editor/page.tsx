@@ -7,9 +7,9 @@ import EarlyAccessLogo from "../ui/ea-logo"
 
 export default function Editor() {
   return (
-    <main className="flex flex-col justify-center items-center min-h-screen">
-      <div className="min-w-xl min-h-52 flex justify-between">
-        <div className="flex flex-col gap-4">
+    <main className="flex justify-center items-center min-h-screen">
+      <div className="w-xl flex flex-wrap-reverse items-end justify-between  gap-6 mx-10">
+        <div className="flex min-h-52 flex-col gap-4">
           <p className="text-xl">Editor</p>
           <p>Psst!</p>
           <Link className='flex items-center gap-2' href='/mystuff'>
