@@ -1,28 +1,111 @@
 'use client'
 
+import { DockviewReact, DockviewReadyEvent, IDockviewPanelProps, DockviewTheme, DockviewDefaultTab, IDockviewPanelHeaderProps } from "dockview-react"
+// Needs granular cleaning
+import './styles/bloat.css'
 import { Folder, LogOut } from "lucide-react"
-import { signOut } from "next-auth/react"
 import Link from "next/link"
-import EarlyAccessLogo from "../ui/ea-logo"
+import { signOut } from "next-auth/react"
+import { usePanelState } from "./hooks/usePanelState"
+
+const components = {
+  default: DefaultPanel
+}
+
+const grapletTheme: DockviewTheme = {
+  name: 'graplet',
+  className: 'dockview-graplet'
+}
+
+function DefaultPanel(props: IDockviewPanelProps) {
+  const { isActive, title, width, height } = usePanelState(props.api)
+  return (
+    <div className="m-4">
+      <p className="italic">Prototype</p>
+      <p>ID: {props.api.id}</p>
+      <p>Title: {title}</p>
+      <p>IsActive: {isActive ? 'true' : 'false'}</p>
+      <p>Width: {Math.round(width)} Height: {Math.round(height)}</p>
+    </div>
+  )
+}
+
+function DefaultTab(props: IDockviewPanelHeaderProps) {
+  return <DockviewDefaultTab hideClose {...props} />
+}
 
 export default function Editor() {
+  function mount(event: DockviewReadyEvent) {
+    // Testing
+    event.api.addPanel({
+      id: crypto.randomUUID(),
+      title: 'Code',
+      component: 'default',
+    })
+
+    event.api.addPanel({
+      id: crypto.randomUUID(),
+      title: 'Model',
+      component: 'default'
+    })
+
+    event.api.addPanel({
+      id: crypto.randomUUID(),
+      title: 'Addons',
+      component: 'default'
+    })
+
+    const scenePanel = event.api.addPanel({
+      id: crypto.randomUUID(),
+      component: 'default',
+      title: 'Scene',
+      position: { direction: 'right' }
+    })
+
+    event.api.addPanel({
+      id: crypto.randomUUID(),
+      title: 'Console',
+      component: 'default',
+    })
+
+    const propertiesPanel = event.api.addPanel({
+      id: crypto.randomUUID(),
+      title: 'Properties',
+      component: 'default',
+      position: { referencePanel: scenePanel, direction: 'below' }
+    })
+
+    event.api.addPanel({
+      id: crypto.randomUUID(), component: 'default',
+      title: 'Assets',
+      position: { referencePanel: propertiesPanel, direction: 'right' }
+    })
+  }
+
   return (
-    <main className="flex justify-center items-center min-h-screen">
-      <div className="w-xl flex flex-wrap-reverse items-end justify-between  gap-6 mx-10">
-        <div className="flex min-h-52 flex-col gap-4">
-          <p className="text-xl">Editor</p>
-          <p>Psst!</p>
-          <Link className='flex items-center gap-2' href='/mystuff'>
-            <Folder size={18} />
-            <p>Go to my stuff</p>
-          </Link>
-          <button className="cursor-pointer flex items-center gap-2" onClick={() => signOut({ callbackUrl: '/' })}>
-            <LogOut size={18} />
-            <p>Sign Out</p>
-          </button>
-        </div>
-        <EarlyAccessLogo size={90} />
-      </div>
-    </main>
+    <div className="h-screen flex flex-col">
+      <nav className="h-10 flex gap-4 items-center">
+        <p>Nav</p>
+        <Link className='flex items-center gap-2' href='/mystuff'>
+          <Folder size={18} />
+          <p>My stuff</p>
+        </Link>
+        <button className="cursor-pointer flex items-center gap-2" onClick={() => signOut({ callbackUrl: '/' })}>
+          <LogOut size={18} />
+          <p>Sign Out</p>
+        </button>
+      </nav>
+      <DockviewReact
+        defaultTabComponent={DefaultTab}
+        theme={grapletTheme}
+        className="w-full h-full"
+        onReady={mount}
+        components={components}
+        disableFloatingGroups
+      />
+      <footer className="h-6 flex items-center">
+        <p>Footer</p>
+      </footer>
+    </div>
   )
 }
