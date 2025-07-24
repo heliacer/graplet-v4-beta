@@ -1,6 +1,6 @@
 'use client'
 
-import { simulateLogIn } from '@/app/lib/actions'
+import { signIn } from 'next-auth/react'
 import CredentialsInput from '@/app/ui/components/CredentialsInput'
 import SubmitButton from '@/app/ui/components/SubmitButton'
 import { AlertTriangle, Award, Eye, EyeClosed, Pen } from 'lucide-react'
@@ -10,12 +10,20 @@ import { FormEvent, useEffect, useState } from 'react'
 export default function Password() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [password,setPassword] = useState('')
+  const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isFocussedPassword, setIsFocussedPassword] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-  
+
+  const email = searchParams.get('email')!
+
+  useEffect(() => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      router.push('/login')
+    }
+  }, [email, router])
+
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -24,33 +32,46 @@ export default function Password() {
       return () => clearTimeout(timer)
     }
   }, [message])
-  
-  const email = searchParams.get('email')!
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setIsLoading(true)
 
     if (password) {
-      // UI Testing, bypass
       if (password.length >= 6) {
-        const response = await simulateLogIn(email, password)
-        if (response.status === 'ok'){
-          if (response.message === 'authorized'){
-            router.push('/editor')
-          }
-          // else (future) router.push('/signup')
-        } else {
+        const result = await signIn('credentials', {
+          email,
+          password,
+          redirect: false,
+        })
+
+        if (result?.error) {
+          console.log('Auth error:', result)
           setIsLoading(false)
-          setMessage(response.message)
+          switch (result.code) {
+            case 'invalid_credentials':
+              setMessage('Invalid Credentials.')
+              break
+            case 'user_not_found':
+              setMessage('Early Access Only.')
+              break
+            case 'incorrect_password':
+              setMessage('Incorrect password.')
+              break
+            default:
+              setMessage('Something went wrong.')
+          }
+        } else {
+          router.push('/mystuff')
         }
+        // ... 
       } else {
         setIsLoading(false)
         setMessage('Password is too small.')
       }
     } else {
       setIsLoading(false)
-      setMessage('Password cannot be empty.')
+      setMessage('Password required.')
     }
   }
 
@@ -67,10 +88,10 @@ export default function Password() {
       <form
         className='relative flex flex-col gap-2.5 w-80'
         id='login-form'
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={handleSubmit}
         noValidate
       >
-        <CredentialsInput type='email' value={email} disabled/>
+        <CredentialsInput type='email' value={email} disabled />
         <button
           type='reset'
           onClick={() => router.push('/login')}
@@ -79,6 +100,7 @@ export default function Password() {
           <Pen size={18} />
         </button>
         <CredentialsInput
+          placeholder='Enter Password'
           value={password}
           name='password'
           type={showPassword ? 'text' : 'password'}
@@ -90,7 +112,7 @@ export default function Password() {
           className={buttonClasses}
           onClick={() => setShowPassword(prev => !prev)}
         >
-          {showPassword ? <Eye size={18} /> : <EyeClosed size={18}/>}
+          {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
         </button>
         <SubmitButton
           value={password}

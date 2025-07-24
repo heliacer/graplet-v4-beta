@@ -5,9 +5,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
 import CredentialsInput from '../ui/components/CredentialsInput'
 import SubmitButton from '../ui/components/SubmitButton'
-import { simulateCheck } from '../lib/actions'
+import { checkEmail } from '../lib/actions'
 
-export default function Login(){  
+export default function Login() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const [email, setEmail] = useState('')
@@ -32,40 +32,41 @@ export default function Login(){
 
     if (email) {
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        const response = await simulateCheck(email)
+        const response = await checkEmail(email)
 
         if (response.status === 'ok') {
           const params = new URLSearchParams(searchParams)
-          params.set('email',email)
+          params.set('email', email)
 
-          if (response.message === 'continue'){
+          if (response.message === 'continue') {
             replace(`${pathname}/password?${params.toString()}`)
+          } else {
+            replace(`signup/password?${params.toString()}`)
           }
-          // else (future) replace(`signup/password?${params.toString()}`)
         } else {
           setIsLoading(false)
           setMessage(response.message)
         }
-        
       } else {
         setIsLoading(false)
         setMessage('Invalid Email.')
       }
     } else {
       setIsLoading(false)
-      setMessage('Email cannot be empty.')
+      setMessage('Email required.')
     }
   }
 
-    return (
-      <>
+  return (
+    <>
       <form
         className='relative flex flex-col gap-2.5 w-80'
         id='login-form'
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={handleSubmit}
         noValidate
       >
         <CredentialsInput
+          placeholder='Enter granted Email'
           type='email'
           value={email}
           setValue={setEmail}
@@ -77,17 +78,17 @@ export default function Login(){
           isLoading={isLoading}
         />
       </form>
-      {message ? 
+      {message ?
         <div className='flex gap-2.5 items-center'>
           <AlertTriangle size={14} className='text-red-400' />
           <p className='text-red-400'>{message}</p>
         </div>
-      : 
+        :
         <div className='flex gap-2.5 items-center'>
           <Mail size={14} />
           <p>Invitation only.</p>
         </div>}
-        <span className='h-7'></span>
-      </>
-    )
+      <span className='h-7'></span>
+    </>
+  )
 }

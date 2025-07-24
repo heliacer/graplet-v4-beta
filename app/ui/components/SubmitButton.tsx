@@ -8,7 +8,7 @@ export default function SubmitButton({
   value: string
   isFocussed: boolean
   isLoading: boolean
-}){
+}) {
   const buttonClasses = [
     'absolute right-2 bottom-[7px] border px-2 py-0.5 rounded-full',
     value
@@ -25,6 +25,6 @@ export default function SubmitButton({
   return (
     <button type='submit' className={buttonClasses} disabled={isLoading}>
       {isLoading ? <LoaderCircle className='animate-spin' size={18} /> : <ArrowRight size={18} />}
-    </button> 
+    </button>
   )
 }
