@@ -17,6 +17,9 @@ export default function Password() {
   const [showPassword, setShowPassword] = useState(false)
 
   const email = searchParams.get('email')!
+  const callbackUrl = searchParams.get('callbackUrl') || '/mystuff'
+
+  console.log(callbackUrl)
 
   useEffect(() => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -62,9 +65,8 @@ export default function Password() {
               setMessage('Something went wrong.')
           }
         } else {
-          router.push('/mystuff')
+          router.push(callbackUrl)
         }
-        // ... 
       } else {
         setIsLoading(false)
         setMessage('Password is too small.')
