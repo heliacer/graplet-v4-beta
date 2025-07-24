@@ -7,7 +7,7 @@ import CredentialsInput from '../ui/components/CredentialsInput'
 import SubmitButton from '../ui/components/SubmitButton'
 import { checkEmail } from '../lib/actions'
 
-export default function Login(){  
+export default function Login() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const [email, setEmail] = useState('')
@@ -32,20 +32,20 @@ export default function Login(){
 
     if (email) {
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        const result = await checkEmail(email)
+        const response = await checkEmail(email)
 
-        if (result.status === 'ok') {
+        if (response.status === 'ok') {
           const params = new URLSearchParams(searchParams)
-          params.set('email',email)
+          params.set('email', email)
 
-          if (result.message === 'continue'){
+          if (response.message === 'continue') {
             replace(`${pathname}/password?${params.toString()}`)
           } else {
             replace(`signup/password?${params.toString()}`)
           }
         } else {
           setIsLoading(false)
-          setMessage(result.message)
+          setMessage(response.message)
         }
       } else {
         setIsLoading(false)
@@ -57,15 +57,16 @@ export default function Login(){
     }
   }
 
-    return (
-      <>
+  return (
+    <>
       <form
         className='relative flex flex-col gap-2.5 w-80'
         id='login-form'
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={handleSubmit}
         noValidate
       >
         <CredentialsInput
+          placeholder='Enter granted Email'
           type='email'
           value={email}
           setValue={setEmail}
@@ -77,17 +78,17 @@ export default function Login(){
           isLoading={isLoading}
         />
       </form>
-      {message ? 
+      {message ?
         <div className='flex gap-2.5 items-center'>
           <AlertTriangle size={14} className='text-red-400' />
           <p className='text-red-400'>{message}</p>
         </div>
-      : 
+        :
         <div className='flex gap-2.5 items-center'>
           <Mail size={14} />
           <p>Invitation only.</p>
         </div>}
-        <span className='h-7'></span>
-      </>
-    )
+      <span className='h-7'></span>
+    </>
+  )
 }

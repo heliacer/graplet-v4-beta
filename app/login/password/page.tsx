@@ -10,12 +10,12 @@ import { FormEvent, useEffect, useState } from 'react'
 export default function Password() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [password,setPassword] = useState('')
+  const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isFocussedPassword, setIsFocussedPassword] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-  
+
   const email = searchParams.get('email')!
 
   useEffect(() => {
@@ -32,25 +32,25 @@ export default function Password() {
       return () => clearTimeout(timer)
     }
   }, [message])
-  
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setIsLoading(true)
 
     if (password) {
-      if (password.length >= 6){
+      if (password.length >= 6) {
         const result = await signIn('credentials', {
           email,
           password,
           redirect: false,
         })
-        
+
         if (result?.error) {
           console.log('Auth error:', result)
           setIsLoading(false)
           switch (result.code) {
             case 'invalid_credentials':
-              setMessage('Nice try Diddy.')
+              setMessage('Invalid Credentials.')
               break
             case 'user_not_found':
               setMessage('Early Access Only.')
@@ -88,10 +88,10 @@ export default function Password() {
       <form
         className='relative flex flex-col gap-2.5 w-80'
         id='login-form'
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={handleSubmit}
         noValidate
       >
-        <CredentialsInput type='email' value={email} disabled/>
+        <CredentialsInput type='email' value={email} disabled />
         <button
           type='reset'
           onClick={() => router.push('/login')}
@@ -100,6 +100,7 @@ export default function Password() {
           <Pen size={18} />
         </button>
         <CredentialsInput
+          placeholder='Enter Password'
           value={password}
           name='password'
           type={showPassword ? 'text' : 'password'}
@@ -111,7 +112,7 @@ export default function Password() {
           className={buttonClasses}
           onClick={() => setShowPassword(prev => !prev)}
         >
-          {showPassword ? <Eye size={18} /> : <EyeClosed size={18}/>}
+          {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
         </button>
         <SubmitButton
           value={password}

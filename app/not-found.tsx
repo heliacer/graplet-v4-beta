@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function NotFound(){
+export default function NotFound() {
   return (
     <main className='font-light flex gap-5 flex-col justify-center items-center min-h-screen'>
       <EarlyAccessLogo size={90} />
@@ -17,7 +17,7 @@ export default function NotFound(){
       <p>Think you&apos;re lost?</p>
 
       <Link className='flex items-center gap-1' href='/login'>
-        <ArrowRight size={18}/>
+        <ArrowRight size={18} />
         <p>Go back</p>
       </Link>
     </main>
