@@ -18,7 +18,7 @@ export default function CredentialsInput({
 
   const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {
     name: name || type,
-    className: 'w-full pr-12 border py-1.5 pl-3 rounded-full border-zinc-700 truncate focus:outline-none focus:bg-zinc-800 focus:border-zinc-600',
+    className: 'w-full pr-12 border py-1.5 pl-3 rounded-full dark:border-zinc-700 border-zinc-400 truncate focus:outline-none focus:bg-zinc-200 dark:focus:bg-zinc-800 dark:focus:border-zinc-600 focus:border-zinc-400',
     placeholder: placeholder || type,
     type,
     inputMode: 'email',

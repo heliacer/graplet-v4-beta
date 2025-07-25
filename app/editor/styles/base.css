@@ -1,3 +1,4 @@
+/* Scrollable container structure */
 .dv-scrollable {
   position: relative;
   overflow: hidden;
@@ -7,21 +8,48 @@
   position: absolute;
   bottom: 0px;
   left: 0px;
-  height: 4px;
-  border-radius: 2px;
+  height: var(--dv-scrollbar-height);
+  border-radius: var(--dv-scrollbar-border-radius);
   background-color: transparent;
-  transition-property: background-color;
-  transition-timing-function: ease-in-out;
-  transition-duration: 1s;
-  transition-delay: 0s;
 }
 
 .dv-scrollable:hover .dv-scrollbar-horizontal,
 .dv-scrollable.dv-scrollable-resizing .dv-scrollbar-horizontal,
 .dv-scrollable.dv-scrollable-scrolling .dv-scrollbar-horizontal {
-  background-color: var(--dv-scrollbar-background-color, rgba(255, 255, 255, 0.25));
+  background-color: var(--dv-scrollbar-background-color);
 }
 
+.dv-scrollable>.dv-tabs-container {
+  overflow: hidden;
+}
+
+/* Tab state styling */
+.dv-groupview.dv-active-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-active-tab {
+  background-color: var(--dv-activegroup-visiblepanel-tab-background-color);
+  color: var(--dv-activegroup-visiblepanel-tab-color);
+}
+
+.dv-groupview.dv-active-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-inactive-tab {
+  background-color: var(--dv-activegroup-hiddenpanel-tab-background-color);
+  color: var(--dv-activegroup-hiddenpanel-tab-color);
+}
+
+.dv-groupview.dv-inactive-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-active-tab {
+  background-color: var(--dv-inactivegroup-visiblepanel-tab-background-color);
+  color: var(--dv-inactivegroup-visiblepanel-tab-color);
+}
+
+.dv-groupview.dv-inactive-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-inactive-tab {
+  background-color: var(--dv-inactivegroup-hiddenpanel-tab-background-color);
+  color: var(--dv-inactivegroup-hiddenpanel-tab-color);
+}
+
+.dv-tab.dv-tab-dragging {
+  background-color: var(--dv-activegroup-visiblepanel-tab-background-color);
+  color: var(--dv-activegroup-visiblepanel-tab-color);
+}
+
+/* SVG icons */
 .dv-svg {
   display: inline-block;
   fill: currentcolor;
@@ -30,44 +58,7 @@
   stroke-width: 0;
 }
 
-/* My custom theme, will be using @apply with tailwind later, to support dark:, using zinc. */
-.dockview-graplet {
-  --dv-paneview-active-outline-color: dodgerblue;
-  --dv-tabs-and-actions-container-font-size: 13px;
-  --dv-tabs-and-actions-container-height: 35px;
-  --dv-drag-over-background-color: rgba(83, 89, 93, 0.5);
-  --dv-drag-over-border-color: transparent;
-  --dv-tabs-container-scrollbar-color: #888;
-  --dv-icon-hover-background-color: rgba(90, 93, 94, 0.31);
-  --dv-floating-box-shadow: 8px 8px 8px 0px rgba(83, 89, 93, 0.5);
-  --dv-overlay-z-index: 999;
-  --dv-tab-font-size: inherit;
-  --dv-border-radius: 0px;
-  --dv-tab-margin: 0;
-  --dv-sash-color: transparent;
-  --dv-active-sash-color: transparent;
-  --dv-active-sash-transition-duration: 0.1s;
-  --dv-active-sash-transition-delay: 0.5s;
-  --dv-group-view-background-color: #1e1e1e;
-  --dv-tabs-and-actions-container-background-color: #252526;
-  --dv-activegroup-visiblepanel-tab-background-color: #1e1e1e;
-  --dv-activegroup-hiddenpanel-tab-background-color: #2d2d2d;
-  --dv-inactivegroup-visiblepanel-tab-background-color: #1e1e1e;
-  --dv-inactivegroup-hiddenpanel-tab-background-color: #2d2d2d;
-  --dv-tab-divider-color: #1e1e1e;
-  --dv-activegroup-visiblepanel-tab-color: white;
-  --dv-activegroup-hiddenpanel-tab-color: #969696;
-  --dv-inactivegroup-visiblepanel-tab-color: #8f8f8f;
-  --dv-inactivegroup-hiddenpanel-tab-color: #626262;
-  --dv-separator-border: rgb(68, 68, 68);
-  --dv-paneview-header-border-color: rgba(204, 204, 204, 0.2);
-}
-
-.dv-drop-target-container .dv-drop-target-anchor.dv-drop-target-anchor-container-changed {
-  opacity: 0;
-  transition: none;
-}
-
+/* Drop target structure */
 .dv-drop-target-container {
   position: absolute;
   z-index: 9999;
@@ -86,6 +77,11 @@
   transition: opacity var(--dv-transition-duration) ease-in, top var(--dv-transition-duration) ease-out, left var(--dv-transition-duration) ease-out, width var(--dv-transition-duration) ease-out, height var(--dv-transition-duration) ease-out;
   background-color: var(--dv-drag-over-background-color);
   opacity: 1;
+}
+
+.dv-drop-target-container .dv-drop-target-anchor.dv-drop-target-anchor-container-changed {
+  opacity: 0;
+  transition: none;
 }
 
 .dv-drop-target {
@@ -131,9 +127,12 @@
   border-right: 1px solid var(--dv-drag-over-border-color);
 }
 
+/* Main dockview structure */
 .dv-dockview {
   position: relative;
   background-color: var(--dv-group-view-background-color);
+  border-top: 1px solid var(--dv-tab-divider-color);
+  border-bottom: 1px solid var(--dv-tab-divider-color);
 }
 
 .dv-dockview .dv-watermark-container {
@@ -149,35 +148,7 @@
   position: relative;
 }
 
-.dv-groupview.dv-active-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-active-tab {
-  background-color: var(--dv-activegroup-visiblepanel-tab-background-color);
-  color: var(--dv-activegroup-visiblepanel-tab-color);
-}
-
-.dv-groupview.dv-active-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-inactive-tab {
-  background-color: var(--dv-activegroup-hiddenpanel-tab-background-color);
-  color: var(--dv-activegroup-hiddenpanel-tab-color);
-}
-
-.dv-groupview.dv-inactive-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-active-tab {
-  background-color: var(--dv-inactivegroup-visiblepanel-tab-background-color);
-  color: var(--dv-inactivegroup-visiblepanel-tab-color);
-}
-
-.dv-groupview.dv-inactive-group>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-inactive-tab {
-  background-color: var(--dv-inactivegroup-hiddenpanel-tab-background-color);
-  color: var(--dv-inactivegroup-hiddenpanel-tab-color);
-}
-
-/**
- * when a tab is dragged we lose the above stylings because they are conditional on parent elements
- * therefore we also set some stylings for the dragging event
- **/
-.dv-tab.dv-tab-dragging {
-  background-color: var(--dv-activegroup-visiblepanel-tab-background-color);
-  color: var(--dv-activegroup-visiblepanel-tab-color);
-}
-
+/* Group view structure */
 .dv-groupview {
   display: flex;
   flex-direction: column;
@@ -196,40 +167,19 @@
   outline: none;
 }
 
-.dv-root-wrapper {
-  height: 100%;
-  width: 100%;
+.dv-content-container>div {
+  overflow: auto;
 }
 
+/* Root layout */
+.dv-root-wrapper,
 .dv-grid-view,
 .dv-branch-node {
   height: 100%;
   width: 100%;
 }
 
-.dv-debug .dv-resize-container .dv-resize-handle-top {
-  background-color: red;
-}
-
-.dv-debug .dv-resize-container .dv-resize-handle-bottom {
-  background-color: green;
-}
-
-.dv-debug .dv-resize-container .dv-resize-handle-left {
-  background-color: yellow;
-}
-
-.dv-debug .dv-resize-container .dv-resize-handle-right {
-  background-color: blue;
-}
-
-.dv-debug .dv-resize-container .dv-resize-handle-topleft,
-.dv-debug .dv-resize-container .dv-resize-handle-topright,
-.dv-debug .dv-resize-container .dv-resize-handle-bottomleft,
-.dv-debug .dv-resize-container .dv-resize-handle-bottomright {
-  background-color: cyan;
-}
-
+/* Resize container structure */
 .dv-resize-container {
   --dv-overlay-z-index: var(--dv-overlay-z-index, 999);
   position: absolute;
@@ -326,6 +276,7 @@
   cursor: se-resize;
 }
 
+/* Render overlay */
 .dv-render-overlay {
   --dv-overlay-z-index: var(--dv-overlay-z-index, 999);
   position: absolute;
@@ -337,19 +288,33 @@
   z-index: calc(var(--dv-overlay-z-index) - 1);
 }
 
-.dv-debug .dv-render-overlay {
-  outline: 1px solid red;
-  outline-offset: -1;
+/* Focus outline utility - applied to multiple elements */
+.dv-focus-outline:focus::after,
+.dv-focus-outline:focus-within::after,
+.dv-pane-container .dv-pane .dv-pane-header:focus::after,
+.dv-pane-container .dv-pane .dv-pane-header:focus-within::after,
+.dv-pane-container .dv-pane .dv-pane-body:focus::after,
+.dv-pane-container .dv-pane .dv-pane-body:focus-within::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  content: "";
+  pointer-events: none;
+  outline: 1px solid var(--dv-paneview-active-outline-color);
+  outline-offset: -1px;
 }
 
+/* Pane container structure */
 .dv-pane-container {
   height: 100%;
   width: 100%;
 }
 
 .dv-pane-container.dv-animated .dv-view {
-  transition-duration: 0.15s;
-  transition-timing-function: ease-out;
+  transition: 0.15s ease-out;
 }
 
 .dv-pane-container .dv-view {
@@ -408,23 +373,6 @@
   cursor: pointer;
 }
 
-.dv-pane-container .dv-pane .dv-pane-header:focus:before,
-.dv-pane-container .dv-pane .dv-pane-header:focus-within:before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  content: "";
-  pointer-events: none;
-  outline: 1px solid;
-  outline-width: -1px;
-  outline-style: solid;
-  outline-offset: -1px;
-  outline-color: var(--dv-paneview-active-outline-color);
-}
-
 .dv-pane-container .dv-pane .dv-pane-body {
   overflow-y: auto;
   overflow-x: hidden;
@@ -433,39 +381,7 @@
   outline: none;
 }
 
-.dv-pane-container .dv-pane .dv-pane-body:focus:before,
-.dv-pane-container .dv-pane .dv-pane-body:focus-within:before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  content: "";
-  pointer-events: none;
-  outline: 1px solid;
-  outline-width: -1px;
-  outline-style: solid;
-  outline-offset: -1px;
-  outline-color: var(--dv-paneview-active-outline-color);
-}
-
-.dv-debug .dv-split-view-container .dv-sash-container .dv-sash.dv-enabled {
-  background-color: black;
-}
-
-.dv-debug .dv-split-view-container .dv-sash-container .dv-sash.dv-disabled {
-  background-color: orange;
-}
-
-.dv-debug .dv-split-view-container .dv-sash-container .dv-sash.dv-maximum {
-  background-color: green;
-}
-
-.dv-debug .dv-split-view-container .dv-sash-container .dv-sash.dv-minimum {
-  background-color: red;
-}
-
+/* Split view structure */
 .dv-split-view-container {
   position: relative;
   overflow: hidden;
@@ -479,8 +395,7 @@
 
 .dv-split-view-container.dv-animation .dv-view,
 .dv-split-view-container.dv-animation .dv-sash {
-  transition-duration: 0.15s;
-  transition-timing-function: ease-out;
+  transition: 0.15s ease-out;
 }
 
 .dv-split-view-container.dv-horizontal {
@@ -508,9 +423,8 @@
   cursor: e-resize;
 }
 
-.dv-split-view-container.dv-horizontal>.dv-view-container>.dv-view:not(:first-child)::before {
-  height: 100%;
-  width: 1px;
+.dv-split-view-container.dv-horizontal>.dv-view-container>.dv-view:not(:first-child).visible {
+  border-left: 1px solid var(--dv-tab-divider-color);
 }
 
 .dv-split-view-container.dv-vertical {
@@ -542,9 +456,8 @@
   width: 100%;
 }
 
-.dv-split-view-container.dv-vertical>.dv-view-container>.dv-view:not(:first-child)::before {
-  height: 1px;
-  width: 100%;
+.dv-split-view-container.dv-vertical>.dv-view-container>.dv-view:not(:first-child).visible {
+  border-top: 1px solid var(--dv-tab-divider-color);
 }
 
 .dv-split-view-container .dv-sash-container {
@@ -562,16 +475,13 @@
   -moz-user-select: none;
   -ms-user-select: none;
   touch-action: none;
-  background-color: var(--dv-sash-color, transparent);
+  background-color: var(--dv-sash-color);
 }
 
 .dv-split-view-container .dv-sash-container .dv-sash:not(.disabled):active,
 .dv-split-view-container .dv-sash-container .dv-sash:not(.disabled):hover {
-  background-color: var(--dv-active-sash-color, transparent);
-  transition-property: background-color;
-  transition-timing-function: ease-in-out;
-  transition-duration: var(--dv-active-sash-transition-duration, 0.1s);
-  transition-delay: var(--dv-active-sash-transition-delay, 0.5s);
+  background-color: var(--dv-active-sash-color);
+  transition: background-color var(--dv-active-sash-transition-duration) ease-in-out var(--dv-active-sash-transition-delay);
 }
 
 .dv-split-view-container .dv-view-container {
@@ -597,32 +507,24 @@
   background-color: var(--dv-separator-border);
 }
 
+/* Tab structure */
 .dv-dragged {
   transform: translate3d(0px, 0px, 0px);
-  /* forces tab to be drawn on a separate layer (see https://github.com/microsoft/vscode/issues/18733) */
 }
 
 .dv-tab {
+  border-top: 1px solid transparent;
   flex-shrink: 0;
-}
-
-.dv-tab:focus-within,
-.dv-tab:focus {
+  -webkit-user-drag: element;
+  outline: none;
+  cursor: pointer;
   position: relative;
+  box-sizing: border-box;
+  font-size: var(--dv-tab-font-size);
 }
 
-.dv-tab:focus-within::after,
-.dv-tab:focus::after {
-  position: absolute;
-  content: "";
-  height: 100%;
-  width: 100%;
-  top: 0px;
-  left: 0px;
-  pointer-events: none;
-  outline: 1px solid var(--dv-tab-divider-color) !important;
-  outline-offset: -1px;
-  z-index: 5;
+.dv-active-group .dv-active-tab {
+  border-top: 1px solid var(--dv-activegroup-visiblepanel-tab-border-color);
 }
 
 .dv-tab.dv-tab-dragging .dv-default-tab-action {
@@ -661,39 +563,26 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: .25rem;
 }
 
 .dv-tab .dv-default-tab .dv-default-tab-action:hover {
-  border-radius: 2px;
   background-color: var(--dv-icon-hover-background-color);
+  border-color: var(--dv-tab-divider-color);
 }
 
-.dv-tabs-overflow-dropdown-default {
-  height: 100%;
-  color: var(--dv-activegroup-hiddenpanel-tab-color);
-  margin: var(--dv-tab-margin);
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
+.dv-inactive-tab .dv-default-tab .dv-default-tab-action:hover {
+  background-color: transparent;
 }
 
-.dv-tabs-overflow-dropdown-default>span {
-  padding-left: 0.25rem;
-}
-
-.dv-tabs-overflow-dropdown-default>svg {
-  transform: rotate(90deg);
-}
-
+/* Tabs container */
 .dv-tabs-container {
   display: flex;
   height: 100%;
   overflow: auto;
   scrollbar-width: thin;
-  /* Track */
-  /* Handle */
+  border-right: 1px solid var(--dv-tab-divider-color);
 }
 
 .dv-tabs-container.dv-horizontal .dv-tab:not(:first-child)::before {
@@ -720,19 +609,24 @@
   background: var(--dv-tabs-container-scrollbar-color);
 }
 
-.dv-scrollable>.dv-tabs-container {
-  overflow: hidden;
-}
-
-.dv-tab {
-  -webkit-user-drag: element;
-  outline: none;
+/* Tabs overflow */
+.dv-tabs-overflow-dropdown-default {
+  height: 100%;
+  color: var(--dv-activegroup-hiddenpanel-tab-color);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
-  position: relative;
-  box-sizing: border-box;
-  font-size: var(--dv-tab-font-size);
-  margin: var(--dv-tab-margin);
+}
+
+.dv-tabs-overflow-dropdown-default>span {
+  padding-left: 0.25rem;
+}
+
+.dv-tabs-overflow-dropdown-default>svg {
+  transform: rotate(90deg);
 }
 
 .dv-tabs-overflow-container {
@@ -740,6 +634,7 @@
   height: unset;
   border: 1px solid var(--dv-tab-divider-color);
   background-color: var(--dv-group-view-background-color);
+  border-bottom: 0;
 }
 
 .dv-tabs-overflow-container .dv-tab:not(:last-child) {
@@ -756,6 +651,11 @@
   color: var(--dv-activegroup-hiddenpanel-tab-color);
 }
 
+.dv-inactive-tab {
+  border-bottom: 1px solid var(--dv-tab-divider-color);
+}
+
+/* Tabs and actions container */
 .dv-tabs-and-actions-container {
   display: flex;
   background-color: var(--dv-tabs-and-actions-container-background-color);
@@ -788,11 +688,13 @@
   cursor: grab;
 }
 
-.dv-tabs-and-actions-container .dv-right-actions-container {
-  display: flex;
+/* Consistent bottom borders */
+.dv-void-container,
+.dv-left-actions-container,
+.dv-right-actions-container {
+  border-bottom: 1px solid var(--dv-tab-divider-color);
 }
 
-.dv-watermark {
+.dv-tabs-and-actions-container .dv-right-actions-container {
   display: flex;
-  height: 100%;
 }

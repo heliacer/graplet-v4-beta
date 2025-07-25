@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-zinc-850: oklch(24.2% 0.006 285.959);
+  --color-zinc-750: oklch(32.5% 0.006 285.959);
+  --color-zinc-650: oklch(40.7% 0.006 285.959);
+}
+
 button {
   @apply focus:outline-none focus-visible:border-emerald-500;
 }

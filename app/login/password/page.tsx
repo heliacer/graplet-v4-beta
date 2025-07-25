@@ -19,8 +19,6 @@ export default function Password() {
   const email = searchParams.get('email')!
   const callbackUrl = searchParams.get('callbackUrl') || '/mystuff'
 
-  console.log(callbackUrl)
-
   useEffect(() => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       router.push('/login')

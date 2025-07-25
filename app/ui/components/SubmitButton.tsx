@@ -13,11 +13,11 @@ export default function SubmitButton({
     'absolute right-2 bottom-[7px] border px-2 py-0.5 rounded-full',
     value
       ? isFocussed
-        ? 'bg-zinc-700 border-zinc-500'
-        : 'bg-zinc-800 border-zinc-600'
+        ? 'dark:bg-zinc-700 dark:border-zinc-500 bg-zinc-300 border-zinc-500'
+        : 'dark:bg-zinc-800 dark:border-zinc-600 bg-zinc-200 border-zinc-400 '
       : isFocussed
-        ? 'border-zinc-600'
-        : 'border-zinc-700',
+        ? 'dark:border-zinc-600 border-zinc-500'
+        : 'dark:border-zinc-700 border-zinc-400',
     !isLoading && 'cursor-pointer'
   ].join(' ')
 
