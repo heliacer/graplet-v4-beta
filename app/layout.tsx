@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang='en'>
-      <body className={`${fredoka.className} font-light antialiased dark:bg-zinc-900 bg-zinc-100 text-zinc-800 dark:text-zinc-200`}>
+      <body className={`${fredoka.className} dark:bg-zinc-900 bg-zinc-100 text-zinc-800 dark:text-zinc-200`}>
         <SessionProvider>
           {children}
         </SessionProvider>

@@ -1,13 +1,13 @@
-interface EarlyAccessLogoProps {
+interface LogoSolidProps {
   size: number
   className?: string
   id?: string
 }
 
-export default function EarlyAccessLogo({
+export default function LogoSolid({
   size,
   className,
-}: EarlyAccessLogoProps) {
+}: LogoSolidProps) {
   return (
     <svg
       width={size}

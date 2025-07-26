@@ -3,7 +3,7 @@
 import { Cuboid, LogOut, ToolCase } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
-import EarlyAccessLogo from "../ui/ea-logo"
+import LogoSolid from "../ui/logo-solid"
 
 export default function MyStuff() {
   const { data: session } = useSession()
@@ -28,7 +28,7 @@ export default function MyStuff() {
             Go to Admin
           </Link>}
         </div>
-        <EarlyAccessLogo size={90} />
+        <LogoSolid size={90} />
       </div>
     </main>
   )
