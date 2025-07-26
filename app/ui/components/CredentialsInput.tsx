@@ -1,3 +1,5 @@
+import clsx from 'clsx'
+
 export default function CredentialsInput({
   value,
   name,
@@ -18,7 +20,12 @@ export default function CredentialsInput({
 
   const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {
     name: name || type,
-    className: 'w-full pr-12 border py-1.5 pl-3 rounded-full dark:border-zinc-700 border-zinc-400 truncate focus:outline-none focus:bg-zinc-200 dark:focus:bg-zinc-800 dark:focus:border-zinc-600 focus:border-zinc-400',
+    className: clsx(
+      'w-full pr-12 border py-1.5 pl-3 rounded-full truncate',
+      'focus:outline-none',
+      'border-zinc-400 focus:bg-zinc-200 focus:border-zinc-400',
+      'dark:border-zinc-700 dark:focus:bg-zinc-800 dark:focus:border-zinc-600',
+    ),
     placeholder: placeholder || type,
     type,
     inputMode: 'email',
