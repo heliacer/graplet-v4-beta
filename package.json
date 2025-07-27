@@ -1,7 +1,9 @@
 {
-  "name": "nextjs",
+  "name": "graplet",
   "version": "0.1.0",
   "private": true,
+  "description": "A block-based 3D scene editor using ThreeJS and Blockly.",
+  "author": "heliacer@gmx.ch",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -11,7 +13,10 @@
   },
   "dependencies": {
     "@prisma/client": "^6.12.0",
+    "@react-three/fiber": "^9.2.0",
+    "@types/three": "^0.178.1",
     "bcrypt": "^6.0.0",
+    "blockly": "^12.2.0",
     "clsx": "^2.1.1",
     "dockview-react": "^4.5.0",
     "lucide-react": "^0.525.0",
@@ -20,6 +25,7 @@
     "prisma": "^6.12.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "three": "^0.178.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {

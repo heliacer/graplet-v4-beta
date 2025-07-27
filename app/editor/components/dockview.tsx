@@ -9,9 +9,11 @@ import TabHeader from "./tabHeader"
 
 // Panels
 import DebugPanel from "./panels/DebugPanel"
+import ScenePanel from "./panels/ScenePanel"
 
 const panelComponents = {
-  debug: DebugPanel
+  debug: DebugPanel,
+  scene: ScenePanel
 }
 
 export default function Dockview() {
@@ -45,7 +47,7 @@ export default function Dockview() {
 
     const scenePanel = event.api.addPanel({
       id: crypto.randomUUID(),
-      component: 'debug',
+      component: 'scene',
       params: {
         Icon: <Airplay size={16} />
       },
