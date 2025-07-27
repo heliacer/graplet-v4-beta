@@ -19,7 +19,7 @@ class IncorrectPasswordError extends CredentialsSignin {
 }
 
 declare module "next-auth" {
-  interface User extends Omit<UserT, 'password'> { } // Remove password from User type
+  interface User extends Omit<UserT, 'password'> { }
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -53,14 +53,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        // Ensures password never gets into JWT
+        // This Ensures password never gets into JWT
         const { password, ...safeUser } = user as any
         token.user = safeUser
       }
       return token
     },
     session({ session, token }) {
-      // Ensures password never gets into session
+      // This Ensures password never gets into session
       if (token.user) {
         session.user = token.user as any
       }

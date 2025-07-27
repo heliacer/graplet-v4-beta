@@ -16,7 +16,7 @@ const panelComponents = {
 
 export default function Dockview() {
   function mount(event: DockviewReadyEvent) {
-    event.api.addPanel({
+    const codePanel = event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Code',
       component: 'debug',
@@ -62,6 +62,8 @@ export default function Dockview() {
       }
     })
 
+    scenePanel.focus()
+
     const propertiesPanel = event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Properties',
@@ -80,6 +82,8 @@ export default function Dockview() {
       },
       position: { referencePanel: propertiesPanel, direction: 'right' }
     })
+
+    codePanel.focus()
   }
 
   return (

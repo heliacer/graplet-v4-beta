@@ -16,7 +16,7 @@ export default function NotFound() {
       <p className='italic'>Early Access.</p>
       <p>Think you&apos;re lost?</p>
 
-      <Link className='flex items-center gap-1' href='/login'>
+      <Link className='flex items-center gap-1' href='/'>
         <ArrowRight size={18} />
         <p>Go back</p>
       </Link>

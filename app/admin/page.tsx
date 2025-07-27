@@ -38,7 +38,7 @@ export default function Admin() {
           <p className="text-xl">Admin</p>
           <Link className='flex items-center gap-2' href='/mystuff'>
             <Folder size={18} />
-            <p>Go to my stuff</p>
+            <p>Go to My Stuff</p>
           </Link>
           <button className="cursor-pointer flex items-center gap-2" onClick={() => signOut({ callbackUrl: '/' })}>
             <LogOut size={18} />
