@@ -10,10 +10,12 @@ import TabHeader from "./tabHeader"
 // Panels
 import DebugPanel from "./panels/DebugPanel"
 import ScenePanel from "./panels/ScenePanel"
+import AssetsPanel from "./panels/AssetsPanel"
 
 const panelComponents = {
   debug: DebugPanel,
-  scene: ScenePanel
+  scene: ScenePanel,
+  assets: AssetsPanel
 }
 
 export default function Dockview() {
@@ -77,7 +79,8 @@ export default function Dockview() {
     })
 
     event.api.addPanel({
-      id: crypto.randomUUID(), component: 'debug',
+      id: crypto.randomUUID(),
+      component: 'assets',
       title: 'Assets',
       params: {
         Icon: <Package size={16} />
