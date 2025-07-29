@@ -35,32 +35,23 @@ export default function AssetsPanel() {
     Storage Options
     - Setting (default): cache cloud / url objects locally, improve loading time
   */
-  const [manifestData, setManifestData] = useState<any>(null)
+
+  const [manifestData, setManifestData] = useState(null)
 
   useEffect(() => {
     fetch('https://graplet.github.io/assetlib/manifest.json')
-    .then(response => response.json())
-    .then(data => setManifestData(data))
-    .catch(error => console.error('Error fetching manifest:', error))
+      .then(response => response.json())
+      .then(data => setManifestData(data))
+      .catch(error => console.error('Error fetching manifest:', error))
   }, [])
 
   return (
     <>
-      <div className="flex px-1.5 py-2 gap-1.5">
-        <button className="text-nowrap cursor-pointer rounded px-1.5 bg-zinc-800 border border-zinc-700">
-          Add empty
-        </button>
-        <input 
-          type="text"
-          className="w-full focus:outline-none rounded px-1.5 border border-zinc-700"
-          placeholder="Type Asset URL or choose from Library"
-        />
-      </div>
-      <div className="px-1.5">
+      <div className="p-1.5">
         {manifestData &&
-        <pre className="text-xs bg-zinc-900 p-2 rounded overflow-auto max-h-80">
-          {JSON.stringify(manifestData, null, 2)}
-        </pre>}
+          <pre className="text-xs bg-zinc-900 p-2 rounded">
+            {JSON.stringify(manifestData, null, 2)}
+          </pre>}
       </div>
     </>
   )

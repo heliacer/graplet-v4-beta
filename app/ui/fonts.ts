@@ -1,3 +1,3 @@
-import { Fredoka } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 
-export const fredoka = Fredoka({ subsets: ['latin'], weight: ['300'] })
+export const nunito = Nunito({ subsets: ['latin'], weight: ['400'] })

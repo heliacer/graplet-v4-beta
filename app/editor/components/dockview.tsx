@@ -3,7 +3,7 @@
 import { DockviewReact, DockviewReadyEvent } from "dockview-react"
 import '../styles/base.css'
 import '../styles/theme.css'
-import { Airplay, Package, PenTool, Puzzle, Shapes, Terminal, Wrench } from "lucide-react"
+import { Airplay, Folder, Package, PenTool, Puzzle, Shapes, Terminal, Wrench } from "lucide-react"
 import { LeftControls, RightControls } from "./controls"
 import TabHeader from "./tabHeader"
 
@@ -11,10 +11,14 @@ import TabHeader from "./tabHeader"
 import DebugPanel from "./panels/DebugPanel"
 import ScenePanel from "./panels/ScenePanel"
 import AssetsPanel from "./panels/AssetsPanel"
+import ExplorerPanel from "./panels/ExplorerPanel"
+import CodePanel from "./panels/CodePanel"
 
 const panelComponents = {
   debug: DebugPanel,
+  code: CodePanel,
   scene: ScenePanel,
+  explorer: ExplorerPanel,
   assets: AssetsPanel
 }
 
@@ -23,7 +27,7 @@ export default function Dockview() {
     const codePanel = event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Code',
-      component: 'debug',
+      component: 'code',
       params: {
         Icon: <Puzzle size={16} />
       }
@@ -40,7 +44,16 @@ export default function Dockview() {
 
     event.api.addPanel({
       id: crypto.randomUUID(),
-      title: 'Addons',
+      title: 'Assets',
+      component: 'assets',
+      params: {
+        Icon: <Package size={16} />
+      }
+    })
+    
+    event.api.addPanel({
+      id: crypto.randomUUID(),
+      title: 'Extensions',
       component: 'debug',
       params: {
         Icon: <Shapes size={16} />
@@ -80,10 +93,10 @@ export default function Dockview() {
 
     event.api.addPanel({
       id: crypto.randomUUID(),
-      component: 'assets',
-      title: 'Assets',
+      component: 'explorer',
+      title: 'Explorer',
       params: {
-        Icon: <Package size={16} />
+        Icon: <Folder size={16} />
       },
       position: { referencePanel: propertiesPanel, direction: 'right' }
     })

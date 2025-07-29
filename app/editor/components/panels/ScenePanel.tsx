@@ -1,35 +1,26 @@
-import { Canvas, ThreeElements, useFrame } from "@react-three/fiber"
-import { useRef, useState } from "react"
+import { Canvas } from "@react-three/fiber"
+import { useEffect, useRef } from "react"
 import { Mesh } from "three"
+import { useEditor } from "../../lib/EditorContext"
 
-function Box(props: ThreeElements['mesh']){
-  const meshRef = useRef<Mesh>(null!)
-  const [hovered, setHover] = useState(false)
-  const [active, setActive] = useState(false)
-  
-  useFrame((_, delta) => (meshRef.current.rotation.x += delta))
+export default function ScenePanel() {
+  const boxRef = useRef<Mesh>(null!)
+  const { ir, runTrigger } = useEditor()
 
-  return (
-    <mesh
-      {...props}
-      ref={meshRef}
-      scale={active ? 1.5 : 1}
-      onClick={() => setActive(!active)}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? '#e4e4e7' : '#00bc7d'} />
-    </mesh>
-  )
-}
+  useEffect(() => {
+    if (runTrigger > 0) {
+      console.log(ir)
+    }
+  }, [runTrigger, ir])
 
-export default function ScenePanel(){
   return (
     <Canvas>
-      <ambientLight intensity={Math.PI / 2}/>
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      <Box position={[0, 0, 0]} />
+      <ambientLight intensity={1} />
+      <directionalLight position={[3, 5, 2]} intensity={2} />
+      <mesh ref={boxRef} rotation={[10, 0, 0]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color='#00bc7d' />
+      </mesh>
     </Canvas>
   )
 }
