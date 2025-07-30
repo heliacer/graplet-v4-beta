@@ -1,12 +1,13 @@
 import "@/app/editor/styles/blockly.css"
 import { definitions } from "../../lib/blockly/blocks"
-import { bumpObjects, common, ContextMenuItems, DropDownDiv, inject, registry, ToolboxCategory, Tooltip, WidgetDiv, WorkspaceSvg } from "blockly"
+import { bumpObjects, common, ContextMenuItems, DropDownDiv, inject, registry, Scrollbar, ToolboxCategory, Tooltip, WidgetDiv, WorkspaceSvg } from "blockly"
 import { useEffect, useRef } from "react"
 import { useEditor } from "../../lib/EditorContext"
 import { blocklyOptions } from "../../lib/blockly/options"
 import { ContinuousCategory, ContinuousFlyout, ContinuousMetrics, ContinuousToolbox, RecyclableBlockFlyoutInflater } from "@blockly/continuous-toolbox"
 import { registerFieldAngle } from "@blockly/field-angle"
 
+Scrollbar.scrollbarThickness = 10
 registerFieldAngle()
 common.defineBlocks(definitions)
 

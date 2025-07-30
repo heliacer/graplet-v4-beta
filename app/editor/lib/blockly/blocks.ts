@@ -1,10 +1,12 @@
 import { common } from "blockly"
+import { colors } from "./colors"
 
 export const definitions = common.createBlockDefinitionsFromJsonArray([
   {
     type: 'onclickrun',
     message0: 'when run clicked',
     nextStatement: null,
+    colour: colors.EVENTS
   },
   {
     type: 'setposxyz',
@@ -25,6 +27,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
+    colour: colors.MOTION
   },
   {
     type: 'setroteulerxyz',
@@ -45,6 +48,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
+    colour: colors.MOTION
   },
   {
     type: "rotatexyz",
@@ -75,6 +79,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
+    colour: colors.MOTION
   },
   {
     type: "translatexyz",
@@ -105,6 +110,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
+    colour: colors.MOTION
   },
   {
     type: 'repeat',
@@ -124,6 +130,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
+    colour: colors.CONTROL
   },
   {
     type: 'wait',
@@ -136,5 +143,6 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
+    colour: colors.CONTROL
   }
 ])

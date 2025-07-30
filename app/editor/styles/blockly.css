@@ -10,12 +10,17 @@
   height: 1.25rem;
 }
 
+.blocklyToolbox, .blocklyFlyoutBackground {
+  outline: none;
+}
+
 .blocklyToolboxCategory {
   height: initial;
   padding: 3px 0;
 }
 
 .blocklyTreeRowContentContainer {
+  outline: none;
   display: flex;
   flex-direction: column;
 }
