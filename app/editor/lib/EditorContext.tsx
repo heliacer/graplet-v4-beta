@@ -1,14 +1,11 @@
 import React, { createContext, useContext, useState } from "react"
-import { Action } from "./types"
 import { WorkspaceSvg } from "blockly"
 
 interface EditorContextType {
   workspace: WorkspaceSvg | null
   setWorkspace: (workspace: WorkspaceSvg | null) => void
-  ir: Action[]
-  setIr: (ir: Action[]) => void
-  runScene: () => void
-  runTrigger: number
+  setRunState: (index: number) => void
+  runState: number
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -19,12 +16,10 @@ export function useEditor() {
 
 export function EditorProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
-  const [runTrigger, setRunTrigger] = useState<number>(0)
-  const [ir, setIr] = useState<Action[]>([])
-  const runScene = () => { setRunTrigger(v => v + 1) }
+  const [runState, setRunState] = useState<number>(0)
 
   return (
-    <EditorContext.Provider value={{ workspace, setWorkspace, ir, setIr, runScene, runTrigger }}>
+    <EditorContext.Provider value={{ workspace, setWorkspace, setRunState, runState }}>
       {children}
     </EditorContext.Provider>
   )

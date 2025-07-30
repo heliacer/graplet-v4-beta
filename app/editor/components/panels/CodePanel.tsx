@@ -1,12 +1,60 @@
 import "@/app/editor/styles/blockly.css"
 import { definitions } from "../../lib/blockly/blocks"
-import { common, WorkspaceSvg } from "blockly"
+import { bumpObjects, common, ContextMenuItems, DropDownDiv, inject, registry, ToolboxCategory, Tooltip, WidgetDiv, WorkspaceSvg } from "blockly"
 import { useEffect, useRef } from "react"
 import { useEditor } from "../../lib/EditorContext"
 import { blocklyOptions } from "../../lib/blockly/options"
-import { initializeWorkspace, resize } from "../../lib/blockly/initializeWorkspace"
+import { ContinuousCategory, ContinuousFlyout, ContinuousMetrics, ContinuousToolbox, RecyclableBlockFlyoutInflater } from "@blockly/continuous-toolbox"
+import { registerFieldAngle } from "@blockly/field-angle"
 
+registerFieldAngle()
 common.defineBlocks(definitions)
+
+registry.register(
+  registry.Type.TOOLBOX_ITEM,
+  ToolboxCategory.registrationName,
+  ContinuousCategory,
+  true,
+)
+
+registry.register(
+  registry.Type.METRICS_MANAGER,
+  'ContinuousMetrics',
+  ContinuousMetrics,
+  true,
+)
+
+registry.register(
+  registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
+  'ContinuousFlyout',
+  ContinuousFlyout,
+  true,
+)
+
+registry.register(
+  registry.Type.TOOLBOX,
+  'ContinuousToolbox',
+  ContinuousToolbox,
+  true,
+)
+
+registry.register(
+  registry.Type.FLYOUT_INFLATER,
+  'block',
+  RecyclableBlockFlyoutInflater,
+  true,
+)
+
+ContextMenuItems.registerCommentOptions()
+
+function resize(workspace: WorkspaceSvg) {
+  Tooltip.hide()
+  workspace.hideComponents(true)
+  DropDownDiv.repositionForWindowResize()
+  WidgetDiv.repositionForWindowResize()
+  common.svgResize(workspace)
+  bumpObjects.bumpTopObjectsIntoBounds(workspace)
+}
 
 export default function CodePanel() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -16,7 +64,7 @@ export default function CodePanel() {
   useEffect(() => {
     if (!containerRef.current || WorkspaceRef.current) return
 
-    const ws = initializeWorkspace(containerRef.current, blocklyOptions)
+    const ws = inject(containerRef.current, blocklyOptions)
     WorkspaceRef.current = ws
     setWorkspace(ws)
 

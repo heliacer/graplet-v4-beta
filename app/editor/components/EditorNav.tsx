@@ -7,7 +7,7 @@ import { useEditor } from "../lib/EditorContext"
 
 export default function EditorNav() {
   const { data: session} = useSession()
-  const { runScene } = useEditor()
+  const { setRunState } = useEditor()
 
   return (
     <nav className="h-11 flex items-center justify-between px-2">
@@ -16,7 +16,7 @@ export default function EditorNav() {
         <p className="text-lg">Graplet</p>
       </Link>
       <button
-        onClick={runScene}
+        onClick={() => setRunState(1)}
         className="flex items-center gap-1 cursor-pointer rounded-lg px-1.5 bg-emerald-600">
         <Play size={16}/>
         <p>Run</p>

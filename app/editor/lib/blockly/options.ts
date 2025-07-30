@@ -12,7 +12,18 @@ export const blocklyOptions: BlocklyOptions = {
       family: 'Nunito, Nunito Fallback',
       weight: '400'
     },
-    startHats: true
+    startHats: true,
+    categoryStyles: {
+      'motion': {
+        colour: 'black'
+      },
+      'events': {
+        colour: 'black'
+      },
+      'control': {
+        colour: 'black'
+      }
+    }
   },
   renderer: 'thrasos',
   scrollbars: true,
