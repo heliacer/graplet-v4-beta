@@ -27,6 +27,15 @@ export const blocklyOptions: BlocklyOptions = {
           },
           {
             kind: 'block',
+            type: 'setscalexyz',
+            fields: {
+              X: 1,
+              Y: 1,
+              Z: 1
+            }
+          },
+          {
+            kind: 'block',
             type: 'setroteulerxyz'
           },
           {
@@ -83,7 +92,7 @@ export const blocklyOptions: BlocklyOptions = {
         kind: 'category',
         name: 'Variables',
         custom: 'VARIABLE',
-        categorystyle: 'vars',
+        categorystyle: 'variables',
       }
     ]
   },
@@ -114,8 +123,8 @@ export const blocklyOptions: BlocklyOptions = {
       control: {
         colour: colors.CONTROL
       },
-      vars : {
-        colour: colors.VARS
+      variables : {
+        colour: colors.VARIABLES
       }
     },
     blockStyles: {
@@ -129,7 +138,7 @@ export const blocklyOptions: BlocklyOptions = {
         colourPrimary: colors.CONTROL
       },
       variable_blocks : {
-        colourPrimary: colors.VARS
+        colourPrimary: colors.VARIABLES
       }
     }
   },

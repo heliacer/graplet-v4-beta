@@ -72,6 +72,27 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     style: 'motion'
   },
   {
+    type: 'setscalexyz',
+    message0: 'set scale to x: %1 y: %2 z: %3',
+    args0: [
+      {
+        type: 'field_number',
+        name: 'X',
+      },
+      {
+        type: 'field_number',
+        name: 'Y',
+      },
+      {
+        type: 'field_number',
+        name: 'Z',
+      }
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'motion'
+  },
+  {
     type: 'setroteulerxyz',
     message0: 'set rotation to euler x: %1 y: %2 z: %3',
     args0: [

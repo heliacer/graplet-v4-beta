@@ -8,7 +8,7 @@ export const colors = {
   EVENTS: '#C55FCF',
   CONTROL: '#D79B3E',
   LOGIC: '#7EBF41',
-  VARS: '#3E429C',
+  VARIABLES: '#3E429C',
   MATH: '#4FB0C1',
   TIME: '#C57C41',
   CUSTOM: '#7A8DA6'

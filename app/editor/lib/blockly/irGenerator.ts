@@ -119,6 +119,17 @@ irGenerator.forBlock('setposxyz', function(block: Block): Action {
   }
 })
 
+irGenerator.forBlock('setscalexyz', function(block: Block): Action {
+  const x = block.getFieldValue('X')
+  const y = block.getFieldValue('Y')
+  const z = block.getFieldValue('Z')
+
+  return {
+    type: 'setscalexyz',
+    fields: [x,y,z]
+  }
+})
+
 irGenerator.forBlock('setroteulerxyz', function(block: Block): Action {
   const x = block.getFieldValue('X')
   const y = block.getFieldValue('Y')

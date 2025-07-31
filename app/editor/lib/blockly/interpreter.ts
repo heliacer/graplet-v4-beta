@@ -10,7 +10,7 @@ export async function interpret(ir: IR, boxRef: RefObject<Mesh>) {
   }
 }
 
-async function executeActions(actions: Action[], boxRef: RefObject<Mesh>) {
+export async function executeActions(actions: Action[], boxRef: RefObject<Mesh>) {
   for (const action of actions) {
     switch (action.type) {
       case 'wait': {
@@ -32,6 +32,12 @@ async function executeActions(actions: Action[], boxRef: RefObject<Mesh>) {
         const [x, y, z] = action.fields as [number, number, number]
         boxRef.current.position.set(x, y, z)
         console.log(`Set position to: ${x}, ${y}, ${z}`)
+        break
+      }
+      case 'setscalexyz': {
+        const [x, y, z] = action.fields as [number, number, number]
+        boxRef.current.scale.set(x, y, z)
+        console.log(`Set scale to: ${x}, ${y}, ${z}`)
         break
       }
       case 'setroteulerxyz': {
