@@ -2,7 +2,7 @@
 
 import { DockviewReact, DockviewReadyEvent } from "dockview-react"
 import '../styles/base.css'
-import '../styles/theme.css'
+import '../styles/dvtheme.css'
 import { Airplay, Folder, Package, PenTool, Puzzle, Shapes, Terminal, Wrench } from "lucide-react"
 import { LeftControls, RightControls } from "./controls"
 import TabHeader from "./tabHeader"

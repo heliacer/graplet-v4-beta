@@ -17,7 +17,7 @@ export default function EditorNav() {
       </Link>
       <button
         onClick={() => setRunState(1)}
-        className="flex items-center gap-1 cursor-pointer rounded-lg px-1.5 bg-emerald-600">
+        className="flex items-center gap-1 cursor-pointer rounded-lg px-1.5 bg-accent">
         <Play size={16}/>
         <p>Run</p>
       </button>

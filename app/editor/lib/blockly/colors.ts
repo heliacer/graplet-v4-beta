@@ -1,5 +1,15 @@
 export const colors = {
-  MOTION: '#557ee8',
-  EVENTS: '#c55fcf',
-  CONTROL: '#d79b3e'
+  MOTION: '#557EE8',
+  LOOKS: '#C58320',
+  OBJECTS: '#139F86',
+  SCENE: '#41A5D8',
+  CAMERA: '#834CD3',
+  LIGHTS: '#C2524C',
+  EVENTS: '#C55FCF',
+  CONTROL: '#D79B3E',
+  LOGIC: '#7EBF41',
+  VARS: '#3E429C',
+  MATH: '#4FB0C1',
+  TIME: '#C57C41',
+  CUSTOM: '#7A8DA6'
 }

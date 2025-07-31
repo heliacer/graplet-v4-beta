@@ -157,10 +157,6 @@
   outline: none;
 }
 
-.dv-content-container>div {
-  overflow: auto;
-}
-
 /* Root layout */
 .dv-root-wrapper,
 .dv-grid-view,

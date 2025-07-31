@@ -73,7 +73,13 @@ export const blocklyOptions: BlocklyOptions = {
   theme: {
     name: 'graplet',
     componentStyles: {
-      workspaceBackgroundColour: 'transparent'
+      workspaceBackgroundColour: 'transparent',
+      toolboxBackgroundColour: '#1f1f23',
+      flyoutBackgroundColour: '#1f1f23',
+      toolboxForegroundColour: '#e4e4e7',
+      flyoutForegroundColour: '#e4e4e7',
+      flyoutOpacity: 1,
+      scrollbarColour: '#343437',
     },
     fontStyle: {
       family: 'Nunito, Nunito Fallback',
@@ -92,16 +98,20 @@ export const blocklyOptions: BlocklyOptions = {
       }
     }
   },
-  renderer: 'thrasos',
+  renderer: 'graplet',
   scrollbars: true,
   trashcan: false,
   grid: {
-    length: 4,
-    spacing: 20,
+    length: 2,
+    spacing: 30,
     snap: true
   },
   zoom: {
-    startScale: 0.8
+    wheel: true,
+    controls: true,
+    startScale: 0.8,
+    maxScale: 1.2,
+    minScale: 0.2
   },
   plugins: {
     metricsManager: 'ContinuousMetrics',
