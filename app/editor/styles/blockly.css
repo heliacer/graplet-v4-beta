@@ -5,7 +5,7 @@
 .categoryBubble {
   margin: 0 auto 0.125rem;
   border-radius: 100%;
-  border: 1px solid;
+  border: 1px solid rgba(0,0,0,.1);
   width: 1.25rem;
   height: 1.25rem;
 }
@@ -32,7 +32,7 @@
 .blocklyToolboxCategory {
   background-color: transparent !important;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 5px;
   border: 1px solid transparent;
 }
 
@@ -60,9 +60,12 @@
   text-align: center;
   font: inherit;
   font-size: 12px;
-  margin: 0 2px;
 }
 
 .injectionDiv {
   overflow: visible;
+}
+
+.blocklyFlyoutLabelText{
+  font-size: 28px !important;
 }

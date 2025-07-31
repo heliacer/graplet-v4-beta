@@ -1,12 +1,11 @@
 import { common } from "blockly"
-import { colors } from "./colors"
 
 export const definitions = common.createBlockDefinitionsFromJsonArray([
   {
     type: 'onclickrun',
     message0: 'when run clicked',
     nextStatement: null,
-    colour: colors.EVENTS
+    style: 'events'
   },
   {
     type: "moveunitsxyz",
@@ -49,7 +48,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: colors.MOTION
+    style: 'motion'
   },
   {
     type: 'setposxyz',
@@ -70,7 +69,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: colors.MOTION
+    style: 'motion'
   },
   {
     type: 'setroteulerxyz',
@@ -91,7 +90,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: colors.MOTION
+    style: 'motion'
   },
   {
     type: "rotatexyz",
@@ -122,7 +121,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: colors.MOTION
+    style: 'motion'
   },
   {
     type: "translatexyz",
@@ -153,7 +152,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: colors.MOTION
+    style: 'motion'
   },
   {
     type: 'repeat',
@@ -173,7 +172,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: colors.CONTROL
+    style: 'control'
   },
   {
     type: 'wait',
@@ -186,6 +185,6 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: colors.CONTROL
+    style: 'control'
   },
 ])

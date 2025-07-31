@@ -12,7 +12,7 @@ Scrollbar.scrollbarThickness = 10
 registerFieldAngle()
 common.defineBlocks(definitions)
 VerticalFlyout.prototype.getFlyoutScale = function() { return .45 }
-blockRendering.register('graplet', GrapletRenderer);
+blockRendering.register('graplet', GrapletRenderer)
 
 registry.register(
   registry.Type.TOOLBOX_ITEM,

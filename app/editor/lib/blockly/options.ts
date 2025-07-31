@@ -78,6 +78,12 @@ export const blocklyOptions: BlocklyOptions = {
             }
           }
         ]
+      },
+      {
+        kind: 'category',
+        name: 'Variables',
+        custom: 'VARIABLE',
+        categorystyle: 'vars',
       }
     ]
   },
@@ -99,14 +105,31 @@ export const blocklyOptions: BlocklyOptions = {
     },
     startHats: true,
     categoryStyles: {
-      'motion': {
+      motion: {
         colour: colors.MOTION
       },
-      'events': {
+      events: {
         colour: colors.EVENTS
       },
-      'control': {
+      control: {
         colour: colors.CONTROL
+      },
+      vars : {
+        colour: colors.VARS
+      }
+    },
+    blockStyles: {
+      motion : {
+        colourPrimary: colors.MOTION
+      },
+      events: {
+        colourPrimary: colors.EVENTS
+      },
+      control: {
+        colourPrimary: colors.CONTROL
+      },
+      variable_blocks : {
+        colourPrimary: colors.VARS
       }
     }
   },
