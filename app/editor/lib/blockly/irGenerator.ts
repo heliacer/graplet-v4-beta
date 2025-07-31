@@ -95,6 +95,19 @@ irGenerator.forBlock('onclickrun', function(): Action {
   }
 })
 
+irGenerator.forBlock('moveunitsxyz', function(block: Block): Action {
+  const units = block.getFieldValue('UNITS') as number
+  const direction = block.getFieldValue('DIRECTION') as string
+  const axis = direction.slice(-1)
+  console.log(axis)
+
+  return {
+    type: 'translatexyz',
+    fields: [axis,direction.startsWith('-') ? -units : units]
+  }
+})
+
+
 irGenerator.forBlock('setposxyz', function(block: Block): Action {
   const x = block.getFieldValue('X')
   const y = block.getFieldValue('Y')
@@ -129,7 +142,7 @@ irGenerator.forBlock('rotatexyz', function(block: Block): Action {
 
 irGenerator.forBlock('translatexyz', function(block: Block): Action {
   const axis = block.getFieldValue('AXIS')
-  const distance = block.getFieldValue('DISTANCE')
+  const distance = block.getFieldValue('UNITS')
   
   return {
     type: 'translatexyz',

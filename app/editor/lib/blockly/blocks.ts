@@ -9,6 +9,49 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     colour: colors.EVENTS
   },
   {
+    type: "moveunitsxyz",
+    message0: "move %1 units %2",
+    args0: [
+      {
+        type: "field_number",
+        name: "UNITS",
+      },
+      {
+        "type": "field_dropdown",
+        "name": "DIRECTION",
+        "options": [
+          [
+            "forwards",
+            "Z"
+          ],
+          [
+            "backwards",
+            "-Z"
+          ],
+          [
+            "left",
+            "-X"
+          ],
+          [
+            "right",
+            "X"
+          ],
+          [
+            "up",
+            "Y"
+          ],
+          [
+            "down",
+            "-Y"
+          ],
+        ]
+      }
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    colour: colors.MOTION
+  },
+  {
     type: 'setposxyz',
     message0: 'set position to x: %1 y: %2 z: %3',
     args0: [
@@ -105,7 +148,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
       },
       {
         type: "field_number",
-        name: "DISTANCE",
+        name: "UNITS",
       }
     ],
     previousStatement: null,
@@ -144,5 +187,5 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     previousStatement: null,
     nextStatement: null,
     colour: colors.CONTROL
-  }
+  },
 ])

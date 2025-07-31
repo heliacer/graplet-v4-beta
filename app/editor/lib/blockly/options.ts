@@ -12,6 +12,17 @@ export const blocklyOptions: BlocklyOptions = {
         contents: [
           {
             kind: 'block',
+            type: 'moveunitsxyz',
+            fields: {
+              UNITS: .5
+            }
+          },
+          {
+            kind: 'sep',
+            gap: 32
+          },
+          {
+            kind: 'block',
             type: 'setposxyz'
           },
           {
@@ -23,7 +34,7 @@ export const blocklyOptions: BlocklyOptions = {
             type: 'translatexyz',
             fields: {
               AXIS: 'Z',
-              DISTANCE: 1
+              UNITS: .5
             }
           },
           {
@@ -63,7 +74,7 @@ export const blocklyOptions: BlocklyOptions = {
             kind: 'block',
             type: 'wait',
             fields: {
-              MS: 1000
+              MS: 500
             }
           }
         ]
@@ -83,7 +94,8 @@ export const blocklyOptions: BlocklyOptions = {
     },
     fontStyle: {
       family: 'Nunito, Nunito Fallback',
-      weight: '400'
+      weight: '600',
+      size: 19
     },
     startHats: true,
     categoryStyles: {
@@ -109,9 +121,9 @@ export const blocklyOptions: BlocklyOptions = {
   zoom: {
     wheel: true,
     controls: true,
-    startScale: 0.8,
-    maxScale: 1.2,
-    minScale: 0.2
+    maxScale: 2,
+    startScale: .45,
+    minScale: .1
   },
   plugins: {
     metricsManager: 'ContinuousMetrics',

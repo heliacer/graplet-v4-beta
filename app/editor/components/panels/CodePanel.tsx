@@ -11,7 +11,7 @@ import { GrapletRenderer } from "../../lib/blockly/renderer"
 Scrollbar.scrollbarThickness = 10
 registerFieldAngle()
 common.defineBlocks(definitions)
-VerticalFlyout.prototype.getFlyoutScale = function() { return 0.8 }
+VerticalFlyout.prototype.getFlyoutScale = function() { return .45 }
 blockRendering.register('graplet', GrapletRenderer);
 
 registry.register(

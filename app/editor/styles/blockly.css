@@ -11,19 +11,22 @@
 }
 
 .blocklyToolboxCategoryGroup {
-  margin: 4px;
+  margin: 4px 5px 4px 4px;
 }
 
 .blocklyFlyout {
+  z-index: 60;
   border-radius: 5px 0 0 0;
-  border-left: 1px solid oklch(32.5% 0.006 285.959);
-  border-top: 1px solid oklch(32.5% 0.006 285.959);
-  margin-top: -1px;
+  outline: 1px solid oklch(32.5% 0.006 285.959);
 }
 
 .blocklyToolbox:focus-visible,
 .blocklyToolboxCategoryContainer:focus-visible {
   outline: none;
+}
+
+.blocklyToolbox {
+  z-index: 50;
 }
 
 .blocklyToolboxCategory {
@@ -56,7 +59,8 @@
 .blocklyToolboxCategoryLabel {
   text-align: center;
   font: inherit;
-  font-size: 14px;
+  font-size: 12px;
+  margin: 0 2px;
 }
 
 .injectionDiv {
