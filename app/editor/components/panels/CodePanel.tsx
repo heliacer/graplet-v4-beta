@@ -1,17 +1,18 @@
 import "@/app/editor/styles/blockly.css"
 import { definitions } from "../../lib/blockly/blocks"
-import { blockRendering, bumpObjects, common, ContextMenuItems, DropDownDiv, inject, registry, Scrollbar, ToolboxCategory, Tooltip, VerticalFlyout, WidgetDiv, WorkspaceSvg } from "blockly"
+import { blockRendering, bumpObjects, common, ContextMenuItems, DropDownDiv, inject, registry, Scrollbar, ToolboxCategory, Tooltip, VerticalFlyout, WidgetDiv, WorkspaceSvg, Variables, Events } from "blockly"
 import { useEffect, useRef } from "react"
 import { useEditor } from "../../lib/EditorContext"
 import { blocklyOptions } from "../../lib/blockly/options"
 import { ContinuousCategory, ContinuousFlyout, ContinuousMetrics, ContinuousToolbox, RecyclableBlockFlyoutInflater } from "@blockly/continuous-toolbox"
 import { registerFieldAngle } from "@blockly/field-angle"
 import { GrapletRenderer } from "../../lib/blockly/renderer"
+import { variableCategory } from "../../lib/blockly/variables"
 
 Scrollbar.scrollbarThickness = 10
 registerFieldAngle()
 common.defineBlocks(definitions)
-VerticalFlyout.prototype.getFlyoutScale = function() { return .45 }
+VerticalFlyout.prototype.getFlyoutScale = function () { return .45 }
 blockRendering.register('graplet', GrapletRenderer)
 
 registry.register(
@@ -72,11 +73,26 @@ export default function CodePanel() {
     WorkspaceRef.current = ws
     setWorkspace(ws)
 
+    ws.getVariableMap().createVariable('foo')
+    ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
+    ws.registerButtonCallback('CREATE_VARIABLE', function (button) {
+      Variables.createVariableButtonHandler(button.getTargetWorkspace())
+    })
+
+    const variableListener = (event: Events.Abstract) => {
+      if (event.type === Events.VAR_CREATE || event.type === Events.VAR_DELETE || event.type === Events.VAR_RENAME) {
+        ws.refreshToolboxSelection()
+      }
+    }
+
+    ws.addChangeListener(variableListener)
+
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(containerRef.current)
 
     return () => {
       resizeObserver.disconnect()
+      ws.removeChangeListener(variableListener)
       ws.dispose()
       WorkspaceRef.current = null
       setWorkspace(null)

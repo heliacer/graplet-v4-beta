@@ -1,108 +1,9 @@
 import { BlocklyOptions } from "blockly"
 import { colors } from "./colors"
+import { toolbox } from "./toolbox"
 
 export const blocklyOptions: BlocklyOptions = {
-  toolbox: {
-    kind: 'categoryToolbox',
-    contents: [
-      {
-        kind: 'category',
-        name: 'Motion',
-        categorystyle: 'motion',
-        contents: [
-          {
-            kind: 'block',
-            type: 'moveunitsxyz',
-            fields: {
-              UNITS: .5
-            }
-          },
-          {
-            kind: 'sep',
-            gap: 32
-          },
-          {
-            kind: 'block',
-            type: 'setposxyz'
-          },
-          {
-            kind: 'block',
-            type: 'setscalexyz',
-            fields: {
-              X: 1,
-              Y: 1,
-              Z: 1
-            }
-          },
-          {
-            kind: 'block',
-            type: 'setroteulerxyz'
-          },
-          {
-            kind: 'block',
-            type: 'translatexyz',
-            fields: {
-              AXIS: 'Z',
-              UNITS: .5
-            }
-          },
-          {
-            kind: 'block',
-            type: 'rotatexyz',
-            fields: {
-              AXIS: 'Y',
-              ANGLE: 15
-            }
-          }
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Events',
-        categorystyle: 'events',
-        contents: [
-          {
-            kind: 'block',
-            type: 'onclickrun'
-          }
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Control',
-        categorystyle: 'control',
-        contents: [
-          {
-            kind: 'block',
-            type: 'repeat',
-            fields: {
-              TIMES: 10
-            }
-          },
-          {
-            kind: 'block',
-            type: 'wait',
-            inputs: {
-              MS: {
-                shadow : {
-                  type: 'math_number',
-                  fields : {
-                    NUM: 500
-                  }
-                }
-              }
-            }
-          }
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Variables',
-        custom: 'VARIABLE',
-        categorystyle: 'variables',
-      }
-    ]
-  },
+  toolbox: toolbox,
   theme: {
     name: 'graplet',
     componentStyles: {
@@ -121,31 +22,37 @@ export const blocklyOptions: BlocklyOptions = {
     },
     startHats: true,
     categoryStyles: {
-      motion: {
+      motion_category: {
         colour: colors.MOTION
       },
-      events: {
+      events_category: {
         colour: colors.EVENTS
       },
-      control: {
+      control_category: {
         colour: colors.CONTROL
       },
-      variables : {
+      variables_category : {
         colour: colors.VARIABLES
+      },
+      math_category : {
+        colour: colors.MATH
       }
     },
     blockStyles: {
-      motion : {
+      motion_blocks : {
         colourPrimary: colors.MOTION
       },
-      events: {
+      event_blocks: {
         colourPrimary: colors.EVENTS
       },
-      control: {
+      control_blocks: {
         colourPrimary: colors.CONTROL
       },
       variable_blocks : {
         colourPrimary: colors.VARIABLES
+      },
+      math_blocks : {
+        colourPrimary: colors.MATH
       }
     }
   },

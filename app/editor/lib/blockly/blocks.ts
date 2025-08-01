@@ -5,7 +5,18 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     type: 'onclickrun',
     message0: 'when run clicked',
     nextStatement: null,
-    style: 'events'
+    style: 'event_blocks'
+  },
+  {
+    type: "input",
+    message0: "%1",
+    args0: [
+      {
+        type: "field_input",
+        name: "VALUE",
+      }
+    ],
+    output: null
   },
   {
     type: "moveunitsxyz",
@@ -16,9 +27,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
         name: "UNITS",
       },
       {
-        "type": "field_dropdown",
-        "name": "DIRECTION",
-        "options": [
+        type: "field_dropdown",
+        name: "DIRECTION",
+        options: [
           [
             "forwards",
             "Z"
@@ -37,18 +48,18 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
           ],
           [
             "up",
-            "Y"
+            "-Y"
           ],
           [
             "down",
-            "-Y"
+            "Y"
           ],
         ]
       }
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'motion'
+    style: 'motion_blocks'
   },
   {
     type: 'setposxyz',
@@ -69,7 +80,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'motion'
+    style: 'motion_blocks'
   },
   {
     type: 'setscalexyz',
@@ -90,7 +101,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'motion'
+    style: 'motion_blocks'
   },
   {
     type: 'setroteulerxyz',
@@ -111,16 +122,16 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'motion'
+    style: 'motion_blocks'
   },
   {
     type: "rotatexyz",
     message0: "rotate around %1 axis by %2 degrees",
     args0: [
       {
-        "type": "field_dropdown",
-        "name": "AXIS",
-        "options": [
+        type: "field_dropdown",
+        name: "AXIS",
+        options: [
           [
             "x",
             "X"
@@ -142,16 +153,16 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'motion'
+    style: 'motion_blocks'
   },
   {
     type: "translatexyz",
     message0: "translate along %1 axis by %2 units",
     args0: [
       {
-        "type": "field_dropdown",
-        "name": "AXIS",
-        "options": [
+        type: "field_dropdown",
+        name: "AXIS",
+        options: [
           [
             "x",
             "X"
@@ -173,15 +184,16 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'motion'
+    style: 'motion_blocks'
   },
   {
     type: 'repeat',
     message0: 'repeat %1 times %2 %3',
     args0: [
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'TIMES',
+        check: 'Number'
       },
       {
         type: 'input_dummy',
@@ -193,7 +205,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'control'
+    style: 'control_blocks'
   },
   {
     type: 'wait',
@@ -207,6 +219,6 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'control'
-  },
+    style: 'control_blocks'
+  }
 ])

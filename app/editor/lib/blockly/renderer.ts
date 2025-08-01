@@ -51,9 +51,9 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
     this.MIN_BLOCK_WIDTH = 2 * this.GRID_UNIT
     this.MIN_BLOCK_HEIGHT = 12 * this.GRID_UNIT
     this.EMPTY_STATEMENT_INPUT_HEIGHT = 6 * this.GRID_UNIT
-    this.TOP_ROW_MIN_HEIGHT = this.CORNER_RADIUS
+    this.TOP_ROW_MIN_HEIGHT = 2
     this.TOP_ROW_PRECEDES_STATEMENT_MIN_HEIGHT = this.LARGE_PADDING
-    this.BOTTOM_ROW_MIN_HEIGHT = this.CORNER_RADIUS
+    this.BOTTOM_ROW_MIN_HEIGHT = 2
     this.BOTTOM_ROW_AFTER_STATEMENT_MIN_HEIGHT = 6 * this.GRID_UNIT
     this.STATEMENT_BOTTOM_SPACER = -this.NOTCH_HEIGHT
     /** Minimum statement input spacer width. */
@@ -61,13 +61,13 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
     this.STATEMENT_INPUT_PADDING_LEFT = 4 * this.GRID_UNIT
     this.EMPTY_INLINE_INPUT_PADDING = 4 * this.GRID_UNIT
     this.EMPTY_INLINE_INPUT_HEIGHT = 8 * this.GRID_UNIT
-    this.DUMMY_INPUT_MIN_HEIGHT = 1 * this.GRID_UNIT
+    this.DUMMY_INPUT_MIN_HEIGHT = 6 * this.GRID_UNIT
     this.DUMMY_INPUT_SHADOW_MIN_HEIGHT = 6 * this.GRID_UNIT
     this.CURSOR_WS_WIDTH = 20 * this.GRID_UNIT
     this.FIELD_TEXT_FONTSIZE = 3 * this.GRID_UNIT
     this.FIELD_BORDER_RECT_RADIUS = this.CORNER_RADIUS
     this.FIELD_BORDER_RECT_X_PADDING = 2 * this.GRID_UNIT
-    this.FIELD_BORDER_RECT_Y_PADDING = 1 * this.GRID_UNIT
+    this.FIELD_BORDER_RECT_Y_PADDING = 0
     this.FIELD_BORDER_RECT_HEIGHT = 8 * this.GRID_UNIT
     this.FIELD_DROPDOWN_BORDER_RECT_HEIGHT = 8 * this.GRID_UNIT
     this.FIELD_DROPDOWN_SVG_ARROW_PADDING = this.FIELD_BORDER_RECT_X_PADDING

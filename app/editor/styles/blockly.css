@@ -5,7 +5,7 @@
 .categoryBubble {
   margin: 0 auto 0.125rem;
   border-radius: 100%;
-  border: 1px solid rgba(0,0,0,.1);
+  border: 1px solid rgba(0, 0, 0, .1);
   width: 1.25rem;
   height: 1.25rem;
 }
@@ -66,6 +66,6 @@
   overflow: visible;
 }
 
-.blocklyFlyoutLabelText{
+.blocklyFlyoutLabelText {
   font-size: 28px !important;
 }

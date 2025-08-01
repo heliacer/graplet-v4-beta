@@ -140,7 +140,6 @@ irGenerator.forBlock('moveunitsxyz', function(block: Block): Action {
   const units = block.getFieldValue('UNITS') as number
   const direction = block.getFieldValue('DIRECTION') as string
   const axis = direction.slice(-1)
-  console.log(axis)
 
   return {
     type: 'translatexyz',
@@ -203,7 +202,7 @@ irGenerator.forBlock('translatexyz', function(block: Block): Action {
 })
 
 irGenerator.forBlock('repeat', function(block: Block, generator: IRGenerator): Action {
-  const times = block.getFieldValue('TIMES')
+  const times = generator.valueToCode(block,'TIMES')
   
   const actionsInput = block.getInput('ACTIONS')
   const children: Action[] = []
@@ -226,8 +225,8 @@ irGenerator.forBlock('repeat', function(block: Block, generator: IRGenerator): A
   }
 })
 
-irGenerator.forBlock('wait', function(block: Block, generator: IRGenerator): Action {
-  const ms = generator.valueToCode(block, 'MS')
+irGenerator.forBlock('wait', function(block: Block,generator: IRGenerator): Action {
+  const ms = generator.valueToCode(block,'MS')
   
   return {
     type: 'wait',
@@ -237,4 +236,50 @@ irGenerator.forBlock('wait', function(block: Block, generator: IRGenerator): Act
 
 irGenerator.forValueBlock('math_number', function(block: Block): number {
   return block.getFieldValue('NUM')
+})
+
+irGenerator.forValueBlock('text', function(block: Block): string {
+  return block.getFieldValue('TEXT')
+})
+
+irGenerator.forValueBlock('input', function(block: Block): string {
+  return block.getFieldValue('VALUE')
+})
+
+irGenerator.forValueBlock('variables_get', function(block: Block): string {
+  return block.getFieldValue('VAR')
+})
+
+irGenerator.forBlock('variables_set', function(block: Block, generator: IRGenerator): Action {
+  const variableName = block.getFieldValue('VAR')
+  const value = generator.valueToCode(block, 'VALUE')
+
+  return {
+    type: 'setvar',
+    fields: [variableName, value]
+  }
+})
+
+irGenerator.forBlock('math_change', function(block: Block, generator: IRGenerator): Action {
+  const variableName = block.getFieldValue('VAR')
+  const delta = generator.valueToCode(block, 'DELTA')
+
+  return {
+    type: 'changevar',
+    fields: [variableName, delta]
+  }
+})
+
+irGenerator.forValueBlock('math_arithmetic', function(block: Block, generator: IRGenerator): number {
+  const operator = block.getFieldValue('OP')
+  const a = generator.valueToCode(block, 'A')
+  const b = generator.valueToCode(block, 'B')
+  
+  switch (operator) {
+    case 'ADD': return a + b
+    case 'MINUS': return a - b
+    case 'MULTIPLY': return a * b
+    case 'DIVIDE': return a / a
+    default: return 0
+  }
 })
