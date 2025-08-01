@@ -1,55 +1,41 @@
 import { Block, Workspace } from "blockly"
-import { Action, ActionScript, IR } from "../types"
+import { Action, ActionScript, IR, ValueWrapper } from "../types"
 
 class IRGenerator {
   private blockGenerators: Record<string, (block: Block, generator: IRGenerator) => Action | null> = {}
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => any> = {}
+
+  private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => ValueWrapper[]> = {}
   private triggerBlocks = new Set(['onclickrun'])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private variables: Map<string, any> = new Map()
+
   forBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => Action | null) {
     this.blockGenerators[blockType] = generatorFn
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  forValueBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => any) {
+
+  forValueBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => ValueWrapper[]) {
     this.valueGenerators[blockType] = generatorFn
   }
+
   registerTrigger(blockType: string) {
     this.triggerBlocks.add(blockType)
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setVariable(varId: string, value: any): void {
-    this.variables.set(varId, value)
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getVariable(varId: string): any {
-    return this.variables.get(varId) ?? 0
-  }
-  changeVariable(varId: string, delta: number): void {
-    const currentValue = this.getVariable(varId)
-    this.setVariable(varId, (Number.isNaN(Number(currentValue)) ? 0 : Number(currentValue)) + delta)
-  }
-  clearVariables(): void {
-    this.variables.clear()
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getInputValue(block: Block, inputName: string): any {
+
+  getInputValue(block: Block, inputName: string): ValueWrapper[] {
     const input = block.getInput(inputName)
     if (!input || !input.connection) {
-      return null
+      return [{}]
     }
     const connectedBlock = input.connection.targetBlock()
     if (!connectedBlock) {
-      return null
+      return [{}]
     }
     const valueGenerator = this.valueGenerators[connectedBlock.type]
     if (valueGenerator) {
       return valueGenerator(connectedBlock, this)
     }
     console.warn(`No value generator found for block type: ${connectedBlock.type}`)
-    return null
+    return [{}]
   }
+
   blockToAction(block: Block): Action | null {
     const generator = this.blockGenerators[block.type]
     if (!generator) {
@@ -58,6 +44,7 @@ class IRGenerator {
     }
     return generator(block, this)
   }
+
   workspaceToIR(workspace: Workspace): IR {
     const topBlocks = workspace.getTopBlocks(true)
     const scripts: ActionScript[] = []
@@ -157,7 +144,8 @@ irGenerator.forBlock('translatexyz', function (block: Block): Action {
 })
 
 irGenerator.forBlock('repeat', function (block: Block, generator: IRGenerator): Action {
-  const times = generator.getInputValue(block, 'TIMES')
+  const value = generator.getInputValue(block, 'TIMES')
+
   const actionsInput = block.getInput('ACTIONS')
   const children: Action[] = []
   if (actionsInput && actionsInput.connection && actionsInput.connection.targetBlock()) {
@@ -170,75 +158,80 @@ irGenerator.forBlock('repeat', function (block: Block, generator: IRGenerator): 
       currentBlock = currentBlock.getNextBlock()
     }
   }
+
   return {
     type: 'repeat',
-    fields: [times],
+    values: value,
+    resolvers: [(v) => (Number(v) | 0)],
     children: children
   }
 })
 
 irGenerator.forBlock('wait', function (block: Block, generator: IRGenerator): Action {
   const ms = generator.getInputValue(block, 'MS')
+
   return {
     type: 'wait',
-    fields: [ms]
+    values: ms,
+    resolvers: [(v) => (Number(v) | 0)]
   }
 })
 
-
-irGenerator.forValueBlock('math_number', function (block: Block): number {
-  return block.getFieldValue('NUM')
+irGenerator.forValueBlock('math_number', function (block: Block): ValueWrapper[] {
+  return [{ content: block.getFieldValue('NUM') }]
 })
 
-
-irGenerator.forValueBlock('text', function (block: Block): string {
-  return block.getFieldValue('TEXT')
+irGenerator.forValueBlock('text', function (block: Block): ValueWrapper[] {
+  return [{ content: block.getFieldValue('TEXT') }]
 })
 
-irGenerator.forValueBlock('input', function (block: Block): string | number {
+irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
   const value = block.getFieldValue('VALUE')
-  return Number.isNaN(Number(value)) ? value : Number(value)
+  return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
 })
 
-
-irGenerator.forValueBlock('variables_get', function (block: Block, generator: IRGenerator): any {
+irGenerator.forValueBlock('variables_get', function (block: Block): ValueWrapper[] {
   const varId = block.getFieldValue('VAR')
-  return generator.getVariable(varId)
+  return [{ id: varId }]
 })
-
 
 irGenerator.forBlock('variables_set', function (block: Block, generator: IRGenerator): Action {
   const varId = block.getFieldValue('VAR')
   const value = generator.getInputValue(block, 'VALUE')
-  console.log(value)
-  generator.setVariable(varId, value)
   return {
-    type: 'ignore',
-    fields: []
+    type: 'setvar',
+    fields: [varId],
+    values: value
   }
 })
-
 
 irGenerator.forBlock('math_change', function (block: Block, generator: IRGenerator): Action {
   const varId = block.getFieldValue('VAR')
   const delta = generator.getInputValue(block, 'DELTA')
-  generator.changeVariable(varId, delta)
   return {
-    type: 'ignore',
-    fields: []
+    type: 'changevar',
+    fields: [varId],
+    values: delta
   }
 })
 
-
-irGenerator.forValueBlock('math_arithmetic', function (block: Block, generator: IRGenerator): number {
+irGenerator.forValueBlock('math_arithmetic', function (block: Block, generator: IRGenerator): ValueWrapper[] {
   const operator = block.getFieldValue('OP')
-  const a = generator.getInputValue(block, 'A')
-  const b = generator.getInputValue(block, 'B')
-  switch (operator) {
-    case 'ADD': return a + b
-    case 'MINUS': return a - b
-    case 'MULTIPLY': return a * b
-    case 'DIVIDE': return a / a
-    default: return 0
+  const valueA = generator.getInputValue(block, 'A')
+  const valueB = generator.getInputValue(block, 'B')
+
+  const a = (typeof valueA === 'number' ? valueA : 0)
+  const b = (typeof valueB === 'number' ? valueB : 0)
+
+  function result() {
+    switch (operator) {
+      case 'ADD': return a + b
+      case 'MINUS': return a - b
+      case 'MULTIPLY': return a * b
+      case 'DIVIDE': return a / a
+      default: return 0
+    }
   }
+
+  return [{ content: result() }]
 })

@@ -5,16 +5,20 @@ import { useEditor } from "../../lib/EditorContext"
 import { irGenerator } from "../../lib/blockly/irGenerator"
 import { executeActions, interpret } from "../../lib/blockly/interpreter"
 import { Block, Events } from "blockly"
-import { Action } from "../../lib/types"
+import { Action, VariableManager } from "../../lib/types"
 
 export default function ScenePanel() {
   const testingBoxRef = useRef<Mesh>(null!)
   const { runState, workspace, setRunState } = useEditor()
+  const [variableManager] = useState(() => new VariableManager())
 
   function runAction(action: Action) {
     setRunState(2)
     console.log('Running single Action...')
-    executeActions([action], testingBoxRef).then(() => {
+    executeActions(
+      [action],
+      { box: testingBoxRef, variables: variableManager }
+    ).then(() => {
       console.log('Execution completed')
       setRunState(0)
     }).catch((error) => {
@@ -49,7 +53,7 @@ export default function ScenePanel() {
     if (runState === 1 && workspace) {
       const IR = irGenerator.workspaceToIR(workspace)
       console.log('Running...')
-      interpret(IR, testingBoxRef).then(() => {
+      interpret(IR, { box: testingBoxRef, variables: variableManager}).then(() => {
         console.log('Execution completed')
         setRunState(0)
       }).catch((error) => {

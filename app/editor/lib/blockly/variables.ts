@@ -51,7 +51,7 @@ export function variableCategory(workspace: WorkspaceSvg): utils.toolbox.FlyoutI
       VALUE: {
         shadow: {
           type: 'input',
-          fields: { VALUE: '' }
+          fields: { VALUE: '0' }
         }
       }
     }
