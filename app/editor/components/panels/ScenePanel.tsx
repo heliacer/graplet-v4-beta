@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Mesh } from "three"
 import { useEditor } from "../../lib/EditorContext"
 import { irGenerator } from "../../lib/blockly/irGenerator"

@@ -2,6 +2,23 @@ import { RefObject } from "react"
 import { Action, IR } from "../types"
 import { Mesh } from "three"
 
+class VariableManager {
+  private variables: Map<string, string | number> = new Map()
+
+  set(varId: string, value: string | number) {
+    this.variables.set(varId, Number.isNaN(value) ? value : Number(value))
+  }
+
+  get(varId: string): string | number {
+    return this.variables.get(varId) ?? 0
+  }
+
+  change(varId: string, delta: number) {
+
+  }
+}
+
+
 export async function interpret(ir: IR, boxRef: RefObject<Mesh>) {
   for (const script of ir.scripts) {
     if (script.trigger.type === 'onclickrun') {
@@ -12,7 +29,20 @@ export async function interpret(ir: IR, boxRef: RefObject<Mesh>) {
 
 export async function executeActions(actions: Action[], boxRef: RefObject<Mesh>) {
   for (const action of actions) {
+    if (action.values) {
+      for (const value of action.values) {
+        if (value.id) {
+          // get variable 
+        } else if (value.content) {
+          action.fields.push(value.content)
+        }
+      }
+    }
+
+
     switch (action.type) {
+      case 'ignore':
+        break
       case 'wait': {
         const [ms] = action.fields as [number]
         await new Promise(res => setTimeout(res, ms))
@@ -49,7 +79,7 @@ export async function executeActions(actions: Action[], boxRef: RefObject<Mesh>)
       case 'rotatexyz': {
         const [axis, angle] = action.fields as [string, number]
         const rad = angle * Math.PI / 180
-        switch (axis){
+        switch (axis) {
           case 'X':
             boxRef.current.rotateX(rad)
             break
@@ -65,7 +95,7 @@ export async function executeActions(actions: Action[], boxRef: RefObject<Mesh>)
       }
       case 'translatexyz': {
         const [axis, distance] = action.fields as [string, number]
-        switch (axis){
+        switch (axis) {
           case 'X':
             boxRef.current.translateX(distance)
             break

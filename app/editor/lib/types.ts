@@ -1,7 +1,13 @@
 export interface Action {
   type: string
   fields: (string | number)[]
+  values?: Value[]
   children?: Action[]
+}
+
+export interface Value {
+  id?: string,
+  content?: string | number
 }
 
 export interface ActionScript {
