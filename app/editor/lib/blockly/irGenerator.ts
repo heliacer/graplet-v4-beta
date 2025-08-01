@@ -10,7 +10,13 @@ class IRGenerator {
   /**
    * Block generators - each returns an Action object or null
    */
-  private blockGenerators: Record<string, (block: Block) => Action | null> = {}
+  private blockGenerators: Record<string, (block: Block, generator: IRGenerator) => Action | null> = {}
+
+  /**
+   * Value block generators - each returns a value (string, number, etc.)
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => any> = {}
 
   /**
    * Set of block types that can trigger script execution
@@ -20,8 +26,16 @@ class IRGenerator {
   /**
    * Register a block generator function
    */
-  forBlock(blockType: string, generatorFn: (block: Block) => Action | null) {
+  forBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => Action | null) {
     this.blockGenerators[blockType] = generatorFn
+  }
+
+  /**
+   * Register a value block generator function
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  forValueBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => any) {
+    this.valueGenerators[blockType] = generatorFn
   }
 
   /**
@@ -29,6 +43,33 @@ class IRGenerator {
    */
   registerTrigger(blockType: string) {
     this.triggerBlocks.add(blockType)
+  }
+
+  /**
+   * Get the value from a value input connection
+   * Similar to Blockly's valueToCode but returns the actual value instead of code string
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  valueToCode(block: Block, inputName: string): any {
+    const input = block.getInput(inputName)
+    if (!input || !input.connection) {
+      return null
+    }
+
+    const connectedBlock = input.connection.targetBlock()
+    if (!connectedBlock) {
+      return null
+    }
+
+    // Check if it's a value block first
+    const valueGenerator = this.valueGenerators[connectedBlock.type]
+    if (valueGenerator) {
+      return valueGenerator(connectedBlock, this)
+    }
+
+    // If no value generator found, warn and return null
+    console.warn(`No value generator found for block type: ${connectedBlock.type}`)
+    return null
   }
 
   /**
@@ -40,7 +81,7 @@ class IRGenerator {
       console.warn(`No IR generator found for block type: ${block.type}`)
       return null
     }
-    return generator(block)
+    return generator(block, this)
   }
 
   /**
@@ -161,7 +202,7 @@ irGenerator.forBlock('translatexyz', function(block: Block): Action {
   }
 })
 
-irGenerator.forBlock('repeat', function(block: Block): Action {
+irGenerator.forBlock('repeat', function(block: Block, generator: IRGenerator): Action {
   const times = block.getFieldValue('TIMES')
   
   const actionsInput = block.getInput('ACTIONS')
@@ -170,7 +211,7 @@ irGenerator.forBlock('repeat', function(block: Block): Action {
   if (actionsInput && actionsInput.connection && actionsInput.connection.targetBlock()) {
     let currentBlock = actionsInput.connection.targetBlock()
     while (currentBlock) {
-      const action = irGenerator.blockToAction(currentBlock)
+      const action = generator.blockToAction(currentBlock)
       if (action) {
         children.push(action)
       }
@@ -185,11 +226,15 @@ irGenerator.forBlock('repeat', function(block: Block): Action {
   }
 })
 
-irGenerator.forBlock('wait', function(block: Block): Action {
-  const ms = block.getFieldValue('MS')
+irGenerator.forBlock('wait', function(block: Block, generator: IRGenerator): Action {
+  const ms = generator.valueToCode(block, 'MS')
   
   return {
     type: 'wait',
     fields: [ms]
   }
+})
+
+irGenerator.forValueBlock('math_number', function(block: Block): number {
+  return block.getFieldValue('NUM')
 })

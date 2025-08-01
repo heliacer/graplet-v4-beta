@@ -82,8 +82,15 @@ export const blocklyOptions: BlocklyOptions = {
           {
             kind: 'block',
             type: 'wait',
-            fields: {
-              MS: 500
+            inputs: {
+              MS: {
+                shadow : {
+                  type: 'math_number',
+                  fields : {
+                    NUM: 500
+                  }
+                }
+              }
             }
           }
         ]

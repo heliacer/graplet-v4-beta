@@ -200,8 +200,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'wait %1 ms',
     args0: [
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'MS',
+        check: 'Number'
       }
     ],
     previousStatement: null,
