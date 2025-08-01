@@ -1,80 +1,41 @@
 import { Block, Workspace } from "blockly"
-import { Action, ActionScript, IR } from "../types"
+import { Action, ActionScript, IR, ValueWrapper } from "../types"
 
-
-/**
- * Custom IR Generator for converting Blockly workspace to Action IR
- * This is different from Blockly's code generators as it produces structured data, not code strings
- */
 class IRGenerator {
-  /**
-   * Block generators - each returns an Action object or null
-   */
   private blockGenerators: Record<string, (block: Block, generator: IRGenerator) => Action | null> = {}
 
-  /**
-   * Value block generators - each returns a value (string, number, etc.)
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => any> = {}
-
-  /**
-   * Set of block types that can trigger script execution
-   */
+  private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => ValueWrapper[]> = {}
   private triggerBlocks = new Set(['onclickrun'])
 
-  /**
-   * Register a block generator function
-   */
   forBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => Action | null) {
     this.blockGenerators[blockType] = generatorFn
   }
 
-  /**
-   * Register a value block generator function
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  forValueBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => any) {
+  forValueBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => ValueWrapper[]) {
     this.valueGenerators[blockType] = generatorFn
   }
 
-  /**
-   * Register a block type as a trigger block
-   */
   registerTrigger(blockType: string) {
     this.triggerBlocks.add(blockType)
   }
 
-  /**
-   * Get the value from a value input connection
-   * Similar to Blockly's valueToCode but returns the actual value instead of code string
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  valueToCode(block: Block, inputName: string): any {
+  getInputValue(block: Block, inputName: string): ValueWrapper[] {
     const input = block.getInput(inputName)
     if (!input || !input.connection) {
-      return null
+      return [{}]
     }
-
     const connectedBlock = input.connection.targetBlock()
     if (!connectedBlock) {
-      return null
+      return [{}]
     }
-
-    // Check if it's a value block first
     const valueGenerator = this.valueGenerators[connectedBlock.type]
     if (valueGenerator) {
       return valueGenerator(connectedBlock, this)
     }
-
-    // If no value generator found, warn and return null
     console.warn(`No value generator found for block type: ${connectedBlock.type}`)
-    return null
+    return [{}]
   }
 
-  /**
-   * Convert a single block to an Action
-   */
   blockToAction(block: Block): Action | null {
     const generator = this.blockGenerators[block.type]
     if (!generator) {
@@ -84,15 +45,10 @@ class IRGenerator {
     return generator(block, this)
   }
 
-  /**
-   * Convert workspace to IR with script structure
-   */
   workspaceToIR(workspace: Workspace): IR {
     const topBlocks = workspace.getTopBlocks(true)
     const scripts: ActionScript[] = []
-
     for (const block of topBlocks) {
-      // Only process blocks that are triggers
       if (this.triggerBlocks.has(block.type)) {
         const trigger = this.blockToAction(block)
         if (trigger) {
@@ -104,17 +60,11 @@ class IRGenerator {
         }
       }
     }
-
     return { scripts: scripts }
   }
-
-  /**
-   * Get actions from blocks connected below the trigger block
-   */
   private getConnectedActions(triggerBlock: Block): Action[] {
     const actions: Action[] = []
     let currentBlock = triggerBlock.getNextBlock()
-
     while (currentBlock) {
       const action = this.blockToAction(currentBlock)
       if (action) {
@@ -122,91 +72,82 @@ class IRGenerator {
       }
       currentBlock = currentBlock.getNextBlock()
     }
-
     return actions
   }
 }
 
 export const irGenerator = new IRGenerator()
 
-irGenerator.forBlock('onclickrun', function(): Action {
+irGenerator.forBlock('onclickrun', function (): Action {
   return {
     type: 'onclickrun',
     fields: []
   }
 })
 
-irGenerator.forBlock('moveunitsxyz', function(block: Block): Action {
+irGenerator.forBlock('moveunitsxyz', function (block: Block): Action {
   const units = block.getFieldValue('UNITS') as number
   const direction = block.getFieldValue('DIRECTION') as string
   const axis = direction.slice(-1)
-
   return {
     type: 'translatexyz',
-    fields: [axis,direction.startsWith('-') ? -units : units]
+    fields: [axis, direction.startsWith('-') ? -units : units]
   }
 })
 
-
-irGenerator.forBlock('setposxyz', function(block: Block): Action {
+irGenerator.forBlock('setposxyz', function (block: Block): Action {
   const x = block.getFieldValue('X')
   const y = block.getFieldValue('Y')
   const z = block.getFieldValue('Z')
-
   return {
     type: 'setposxyz',
-    fields: [x,y,z]
+    fields: [x, y, z]
   }
 })
 
-irGenerator.forBlock('setscalexyz', function(block: Block): Action {
+irGenerator.forBlock('setscalexyz', function (block: Block): Action {
   const x = block.getFieldValue('X')
   const y = block.getFieldValue('Y')
   const z = block.getFieldValue('Z')
-
   return {
     type: 'setscalexyz',
-    fields: [x,y,z]
+    fields: [x, y, z]
   }
 })
 
-irGenerator.forBlock('setroteulerxyz', function(block: Block): Action {
+irGenerator.forBlock('setroteulerxyz', function (block: Block): Action {
   const x = block.getFieldValue('X')
   const y = block.getFieldValue('Y')
   const z = block.getFieldValue('Z')
-
   return {
     type: 'setroteulerxyz',
-    fields: [x,y,z]
+    fields: [x, y, z]
   }
 })
 
-irGenerator.forBlock('rotatexyz', function(block: Block): Action {
+irGenerator.forBlock('rotatexyz', function (block: Block): Action {
   const axis = block.getFieldValue('AXIS')
   const angle = block.getFieldValue('ANGLE')
-  
   return {
     type: 'rotatexyz',
-    fields: [axis,angle]
+    fields: [axis, angle]
   }
 })
 
-irGenerator.forBlock('translatexyz', function(block: Block): Action {
+irGenerator.forBlock('translatexyz', function (block: Block): Action {
   const axis = block.getFieldValue('AXIS')
   const distance = block.getFieldValue('UNITS')
-  
   return {
     type: 'translatexyz',
-    fields: [axis,distance]
+    fields: [axis, distance]
   }
 })
 
-irGenerator.forBlock('repeat', function(block: Block, generator: IRGenerator): Action {
-  const times = generator.valueToCode(block,'TIMES')
-  
+irGenerator.forBlock('repeat', function (block: Block, generator: IRGenerator): Action {
+  const value = generator.getInputValue(block, 'TIMES')
+
   const actionsInput = block.getInput('ACTIONS')
   const children: Action[] = []
-  
   if (actionsInput && actionsInput.connection && actionsInput.connection.targetBlock()) {
     let currentBlock = actionsInput.connection.targetBlock()
     while (currentBlock) {
@@ -220,66 +161,77 @@ irGenerator.forBlock('repeat', function(block: Block, generator: IRGenerator): A
 
   return {
     type: 'repeat',
-    fields: [times],
+    values: value,
+    resolvers: [(v) => (Number(v) | 0)],
     children: children
   }
 })
 
-irGenerator.forBlock('wait', function(block: Block,generator: IRGenerator): Action {
-  const ms = generator.valueToCode(block,'MS')
-  
+irGenerator.forBlock('wait', function (block: Block, generator: IRGenerator): Action {
+  const ms = generator.getInputValue(block, 'MS')
+
   return {
     type: 'wait',
-    fields: [ms]
+    values: ms,
+    resolvers: [(v) => (Number(v) | 0)]
   }
 })
 
-irGenerator.forValueBlock('math_number', function(block: Block): number {
-  return block.getFieldValue('NUM')
+irGenerator.forValueBlock('math_number', function (block: Block): ValueWrapper[] {
+  return [{ content: block.getFieldValue('NUM') }]
 })
 
-irGenerator.forValueBlock('text', function(block: Block): string {
-  return block.getFieldValue('TEXT')
+irGenerator.forValueBlock('text', function (block: Block): ValueWrapper[] {
+  return [{ content: block.getFieldValue('TEXT') }]
 })
 
-irGenerator.forValueBlock('input', function(block: Block): string {
-  return block.getFieldValue('VALUE')
+irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
+  const value = block.getFieldValue('VALUE')
+  return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
 })
 
-irGenerator.forValueBlock('variables_get', function(block: Block): string {
-  return block.getFieldValue('VAR')
+irGenerator.forValueBlock('variables_get', function (block: Block): ValueWrapper[] {
+  const varId = block.getFieldValue('VAR')
+  return [{ id: varId }]
 })
 
-irGenerator.forBlock('variables_set', function(block: Block, generator: IRGenerator): Action {
-  const variableName = block.getFieldValue('VAR')
-  const value = generator.valueToCode(block, 'VALUE')
-
+irGenerator.forBlock('variables_set', function (block: Block, generator: IRGenerator): Action {
+  const varId = block.getFieldValue('VAR')
+  const value = generator.getInputValue(block, 'VALUE')
   return {
     type: 'setvar',
-    fields: [variableName, value]
+    fields: [varId],
+    values: value
   }
 })
 
-irGenerator.forBlock('math_change', function(block: Block, generator: IRGenerator): Action {
-  const variableName = block.getFieldValue('VAR')
-  const delta = generator.valueToCode(block, 'DELTA')
-
+irGenerator.forBlock('math_change', function (block: Block, generator: IRGenerator): Action {
+  const varId = block.getFieldValue('VAR')
+  const delta = generator.getInputValue(block, 'DELTA')
   return {
     type: 'changevar',
-    fields: [variableName, delta]
+    fields: [varId],
+    values: delta
   }
 })
 
-irGenerator.forValueBlock('math_arithmetic', function(block: Block, generator: IRGenerator): number {
+irGenerator.forValueBlock('math_arithmetic', function (block: Block, generator: IRGenerator): ValueWrapper[] {
   const operator = block.getFieldValue('OP')
-  const a = generator.valueToCode(block, 'A')
-  const b = generator.valueToCode(block, 'B')
-  
-  switch (operator) {
-    case 'ADD': return a + b
-    case 'MINUS': return a - b
-    case 'MULTIPLY': return a * b
-    case 'DIVIDE': return a / a
-    default: return 0
+  const valueA = generator.getInputValue(block, 'A')
+  const valueB = generator.getInputValue(block, 'B')
+
+  const a = (typeof valueA === 'number' ? valueA : 0)
+  const b = (typeof valueB === 'number' ? valueB : 0)
+
+  function result() {
+    switch (operator) {
+      case 'ADD': return a + b
+      case 'MINUS': return a - b
+      case 'MULTIPLY': return a * b
+      case 'DIVIDE': return a / a
+      default: return 0
+    }
   }
+
+  return [{ content: result() }]
 })

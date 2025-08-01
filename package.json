@@ -14,6 +14,7 @@
   "dependencies": {
     "@blockly/continuous-toolbox": "^7.0.2",
     "@blockly/field-angle": "^6.0.2",
+    "@blockly/workspace-backpack": "^7.0.2",
     "@prisma/client": "^6.12.0",
     "@react-three/fiber": "^9.2.0",
     "@types/three": "^0.178.1",

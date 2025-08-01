@@ -8,6 +8,8 @@ import { ContinuousCategory, ContinuousFlyout, ContinuousMetrics, ContinuousTool
 import { registerFieldAngle } from "@blockly/field-angle"
 import { GrapletRenderer } from "../../lib/blockly/renderer"
 import { variableCategory } from "../../lib/blockly/variables"
+import { Backpack } from "@blockly/workspace-backpack"
+
 
 Scrollbar.scrollbarThickness = 10
 registerFieldAngle()
@@ -89,6 +91,9 @@ export default function CodePanel() {
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(containerRef.current)
+
+    const backpack = new Backpack(ws)
+    backpack.init()
 
     return () => {
       resizeObserver.disconnect()
