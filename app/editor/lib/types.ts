@@ -5,7 +5,7 @@ export interface Action {
   type: string
   fields?: Value[]
   values?: ValueWrapper[]
-  resolvers?: Array<(v: Value) => Value>
+  resolvers?: Array<((v: Value) => Value) | undefined>
   children?: Action[]
 }
 

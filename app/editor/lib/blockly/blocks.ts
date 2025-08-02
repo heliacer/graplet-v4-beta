@@ -23,8 +23,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: "move %1 units %2",
     args0: [
       {
-        type: "field_number",
+        type: "input_value",
         name: "UNITS",
+        check: "Number"
       },
       {
         type: "field_dropdown",
@@ -66,18 +67,22 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set position to x: %1 y: %2 z: %3',
     args0: [
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'X',
+        check: 'Number'
       },
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'Y',
+        check: 'Number'
       },
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'Z',
+        check: 'Number'
       }
     ],
+    inputsInline: true,
     previousStatement: null,
     nextStatement: null,
     style: 'motion_blocks'
@@ -87,18 +92,22 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set scale to x: %1 y: %2 z: %3',
     args0: [
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'X',
+        check: 'Number'
       },
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'Y',
+        check: 'Number'
       },
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'Z',
+        check: 'Number'
       }
     ],
+    inputsInline: true,
     previousStatement: null,
     nextStatement: null,
     style: 'motion_blocks'
@@ -108,18 +117,22 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set rotation to euler x: %1 y: %2 z: %3',
     args0: [
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'X',
+        check: 'Number'
       },
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'Y',
+        check: 'Number'
       },
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'Z',
+        check: 'Number'
       }
     ],
+    inputsInline: true,
     previousStatement: null,
     nextStatement: null,
     style: 'motion_blocks'
@@ -147,8 +160,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
         ]
       },
       {
-        type: "field_number",
-        name: "ANGLE",
+        type: 'input_value',
+        name: 'ANGLE',
+        check: 'Number'
       }
     ],
     previousStatement: null,
@@ -178,8 +192,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
         ]
       },
       {
-        type: "field_number",
-        name: "UNITS",
+        type: 'input_value',
+        name: 'UNITS',
+        check: 'Number'
       }
     ],
     previousStatement: null,

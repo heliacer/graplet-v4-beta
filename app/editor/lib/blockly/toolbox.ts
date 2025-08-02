@@ -11,8 +11,15 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         {
           kind: 'block',
           type: 'moveunitsxyz',
-          fields: {
-            UNITS: .5
+          inputs: {
+            UNITS: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: .5
+                }
+              }
+            }
           }
         },
         {
@@ -21,27 +28,109 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'block',
-          type: 'setposxyz'
-        },
-        {
-          kind: 'block',
-          type: 'setscalexyz',
-          fields: {
-            X: 1,
-            Y: 1,
-            Z: 1
+          type: 'setposxyz',
+          inputs: {
+            X: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 0
+                }
+              }
+            },
+            Y: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 0
+                }
+              }
+            },
+            Z: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 0
+                }
+              }
+            }
           }
         },
         {
           kind: 'block',
-          type: 'setroteulerxyz'
+          type: 'setscalexyz',
+          inputs: {
+            X: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 2
+                }
+              }
+            },
+            Y: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 2
+                }
+              }
+            },
+            Z: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 2
+                }
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'setroteulerxyz',
+          inputs: {
+            X: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 0
+                }
+              }
+            },
+            Y: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 0
+                }
+              }
+            },
+            Z: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 0
+                }
+              }
+            }
+          }
         },
         {
           kind: 'block',
           type: 'translatexyz',
           fields: {
             AXIS: 'Z',
-            UNITS: .5
+          },
+          inputs: {
+            UNITS: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: .5
+                }
+              }
+            }
           }
         },
         {
@@ -49,8 +138,17 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           type: 'rotatexyz',
           fields: {
             AXIS: 'Y',
-            ANGLE: 15
-          }
+          },
+          inputs: {
+            ANGLE: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 15
+                }
+              }
+            }
+          }          
         }
       ]
     },

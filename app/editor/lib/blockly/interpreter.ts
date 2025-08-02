@@ -11,7 +11,7 @@ export async function interpret(ir: IR, context: Context) {
 export async function executeActions(actions: Action[], context: Context) {
   for (const action of actions) {
     console.log(context.variables)
-    const fields = action.fields  || []
+    const fields = action.fields || []
     action.values?.forEach((value, i) => {
       const resolver = action.resolvers?.[i]
       const raw = value.id
@@ -21,20 +21,20 @@ export async function executeActions(actions: Action[], context: Context) {
       const resolved = resolver ? resolver(raw) : raw
       fields.push(resolved)
     })
-    
+
     const { box } = context
 
     switch (action.type) {
       case 'setvar': {
-        const [varId,value] = fields as [string, Value]
-        console.log(varId,value)
+        const [varId, value] = fields as [string, Value]
+        console.log(varId, value)
         context.variables.set(varId, value)
         break
       }
       case 'changevar': {
-        const [varId,delta] = fields as [string, number]
-        console.log(varId,delta)
-        context.variables.change(varId,delta)
+        const [varId, delta] = fields as [string, number]
+        console.log(varId, delta)
+        context.variables.change(varId, delta)
         break
       }
       case 'wait': {
@@ -88,16 +88,16 @@ export async function executeActions(actions: Action[], context: Context) {
         break
       }
       case 'translatexyz': {
-        const [axis, distance] = fields as [string, number]
+        const [axis, direction, distance] = fields as [string, number, number]
         switch (axis) {
           case 'X':
-            box.current.translateX(distance)
+            box.current.translateX(distance * direction)
             break
           case 'Y':
-            box.current.translateY(distance)
+            box.current.translateY(distance * direction)
             break
           case 'Z':
-            box.current.translateZ(distance)
+            box.current.translateZ(distance * direction)
             break
         }
         console.log(`Translated cube around ${axis} by ${distance} units`)

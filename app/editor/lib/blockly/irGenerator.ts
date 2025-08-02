@@ -1,5 +1,5 @@
 import { Block, Workspace } from "blockly"
-import { Action, ActionScript, IR, ValueWrapper } from "../types"
+import { Action, ActionScript, IR, Value, ValueWrapper } from "../types"
 
 class IRGenerator {
   private blockGenerators: Record<string, (block: Block, generator: IRGenerator) => Action | null> = {}
@@ -85,61 +85,70 @@ irGenerator.forBlock('onclickrun', function (): Action {
   }
 })
 
-irGenerator.forBlock('moveunitsxyz', function (block: Block): Action {
-  const units = block.getFieldValue('UNITS') as number
+irGenerator.forBlock('moveunitsxyz', function (block: Block, generator: IRGenerator): Action {
+  const units = generator.getInputValue(block,'UNITS')
   const direction = block.getFieldValue('DIRECTION') as string
   const axis = direction.slice(-1)
   return {
     type: 'translatexyz',
-    fields: [axis, direction.startsWith('-') ? -units : units]
+    fields: [axis, direction.startsWith('-') ? -1: 1 ],
+    values: units,
+    resolvers: [undefined, undefined, (v) => Number(v) | 0]
   }
 })
 
-irGenerator.forBlock('setposxyz', function (block: Block): Action {
-  const x = block.getFieldValue('X')
-  const y = block.getFieldValue('Y')
-  const z = block.getFieldValue('Z')
+irGenerator.forBlock('setposxyz', function (block: Block, generator: IRGenerator): Action {
+  const x = generator.getInputValue(block,'X')
+  const y = generator.getInputValue(block,'Y')
+  const z = generator.getInputValue(block,'Z')
   return {
     type: 'setposxyz',
-    fields: [x, y, z]
+    values: x.concat(y).concat(z),
+    resolvers: Array(3).fill((v: Value) => Number(v) | 0) 
   }
 })
 
-irGenerator.forBlock('setscalexyz', function (block: Block): Action {
-  const x = block.getFieldValue('X')
-  const y = block.getFieldValue('Y')
-  const z = block.getFieldValue('Z')
+irGenerator.forBlock('setscalexyz', function (block: Block, generator: IRGenerator): Action {
+  const x = generator.getInputValue(block,'X')
+  const y = generator.getInputValue(block,'Y')
+  const z = generator.getInputValue(block,'Z')
   return {
     type: 'setscalexyz',
-    fields: [x, y, z]
+    values: x.concat(y).concat(z),
+    resolvers: Array(3).fill((v: Value) => Number(v) | 0) 
   }
 })
 
-irGenerator.forBlock('setroteulerxyz', function (block: Block): Action {
-  const x = block.getFieldValue('X')
-  const y = block.getFieldValue('Y')
-  const z = block.getFieldValue('Z')
+irGenerator.forBlock('setroteulerxyz', function (block: Block, generator: IRGenerator): Action {
+  const x = generator.getInputValue(block,'X')
+  const y = generator.getInputValue(block,'Y')
+  const z = generator.getInputValue(block,'Z')
   return {
     type: 'setroteulerxyz',
-    fields: [x, y, z]
+    values: x.concat(y).concat(z),
+    resolvers: Array(3).fill((v: Value) => Number(v) | 0) 
   }
 })
 
-irGenerator.forBlock('rotatexyz', function (block: Block): Action {
-  const axis = block.getFieldValue('AXIS')
-  const angle = block.getFieldValue('ANGLE')
+irGenerator.forBlock('rotatexyz', function (block: Block, generator: IRGenerator): Action {
+  const axis = block.getFieldValue('AXIS') as string
+  const angle = generator.getInputValue(block,'ANGLE')
   return {
     type: 'rotatexyz',
-    fields: [axis, angle]
+    fields: [axis],
+    values: angle,
+    resolvers: [(v) => Number(v) | 0]
   }
 })
 
-irGenerator.forBlock('translatexyz', function (block: Block): Action {
-  const axis = block.getFieldValue('AXIS')
-  const distance = block.getFieldValue('UNITS')
+irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenerator): Action {
+  const axis = block.getFieldValue('AXIS') as string
+  const distance = generator.getInputValue(block,'UNITS')
   return {
     type: 'translatexyz',
-    fields: [axis, distance]
+    fields: [axis,1],
+    values: distance,
+    resolvers: [(v) => Number(v) | 0]
   }
 })
 
@@ -191,12 +200,12 @@ irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
 })
 
 irGenerator.forValueBlock('variables_get', function (block: Block): ValueWrapper[] {
-  const varId = block.getFieldValue('VAR')
+  const varId = block.getFieldValue('VAR') as string
   return [{ id: varId }]
 })
 
 irGenerator.forBlock('variables_set', function (block: Block, generator: IRGenerator): Action {
-  const varId = block.getFieldValue('VAR')
+  const varId = block.getFieldValue('VAR') as string
   const value = generator.getInputValue(block, 'VALUE')
   return {
     type: 'setvar',
@@ -206,7 +215,7 @@ irGenerator.forBlock('variables_set', function (block: Block, generator: IRGener
 })
 
 irGenerator.forBlock('math_change', function (block: Block, generator: IRGenerator): Action {
-  const varId = block.getFieldValue('VAR')
+  const varId = block.getFieldValue('VAR') as string
   const delta = generator.getInputValue(block, 'DELTA')
   return {
     type: 'changevar',
@@ -216,7 +225,7 @@ irGenerator.forBlock('math_change', function (block: Block, generator: IRGenerat
 })
 
 irGenerator.forValueBlock('math_arithmetic', function (block: Block, generator: IRGenerator): ValueWrapper[] {
-  const operator = block.getFieldValue('OP')
+  const operator = block.getFieldValue('OP') as string
   const valueA = generator.getInputValue(block, 'A')
   const valueB = generator.getInputValue(block, 'B')
 
