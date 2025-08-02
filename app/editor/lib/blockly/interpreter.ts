@@ -10,7 +10,6 @@ export async function interpret(ir: IR, context: Context) {
 
 export async function executeActions(actions: Action[], context: Context) {
   for (const action of actions) {
-    console.log(context.variables)
     const fields = action.fields || []
     action.values?.forEach((value, i) => {
       const resolver = action.resolvers?.[i]

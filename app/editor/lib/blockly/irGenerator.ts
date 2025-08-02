@@ -78,6 +78,8 @@ class IRGenerator {
 
 export const irGenerator = new IRGenerator()
 
+function toNumber(v: Value) { return isNaN(Number(v)) ? 0 : Number(v) }
+
 irGenerator.forBlock('onclickrun', function (): Action {
   return {
     type: 'onclickrun',
@@ -86,69 +88,69 @@ irGenerator.forBlock('onclickrun', function (): Action {
 })
 
 irGenerator.forBlock('moveunitsxyz', function (block: Block, generator: IRGenerator): Action {
-  const units = generator.getInputValue(block,'UNITS')
+  const units = generator.getInputValue(block, 'UNITS')
   const direction = block.getFieldValue('DIRECTION') as string
   const axis = direction.slice(-1)
   return {
     type: 'translatexyz',
-    fields: [axis, direction.startsWith('-') ? -1: 1 ],
+    fields: [axis, direction.startsWith('-') ? -1 : 1],
     values: units,
-    resolvers: [undefined, undefined, (v) => Number(v) | 0]
+    resolvers: [toNumber]
   }
 })
 
 irGenerator.forBlock('setposxyz', function (block: Block, generator: IRGenerator): Action {
-  const x = generator.getInputValue(block,'X')
-  const y = generator.getInputValue(block,'Y')
-  const z = generator.getInputValue(block,'Z')
+  const x = generator.getInputValue(block, 'X')
+  const y = generator.getInputValue(block, 'Y')
+  const z = generator.getInputValue(block, 'Z')
   return {
     type: 'setposxyz',
     values: x.concat(y).concat(z),
-    resolvers: Array(3).fill((v: Value) => Number(v) | 0) 
+    resolvers: Array(3).fill(toNumber)
   }
 })
 
 irGenerator.forBlock('setscalexyz', function (block: Block, generator: IRGenerator): Action {
-  const x = generator.getInputValue(block,'X')
-  const y = generator.getInputValue(block,'Y')
-  const z = generator.getInputValue(block,'Z')
+  const x = generator.getInputValue(block, 'X')
+  const y = generator.getInputValue(block, 'Y')
+  const z = generator.getInputValue(block, 'Z')
   return {
     type: 'setscalexyz',
     values: x.concat(y).concat(z),
-    resolvers: Array(3).fill((v: Value) => Number(v) | 0) 
+    resolvers: Array(3).fill(toNumber)
   }
 })
 
 irGenerator.forBlock('setroteulerxyz', function (block: Block, generator: IRGenerator): Action {
-  const x = generator.getInputValue(block,'X')
-  const y = generator.getInputValue(block,'Y')
-  const z = generator.getInputValue(block,'Z')
+  const x = generator.getInputValue(block, 'X')
+  const y = generator.getInputValue(block, 'Y')
+  const z = generator.getInputValue(block, 'Z')
   return {
     type: 'setroteulerxyz',
     values: x.concat(y).concat(z),
-    resolvers: Array(3).fill((v: Value) => Number(v) | 0) 
+    resolvers: Array(3).fill(toNumber)
   }
 })
 
 irGenerator.forBlock('rotatexyz', function (block: Block, generator: IRGenerator): Action {
   const axis = block.getFieldValue('AXIS') as string
-  const angle = generator.getInputValue(block,'ANGLE')
+  const angle = generator.getInputValue(block, 'ANGLE')
   return {
     type: 'rotatexyz',
     fields: [axis],
     values: angle,
-    resolvers: [(v) => Number(v) | 0]
+    resolvers: [toNumber]
   }
 })
 
 irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenerator): Action {
   const axis = block.getFieldValue('AXIS') as string
-  const distance = generator.getInputValue(block,'UNITS')
+  const distance = generator.getInputValue(block, 'UNITS')
   return {
     type: 'translatexyz',
-    fields: [axis,1],
+    fields: [axis, 1],
     values: distance,
-    resolvers: [(v) => Number(v) | 0]
+    resolvers: [toNumber]
   }
 })
 
@@ -171,7 +173,7 @@ irGenerator.forBlock('repeat', function (block: Block, generator: IRGenerator): 
   return {
     type: 'repeat',
     values: value,
-    resolvers: [(v) => (Number(v) | 0)],
+    resolvers: [toNumber],
     children: children
   }
 })
@@ -182,7 +184,7 @@ irGenerator.forBlock('wait', function (block: Block, generator: IRGenerator): Ac
   return {
     type: 'wait',
     values: ms,
-    resolvers: [(v) => (Number(v) | 0)]
+    resolvers: [toNumber]
   }
 })
 
