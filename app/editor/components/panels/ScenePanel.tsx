@@ -1,4 +1,3 @@
-import { Canvas } from "@react-three/fiber"
 import { useEffect, useRef, useState } from "react"
 import { Mesh } from "three"
 import { useEditor } from "../../lib/EditorContext"
@@ -6,24 +5,24 @@ import { irGenerator } from "../../lib/blockly/irGenerator"
 import { executeActions, interpret } from "../../lib/blockly/interpreter"
 import { Block, Events } from "blockly"
 import { Action, VariableManager } from "../../lib/types"
+import { useTrigger } from "../../lib/TriggerContext"
 
 export default function ScenePanel() {
   const testingBoxRef = useRef<Mesh>(null!)
-  const { runState, workspace, setRunState } = useEditor()
+  const { workspace } = useEditor()
   const [variableManager] = useState(() => new VariableManager())
+  // const { scene } = useThree()
+  const emitter = useTrigger()
 
   function runAction(action: Action) {
-    setRunState(2)
     console.log('Running single Action...')
     executeActions(
       [action],
       { box: testingBoxRef, variables: variableManager }
     ).then(() => {
       console.log('Execution completed')
-      setRunState(0)
     }).catch((error) => {
       console.error('Execution error', error)
-      setRunState(0)
     })
   }
 
@@ -50,19 +49,24 @@ export default function ScenePanel() {
   }
 
   useEffect(() => {
-    if (runState === 1 && workspace) {
+    const handler = () => {
+      if (!workspace) return
       const IR = irGenerator.workspaceToIR(workspace)
       console.log('Running...')
-      interpret(IR, { box: testingBoxRef, variables: variableManager}).then(() => {
+      interpret(
+        IR, { box: testingBoxRef, variables: variableManager }
+      ).then(() => {
+        // TODO: Update run button
         console.log('Execution completed')
-        setRunState(0)
       }).catch((error) => {
         console.error('Execution error:', error)
-        setRunState(0)
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runState])
+    emitter.on('runScene', handler)
+    return () => {
+      emitter.off('runScene', handler)
+    }
+  }, [emitter, workspace, variableManager])
 
   useEffect(() => {
     workspace?.addChangeListener(handleWorkspaceClick)
@@ -70,13 +74,13 @@ export default function ScenePanel() {
   })
 
   return (
-    <Canvas>
+    <>
       <ambientLight intensity={1} />
       <directionalLight position={[3, 5, 2]} intensity={2} />
       <mesh ref={testingBoxRef} rotation={[10, 0, 0]}>
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color='#00bc7d' />
       </mesh>
-    </Canvas>
+    </>
   )
 }

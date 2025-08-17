@@ -3,11 +3,11 @@ import { ChevronDown, Folder, LogOut, Play, Settings2, User } from "lucide-react
 import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import Logo from "@/app/ui/logo"
-import { useEditor } from "../lib/EditorContext"
+import { useTrigger } from "../lib/TriggerContext"
 
 export default function EditorNav() {
   const { data: session} = useSession()
-  const { setRunState } = useEditor()
+  const emitter = useTrigger()
 
   return (
     <nav className="h-11 flex items-center justify-between px-2">
@@ -16,7 +16,7 @@ export default function EditorNav() {
         <p className="text-lg">Graplet</p>
       </Link>
       <button
-        onClick={() => setRunState(1)}
+        onClick={() => emitter.emit('runScene')}
         className="flex items-center gap-1 cursor-pointer rounded-lg px-1.5 bg-accent">
         <Play size={16}/>
         <p>Run</p>

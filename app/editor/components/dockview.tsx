@@ -6,6 +6,7 @@ import '../styles/dvtheme.css'
 import { Airplay, Folder, Package, PenTool, Puzzle, Shapes, Terminal, Wrench } from "lucide-react"
 import { LeftControls, RightControls } from "./controls"
 import TabHeader from "./tabHeader"
+import { Canvas } from "@react-three/fiber"
 
 // Panels
 import DebugPanel from "./panels/DebugPanel"
@@ -17,7 +18,7 @@ import CodePanel from "./panels/CodePanel"
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
-  scene: ScenePanel,
+  scene: function () { return <Canvas><ScenePanel /></Canvas> },
   explorer: ExplorerPanel,
   assets: AssetsPanel
 }
@@ -50,7 +51,7 @@ export default function Dockview() {
         Icon: <Package size={16} />
       }
     })
-    
+
     event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Extensions',
