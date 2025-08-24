@@ -1,11 +1,10 @@
 import mitt, { Emitter } from "mitt"
-import { Action } from "./types"
 import { createContext, useContext, useMemo } from "react"
 
 type Events = {
   runScene: void
   stopScene: void
-  runAction: Action
+  createObject: void
 }
 
 const TriggerContext = createContext<Emitter<Events>>(null!)

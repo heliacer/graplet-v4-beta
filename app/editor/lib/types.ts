@@ -1,5 +1,5 @@
 import { RefObject } from "react"
-import { Mesh } from "three"
+import { Mesh, Object3D, Object3DEventMap, Scene } from "three"
 
 export interface Action {
   type: string
@@ -24,7 +24,9 @@ export interface IR {
 }
 
 export interface Context {
-  box: RefObject<Mesh>
+  box: RefObject<Mesh> // depreceated in future
+  scene: Scene
+  objects: Map<string, Object3D<Object3DEventMap>>
   variables: VariableManager
 }
 

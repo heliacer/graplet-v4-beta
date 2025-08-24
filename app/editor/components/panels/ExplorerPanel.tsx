@@ -1,6 +1,10 @@
 import { Package, PenTool, Upload } from "lucide-react"
+import { useTrigger } from "../../lib/TriggerContext"
 
 export default function ExplorerPanel() {
+  const emitter = useTrigger()
+
+
   /**
    * Asset Logic - Explorer
    */
@@ -40,7 +44,10 @@ export default function ExplorerPanel() {
     <>
       <div className="flex px-1.5 py-2 gap-1.5">
         {/* Opens the Model editor, adds empty asset */}
-        <button className="text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 bg-zinc-800 border border-zinc-700">
+        <button
+          onClick={() => emitter.emit('createObject')} 
+          className="text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 bg-zinc-800 border border-zinc-700"
+        >
           <PenTool size={14} />
           New
         </button>
