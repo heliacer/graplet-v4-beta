@@ -6,6 +6,7 @@
   --color-zinc-650: oklch(40.7% 0.006 285.959);
 
   --color-accent: oklch(0.6292 0.1145 175.84);
+  --color-accent-dark: oklch(0.5532 0.0989 176.7);
 }
 
 button {

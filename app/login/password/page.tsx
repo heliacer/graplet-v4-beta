@@ -6,6 +6,7 @@ import SubmitButton from '@/app/ui/components/SubmitButton'
 import { AlertTriangle, Award, Eye, EyeClosed, Pen } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
+import clsx from 'clsx'
 
 export default function Password() {
   const searchParams = useSearchParams()
@@ -41,7 +42,7 @@ export default function Password() {
     if (password) {
       if (password.length >= 6) {
         const result = await signIn('credentials', {
-          email,
+          email: email.toLowerCase(),
           password,
           redirect: false,
         })
@@ -75,14 +76,6 @@ export default function Password() {
     }
   }
 
-  const buttonClasses = [
-    'absolute right-[50px] bottom-[7px] border px-2 py-0.5 rounded-full',
-    isFocussedPassword
-      ? 'bg-zinc-700 border-zinc-500'
-      : 'bg-zinc-800 border-zinc-600',
-    !isLoading && 'cursor-pointer'
-  ].join(' ')
-
   return (
     <>
       <form
@@ -95,7 +88,11 @@ export default function Password() {
         <button
           type='reset'
           onClick={() => router.push('/login')}
-          className='cursor-pointer bg-zinc-800 border-zinc-600 absolute right-2 top-[7px] border px-2 py-0.5 rounded-full'
+          className={clsx(
+            'absolute right-2 top-[7px] border px-2 py-0.5 rounded-full',
+            'dark:bg-zinc-800 dark:border-zinc-600 border-zinc-400',
+            !isLoading && 'cursor-pointer'
+          )}
         >
           <Pen size={18} />
         </button>
@@ -109,16 +106,16 @@ export default function Password() {
         />
         <button
           type='button'
-          className={buttonClasses}
+          className={clsx(
+            'absolute right-[50px] bottom-[7px] border px-2 py-0.5 rounded-full',
+            'dark:bg-zinc-800 dark:border-zinc-600 border-zinc-400',
+            !isLoading && 'cursor-pointer'
+          )}
           onClick={() => setShowPassword(prev => !prev)}
         >
           {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
         </button>
-        <SubmitButton
-          value={password}
-          isFocussed={isFocussedPassword}
-          isLoading={isLoading}
-        />
+        <SubmitButton isLoading={isLoading}/>
       </form>
       {message ?
         <div className='flex gap-2.5 items-center'>
