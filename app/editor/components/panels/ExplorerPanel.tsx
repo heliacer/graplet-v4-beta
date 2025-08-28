@@ -1,9 +1,17 @@
 import { Package, PenTool, Upload } from "lucide-react"
 import { useTrigger } from "../../lib/TriggerContext"
+import { useEditor } from "../../lib/EditorContext"
+import { useEffect, useReducer } from "react"
 
 export default function ExplorerPanel() {
   const emitter = useTrigger()
+  const { objects } = useEditor()
+  const [, forceUpdate] = useReducer(x => x + 1, 0) // Only for object list changes
 
+
+  useEffect(() => {
+    emitter.on('createObject', forceUpdate)
+  })
 
   /**
    * Asset Logic - Explorer
@@ -45,7 +53,7 @@ export default function ExplorerPanel() {
       <div className="flex px-1.5 py-2 gap-1.5">
         {/* Opens the Model editor, adds empty asset */}
         <button
-          onClick={() => emitter.emit('createObject')} 
+          onClick={() => emitter.emit('createObject')}
           className="text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 bg-zinc-800 border border-zinc-700"
         >
           <PenTool size={14} />
@@ -65,6 +73,14 @@ export default function ExplorerPanel() {
         <button className="cursor-pointer rounded px-1.5 bg-zinc-800 border border-zinc-700">
           <Upload size={14} />
         </button>
+      </div>
+      <div className="flex px-1.5 gap-1 flex-col">
+        <p>Red Cubes:</p>
+        <ul>
+          {Array.from(objects.current).map(([key, object]) => (
+            <li key={key}>Type: <em>{object.type}</em>, Name: <em>{object.name}</em> </li>
+          ))}
+        </ul>
       </div>
     </>
   )

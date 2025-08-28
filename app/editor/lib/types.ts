@@ -23,10 +23,12 @@ export interface IR {
   scripts: ActionScript[]
 }
 
+export type ObjectsRecord = Map<string, Object3D<Object3DEventMap>>
+
 export interface Context {
   box: RefObject<Mesh> // depreceated in future
   scene: Scene
-  objects: Map<string, Object3D<Object3DEventMap>>
+  objects: ObjectsRecord
   variables: VariableManager
 }
 

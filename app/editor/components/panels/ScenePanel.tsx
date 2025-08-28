@@ -33,7 +33,6 @@ export default function ScenePanel() {
   const testingBoxRef = useRef<Mesh>(null!)
   const [variableManager] = useState(() => new VariableManager())
   const [selected, setSelected] = useState<string>('')
-  const [,setObjectCount] = useState(0)
   const [testingBoxHovered, setTestingBoxHovered] = useState(false)
   const { scene } = useThree()
   const { workspace, objects } = useEditor()
@@ -47,9 +46,11 @@ export default function ScenePanel() {
         new BoxGeometry(1, 1, 1),
         new MeshStandardMaterial({ color: '#ff6080' })
       )
+
+      cube.name = 'Testing Cube'
+
       scene.add(cube)
       objects.current.set(cube.uuid, cube)
-      setObjectCount(prev => prev + 1)
       console.log(objects.current)
     }
     
