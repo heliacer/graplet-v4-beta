@@ -23,8 +23,8 @@ export default function CredentialsInput({
     className: clsx(
       'w-full pr-12 border py-1.5 pl-3 rounded-full truncate',
       'focus:outline-none',
-      'border-zinc-400 focus:bg-zinc-200 focus:border-zinc-400',
-      'dark:border-zinc-700 dark:focus:bg-zinc-800 dark:focus:border-zinc-600',
+      'border-zinc-400 focus:border-accent-dark',
+      'dark:border-zinc-700 dark:focus:accent',
     ),
     placeholder: placeholder || type,
     type,

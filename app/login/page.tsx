@@ -31,8 +31,8 @@ export default function Login() {
     setIsLoading(true)
 
     if (email) {
-      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        const response = await checkEmail(email)
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.toLowerCase())) {
+        const response = await checkEmail(email.toLowerCase())
 
         if (response.status === 'ok') {
           const params = new URLSearchParams(searchParams)
@@ -72,11 +72,7 @@ export default function Login() {
           setValue={setEmail}
           setIsFocussed={setIsFocussedEmail}
         />
-        <SubmitButton
-          value={email}
-          isFocussed={isFocussedEmail}
-          isLoading={isLoading}
-        />
+        <SubmitButton isLoading={isLoading}/>
       </form>
       {message ?
         <div className='flex gap-2.5 items-center'>
