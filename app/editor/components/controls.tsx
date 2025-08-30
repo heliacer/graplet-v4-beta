@@ -1,5 +1,5 @@
 import { IDockviewHeaderActionsProps } from "dockview-react"
-import { useHeaderControls } from "../hooks/useHeaderControls"
+import { useHeaderControls } from "../lib/hooks/useHeaderControls"
 import { Maximize, Minimize, Plus, SquareArrowOutDownLeft, SquareArrowOutUpRight } from "lucide-react"
 
 export function RightControls(props: IDockviewHeaderActionsProps) {

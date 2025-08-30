@@ -1,5 +1,9 @@
 import { common } from "blockly"
 
+export const objectRegistry = {
+  options: [["",""]]
+}
+
 export const definitions = common.createBlockDefinitionsFromJsonArray([
   {
     type: 'onclickrun',
@@ -20,8 +24,13 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
   },
   {
     type: "moveunitsxyz",
-    message0: "move %1 units %2",
+    message0: "move %1 %2 units %3",
     args0: [
+      {
+        type: "field_dropdown",
+        name: "OBJECT",
+        options: () => objectRegistry.options
+      },
       {
         type: "input_value",
         name: "UNITS",
@@ -171,8 +180,13 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
   },
   {
     type: "translatexyz",
-    message0: "translate along %1 axis by %2 units",
+    message0: "translate %1 along %2 axis by %3 units",
     args0: [
+      {
+        type: "field_dropdown",
+        name: "OBJECTS",
+        options: () => objectRegistry.options
+      },
       {
         type: "field_dropdown",
         name: "AXIS",

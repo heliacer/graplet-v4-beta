@@ -33,6 +33,7 @@ export default function ScenePanel() {
   const testingBoxRef = useRef<Mesh>(null!)
   const [variableManager] = useState(() => new VariableManager())
   const [testingBoxHovered, setTestingBoxHovered] = useState(false)
+  const [objectCounter, setObjectCounter] = useState(1)
   const { scene } = useThree()
   const { workspace, objects, currentObject, setCurrentObject} = useEditor()
   const emitter = useTrigger()
@@ -46,11 +47,12 @@ export default function ScenePanel() {
         new MeshStandardMaterial({ color: '#ff6080' })
       )
 
-      cube.name = 'Testing Cube'
-
+      cube.name = `Cube ${objectCounter}`
+      
       scene.add(cube)
       objects.current.set(cube.uuid, cube)
-      console.log(objects.current)
+      emitter.emit('objectCreated', { id: cube.uuid, object: cube })
+      setObjectCounter(objectCounter + 1)
     }
     
     emitter.on('createObject', handleCreateObject)
@@ -58,7 +60,7 @@ export default function ScenePanel() {
     return () => {
       emitter.off('createObject', handleCreateObject)
     }
-  }, [emitter, scene, objects])
+  }, [emitter, scene, objects, objectCounter])
 
   useEffect(() => {
     function runAction(action: Action) {

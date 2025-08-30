@@ -1,108 +1,13 @@
 import "@/app/editor/styles/blockly.css"
-import { definitions } from "../../lib/blockly/blocks"
-import { blockRendering, bumpObjects, common, ContextMenuItems, DropDownDiv, inject, registry, Scrollbar, ToolboxCategory, Tooltip, VerticalFlyout, WidgetDiv, WorkspaceSvg, Variables, Events } from "blockly"
-import { useEffect, useRef } from "react"
-import { useEditor } from "../../lib/EditorContext"
-import { blocklyOptions } from "../../lib/blockly/options"
-import { ContinuousCategory, ContinuousFlyout, ContinuousMetrics, ContinuousToolbox, RecyclableBlockFlyoutInflater } from "@blockly/continuous-toolbox"
-import { registerFieldAngle } from "@blockly/field-angle"
-import { GrapletRenderer } from "../../lib/blockly/renderer"
-import { variableCategory } from "../../lib/blockly/variables"
-import { Backpack } from "@blockly/workspace-backpack"
+import { useRef, useEffect } from "react"
+import { useBlocklyWorkspace } from "../../lib/hooks/useBlocklyWorkspace"
+import { initializeBlockly } from "../../lib/blockly/config"
 
-
-Scrollbar.scrollbarThickness = 10
-registerFieldAngle()
-common.defineBlocks(definitions)
-VerticalFlyout.prototype.getFlyoutScale = function () { return .45 }
-blockRendering.register('graplet', GrapletRenderer)
-
-registry.register(
-  registry.Type.TOOLBOX_ITEM,
-  ToolboxCategory.registrationName,
-  ContinuousCategory,
-  true,
-)
-
-registry.register(
-  registry.Type.METRICS_MANAGER,
-  'ContinuousMetrics',
-  ContinuousMetrics,
-  true,
-)
-
-registry.register(
-  registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
-  'ContinuousFlyout',
-  ContinuousFlyout,
-  true,
-)
-
-registry.register(
-  registry.Type.TOOLBOX,
-  'ContinuousToolbox',
-  ContinuousToolbox,
-  true,
-)
-
-registry.register(
-  registry.Type.FLYOUT_INFLATER,
-  'block',
-  RecyclableBlockFlyoutInflater,
-  true,
-)
-
-ContextMenuItems.registerCommentOptions()
-
-function resize(workspace: WorkspaceSvg) {
-  Tooltip.hide()
-  workspace.hideComponents(true)
-  DropDownDiv.repositionForWindowResize()
-  WidgetDiv.repositionForWindowResize()
-  common.svgResize(workspace)
-  bumpObjects.bumpTopObjectsIntoBounds(workspace)
-}
+initializeBlockly()
 
 export default function CodePanel() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const WorkspaceRef = useRef<WorkspaceSvg | null>(null)
-  const { setWorkspace } = useEditor()
-
-  useEffect(() => {
-    if (!containerRef.current || WorkspaceRef.current) return
-
-    const ws = inject(containerRef.current, blocklyOptions)
-    WorkspaceRef.current = ws
-    setWorkspace(ws)
-
-    ws.getVariableMap().createVariable('foo')
-    ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
-    ws.registerButtonCallback('CREATE_VARIABLE', function (button) {
-      Variables.createVariableButtonHandler(button.getTargetWorkspace())
-    })
-
-    const variableListener = (event: Events.Abstract) => {
-      if (event.type === Events.VAR_CREATE || event.type === Events.VAR_DELETE || event.type === Events.VAR_RENAME) {
-        ws.refreshToolboxSelection()
-      }
-    }
-
-    ws.addChangeListener(variableListener)
-
-    const resizeObserver = new ResizeObserver(() => resize(ws))
-    resizeObserver.observe(containerRef.current)
-
-    const backpack = new Backpack(ws)
-    backpack.init()
-
-    return () => {
-      resizeObserver.disconnect()
-      ws.removeChangeListener(variableListener)
-      ws.dispose()
-      WorkspaceRef.current = null
-      setWorkspace(null)
-    }
-  }, [setWorkspace])
+  const containerRef = useRef<HTMLDivElement>(null!)
+  useBlocklyWorkspace(containerRef)
 
   return (
     <div ref={containerRef} className="w-full h-full" />

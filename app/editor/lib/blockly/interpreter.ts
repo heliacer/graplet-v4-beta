@@ -21,7 +21,7 @@ export async function executeActions(actions: Action[], context: Context) {
       fields.push(resolved)
     })
 
-    const { box } = context
+    const { box, objects } = context
 
     switch (action.type) {
       case 'setvar': {
@@ -87,19 +87,24 @@ export async function executeActions(actions: Action[], context: Context) {
         break
       }
       case 'translatexyz': {
-        const [axis, direction, distance] = fields as [string, number, number]
-        switch (axis) {
-          case 'X':
-            box.current.translateX(distance * direction)
-            break
-          case 'Y':
-            box.current.translateY(distance * direction)
-            break
-          case 'Z':
-            box.current.translateZ(distance * direction)
-            break
+        const [axis, direction, objectId, distance] = fields as [string, number, string, number]
+        const object = objects.get(objectId)
+        if (object) {
+          switch (axis) {
+            case 'X':
+              object.translateX(distance * direction)
+              break
+            case 'Y':
+              object.translateY(distance * direction)
+              break
+            case 'Z':
+              object.translateZ(distance * direction)
+              break
+          }
+          console.log(`Translated ${object.name} around ${axis} by ${distance} units`)
+        } else {
+          console.log(`${objectId} does not exist.`)
         }
-        console.log(`Translated cube around ${axis} by ${distance} units`)
         break
       }
       default:
