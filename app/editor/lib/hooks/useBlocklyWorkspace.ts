@@ -40,7 +40,7 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
     backpack.init()
 
     const handleObjectCreated = () => {
-      let newOptions: [string, string][] = []
+      const newOptions: [string, string][] = []
       objects.current.forEach((object, key) => {
         newOptions.push([object.name, key])
       })
@@ -63,7 +63,7 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
       workspaceRef.current = null
       setWorkspace(null)
     }
-  }, [containerRef, setWorkspace])
+  }, [containerRef, setWorkspace, emitter, objects])
 
   return workspaceRef.current
 }

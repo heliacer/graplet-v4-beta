@@ -6,7 +6,6 @@ export default function CredentialsInput({
   type = 'text',
   placeholder,
   setValue,
-  setIsFocussed,
   disabled = false
 }: {
   value?: string
@@ -14,7 +13,6 @@ export default function CredentialsInput({
   type?: string
   placeholder?: string
   setValue?: (value: string) => void
-  setIsFocussed?: (isFocussed: boolean) => void
   disabled?: boolean
 }) {
 
@@ -40,11 +38,6 @@ export default function CredentialsInput({
 
   if (setValue) {
     inputProps.onChange = (e) => setValue(e.target.value)
-  }
-
-  if (setIsFocussed) {
-    inputProps.onFocus = () => setIsFocussed(true)
-    inputProps.onBlur = () => setIsFocussed(false)
   }
 
   return <input {...inputProps} />

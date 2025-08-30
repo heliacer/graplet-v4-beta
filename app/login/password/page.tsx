@@ -14,7 +14,6 @@ export default function Password() {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isFocussedPassword, setIsFocussedPassword] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
 
   const email = searchParams.get('email')!
@@ -102,7 +101,6 @@ export default function Password() {
           name='password'
           type={showPassword ? 'text' : 'password'}
           setValue={setPassword}
-          setIsFocussed={setIsFocussedPassword}
         />
         <button
           type='button'

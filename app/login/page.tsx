@@ -13,7 +13,6 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isFocussedEmail, setIsFocussedEmail] = useState(true)
   const { replace } = useRouter()
 
   useEffect(() => {
@@ -70,7 +69,6 @@ export default function Login() {
           type='email'
           value={email}
           setValue={setEmail}
-          setIsFocussed={setIsFocussedEmail}
         />
         <SubmitButton isLoading={isLoading}/>
       </form>
