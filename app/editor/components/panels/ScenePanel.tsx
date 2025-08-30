@@ -32,10 +32,9 @@ function Object({ objectId, object, onSelect, onDeselect }: {
 export default function ScenePanel() {
   const testingBoxRef = useRef<Mesh>(null!)
   const [variableManager] = useState(() => new VariableManager())
-  const [selected, setSelected] = useState<string>('')
   const [testingBoxHovered, setTestingBoxHovered] = useState(false)
   const { scene } = useThree()
-  const { workspace, objects } = useEditor()
+  const { workspace, objects, currentObject, setCurrentObject} = useEditor()
   const emitter = useTrigger()
 
   useCursor(testingBoxHovered)
@@ -147,15 +146,15 @@ export default function ScenePanel() {
           key={key}
           objectId={key}
           object={object}
-          onSelect={setSelected}
-          onDeselect={() => setSelected('')}
+          onSelect={setCurrentObject}
+          onDeselect={() => setCurrentObject('')}
         />
       ))}
       
       <mesh 
         ref={testingBoxRef}
-        onClick={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), setSelected('testingBox'))}
-        onPointerMissed={(e: MouseEvent) => e.type === 'click' && setSelected('')}
+        onClick={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), setCurrentObject('testingBox'))}
+        onPointerMissed={(e: MouseEvent) => e.type === 'click' && setCurrentObject('')}
         onPointerOver={(e) => (e.stopPropagation(), setTestingBoxHovered(true))}
         onPointerOut={() => setTestingBoxHovered(false)}
       >
@@ -163,12 +162,12 @@ export default function ScenePanel() {
         <meshStandardMaterial color='#00bc7d'/>
       </mesh>
       
-      {selected && (
+      {currentObject && (
         <TransformControls 
           object={
-            selected === 'testingBox' 
+            currentObject === 'testingBox' 
               ? testingBoxRef.current 
-              : objects.current.get(selected)
+              : objects.current.get(currentObject)
           }
         />
       )}

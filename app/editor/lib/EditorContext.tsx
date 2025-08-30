@@ -6,6 +6,8 @@ interface EditorContextType {
   workspace: WorkspaceSvg | null
   setWorkspace: (workspace: WorkspaceSvg | null) => void
   objects: RefObject<ObjectsRecord>
+  currentObject: string,
+  setCurrentObject: (key: string) => void
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -16,10 +18,11 @@ export function useEditor() {
 
 export function EditorProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
+  const [currentObject, setCurrentObject] = useState<string>('')
   const objects = useRef(new Map())
   
   return (
-    <EditorContext.Provider value={{ workspace, setWorkspace, objects}}>
+    <EditorContext.Provider value={{ workspace, setWorkspace, objects, currentObject, setCurrentObject}}>
       {children}
     </EditorContext.Provider>
   )
