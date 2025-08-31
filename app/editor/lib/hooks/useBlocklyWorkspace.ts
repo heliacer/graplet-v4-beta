@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react"
 import { useEditor } from "../EditorContext"
 import { blocklyOptions } from "../blockly/options"
 import { variableCategory } from "../blockly/variables"
-import { Backpack } from "@blockly/workspace-backpack"
 import { resize } from "../blockly/utils"
 import { useTrigger } from "../TriggerContext"
 import { objectRegistry } from "../blockly/blocks"
@@ -35,9 +34,6 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(containerRef.current)
-
-    const backpack = new Backpack(ws)
-    backpack.init()
 
     const handleObjectCreated = () => {
       const newOptions: [string, string][] = []

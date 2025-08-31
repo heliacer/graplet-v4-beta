@@ -9,7 +9,7 @@ export async function interpret(ir: IR, context: Context) {
 
 export async function executeActions(actions: Action[], context: Context) {
   for (const action of actions) {
-    const fields = action.fields || []
+    const fields = [...(action.fields) || []]
     action.values?.forEach((value, i) => {
       const resolver = action.resolvers?.[i]
       const raw = resolveValueWrapper(value, context)
@@ -118,7 +118,7 @@ export async function executeActions(actions: Action[], context: Context) {
               object.translateZ(distance * direction)
               break
           }
-          console.log(`Translated ${object.name} around ${axis} by ${distance} units`)
+          console.log(`Translated ${object.name} around ${axis} by ${distance * direction} units`)
         } else {
           console.log(`${objectId} does not exist.`)
         }
