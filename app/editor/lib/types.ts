@@ -1,5 +1,4 @@
-import { RefObject } from "react"
-import { Mesh, Object3D, Object3DEventMap, Scene } from "three"
+import { Object3D, Object3DEventMap, Scene } from "three"
 
 export interface Action {
   type: string
@@ -26,7 +25,6 @@ export interface IR {
 export type ObjectsRecord = Map<string, Object3D<Object3DEventMap>>
 
 export interface Context {
-  box: RefObject<Mesh> // depreceated in future
   scene: Scene
   objects: ObjectsRecord
   variables: VariableManager

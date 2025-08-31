@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from "three"
 import { useEditor } from "../../lib/EditorContext"
 import { irGenerator } from "../../lib/blockly/irGenerator"
@@ -9,8 +9,7 @@ import { useTrigger } from "../../lib/TriggerContext"
 import { ThreeEvent, useThree } from "@react-three/fiber"
 import { Grid, OrbitControls, TransformControls, useCursor } from "@react-three/drei"
 
-function Object({ objectId, object, onSelect, onDeselect }: {
-  objectId: string
+function Object({ object, onSelect, onDeselect }: {
   object: Object3D
   onSelect: (id: string) => void
   onDeselect: () => void
@@ -21,7 +20,7 @@ function Object({ objectId, object, onSelect, onDeselect }: {
   return (
     <primitive
       object={object}
-      onClick={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), onSelect(objectId))}
+      onClick={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), onSelect(object.uuid))}
       onPointerMissed={(e: MouseEvent) => e.type === 'click' && onDeselect()}
       onPointerOver={(e: ThreeEvent<PointerEvent>) => (e.stopPropagation(), setHovered(true))}
       onPointerOut={() => setHovered(false)}
@@ -30,37 +29,31 @@ function Object({ objectId, object, onSelect, onDeselect }: {
 }
 
 export default function ScenePanel() {
-  const testingBoxRef = useRef<Mesh>(null!)
   const [variableManager] = useState(() => new VariableManager())
-  const [testingBoxHovered, setTestingBoxHovered] = useState(false)
-  const [objectCounter, setObjectCounter] = useState(1)
+  const [objectCounter, setObjectCounter] = useState(0)
   const { scene } = useThree()
-  const { workspace, objects, currentObject, setCurrentObject} = useEditor()
+  const { workspace, objects, currentObject, setCurrentObject } = useEditor()
   const emitter = useTrigger()
 
-  useCursor(testingBoxHovered)
+  const handleCreateObject = useCallback(() => {
+    const cube = new Mesh(
+      new BoxGeometry(1, 1, 1),
+      new MeshStandardMaterial({ color: '#ff6080' })
+    )
+
+    cube.name = `Cube ${objectCounter + 1}`
+
+    scene.add(cube)
+    objects.current.set(cube.uuid, cube)
+    emitter.emit('objectCreated', { id: cube.uuid, object: cube })
+    setObjectCounter(objectCounter + 1)
+  }, [objectCounter, scene, objects, emitter])
 
   useEffect(() => {
-    const handleCreateObject = () => {
-      const cube = new Mesh(
-        new BoxGeometry(1, 1, 1),
-        new MeshStandardMaterial({ color: '#ff6080' })
-      )
-
-      cube.name = `Cube ${objectCounter}`
-      
-      scene.add(cube)
-      objects.current.set(cube.uuid, cube)
-      emitter.emit('objectCreated', { id: cube.uuid, object: cube })
-      setObjectCounter(objectCounter + 1)
+    if (objects.current.size === 0) {
+      handleCreateObject()
     }
-    
-    emitter.on('createObject', handleCreateObject)
-    
-    return () => {
-      emitter.off('createObject', handleCreateObject)
-    }
-  }, [emitter, scene, objects, objectCounter])
+  }, [handleCreateObject, objects])
 
   useEffect(() => {
     function runAction(action: Action) {
@@ -68,7 +61,6 @@ export default function ScenePanel() {
       executeActions(
         [action],
         {
-          box: testingBoxRef,
           scene,
           objects: objects.current,
           variables: variableManager
@@ -110,7 +102,7 @@ export default function ScenePanel() {
       workspace?.getFlyout()?.getWorkspace().removeChangeListener(handleFlyoutWorkspaceClick)
     }
   }, [workspace, objects, scene, variableManager])
-
+  
   useEffect(() => {
     const handleRunScene = () => {
       if (!workspace) return
@@ -120,7 +112,6 @@ export default function ScenePanel() {
       interpret(
         IR,
         {
-          box: testingBoxRef,
           scene,
           objects: objects.current,
           variables: variableManager
@@ -133,47 +124,27 @@ export default function ScenePanel() {
       })
     }
     emitter.on('runScene', handleRunScene)
-    return () => {
-      emitter.off('runScene', handleRunScene)
-    }
+    return () => emitter.off('runScene', handleRunScene)
   }, [objects, scene, emitter, workspace, variableManager])
+  
+  useEffect(() => {
+    emitter.on('createObject', handleCreateObject)
+    return () => emitter.off('createObject', handleCreateObject)
+  }, [emitter, handleCreateObject])
 
   return (
     <>
       <OrbitControls makeDefault />
       <Grid args={[10, 10]} cellSize={1} />
-      
       {Array.from(objects.current).map(([key, object]) => (
         <Object
           key={key}
-          objectId={key}
           object={object}
           onSelect={setCurrentObject}
           onDeselect={() => setCurrentObject('')}
         />
       ))}
-      
-      <mesh 
-        ref={testingBoxRef}
-        onClick={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), setCurrentObject('testingBox'))}
-        onPointerMissed={(e: MouseEvent) => e.type === 'click' && setCurrentObject('')}
-        onPointerOver={(e) => (e.stopPropagation(), setTestingBoxHovered(true))}
-        onPointerOut={() => setTestingBoxHovered(false)}
-      >
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color='#00bc7d'/>
-      </mesh>
-      
-      {currentObject && (
-        <TransformControls 
-          object={
-            currentObject === 'testingBox' 
-              ? testingBoxRef.current 
-              : objects.current.get(currentObject)
-          }
-        />
-      )}
-      
+      {currentObject && (<TransformControls object={objects.current.get(currentObject)}/>)}
       <ambientLight intensity={1} />
       <directionalLight position={[3, 5, 2]} intensity={2} />
     </>

@@ -1,11 +1,10 @@
 import { Action, Context, IR, Value } from "../types"
 
 export async function interpret(ir: IR, context: Context) {
-  for (const script of ir.scripts) {
-    if (script.trigger.type === 'onclickrun') {
-      await executeActions(script.actions, context)
-    }
-  }
+  const promises = ir.scripts
+    .filter(script => script.trigger.type === 'onclickrun')
+    .map(script => executeActions(script.actions, context))
+  await Promise.all(promises)
 }
 
 export async function executeActions(actions: Action[], context: Context) {
@@ -21,7 +20,7 @@ export async function executeActions(actions: Action[], context: Context) {
       fields.push(resolved)
     })
 
-    const { box, objects } = context
+    const { objects } = context
 
     switch (action.type) {
       case 'setvar': {
@@ -52,42 +51,62 @@ export async function executeActions(actions: Action[], context: Context) {
         break
       }
       case 'setposxyz': {
-        const [x, y, z] = fields as [number, number, number]
-        box.current.position.set(x, y, z)
-        console.log(`Set position to: ${x}, ${y}, ${z}`)
+        const [objectId, x, y, z] = fields as [string, number, number, number]
+        const object = objects.get(objectId)
+        if (object) {
+          object.position.set(x, y, z)
+          console.log(`Set position to: ${x}, ${y}, ${z}`)
+        } else {
+          console.log(`${objectId} does not exist.`)
+        }
         break
       }
       case 'setscalexyz': {
-        const [x, y, z] = fields as [number, number, number]
-        box.current.scale.set(x, y, z)
-        console.log(`Set scale to: ${x}, ${y}, ${z}`)
+        const [objectId, x, y, z] = fields as [string, number, number, number]
+        const object = objects.get(objectId)
+        if (object) {
+          object.scale.set(x, y, z)
+          console.log(`Set scale to: ${x}, ${y}, ${z}`)
+        } else {
+          console.log(`${objectId} does not exist.`)
+        }
         break
       }
       case 'setroteulerxyz': {
-        const [x, y, z] = fields as [number, number, number]
-        box.current.rotation.set(x, y, z)
-        console.log(`Set rotation to euler: ${x}, ${y}, ${z}`)
+        const [objectId, x, y, z] = fields as [string, number, number, number]
+        const object = objects.get(objectId)
+        if (object) {
+          object.rotation.set(x, y, z)
+          console.log(`Set rotation to euler: ${x}, ${y}, ${z}`)
+        } else {
+          console.log(`${objectId} does not exist.`)
+        }
         break
       }
       case 'rotatexyz': {
-        const [axis, angle] = fields as [string, number]
-        const rad = angle * Math.PI / 180
-        switch (axis) {
-          case 'X':
-            box.current.rotateX(rad)
-            break
-          case 'Y':
-            box.current.rotateY(rad)
-            break
-          case 'Z':
-            box.current.rotateZ(rad)
-            break
+        const [objectId, axis, angle] = fields as [string, string, number]
+        const object = objects.get(objectId)
+        if (object) {
+          const rad = angle * Math.PI / 180
+          switch (axis) {
+            case 'X':
+              object.rotateX(rad)
+              break
+            case 'Y':
+              object.rotateY(rad)
+              break
+            case 'Z':
+              object.rotateZ(rad)
+              break
+          }
+          console.log(`Rotated cube around ${axis} by ${angle}° (${rad} radians)`)
+        } else {
+          console.log(`${objectId} does not exist.`)
         }
-        console.log(`Rotated cube around ${axis} by ${angle}° (${rad} radians)`)
         break
       }
       case 'translatexyz': {
-        const [axis, direction, objectId, distance] = fields as [string, number, string, number]
+        const [objectId, axis, direction, distance] = fields as [string, string, number, number]
         const object = objects.get(objectId)
         if (object) {
           switch (axis) {

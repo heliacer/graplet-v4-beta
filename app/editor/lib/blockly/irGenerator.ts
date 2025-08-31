@@ -88,70 +88,77 @@ irGenerator.forBlock('onclickrun', function (): Action {
 })
 
 irGenerator.forBlock('moveunitsxyz', function (block: Block, generator: IRGenerator): Action {
+  const objectId = block.getFieldValue('OBJECT') as string
   const units = generator.getInputValue(block, 'UNITS')
   const direction = block.getFieldValue('DIRECTION') as string
-  const objectId = block.getFieldValue('OBJECT') as string
   const axis = direction.slice(-1)
   return {
     type: 'translatexyz',
-    fields: [axis, direction.startsWith('-') ? -1 : 1, objectId],
+    fields: [objectId, axis, direction.startsWith('-') ? -1 : 1],
     values: units,
     resolvers: [toNumber]
   }
 })
 
 irGenerator.forBlock('setposxyz', function (block: Block, generator: IRGenerator): Action {
+  const objectId = block.getFieldValue('OBJECT') as string
   const x = generator.getInputValue(block, 'X')
   const y = generator.getInputValue(block, 'Y')
   const z = generator.getInputValue(block, 'Z')
   return {
     type: 'setposxyz',
+    fields: [objectId],
     values: x.concat(y).concat(z),
     resolvers: Array(3).fill(toNumber)
   }
 })
 
 irGenerator.forBlock('setscalexyz', function (block: Block, generator: IRGenerator): Action {
+  const objectId = block.getFieldValue('OBJECT') as string
   const x = generator.getInputValue(block, 'X')
   const y = generator.getInputValue(block, 'Y')
   const z = generator.getInputValue(block, 'Z')
   return {
     type: 'setscalexyz',
+    fields: [objectId],
     values: x.concat(y).concat(z),
     resolvers: Array(3).fill(toNumber)
   }
 })
 
 irGenerator.forBlock('setroteulerxyz', function (block: Block, generator: IRGenerator): Action {
+  const objectId = block.getFieldValue('OBJECT') as string
   const x = generator.getInputValue(block, 'X')
   const y = generator.getInputValue(block, 'Y')
   const z = generator.getInputValue(block, 'Z')
   return {
     type: 'setroteulerxyz',
+    fields: [objectId],
     values: x.concat(y).concat(z),
     resolvers: Array(3).fill(toNumber)
   }
 })
 
 irGenerator.forBlock('rotatexyz', function (block: Block, generator: IRGenerator): Action {
+  const objectId = block.getFieldValue('OBJECT') as string
   const axis = block.getFieldValue('AXIS') as string
   const angle = generator.getInputValue(block, 'ANGLE')
   return {
     type: 'rotatexyz',
-    fields: [axis],
+    fields: [objectId, axis],
     values: angle,
     resolvers: [toNumber]
   }
 })
 
 irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenerator): Action {
+  const objectId = block.getFieldValue('OBJECT') as string
   const axis = block.getFieldValue('AXIS') as string
   const distance = generator.getInputValue(block, 'UNITS')
-  const objectId = block.getFieldValue('OBJECT') as string
   
   return {
     type: 'translatexyz',
-    fields: [axis, 1, objectId],
+    fields: [objectId, axis, 1],
     values: distance,
     resolvers: [toNumber]
   }
