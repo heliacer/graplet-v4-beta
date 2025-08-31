@@ -105,12 +105,7 @@ irGenerator.forBlock('setposxyz', function (block: Block, generator: IRGenerator
   const x = generator.getInputValue(block, 'X')
   const y = generator.getInputValue(block, 'Y')
   const z = generator.getInputValue(block, 'Z')
-  return {
-    type: 'setposxyz',
-    fields: [objectId],
-    values: x.concat(y).concat(z),
-    resolvers: Array(3).fill(toNumber)
-  }
+  return createXyzAction('setposxyz', objectId, x, y, z)
 })
 
 irGenerator.forBlock('setscalexyz', function (block: Block, generator: IRGenerator): Action {
@@ -155,7 +150,7 @@ irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenera
   const objectId = block.getFieldValue('OBJECT') as string
   const axis = block.getFieldValue('AXIS') as string
   const distance = generator.getInputValue(block, 'UNITS')
-  
+
   return {
     type: 'translatexyz',
     fields: [objectId, axis, 1],
@@ -207,7 +202,7 @@ irGenerator.forValueBlock('text', function (block: Block): ValueWrapper[] {
 })
 
 irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
-  const value = block.getFieldValue('VALUE')
+  const value = block.getFieldValue('VALUE') as Value
   return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
 })
 
@@ -238,21 +233,41 @@ irGenerator.forBlock('math_change', function (block: Block, generator: IRGenerat
 
 irGenerator.forValueBlock('math_arithmetic', function (block: Block, generator: IRGenerator): ValueWrapper[] {
   const operator = block.getFieldValue('OP') as string
-  const valueA = generator.getInputValue(block, 'A')
-  const valueB = generator.getInputValue(block, 'B')
-
-  const a = (typeof valueA === 'number' ? valueA : 0)
-  const b = (typeof valueB === 'number' ? valueB : 0)
-
-  function result() {
+  const a = generator.getInputValue(block, 'A')
+  const b = generator.getInputValue(block, 'B')
+  function calculate(a: number, b: number): number {
     switch (operator) {
       case 'ADD': return a + b
       case 'MINUS': return a - b
       case 'MULTIPLY': return a * b
-      case 'DIVIDE': return a / a
+      case 'DIVIDE': return a / b
       default: return 0
     }
   }
 
-  return [{ content: result() }]
+  return [{
+    compute: calculate,
+    resolvers: [toNumber, toNumber],
+    nestedValues: a.concat(b)
+  }]
 })
+
+irGenerator.forValueBlock('amodb', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const a = generator.getInputValue(block, 'A')
+  const b = generator.getInputValue(block, 'B')
+
+  return [{
+    compute: (a: number,b: number) => { return a % b },
+    resolvers: [toNumber, toNumber],
+    nestedValues: a.concat(b)
+  }]
+})
+
+function createXyzAction(type: string, objectId: string, x: ValueWrapper[], y: ValueWrapper[], z: ValueWrapper[]): Action {
+  return {
+    type,
+    fields: [objectId],
+    values: x.concat(y).concat(z),
+    resolvers: Array(3).fill(toNumber)
+  }
+}

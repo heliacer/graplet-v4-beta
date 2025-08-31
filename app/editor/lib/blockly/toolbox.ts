@@ -224,6 +224,22 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
               }
             }
           }
+        },
+        {
+          kind: 'block',
+          type: 'amodb',
+          inputs: {
+            A: {
+              shadow: {
+                type: 'math_number',
+              }
+            },
+            B: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
         }
       ]
     }

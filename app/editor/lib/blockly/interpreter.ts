@@ -1,4 +1,4 @@
-import { Action, Context, IR, Value } from "../types"
+import { Action, Context, IR, Value, ValueWrapper } from "../types"
 
 export async function interpret(ir: IR, context: Context) {
   const promises = ir.scripts
@@ -12,9 +12,7 @@ export async function executeActions(actions: Action[], context: Context) {
     const fields = action.fields || []
     action.values?.forEach((value, i) => {
       const resolver = action.resolvers?.[i]
-      const raw = value.id
-        ? context.variables.get(value.id)
-        : value.content
+      const raw = resolveValueWrapper(value, context)
       if (raw === undefined) throw Error(`Fields or Values are missing on Action ${action.type}`)
       const resolved = resolver ? resolver(raw) : raw
       fields.push(resolved)
@@ -25,13 +23,13 @@ export async function executeActions(actions: Action[], context: Context) {
     switch (action.type) {
       case 'setvar': {
         const [varId, value] = fields as [string, Value]
-        console.log(varId, value)
+        console.log(`set variable ${varId} to ${value}`)
         context.variables.set(varId, value)
         break
       }
       case 'changevar': {
         const [varId, delta] = fields as [string, number]
-        console.log(varId, delta)
+        console.log(`changed variable ${varId} by ${delta}`)
         context.variables.change(varId, delta)
         break
       }
@@ -130,4 +128,21 @@ export async function executeActions(actions: Action[], context: Context) {
         console.warn(`Unknown action type: ${action.type}`)
     }
   }
+}
+
+function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
+  // variable reference
+  if (wrapper.id !== undefined) return context.variables.get(wrapper.id)
+  
+  // resolve nested values
+  if (wrapper.nestedValues && wrapper.nestedValues.length > 0 && wrapper.compute) {
+    const resolvedValues = wrapper.nestedValues.map(nestedValue => 
+      resolveValueWrapper(nestedValue, context)
+    )
+    console.log(resolvedValues)
+    return wrapper.compute(...resolvedValues)
+  }
+  
+  if (wrapper.content === undefined) throw new Error('Invalid ValueWrapper: No id, content, or compute function found');
+  return wrapper.content
 }

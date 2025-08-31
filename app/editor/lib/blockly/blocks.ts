@@ -269,5 +269,24 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     previousStatement: null,
     nextStatement: null,
     style: 'control_blocks'
+  },
+  {
+    type: 'amodb',
+    message0: '%1 mod %2',
+    args0: [
+      {
+        type: 'input_value',
+        name: 'A',
+        check: 'Number'
+      },
+      {
+        type: 'input_value',
+        name: 'B',
+        check: 'Number'
+      }
+    ],
+    inputsInline: true,
+    output: "Number",
+    style: 'math_blocks'
   }
 ])

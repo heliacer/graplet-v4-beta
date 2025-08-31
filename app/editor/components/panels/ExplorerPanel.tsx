@@ -1,4 +1,4 @@
-import { Box, PenTool, FileText, type LucideIcon } from "lucide-react"
+import { Box, FileText, type LucideIcon, Plus } from "lucide-react"
 import { useTrigger } from "../../lib/TriggerContext"
 import { useEditor } from "../../lib/EditorContext"
 import { useEffect, useReducer } from "react"
@@ -65,8 +65,8 @@ export default function ExplorerPanel() {
           onClick={() => emitter.emit('createObject')}
           className="text-sm text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 py-0.5 bg-accent"
         >
-          <PenTool size={14} />
-          New Model
+          <Plus size={14} />
+          Add Cube
         </button>
         {/* File Path */}
       </nav>

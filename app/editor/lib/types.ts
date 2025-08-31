@@ -11,6 +11,10 @@ export interface Action {
 export interface ValueWrapper {
   id?: string,
   content?: Value,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  compute?: Function
+  nestedValues?: ValueWrapper[]
+  resolvers?: Array<((v: Value) => Value) | undefined>
 }
 
 export interface ActionScript {
