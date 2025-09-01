@@ -90,7 +90,7 @@ export function DropdownContent({
 
   return (
     <div className={clsx(
-      'absolute top-full rounded-lg translate-y-0.5 border border-zinc-700 bg-zinc-800 z-10',
+      'absolute top-full rounded-lg translate-y-0.5 border border-zinc-700 bg-zinc-800 z-[999]',
       alignmentStyles[align],
       !isOpen && 'hidden',
       className

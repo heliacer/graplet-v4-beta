@@ -69,3 +69,7 @@
 .blocklyFlyoutLabelText {
   font-size: 28px !important;
 }
+
+.blocklyComment .blocklyTextarea{
+  color: oklch(27.4% 0.006 286.033);
+}
