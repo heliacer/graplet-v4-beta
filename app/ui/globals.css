@@ -12,3 +12,11 @@
 button {
   @apply focus:outline-none focus-visible:border-accent;
 }
+
+input {
+  @apply border-zinc-400 focus:border-accent-dark dark:border-zinc-700 dark:focus:border-accent;
+}
+
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}

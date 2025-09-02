@@ -14,13 +14,15 @@ import ScenePanel from "./panels/ScenePanel"
 import AssetsPanel from "./panels/AssetsPanel"
 import ExplorerPanel from "./panels/ExplorerPanel"
 import CodePanel from "./panels/CodePanel"
+import PropertiesPanel from "./panels/PropertiesPanel"
 
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
   scene: function () { return <Canvas><ScenePanel /></Canvas> },
   explorer: ExplorerPanel,
-  assets: AssetsPanel
+  assets: AssetsPanel,
+  properties: PropertiesPanel
 }
 
 export default function Dockview() {
@@ -85,7 +87,7 @@ export default function Dockview() {
     const propertiesPanel = event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Properties',
-      component: 'debug',
+      component: 'properties',
       params: {
         Icon: <Wrench size={16} />
       },

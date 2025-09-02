@@ -6,6 +6,7 @@ type Events = {
   runScene: void
   stopScene: void
   createObject: void
+  objectUpdated: void
   objectCreated: { id: string, object: Object3D }
 }
 

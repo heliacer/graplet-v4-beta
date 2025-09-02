@@ -17,7 +17,7 @@
 .blocklyFlyout {
   z-index: 60;
   border-radius: 5px 0 0 0;
-  outline: 1px solid oklch(32.5% 0.006 285.959);
+  outline: 1px solid oklch(37% 0.013 285.805);
 }
 
 .blocklyToolbox:focus-visible,

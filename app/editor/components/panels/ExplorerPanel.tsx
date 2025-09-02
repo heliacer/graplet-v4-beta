@@ -53,13 +53,15 @@ export default function ExplorerPanel() {
 
   useEffect(() => {
     emitter.on('objectCreated', forceUpdate)
+    emitter.on('objectUpdated', forceUpdate)
     return () => {
       emitter.off('objectCreated', forceUpdate)
+      emitter.off('objectUpdated', forceUpdate)
     }
   }, [emitter])
 
   return (
-    <main className="px-1.5 py-1.5 flex flex-col gap-1.5">
+    <main className="p-1.5 flex flex-col gap-1.5">
       <nav className="flex justify-between items-center">
         <button
           onClick={() => emitter.emit('createObject')}

@@ -11,7 +11,7 @@
   /* Semantic Color assignments */
   --text-primary: var(--color-zinc-200);
   --text-secondary: var(--color-zinc-400);
-  --border-color: var(--color-zinc-750);
+  --border-color: var(--color-zinc-700);
   --surface-primary: var(--color-zinc-850);
   --surface-secondary: var(--color-zinc-900);
   --surface-hover: var(--color-zinc-800);
