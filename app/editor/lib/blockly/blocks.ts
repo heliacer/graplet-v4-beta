@@ -12,58 +12,40 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     style: 'event_blocks'
   },
   {
-    type: "input",
-    message0: "%1",
+    type: 'input',
+    message0: '%1',
     args0: [
       {
-        type: "field_input",
-        name: "VALUE",
+        type: 'field_input',
+        name: 'VALUE',
       }
     ],
     output: null
   },
   {
-    type: "moveunitsxyz",
-    message0: "move %1 %2 units %3",
+    type: 'moveunitsxyz',
+    message0: 'move %1 %2 units %3',
     args0: [
       {
-        type: "field_dropdown",
-        name: "OBJECT",
+        type: 'field_dropdown',
+        name: 'OBJECT',
         options: () => objectRegistry.options
       },
       {
-        type: "input_value",
-        name: "UNITS",
-        check: "Number"
+        type: 'input_value',
+        name: 'UNITS',
+        check: 'Number'
       },
       {
-        type: "field_dropdown",
-        name: "DIRECTION",
+        type: 'field_dropdown',
+        name: 'DIRECTION',
         options: [
-          [
-            "forwards",
-            "Z"
-          ],
-          [
-            "backwards",
-            "-Z"
-          ],
-          [
-            "left",
-            "-X"
-          ],
-          [
-            "right",
-            "X"
-          ],
-          [
-            "up",
-            "-Y"
-          ],
-          [
-            "down",
-            "Y"
-          ],
+          ['forwards', 'Z'],
+          ['backwards', '-Z'],
+          ['left', '-X'],
+          ['right', 'X'],
+          ['up', '-Y'],
+          ['down', 'Y'],
         ]
       }
     ],
@@ -76,8 +58,8 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set position of %1 to x: %2 y: %3 z: %4',
     args0: [
       {
-        type: "field_dropdown",
-        name: "OBJECT",
+        type: 'field_dropdown',
+        name: 'OBJECT',
         options: () => objectRegistry.options
       },
       {
@@ -106,8 +88,8 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set scale of %1 to x: %2 y: %3 z: %4',
     args0: [
       {
-        type: "field_dropdown",
-        name: "OBJECT",
+        type: 'field_dropdown',
+        name: 'OBJECT',
         options: () => objectRegistry.options
       },
       {
@@ -136,8 +118,8 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set rotation of %1 to euler x: %2 y: %3 z: %4',
     args0: [
       {
-        type: "field_dropdown",
-        name: "OBJECT",
+        type: 'field_dropdown',
+        name: 'OBJECT',
         options: () => objectRegistry.options
       },
       {
@@ -162,30 +144,21 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     style: 'motion_blocks'
   },
   {
-    type: "rotatexyz",
-    message0: "rotate %1 around %2 axis by %3 degrees",
+    type: 'rotatexyz',
+    message0: 'rotate %1 around %2 axis by %3 degrees',
     args0: [
       {
-        type: "field_dropdown",
-        name: "OBJECT",
+        type: 'field_dropdown',
+        name: 'OBJECT',
         options: () => objectRegistry.options
       },
       {
-        type: "field_dropdown",
-        name: "AXIS",
+        type: 'field_dropdown',
+        name: 'AXIS',
         options: [
-          [
-            "x",
-            "X"
-          ],
-          [
-            "y",
-            "Y"
-          ],
-          [
-            "z",
-            "Z"
-          ]
+          ['x', 'X'],
+          ['y', 'Y'],
+          ['z', 'Z']
         ]
       },
       {
@@ -199,30 +172,21 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     style: 'motion_blocks'
   },
   {
-    type: "translatexyz",
-    message0: "translate %1 along %2 axis by %3 units",
+    type: 'translatexyz',
+    message0: 'translate %1 along %2 axis by %3 units',
     args0: [
       {
-        type: "field_dropdown",
-        name: "OBJECTS",
+        type: 'field_dropdown',
+        name: 'OBJECTS',
         options: () => objectRegistry.options
       },
       {
-        type: "field_dropdown",
-        name: "AXIS",
+        type: 'field_dropdown',
+        name: 'AXIS',
         options: [
-          [
-            "x",
-            "X"
-          ],
-          [
-            "y",
-            "Y"
-          ],
-          [
-            "z",
-            "Z"
-          ]
+          ['x', 'X'],
+          ['y', 'Y'],
+          ['z', 'Z']
         ]
       },
       {
@@ -254,7 +218,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'control_blocks'
+    style: 'logic_blocks'
   },
   {
     type: 'wait',
@@ -268,25 +232,109 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    style: 'control_blocks'
+    style: 'logic_blocks'
   },
   {
-    type: 'amodb',
-    message0: '%1 mod %2',
+    type: 'math_map',
+    message0: 'map %1 from %2 , %3 to %4 , %5',
     args0: [
       {
         type: 'input_value',
-        name: 'A',
+        name: 'NUM',
         check: 'Number'
       },
       {
         type: 'input_value',
-        name: 'B',
+        name: 'FROM_MIN',
+        check: 'Number'
+      },
+      {
+        type: 'input_value',
+        name: 'FROM_MAX',
+        check: 'Number'
+      },
+      {
+        type: 'input_value',
+        name: 'TO_MIN',
+        check: 'Number'
+      },
+      {
+        type: 'input_value',
+        name: 'TO_MAX',
         check: 'Number'
       }
     ],
-    inputsInline: true,
-    output: "Number",
-    style: 'math_blocks'
+    output: 'Number',
+    style: 'math_blocks',
+    inputsInline: true
+  },
+  {
+    type: 'math_htrig',
+    message0: '%1 %2',
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'OP',
+        options: [
+          ['sinh', 'SINH'],
+          ['cosh', 'COSH'],
+          ['tanh', 'TANH'],
+          ['arcsinh', 'ARCSINH'],
+          ['arccosh', 'ARCCOSH'],
+          ['arctanh', 'ARCTANH'],
+        ]
+      },
+      {
+        type: 'input_value',
+        name: 'NUM',
+        check: 'Number'
+      }
+    ],
+    output: 'Number',
+    style: 'math_blocks',
+    inputsInline: true
+  },
+  {
+    type: 'math_deriviative',
+    message0: 'deriviative of %1 at %2',
+    args0: [
+      {
+        type: 'input_value',
+        name: 'PROCEDURE',
+        check: 'Function'
+      },
+      {
+        type: 'input_value',
+        name: 'NUM',
+        check: 'Number'
+      }
+    ],
+    output: 'Number',
+    style: 'math_blocks',
+    inputsInline: true
+  },
+  {
+    type: 'math_integral',
+    message0: 'integral of %1 from %2 to %3',
+    args0: [
+      {
+        type: 'input_value',
+        name: 'PROCEDURE',
+        check: 'Function'
+      },
+      {
+        type: 'input_value',
+        name: 'FROM',
+        check: 'Number'
+      },
+      {
+        type: 'input_value',
+        name: 'TO',
+        check: 'Number'
+      }
+    ],
+    output: 'Number',
+    style: 'math_blocks',
+    inputsInline: true
   }
 ])

@@ -3,6 +3,7 @@ import { useEditor } from "../../lib/EditorContext"
 import { useTrigger } from "../../lib/TriggerContext"
 
 export default function PropertiesPanel() {
+  // TODO: needs refactor + no direct state access, only commit on submit, to allow validate
   const { objects, currentObject } = useEditor()
   const [, forceUpdate] = useReducer(x => x + 1, 0)
   const emitter = useTrigger()

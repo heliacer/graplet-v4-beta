@@ -139,7 +139,6 @@ function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
     const resolvedValues = wrapper.nestedValues.map(nestedValue => 
       resolveValueWrapper(nestedValue, context)
     )
-    console.log(resolvedValues)
     return wrapper.compute(...resolvedValues)
   }
   

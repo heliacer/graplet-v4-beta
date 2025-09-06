@@ -78,8 +78,6 @@ class IRGenerator {
 
 export const irGenerator = new IRGenerator()
 
-function toNumber(v: Value) { return isNaN(Number(v)) ? 0 : Number(v) }
-
 irGenerator.forBlock('onclickrun', function (): Action {
   return {
     type: 'onclickrun',
@@ -96,7 +94,7 @@ irGenerator.forBlock('moveunitsxyz', function (block: Block, generator: IRGenera
     type: 'translatexyz',
     fields: [objectId, axis, direction.startsWith('-') ? -1 : 1],
     values: units,
-    resolvers: [toNumber]
+    resolvers: [Number]
   }
 })
 
@@ -113,12 +111,8 @@ irGenerator.forBlock('setscalexyz', function (block: Block, generator: IRGenerat
   const x = generator.getInputValue(block, 'X')
   const y = generator.getInputValue(block, 'Y')
   const z = generator.getInputValue(block, 'Z')
-  return {
-    type: 'setscalexyz',
-    fields: [objectId],
-    values: x.concat(y).concat(z),
-    resolvers: Array(3).fill(toNumber)
-  }
+  return createXyzAction('setscalexyz', objectId, x, y, z)
+
 })
 
 irGenerator.forBlock('setroteulerxyz', function (block: Block, generator: IRGenerator): Action {
@@ -126,12 +120,7 @@ irGenerator.forBlock('setroteulerxyz', function (block: Block, generator: IRGene
   const x = generator.getInputValue(block, 'X')
   const y = generator.getInputValue(block, 'Y')
   const z = generator.getInputValue(block, 'Z')
-  return {
-    type: 'setroteulerxyz',
-    fields: [objectId],
-    values: x.concat(y).concat(z),
-    resolvers: Array(3).fill(toNumber)
-  }
+  return createXyzAction('setroteulerxyz', objectId, x, y, z)
 })
 
 irGenerator.forBlock('rotatexyz', function (block: Block, generator: IRGenerator): Action {
@@ -142,7 +131,7 @@ irGenerator.forBlock('rotatexyz', function (block: Block, generator: IRGenerator
     type: 'rotatexyz',
     fields: [objectId, axis],
     values: angle,
-    resolvers: [toNumber]
+    resolvers: [Number]
   }
 })
 
@@ -155,7 +144,7 @@ irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenera
     type: 'translatexyz',
     fields: [objectId, axis, 1],
     values: distance,
-    resolvers: [toNumber]
+    resolvers: [Number]
   }
 })
 
@@ -178,7 +167,7 @@ irGenerator.forBlock('repeat', function (block: Block, generator: IRGenerator): 
   return {
     type: 'repeat',
     values: value,
-    resolvers: [toNumber],
+    resolvers: [Number],
     children: children
   }
 })
@@ -189,7 +178,7 @@ irGenerator.forBlock('wait', function (block: Block, generator: IRGenerator): Ac
   return {
     type: 'wait',
     values: ms,
-    resolvers: [toNumber]
+    resolvers: [Number]
   }
 })
 
@@ -232,34 +221,186 @@ irGenerator.forBlock('math_change', function (block: Block, generator: IRGenerat
 })
 
 irGenerator.forValueBlock('math_arithmetic', function (block: Block, generator: IRGenerator): ValueWrapper[] {
-  const operator = block.getFieldValue('OP') as string
+  const operator = block.getFieldValue('OP') as keyof typeof operations
   const a = generator.getInputValue(block, 'A')
   const b = generator.getInputValue(block, 'B')
-  function calculate(a: number, b: number): number {
-    switch (operator) {
-      case 'ADD': return a + b
-      case 'MINUS': return a - b
-      case 'MULTIPLY': return a * b
-      case 'DIVIDE': return a / b
-      default: return 0
-    }
+
+  const operations = {
+    ADD: (a: number, b: number) => a + b,
+    MINUS: (a: number, b: number) => a - b,
+    MULTIPLY: (a: number, b: number) => a * b,
+    DIVIDE: (a: number, b: number) => a / b,
+    POWER: (a: number, b: number) => a ** b
   }
 
   return [{
-    compute: calculate,
-    resolvers: [toNumber, toNumber],
+    compute: operations[operator],
+    resolvers: [Number, Number],
     nestedValues: a.concat(b)
   }]
 })
 
-irGenerator.forValueBlock('amodb', function (block: Block, generator: IRGenerator): ValueWrapper[] {
-  const a = generator.getInputValue(block, 'A')
-  const b = generator.getInputValue(block, 'B')
+irGenerator.forValueBlock('math_map', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const x = generator.getInputValue(block, 'NUM')
+  const fromMin = generator.getInputValue(block, 'FROM_MIN')
+  const fromMax = generator.getInputValue(block, 'FROM_MAX')
+  const toMin = generator.getInputValue(block, 'TO_MIN')
+  const toMax = generator.getInputValue(block, 'TO_MAX')
+
+  function compute(x: number, a: number, b: number, c: number, d: number): number {
+    return (x - a) / (b - a) * (d - c) + c
+  }
 
   return [{
-    compute: (a: number,b: number) => { return a % b },
-    resolvers: [toNumber, toNumber],
-    nestedValues: a.concat(b)
+    compute,
+    resolvers: [Number, Number, Number, Number, Number],
+    nestedValues: x.concat(fromMin).concat(fromMax).concat(toMin).concat(toMax),
+  }]
+})
+
+irGenerator.forValueBlock('math_constant', function (block: Block) {
+  const constant = block.getFieldValue('CONSTANT') as keyof typeof constants
+
+  const constants = {
+    PI: Math.PI,
+    E: Math.E,
+    GOLDEN_RATIO: (1 + Math.sqrt(5)) / 2,
+    SQRT2: Math.SQRT2,
+    SQRT1_2: Math.SQRT1_2,
+    INFINITY: Infinity
+  }
+
+  return [{ content: constants[constant] }]
+})
+
+irGenerator.forValueBlock('math_trig', function (block: Block, generator: IRGenerator) {
+  const x = generator.getInputValue(block, 'NUM')
+  const operator = block.getFieldValue('OP') as keyof typeof operations
+
+  const operations = {
+    SIN: (x: number) => Math.sin(x),
+    COS: (x: number) => Math.cos(x),
+    TAN: (x: number) => Math.tan(x),
+    ASIN: (x: number) => Math.asin(x),
+    ACOS: (x: number) => Math.acos(x),
+    ATAN: (x: number) => Math.atan(x),
+  }
+
+  return [{
+    compute: operations[operator],
+    resolvers: [Number],
+    nestedValues: x
+  }]
+})
+
+irGenerator.forValueBlock('math_htrig', function (block: Block, generator: IRGenerator) {
+  const x = generator.getInputValue(block, 'NUM')
+  const operator = block.getFieldValue('OP') as keyof typeof operations
+
+  const operations = {
+    SINH: (x: number) => Math.sinh(x),
+    COSH: (x: number) => Math.cosh(x),
+    TANH: (x: number) => Math.tanh(x),
+    ASINH: (x: number) => Math.asinh(x),
+    ACOSH: (x: number) => Math.acosh(x),
+    ATANH: (x: number) => Math.atanh(x),
+  }
+
+  return [{
+    compute: operations[operator],
+    resolvers: [Number],
+    nestedValues: x
+  }]
+})
+
+irGenerator.forValueBlock('math_round', function (block: Block, generator: IRGenerator) {
+  const x = generator.getInputValue(block, 'NUM')
+  const operator = block.getFieldValue('OP') as keyof typeof operations
+
+  const operations = {
+    ROUND: (x: number) => Math.round(x),
+    ROUNDUP: (x: number) => Math.floor(x),
+    ROUNDDOWN: (x: number) => Math.ceil(x),
+  }
+
+  return [{
+    compute: operations[operator],
+    resolvers: [Number],
+    nestedValues: x
+  }]
+})
+
+irGenerator.forValueBlock('math_single', function (block: Block, generator: IRGenerator) {
+  const x = generator.getInputValue(block, 'NUM')
+  const operator = block.getFieldValue('OP') as keyof typeof operations
+
+  const operations = {
+    ROOT: (x: number) => Math.sqrt(x),
+    ABS: (x: number) => Math.abs(x),
+    NEG: (x: number) => -x,
+    LN: (x: number) => Math.log(x),
+    LOG10: (x: number) => Math.log10(x),
+    EXP: (x: number) => Math.E ** x,
+    POW10: (x: number) => x ** 10,
+  }
+
+  return [{
+    compute: operations[operator],
+    resolvers: [Number],
+    nestedValues: x
+  }]
+})
+
+irGenerator.forValueBlock('math_atan2', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const x = generator.getInputValue(block, 'X')
+  const y = generator.getInputValue(block, 'Y')
+
+  return [{
+    compute: (x: number, y: number) => Math.atan2(x, y),
+    resolvers: [Number, Number],
+    nestedValues: x.concat(y)
+  }]
+})
+
+irGenerator.forValueBlock('math_modulo', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const dividend = generator.getInputValue(block, 'DIVIDEND')
+  const divisor = generator.getInputValue(block, 'DIVISOR')
+
+  return [{
+    compute: (x: number, y: number) => x % y,
+    resolvers: [Number, Number],
+    nestedValues: dividend.concat(divisor)
+  }]
+})
+
+irGenerator.forValueBlock('math_constrain', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const value = generator.getInputValue(block, 'VALUE')
+  const low = generator.getInputValue(block, 'LOW')
+  const high = generator.getInputValue(block, 'HIGH')
+  
+  return [{
+    compute: (x: number, l: number, h: number) => Math.min(Math.max(x, l), h),
+    resolvers: [Number, Number, Number],
+    nestedValues: value.concat(low).concat(high)
+  }]
+})
+
+irGenerator.forValueBlock('math_random_float', function (): ValueWrapper[] {
+  return [{ content: Math.random() }]
+})
+
+irGenerator.forValueBlock('math_modulo', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const from = generator.getInputValue(block, 'DIVIDEND')
+  const to = generator.getInputValue(block, 'DIVISOR')
+
+  function mathRandomInt(a: number, b: number): number {
+    if (a > b) [a, b] = [b, a];
+    return Math.floor(Math.random() * (b - a + 1)) + a
+  }
+  return [{
+    compute: mathRandomInt,
+    resolvers: [Number, Number],
+    nestedValues: from.concat(to)
   }]
 })
 
@@ -268,6 +409,6 @@ function createXyzAction(type: string, objectId: string, x: ValueWrapper[], y: V
     type,
     fields: [objectId],
     values: x.concat(y).concat(z),
-    resolvers: Array(3).fill(toNumber)
+    resolvers: [Number, Number, Number]
   }
 }

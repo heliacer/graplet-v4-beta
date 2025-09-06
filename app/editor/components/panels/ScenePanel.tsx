@@ -44,7 +44,7 @@ export default function ScenePanel() {
     cube.name = `Cube ${objectCounter + 1}`
 
     scene.add(cube)
-    objects.current.set(cube.uuid, cube)
+    objects.current.set(cube.name, cube)
     emitter.emit('objectCreated', { id: cube.uuid, object: cube })
     setObjectCounter(objectCounter + 1)
   }, [objectCounter, scene, objects, emitter])

@@ -18,7 +18,7 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
     workspaceRef.current = ws
     setWorkspace(ws)
 
-    ws.getVariableMap().createVariable('foo')
+    ws.getVariableMap().createVariable('my variable')
     ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
     ws.registerButtonCallback('CREATE_VARIABLE', function (button) {
       Variables.createVariableButtonHandler(button.getTargetWorkspace())
@@ -35,10 +35,10 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(containerRef.current)
 
-    const handleObjectCreated = () => {
+    const handleObjects = () => {
       const newOptions: [string, string][] = []
-      objects.current.forEach((object, key) => {
-        newOptions.push([object.name, key])
+      objects.current.forEach((object) => {
+        newOptions.push([object.name, object.name])
       })
       
       if (newOptions.length === 0){
@@ -49,10 +49,12 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
       ws.getToolbox()?.refreshSelection()
     }
 
-    emitter.on('objectCreated', handleObjectCreated)
+    emitter.on('objectCreated', handleObjects)
+    emitter.on('objectUpdated', handleObjects)
 
     return () => {
-      emitter.off('objectCreated', handleObjectCreated)
+      emitter.off('objectCreated', handleObjects)
+      emitter.off('objectUpdated', handleObjects)
       resizeObserver.disconnect()
       ws.removeChangeListener(variableListener)
       ws.dispose()
