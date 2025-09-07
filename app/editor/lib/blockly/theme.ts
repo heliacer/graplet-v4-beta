@@ -3,16 +3,16 @@ import { colors } from "./colors"
 
 interface ITheme {
     blockStyles?: {
-        [key: string]: Partial<Theme.BlockStyle>;
-    };
+        [key: string]: Partial<Theme.BlockStyle>
+    }
     categoryStyles?: {
-        [key: string]: Theme.CategoryStyle;
-    };
-    componentStyles?: Theme.ComponentStyle;
-    fontStyle?: Theme.FontStyle;
-    startHats?: boolean;
-    base?: string | Theme;
-    name: string;
+        [key: string]: Theme.CategoryStyle
+    }
+    componentStyles?: Theme.ComponentStyle
+    fontStyle?: Theme.FontStyle
+    startHats?: boolean
+    base?: string | Theme
+    name: string
 }
 
 export const theme: ITheme = {
