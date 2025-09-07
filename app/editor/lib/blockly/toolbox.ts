@@ -174,7 +174,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             A: {
               shadow: {
-                type: 'input'
+                type: 'input',
               }
             },
             B: {
@@ -448,7 +448,22 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             PROCEDURE: {
               block: {
+                inline: true,
                 type: 'procedures_callreturn',
+                extraState: {
+                  name: 'f',
+                  params: ['x']
+                },
+                inputs: {
+                  ARG0: {
+                    shadow: {
+                      type: 'input',
+                      fields: {
+                        VALUE: 0
+                      }
+                    }
+                  }
+                }
               }
             },
             NUM: {
@@ -464,7 +479,22 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             PROCEDURE: {
               block: {
+                inline: true,
                 type: 'procedures_callreturn',
+                extraState: {
+                  name: 'f',
+                  params: ['x']
+                },
+                inputs: {
+                  ARG0: {
+                    shadow: {
+                      type: 'input',
+                      fields: {
+                        VALUE: 0
+                      }
+                    }
+                  }
+                }
               }
             },
             FROM: {

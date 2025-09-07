@@ -5,7 +5,7 @@ export interface Action {
   fields?: Value[]
   values?: ValueWrapper[]
   resolvers?: Array<((v: Value) => Value) | undefined>
-  children?: Action[]
+  actionsList?: Array<Action[]>
 }
 
 export interface ValueWrapper {
@@ -34,7 +34,7 @@ export interface Context {
   variables: VariableManager
 }
 
-export type Value = string | number // More in future, such as Mesh, Vector3, etc...
+export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
 
 export class VariableManager {
   private variables: Map<string, Value> = new Map()

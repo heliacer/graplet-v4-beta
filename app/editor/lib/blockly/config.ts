@@ -1,4 +1,4 @@
-import { Block, blockRendering, common, ContextMenuItems, Extensions, FieldDropdown, registry, Scrollbar, serialization, ToolboxCategory, VerticalFlyout } from "blockly"
+import { Block, blockRendering, common, ContextMenuItems, Extensions, FieldDropdown, registry, Scrollbar, ToolboxCategory, VerticalFlyout } from "blockly"
 import { ContinuousCategory, ContinuousFlyout, ContinuousMetrics, ContinuousToolbox, RecyclableBlockFlyoutInflater } from "@blockly/continuous-toolbox"
 import { registerFieldAngle } from "@blockly/field-angle"
 import { GrapletRenderer } from "./renderer"
@@ -48,7 +48,6 @@ const IS_DIVISIBLE_MUTATOR_EXTENSION = function (this: DivisiblebyBlock) {
     },
   )
 }
-
 
 export function initializeBlockly() {
   Extensions.unregister('math_is_divisibleby_mutator')

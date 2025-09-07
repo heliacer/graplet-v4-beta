@@ -1,4 +1,4 @@
-import { Block, Workspace } from "blockly"
+import { Block, Input, Workspace } from "blockly"
 import { Action, ActionScript, IR, Value, ValueWrapper } from "../types"
 
 class IRGenerator {
@@ -19,14 +19,14 @@ class IRGenerator {
     this.triggerBlocks.add(blockType)
   }
 
-  getInputValue(block: Block, inputName: string): ValueWrapper[] {
+  getInputValue(block: Block, inputName: string, preset?: Value): ValueWrapper[] {
     const input = block.getInput(inputName)
     if (!input || !input.connection) {
       return [{}]
     }
     const connectedBlock = input.connection.targetBlock()
     if (!connectedBlock) {
-      return [{}]
+      return [{ content: preset }]
     }
     const valueGenerator = this.valueGenerators[connectedBlock.type]
     if (valueGenerator) {
@@ -150,25 +150,48 @@ irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenera
 
 irGenerator.forBlock('repeat', function (block: Block, generator: IRGenerator): Action {
   const value = generator.getInputValue(block, 'TIMES')
-
-  const actionsInput = block.getInput('ACTIONS')
-  const children: Action[] = []
-  if (actionsInput && actionsInput.connection && actionsInput.connection.targetBlock()) {
-    let currentBlock = actionsInput.connection.targetBlock()
-    while (currentBlock) {
-      const action = generator.blockToAction(currentBlock)
-      if (action) {
-        children.push(action)
-      }
-      currentBlock = currentBlock.getNextBlock()
-    }
-  }
+  const actions: Action[] = generateActionsFromInput(block.getInput('ACTIONS'), generator)
 
   return {
     type: 'repeat',
     values: value,
     resolvers: [Number],
-    children: children
+    actionsList: [actions]
+  }
+})
+
+irGenerator.forBlock('controls_if', function (block: Block, generator: IRGenerator): Action {
+  const branches: Action[][] = []
+  const conditions: ValueWrapper[] = []
+
+  let i = 0
+  while (block.getInput('IF' + i)) {
+    const condition = generator.getInputValue(block, 'IF' + i, false)
+    conditions.push(...condition)
+    const doActions: Action[] = generateActionsFromInput(block.getInput('DO' + i), generator)
+    branches.push(doActions)
+    i++
+  }
+
+  const elseActions: Action[] = generateActionsFromInput(block.getInput('ELSE'), generator)
+  branches.push(elseActions)
+
+  return {
+    type: 'if',
+    values: conditions,
+    actionsList: branches  // [if_actions, elseif1_actions, elseif2_actions, ..., else_actions]
+  }
+})
+
+irGenerator.forBlock('controls_ifelse', function (block: Block, generator: IRGenerator): Action {
+  const condition = generator.getInputValue(block, 'IF0', false)
+  const doActions: Action[] = generateActionsFromInput(block.getInput('DO0'), generator)
+  const elseActions: Action[] = generateActionsFromInput(block.getInput('ELSE'), generator)
+
+  return {
+    type: 'if',
+    values: condition,
+    actionsList: [doActions, elseActions]
   }
 })
 
@@ -193,6 +216,11 @@ irGenerator.forValueBlock('text', function (block: Block): ValueWrapper[] {
 irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
   const value = block.getFieldValue('VALUE') as Value
   return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
+})
+
+irGenerator.forValueBlock('logic_boolean', function (block: Block): ValueWrapper[] {
+  const bool = block.getFieldValue('BOOL')
+  return [{ content: bool === 'TRUE' ? true: false }]
 })
 
 irGenerator.forValueBlock('variables_get', function (block: Block): ValueWrapper[] {
@@ -377,7 +405,7 @@ irGenerator.forValueBlock('math_constrain', function (block: Block, generator: I
   const value = generator.getInputValue(block, 'VALUE')
   const low = generator.getInputValue(block, 'LOW')
   const high = generator.getInputValue(block, 'HIGH')
-  
+
   return [{
     compute: (x: number, l: number, h: number) => Math.min(Math.max(x, l), h),
     resolvers: [Number, Number, Number],
@@ -394,7 +422,7 @@ irGenerator.forValueBlock('math_modulo', function (block: Block, generator: IRGe
   const to = generator.getInputValue(block, 'DIVISOR')
 
   function mathRandomInt(a: number, b: number): number {
-    if (a > b) [a, b] = [b, a];
+    if (a > b) [a, b] = [b, a]
     return Math.floor(Math.random() * (b - a + 1)) + a
   }
   return [{
@@ -411,4 +439,19 @@ function createXyzAction(type: string, objectId: string, x: ValueWrapper[], y: V
     values: x.concat(y).concat(z),
     resolvers: [Number, Number, Number]
   }
+}
+
+function generateActionsFromInput(input: Input | null, generator: IRGenerator): Action[] {
+  const actions: Action[] = []
+  if (input?.connection?.targetBlock()) {
+    let currentBlock = input.connection.targetBlock()
+    while (currentBlock) {
+      const action = generator.blockToAction(currentBlock)
+      if (action) {
+        actions.push(action)
+      }
+      currentBlock = currentBlock.getNextBlock()
+    }
+  }
+  return actions
 }
