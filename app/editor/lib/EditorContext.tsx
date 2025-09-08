@@ -1,11 +1,11 @@
 import React, { createContext, RefObject, useContext, useRef, useState } from "react"
 import { WorkspaceSvg } from "blockly"
-import { ObjectsRecord } from "./types"
+import { ObjectsEnv } from "./types"
 
 interface EditorContextType {
   workspace: WorkspaceSvg | null
   setWorkspace: (workspace: WorkspaceSvg | null) => void
-  objects: RefObject<ObjectsRecord>
+  objects: RefObject<ObjectsEnv>
   currentObject: string,
   setCurrentObject: (key: string) => void
 }

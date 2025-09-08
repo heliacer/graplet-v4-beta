@@ -26,30 +26,15 @@ export interface IR {
   scripts: ActionScript[]
 }
 
-export type ObjectsRecord = Map<string, Object3D<Object3DEventMap>>
+export type ObjectsEnv = Map<string, Object3D<Object3DEventMap>>
+export type VariableEnv = Map<string, Value>
+export type FunctionsEnv = Map<string, Action[]>
 
 export interface Context {
   scene: Scene
-  objects: ObjectsRecord
-  variables: VariableManager
+  objects: ObjectsEnv
+  variables: VariableEnv
+  functions: FunctionsEnv
 }
 
-export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
-
-export class VariableManager {
-  private variables: Map<string, Value> = new Map()
-
-  set(varId: string, value: Value) {
-    const numValue = Number(value)
-    this.variables.set(varId, Number.isNaN(numValue) ? value : numValue)
-  }
-
-  get(varId: string): Value {
-    return this.variables.get(varId) ?? 0
-  }
-
-  change(varId: string, delta: number) {
-    const value = this.get(varId)
-    this.set(varId, (typeof value === 'number' ? value : 0) + delta)
-  }
-}
+export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...S

@@ -1,6 +1,11 @@
 import { Action, Context, IR, Value, ValueWrapper } from "../types"
 
 export async function interpret(ir: IR, context: Context) {
+  // TODO filter functions, register them - review trigger stuff.
+  const functions = ir.scripts
+    .filter(script => script.trigger.type === 'procedures_defreturn' || 'procedures_defnoreturn')
+    .map(script => console.log(script))
+
   const promises = ir.scripts
     .filter(script => script.trigger.type === 'onclickrun')
     .map(script => executeActions(script.actions, context))
@@ -19,19 +24,21 @@ export async function executeActions(actions: Action[], context: Context) {
       fields.push(resolved)
     })
 
-    const { objects } = context
+    const { objects, variables, functions } = context
 
     switch (action.type) {
       case 'setvar': {
         const [varId, value] = fields as [string, Value]
         console.log(`set variable ${varId} to ${value}`)
-        context.variables.set(varId, value)
+        const numValue = Number(value)
+        variables.set(varId, Number.isNaN(numValue) ? value : numValue)
         break
       }
       case 'changevar': {
         const [varId, delta] = fields as [string, number]
         console.log(`changed variable ${varId} by ${delta}`)
-        context.variables.change(varId, delta)
+        const value = variables.get(varId)
+        variables.set(varId, (typeof value === 'number' ? value : 0) + delta)
         break
       }
       case 'wait': {
@@ -152,17 +159,20 @@ export async function executeActions(actions: Action[], context: Context) {
 }
 
 function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
+  const { nestedValues, compute, content, id} = wrapper
+  const { variables } = context
+
   // variable reference
-  if (wrapper.id !== undefined) return context.variables.get(wrapper.id)
+  if (id !== undefined) return variables.get(id) || 0
 
   // resolve nested values
-  if (wrapper.nestedValues && wrapper.nestedValues.length > 0 && wrapper.compute) {
-    const resolvedValues = wrapper.nestedValues.map(nestedValue =>
+  if (nestedValues && nestedValues.length > 0 && compute) {
+    const resolvedValues = nestedValues.map(nestedValue =>
       resolveValueWrapper(nestedValue, context)
     )
-    return wrapper.compute(...resolvedValues)
+    return compute(...resolvedValues)
   }
 
-  if (wrapper.content === undefined) throw new Error('Invalid ValueWrapper: No id, content, or compute function found')
-  return wrapper.content
+  if (content === undefined) throw new Error('Invalid ValueWrapper: No id, content, or compute function found')
+  return content
 }

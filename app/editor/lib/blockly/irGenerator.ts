@@ -3,9 +3,9 @@ import { Action, ActionScript, IR, Value, ValueWrapper } from "../types"
 
 export class IRGenerator {
   private blockGenerators: Record<string, (block: Block, generator: IRGenerator) => Action | null> = {}
-
   private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => ValueWrapper[]> = {}
   private triggerBlocks = new Set(['onclickrun'])
+  private functionBlocks = new Set(['procedures_defreturn', 'procedures_defnoreturn'])
 
   forBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => Action | null) {
     this.blockGenerators[blockType] = generatorFn
@@ -13,10 +13,6 @@ export class IRGenerator {
 
   forValueBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => ValueWrapper[]) {
     this.valueGenerators[blockType] = generatorFn
-  }
-
-  registerTrigger(blockType: string) {
-    this.triggerBlocks.add(blockType)
   }
 
   getInputValue(block: Block, inputName: string, preset?: Value): ValueWrapper[] {
@@ -58,6 +54,10 @@ export class IRGenerator {
             actions
           })
         }
+      }
+      if (this.functionBlocks.has(block.type)){
+        const decl = this.blockToAction(block)
+        console.log(decl)
       }
     }
     return { scripts: scripts }
@@ -157,10 +157,7 @@ irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenera
 
 // EVENTS
 irGenerator.forBlock('onclickrun', function (): Action {
-  return {
-    type: 'onclickrun',
-    fields: []
-  }
+  return { type: 'onclickrun' }
 })
 
 // LOGIC
@@ -484,8 +481,14 @@ irGenerator.forBlock('variables_set', function (block: Block, generator: IRGener
 })
 
 // FUNCTIONS
+irGenerator.forBlock('procedures_defnoreturn', function (block: Block, generator: IRGenerator): Action {
+  const actions: Action[] = generateActionsFromInput(block.getInput('STACK'), generator)
 
-
+  return {
+    type: 'defnoreturn',
+    actionsList: [actions]
+  }
+})
 
 
 // Helper Functions 

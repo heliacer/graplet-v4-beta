@@ -4,7 +4,7 @@ import { useEditor } from "../../lib/EditorContext"
 import { irGenerator } from "../../lib/blockly/IRGenerator"
 import { executeActions, interpret } from "../../lib/blockly/interpreter"
 import { Block, Events } from "blockly"
-import { Action, VariableManager } from "../../lib/types"
+import { Action, VariableEnv, FunctionsEnv } from "../../lib/types"
 import { useTrigger } from "../../lib/TriggerContext"
 import { ThreeEvent, useThree } from "@react-three/fiber"
 import { Grid, OrbitControls, TransformControls, useCursor } from "@react-three/drei"
@@ -29,7 +29,8 @@ function Object({ object, onSelect, onDeselect }: {
 }
 
 export default function ScenePanel() {
-  const [variableManager] = useState(() => new VariableManager())
+  const [variableEnv] = useState<VariableEnv>(new Map())
+  const [functionsEnv] = useState<FunctionsEnv>(new Map())
   const [objectCounter, setObjectCounter] = useState(0)
   const { scene } = useThree()
   const { workspace, objects, currentObject, setCurrentObject } = useEditor()
@@ -63,7 +64,8 @@ export default function ScenePanel() {
         {
           scene,
           objects: objects.current,
-          variables: variableManager
+          variables: variableEnv,
+          functions: functionsEnv
         }
       ).then(() => {
         console.log('Execution completed')
@@ -101,7 +103,7 @@ export default function ScenePanel() {
       workspace?.removeChangeListener(handleWorkspaceClick)
       workspace?.getFlyout()?.getWorkspace().removeChangeListener(handleFlyoutWorkspaceClick)
     }
-  }, [workspace, objects, scene, variableManager])
+  }, [workspace, objects, scene, variableEnv])
   
   useEffect(() => {
     const handleRunScene = () => {
@@ -114,7 +116,8 @@ export default function ScenePanel() {
         {
           scene,
           objects: objects.current,
-          variables: variableManager
+          variables: variableEnv,
+          functions: functionsEnv
         }
       ).then(() => {
         // TODO: Update run button, trigger runEnd
@@ -125,7 +128,7 @@ export default function ScenePanel() {
     }
     emitter.on('runScene', handleRunScene)
     return () => emitter.off('runScene', handleRunScene)
-  }, [objects, scene, emitter, workspace, variableManager])
+  }, [objects, scene, emitter, workspace, variableEnv])
   
   useEffect(() => {
     emitter.on('createObject', handleCreateObject)
