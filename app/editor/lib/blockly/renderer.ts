@@ -39,7 +39,7 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
       },
     }
 
-    this.SMALL_PADDING = this.GRID_UNIT
+    this.SMALL_PADDING = 0.5 * this.GRID_UNIT
     this.MEDIUM_PADDING = 2 * this.GRID_UNIT
     this.MEDIUM_LARGE_PADDING = 3 * this.GRID_UNIT
     this.LARGE_PADDING = 4 * this.GRID_UNIT
@@ -50,9 +50,9 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
     this.STATEMENT_INPUT_NOTCH_OFFSET = this.NOTCH_OFFSET_LEFT
     this.MIN_BLOCK_WIDTH = 2 * this.GRID_UNIT
     this.MIN_BLOCK_HEIGHT = 12 * this.GRID_UNIT
-    this.EMPTY_STATEMENT_INPUT_HEIGHT = 6 * this.GRID_UNIT
-    this.TOP_ROW_MIN_HEIGHT = 5
-    this.TOP_ROW_PRECEDES_STATEMENT_MIN_HEIGHT = this.LARGE_PADDING
+    this.EMPTY_STATEMENT_INPUT_HEIGHT = 8 * this.GRID_UNIT
+    this.TOP_ROW_MIN_HEIGHT = 5 
+    this.TOP_ROW_PRECEDES_STATEMENT_MIN_HEIGHT = this.LARGE_PADDING 
     this.BOTTOM_ROW_MIN_HEIGHT = 5
     this.BOTTOM_ROW_AFTER_STATEMENT_MIN_HEIGHT = 6 * this.GRID_UNIT
     this.STATEMENT_BOTTOM_SPACER = -this.NOTCH_HEIGHT

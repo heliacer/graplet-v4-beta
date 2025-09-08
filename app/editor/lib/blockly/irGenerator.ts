@@ -1,7 +1,7 @@
 import { Block, Input, Workspace } from "blockly"
 import { Action, ActionScript, IR, Value, ValueWrapper } from "../types"
 
-class IRGenerator {
+export class IRGenerator {
   private blockGenerators: Record<string, (block: Block, generator: IRGenerator) => Action | null> = {}
 
   private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => ValueWrapper[]> = {}
@@ -78,13 +78,20 @@ class IRGenerator {
 
 export const irGenerator = new IRGenerator()
 
-irGenerator.forBlock('onclickrun', function (): Action {
-  return {
-    type: 'onclickrun',
-    fields: []
-  }
+irGenerator.forValueBlock('math_number', function (block: Block): ValueWrapper[] {
+  return [{ content: block.getFieldValue('NUM') }]
 })
 
+irGenerator.forValueBlock('text', function (block: Block): ValueWrapper[] {
+  return [{ content: block.getFieldValue('TEXT') }]
+})
+
+irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
+  const value = block.getFieldValue('VALUE') as Value
+  return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
+})
+
+// MOTION
 irGenerator.forBlock('moveunitsxyz', function (block: Block, generator: IRGenerator): Action {
   const objectId = block.getFieldValue('OBJECT') as string
   const units = generator.getInputValue(block, 'UNITS')
@@ -148,6 +155,15 @@ irGenerator.forBlock('translatexyz', function (block: Block, generator: IRGenera
   }
 })
 
+// EVENTS
+irGenerator.forBlock('onclickrun', function (): Action {
+  return {
+    type: 'onclickrun',
+    fields: []
+  }
+})
+
+// LOGIC
 irGenerator.forBlock('repeat', function (block: Block, generator: IRGenerator): Action {
   const value = generator.getInputValue(block, 'TIMES')
   const actions: Action[] = generateActionsFromInput(block.getInput('ACTIONS'), generator)
@@ -205,39 +221,58 @@ irGenerator.forBlock('wait', function (block: Block, generator: IRGenerator): Ac
   }
 })
 
-irGenerator.forValueBlock('math_number', function (block: Block): ValueWrapper[] {
-  return [{ content: block.getFieldValue('NUM') }]
-})
-
-irGenerator.forValueBlock('text', function (block: Block): ValueWrapper[] {
-  return [{ content: block.getFieldValue('TEXT') }]
-})
-
-irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
-  const value = block.getFieldValue('VALUE') as Value
-  return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
-})
-
 irGenerator.forValueBlock('logic_boolean', function (block: Block): ValueWrapper[] {
   const bool = block.getFieldValue('BOOL')
-  return [{ content: bool === 'TRUE' ? true: false }]
+  return [{ content: bool === 'TRUE' ? true : false }]
 })
+irGenerator.forValueBlock('logic_operation', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const operator = block.getFieldValue('OP') as keyof typeof operations
+  const a = generator.getInputValue(block, 'A', false)
+  const b = generator.getInputValue(block, 'B', false)
 
-irGenerator.forValueBlock('variables_get', function (block: Block): ValueWrapper[] {
-  const varId = block.getFieldValue('VAR') as string
-  return [{ id: varId }]
-})
-
-irGenerator.forBlock('variables_set', function (block: Block, generator: IRGenerator): Action {
-  const varId = block.getFieldValue('VAR') as string
-  const value = generator.getInputValue(block, 'VALUE')
-  return {
-    type: 'setvar',
-    fields: [varId],
-    values: value
+  const operations = {
+    AND: (a: boolean, b: boolean) => a && b,
+    OR: (a: boolean, b: boolean) => a || b
   }
+
+  return [{
+    compute: operations[operator],
+    resolvers: [Boolean, Boolean],
+    nestedValues: a.concat(b)
+  }]
 })
 
+irGenerator.forValueBlock('logic_negate', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const bool = generator.getInputValue(block, 'BOOL', false)
+  
+  return [{
+    compute: (b: boolean) => !b,
+    resolvers: [Boolean],
+    nestedValues: bool
+  }]
+})
+
+irGenerator.forValueBlock('logic_compare', function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  const operator = block.getFieldValue('OP') as keyof typeof operations
+  const a = generator.getInputValue(block, 'A')
+  const b = generator.getInputValue(block, 'B')
+  
+  const operations = {
+    EQ: (a: Value, b: Value) => a == b,
+    NEQ: (a: Value, b: Value) => a != b,
+    LT: (a: Value, b: Value) => a < b,
+    LTE: (a: Value, b: Value) => a <= b,
+    GT: (a: Value, b: Value) => a > b,
+    GTE: (a: Value, b: Value) => a >= b,
+  }
+
+  return [{
+    compute: operations[operator],
+    nestedValues: a.concat(b)
+  }]
+})
+
+// MATH
 irGenerator.forBlock('math_change', function (block: Block, generator: IRGenerator): Action {
   const varId = block.getFieldValue('VAR') as string
   const delta = generator.getInputValue(block, 'DELTA')
@@ -432,16 +467,30 @@ irGenerator.forValueBlock('math_modulo', function (block: Block, generator: IRGe
   }]
 })
 
-function createXyzAction(type: string, objectId: string, x: ValueWrapper[], y: ValueWrapper[], z: ValueWrapper[]): Action {
-  return {
-    type,
-    fields: [objectId],
-    values: x.concat(y).concat(z),
-    resolvers: [Number, Number, Number]
-  }
-}
+// VARIABLES
+irGenerator.forValueBlock('variables_get', function (block: Block): ValueWrapper[] {
+  const varId = block.getFieldValue('VAR') as string
+  return [{ id: varId }]
+})
 
-function generateActionsFromInput(input: Input | null, generator: IRGenerator): Action[] {
+irGenerator.forBlock('variables_set', function (block: Block, generator: IRGenerator): Action {
+  const varId = block.getFieldValue('VAR') as string
+  const value = generator.getInputValue(block, 'VALUE')
+  return {
+    type: 'setvar',
+    fields: [varId],
+    values: value
+  }
+})
+
+// FUNCTIONS
+
+
+
+
+// Helper Functions 
+
+export function generateActionsFromInput(input: Input | null, generator: IRGenerator): Action[] {
   const actions: Action[] = []
   if (input?.connection?.targetBlock()) {
     let currentBlock = input.connection.targetBlock()
@@ -454,4 +503,13 @@ function generateActionsFromInput(input: Input | null, generator: IRGenerator): 
     }
   }
   return actions
+}
+
+function createXyzAction(type: string, objectId: string, x: ValueWrapper[], y: ValueWrapper[], z: ValueWrapper[]): Action {
+  return {
+    type,
+    fields: [objectId],
+    values: x.concat(y).concat(z),
+    resolvers: [Number, Number, Number]
+  }
 }
