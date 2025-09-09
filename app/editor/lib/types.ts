@@ -23,7 +23,8 @@ export type ScriptType =
   | 'onclickrun'
 
 export interface ActionScript {
-  type: ScriptType 
+  type: ScriptType
+  name?: string,
   actions: Action[]
 }
 

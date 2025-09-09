@@ -103,7 +103,7 @@ export default function ScenePanel() {
       workspace?.removeChangeListener(handleWorkspaceClick)
       workspace?.getFlyout()?.getWorkspace().removeChangeListener(handleFlyoutWorkspaceClick)
     }
-  }, [workspace, objects, scene, variableEnv])
+  }, [workspace, objects, scene, variableEnv, functionsEnv])
   
   useEffect(() => {
     const handleRunScene = () => {
@@ -128,7 +128,7 @@ export default function ScenePanel() {
     }
     emitter.on('runScene', handleRunScene)
     return () => emitter.off('runScene', handleRunScene)
-  }, [objects, scene, emitter, workspace, variableEnv])
+  }, [objects, scene, emitter, workspace, variableEnv, functionsEnv])
   
   useEffect(() => {
     emitter.on('createObject', handleCreateObject)

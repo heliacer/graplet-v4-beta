@@ -48,10 +48,15 @@ export class IRGenerator {
         const action = this.blockToAction(block)
         if (action) {
           const actions = this.getConnectedActions(block)
-          scripts.push({
+          const { fields } = action
+          const actionScript: ActionScript = {
             type: action.type as ScriptType,
-            actions
-          })
+            actions: action.actionsList ? action.actionsList[0] : actions
+          }
+          if (fields && fields[0]) {
+            actionScript.name = fields[0] as string
+          }
+          scripts.push(actionScript)
         }
       }
     }
@@ -214,7 +219,7 @@ irGenerator.forBlock('wait', function (block: Block, generator: IRGenerator): Ac
 })
 
 irGenerator.forValueBlock('logic_boolean', function (block: Block): ValueWrapper[] {
-  const bool = block.getFieldValue('BOOL')
+  const bool = block.getFieldValue('BOOL') as 'TRUE' | 'FALSE'
   return [{ content: bool === 'TRUE' ? true : false }]
 })
 irGenerator.forValueBlock('logic_operation', function (block: Block, generator: IRGenerator): ValueWrapper[] {
@@ -236,7 +241,7 @@ irGenerator.forValueBlock('logic_operation', function (block: Block, generator: 
 
 irGenerator.forValueBlock('logic_negate', function (block: Block, generator: IRGenerator): ValueWrapper[] {
   const bool = generator.getInputValue(block, 'BOOL', false)
-  
+
   return [{
     compute: (b: boolean) => !b,
     resolvers: [Boolean],
@@ -248,7 +253,7 @@ irGenerator.forValueBlock('logic_compare', function (block: Block, generator: IR
   const operator = block.getFieldValue('OP') as keyof typeof operations
   const a = generator.getInputValue(block, 'A')
   const b = generator.getInputValue(block, 'B')
-  
+
   const operations = {
     EQ: (a: Value, b: Value) => a == b,
     NEQ: (a: Value, b: Value) => a != b,
@@ -478,10 +483,22 @@ irGenerator.forBlock('variables_set', function (block: Block, generator: IRGener
 // FUNCTIONS
 irGenerator.forBlock('procedures_defnoreturn', function (block: Block, generator: IRGenerator): Action {
   const actions: Action[] = generateActionsFromInput(block.getInput('STACK'), generator)
+  const name = block.getFieldValue('NAME') as string
 
   return {
-    type: 'defnoreturn',
+    type: 'procedures_defnoreturn',
+    fields: [name],
     actionsList: [actions]
+  }
+})
+
+irGenerator.forBlock('procedures_callnoreturn', function (block: Block): Action {
+  const extraState = block.saveExtraState && block.saveExtraState(true) as { name: string }
+  if (!extraState) throw Error('Extrastate does not exist.')
+  
+  return {
+    type: 'procedures_callnoreturn',
+    fields: [extraState?.name]
   }
 })
 

@@ -6,8 +6,9 @@ export async function interpret(ir: IR, context: Context) {
   ir.scripts
     .filter(script => script.type === 'procedures_defnoreturn')
     .forEach(script => {
-      functions.set('test', script.actions)
-    })  
+      if (!script.name) throw Error('Function does not have a name.')
+      functions.set(script.name, script.actions)
+    })
     
   console.log(context.functions)
   const promises = ir.scripts
@@ -59,6 +60,13 @@ export async function executeActions(actions: Action[], context: Context) {
           }
         }
         break
+      }
+      case 'procedures_callnoreturn': {
+        const [funcName] = fields as [string]
+        const actions = functions.get(funcName)
+        if (actions){
+          await executeActions(actions, context)
+        }
       }
       case 'if': {
         const [condition, ...restConditions] = fields as [boolean, ...boolean[]]
@@ -157,7 +165,7 @@ export async function executeActions(actions: Action[], context: Context) {
         break
       }
       default:
-        console.warn(`Unknown action type: ${action.type}`)
+        console.error(`Unknown action type: ${action.type}`)
     }
   }
 }
