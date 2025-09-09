@@ -69,6 +69,8 @@ const IS_DIVISIBLE_MUTATOR_EXTENSION = function (this: DivisiblebyBlock) {
   })
 }
 
+// TODO: Override ifreturn mutator mixins
+
 export function initializeBlockly() {
   Extensions.unregister('math_is_divisibleby_mutator')
   Extensions.registerMutator(
