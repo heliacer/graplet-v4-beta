@@ -1,13 +1,17 @@
 import { Action, Context, IR, Value, ValueWrapper } from "../types"
 
 export async function interpret(ir: IR, context: Context) {
-  // TODO filter functions, register them - review trigger stuff.
-  const functions = ir.scripts
-    .filter(script => script.trigger.type === 'procedures_defreturn' || 'procedures_defnoreturn')
-    .map(script => console.log(script))
-
+  const { functions } = context
+  // TODO: get func name, also, update varEnv / funcEnv on var / func delete
+  ir.scripts
+    .filter(script => script.type === 'procedures_defnoreturn')
+    .forEach(script => {
+      functions.set('test', script.actions)
+    })  
+    
+  console.log(context.functions)
   const promises = ir.scripts
-    .filter(script => script.trigger.type === 'onclickrun')
+    .filter(script => script.type === 'onclickrun')
     .map(script => executeActions(script.actions, context))
   await Promise.all(promises)
 }

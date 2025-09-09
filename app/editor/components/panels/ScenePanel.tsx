@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from "three"
 import { useEditor } from "../../lib/EditorContext"
-import { irGenerator } from "../../lib/blockly/IRGenerator"
+import { irGenerator } from "../../lib/blockly/irGenerator"
 import { executeActions, interpret } from "../../lib/blockly/interpreter"
 import { Block, Events } from "blockly"
 import { Action, VariableEnv, FunctionsEnv } from "../../lib/types"

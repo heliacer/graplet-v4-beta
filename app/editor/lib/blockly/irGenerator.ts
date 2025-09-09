@@ -1,11 +1,10 @@
 import { Block, Input, Workspace } from "blockly"
-import { Action, ActionScript, IR, Value, ValueWrapper } from "../types"
+import { Action, ActionScript, IR, Value, ValueWrapper, ScriptType } from "../types"
 
 export class IRGenerator {
   private blockGenerators: Record<string, (block: Block, generator: IRGenerator) => Action | null> = {}
   private valueGenerators: Record<string, (block: Block, generator: IRGenerator) => ValueWrapper[]> = {}
-  private triggerBlocks = new Set(['onclickrun'])
-  private functionBlocks = new Set(['procedures_defreturn', 'procedures_defnoreturn'])
+  private scriptTypes = new Set<ScriptType>(['onclickrun', 'procedures_defnoreturn', 'procedures_defreturn'])
 
   forBlock(blockType: string, generatorFn: (block: Block, generator: IRGenerator) => Action | null) {
     this.blockGenerators[blockType] = generatorFn
@@ -45,19 +44,15 @@ export class IRGenerator {
     const topBlocks = workspace.getTopBlocks(true)
     const scripts: ActionScript[] = []
     for (const block of topBlocks) {
-      if (this.triggerBlocks.has(block.type)) {
-        const trigger = this.blockToAction(block)
-        if (trigger) {
+      if (this.scriptTypes.has(block.type as ScriptType)) {
+        const action = this.blockToAction(block)
+        if (action) {
           const actions = this.getConnectedActions(block)
           scripts.push({
-            trigger,
+            type: action.type as ScriptType,
             actions
           })
         }
-      }
-      if (this.functionBlocks.has(block.type)){
-        const decl = this.blockToAction(block)
-        console.log(decl)
       }
     }
     return { scripts: scripts }

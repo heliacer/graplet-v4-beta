@@ -17,8 +17,13 @@ export interface ValueWrapper {
   resolvers?: Array<((v: Value) => Value) | undefined>
 }
 
+export type ScriptType =
+    'procedures_defreturn'
+  | 'procedures_defnoreturn'
+  | 'onclickrun'
+
 export interface ActionScript {
-  trigger: Action
+  type: ScriptType 
   actions: Action[]
 }
 
