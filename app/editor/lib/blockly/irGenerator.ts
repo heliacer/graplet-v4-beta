@@ -77,13 +77,16 @@ export class IRGenerator {
         const action = this.blockToAction(block)
         if (action) {
           const actions = this.getConnectedActions(block)
-          const { fields } = action
+          const { fields, values } = action
           const actionScript: ActionScript = {
             type: action.type as ScriptType,
             actions: action.actionsList ? action.actionsList[0] : actions
           }
           if (fields && fields[0]) {
             actionScript.name = fields[0] as string
+          }
+          if (values && values[0]) {
+            actionScript.returns = values[0]
           }
           scripts.push(actionScript)
         }
@@ -627,7 +630,7 @@ irGenerator.forValueBlock(
   'variables_get',
   function (block: Block): ValueWrapper[] {
     const varId = block.getFieldValue('VAR') as string
-    return [{ id: varId }]
+    return [{ varId: varId }]
   }
 )
 
@@ -663,6 +666,25 @@ irGenerator.forBlock(
 )
 
 irGenerator.forBlock(
+  'procedures_defreturn',
+  function (block: Block, generator: IRGenerator): Action {
+    const actions: Action[] = generateActionsFromInput(
+      block.getInput('STACK'),
+      generator
+    )
+    const name = block.getFieldValue('NAME') as string
+    const returnValue = generator.getInputValue(block, 'RETURN', 0)
+
+    return {
+      type: 'procedures_defreturn',
+      fields: [name],
+      values: returnValue,
+      actionsList: [actions]
+    }
+  }
+)
+
+irGenerator.forBlock(
   'procedures_callnoreturn',
   function (block: Block): Action {
     const extraState =
@@ -671,8 +693,19 @@ irGenerator.forBlock(
 
     return {
       type: 'procedures_callnoreturn',
-      fields: [extraState?.name]
+      fields: [extraState.name]
     }
+  }
+)
+
+irGenerator.forValueBlock(
+  'procedures_callreturn',
+  function (block: Block): ValueWrapper[] {
+    const extraState =
+      block.saveExtraState && (block.saveExtraState(true) as { name: string })
+    if (!extraState) throw Error('Extrastate does not exist.')
+
+    return [{ funcName: extraState.name }]
   }
 )
 

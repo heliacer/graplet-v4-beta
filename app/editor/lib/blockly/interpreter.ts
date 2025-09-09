@@ -1,23 +1,31 @@
-import { Action, Context, IR, Value, ValueWrapper } from '../types'
+import { Action, Context, IR, Value, ValueWrapper, Func } from '../types'
 
 export async function interpret(ir: IR, context: Context) {
   const { functions } = context
   // TODO: get func name, also, update varEnv / funcEnv on var / func delete
   ir.scripts
-    .filter((script) => script.type === 'procedures_defnoreturn')
+    .filter(
+      (script) =>
+        script.type === 'procedures_defnoreturn' ||
+        script.type === 'procedures_defreturn'
+    )
     .forEach((script) => {
       if (!script.name) throw Error('Function does not have a name.')
-      functions.set(script.name, script.actions)
+      const { actions, returns } = script
+      const func: Func = { actions, returns }
+      functions.set(script.name, func)
     })
 
-  console.log(context.functions)
   const promises = ir.scripts
     .filter((script) => script.type === 'onclickrun')
     .map((script) => executeActions(script.actions, context))
   await Promise.all(promises)
 }
 
-export async function executeActions(actions: Action[], context: Context) {
+export async function executeActions(
+  actions: Action[],
+  context: Context
+): Promise<void | ValueWrapper[]> {
   for (const action of actions) {
     const fields = [...(action.fields || [])]
 
@@ -64,9 +72,9 @@ export async function executeActions(actions: Action[], context: Context) {
       }
       case 'procedures_callnoreturn': {
         const [funcName] = fields as [string]
-        const actions = functions.get(funcName)
-        if (actions) {
-          await executeActions(actions, context)
+        const func = functions.get(funcName)
+        if (func) {
+          await executeActions(func.actions, context)
         }
       }
       case 'if': {
@@ -175,17 +183,30 @@ export async function executeActions(actions: Action[], context: Context) {
         break
       }
       default:
-        console.error(`Unknown action type: ${action.type}`)
+        console.warn(`Unknown action type: ${action.type}`)
     }
   }
 }
 
 function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
-  const { nestedValues, compute, content, id } = wrapper
-  const { variables } = context
+  const { nestedValues, compute, content, varId, funcName } = wrapper
+  const { variables, functions } = context
 
   // variable reference
-  if (id !== undefined) return variables.get(id) || 0
+  if (varId !== undefined) return variables.get(varId) || 0
+
+  // function reference
+  if (funcName !== undefined) {
+    const func = functions.get(funcName)
+    if (func) {
+      executeActions(func.actions, context)
+      if (func.returns) {
+        const returnValue = resolveValueWrapper(func.returns, context)
+        return returnValue
+      }
+      return 0
+    }
+  }
 
   // resolve nested values
   if (nestedValues && nestedValues.length > 0 && compute) {

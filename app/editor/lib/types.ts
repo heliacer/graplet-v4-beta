@@ -9,7 +9,8 @@ export interface Action {
 }
 
 export interface ValueWrapper {
-  id?: string
+  varId?: string
+  funcName?: string
   content?: Value
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   compute?: Function
@@ -25,6 +26,7 @@ export type ScriptType =
 export interface ActionScript {
   type: ScriptType
   name?: string
+  returns?: ValueWrapper
   actions: Action[]
 }
 
@@ -34,7 +36,12 @@ export interface IR {
 
 export type ObjectsEnv = Map<string, Object3D<Object3DEventMap>>
 export type VariableEnv = Map<string, Value>
-export type FunctionsEnv = Map<string, Action[]>
+export type FunctionsEnv = Map<string, Func>
+
+export interface Func {
+  actions: Action[]
+  returns: ValueWrapper | undefined
+}
 
 export interface Context {
   scene: Scene
