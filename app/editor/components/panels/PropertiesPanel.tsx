@@ -1,11 +1,11 @@
-import { useReducer } from "react"
-import { useEditor } from "../../lib/EditorContext"
-import { useTrigger } from "../../lib/TriggerContext"
+import { useReducer } from 'react'
+import { useEditor } from '../../lib/EditorContext'
+import { useTrigger } from '../../lib/TriggerContext'
 
 export default function PropertiesPanel() {
   // TODO: needs refactor + no direct state access, only commit on submit, to allow validate
   const { objects, currentObject } = useEditor()
-  const [, forceUpdate] = useReducer(x => x + 1, 0)
+  const [, forceUpdate] = useReducer((x) => x + 1, 0)
   const emitter = useTrigger()
   const obj = objects.current.get(currentObject)
 
@@ -21,7 +21,7 @@ export default function PropertiesPanel() {
           value={obj.name}
           onChange={(e) => {
             obj.name = e.target.value
-            emitter.emit('objectUpdated')         
+            emitter.emit('objectUpdated')
             forceUpdate()
           }}
         />
@@ -37,31 +37,31 @@ export default function PropertiesPanel() {
             value={obj.position.x}
             onChange={(e) => {
               obj.position.x = Number(e.target.value)
-              emitter.emit('objectUpdated')         
+              emitter.emit('objectUpdated')
               forceUpdate()
             }}
           />
-        <p>Y</p>
-        <input
+          <p>Y</p>
+          <input
             className="rounded border outline-none px-1 w-10"
             type="number"
             name="y"
             value={obj.position.y}
             onChange={(e) => {
               obj.position.y = Number(e.target.value)
-              emitter.emit('objectUpdated')         
+              emitter.emit('objectUpdated')
               forceUpdate()
             }}
           />
-        <p>Z</p>
-        <input
+          <p>Z</p>
+          <input
             className="rounded border outline-none px-1 w-10"
             type="number"
             name="z"
             value={obj.position.z}
             onChange={(e) => {
               obj.position.z = Number(e.target.value)
-              emitter.emit('objectUpdated')         
+              emitter.emit('objectUpdated')
               forceUpdate()
             }}
           />

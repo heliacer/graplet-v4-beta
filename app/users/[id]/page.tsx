@@ -1,12 +1,16 @@
 'use client'
 
-import LogoSolid from "@/app/ui/logo-solid"
-import { Folder, LogOut } from "lucide-react"
-import { signOut } from "next-auth/react"
-import Link from "next/link"
-import { use } from "react"
+import LogoSolid from '@/app/ui/logo-solid'
+import { Folder, LogOut } from 'lucide-react'
+import { signOut } from 'next-auth/react'
+import Link from 'next/link'
+import { use } from 'react'
 
-export default function BlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+export default function BlogPostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = use(params)
   return (
     <main className="flex justify-center items-center min-h-screen">
@@ -14,11 +18,14 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
         <div className="flex min-h-52 flex-col gap-4">
           <p className="text-xl">User Profile</p>
           <p>ID: {id}</p>
-          <Link className='flex items-center gap-2' href='/mystuff'>
+          <Link className="flex items-center gap-2" href="/mystuff">
             <Folder size={18} />
             <p>Go to My Stuff</p>
           </Link>
-          <button className="cursor-pointer flex items-center gap-2" onClick={() => signOut({ callbackUrl: '/' })}>
+          <button
+            className="cursor-pointer flex items-center gap-2"
+            onClick={() => signOut({ callbackUrl: '/' })}
+          >
             <LogOut size={18} />
             <p>Sign Out</p>
           </button>

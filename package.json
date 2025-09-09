@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"" 
+    "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "dependencies": {
     "@blockly/continuous-toolbox": "^7.0.2",

@@ -1,7 +1,7 @@
-import { common } from "blockly"
+import { common } from 'blockly'
 
 export const objectRegistry = {
-  options: [["",""]]
+  options: [['', '']]
 }
 
 export const definitions = common.createBlockDefinitionsFromJsonArray([
@@ -17,7 +17,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     args0: [
       {
         type: 'field_input',
-        name: 'VALUE',
+        name: 'VALUE'
       }
     ],
     output: null
@@ -45,7 +45,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
           ['left', '-X'],
           ['right', 'X'],
           ['up', '-Y'],
-          ['down', 'Y'],
+          ['down', 'Y']
         ]
       }
     ],
@@ -209,7 +209,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
         check: 'Number'
       },
       {
-        type: 'input_dummy',
+        type: 'input_dummy'
       },
       {
         type: 'input_statement',
@@ -281,7 +281,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
           ['tanh', 'TANH'],
           ['arcsinh', 'ARCSINH'],
           ['arccosh', 'ARCCOSH'],
-          ['arctanh', 'ARCTANH'],
+          ['arctanh', 'ARCTANH']
         ]
       },
       {

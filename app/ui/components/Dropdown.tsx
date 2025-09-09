@@ -10,7 +10,9 @@ interface DropdownContextType {
   close: () => void
 }
 
-const DropdownContext = createContext<DropdownContextType | undefined>(undefined)
+const DropdownContext = createContext<DropdownContextType | undefined>(
+  undefined
+)
 
 const useDropdown = () => {
   const context = useContext(DropdownContext)
@@ -27,7 +29,7 @@ interface DropdownMenuProps {
 
 export function DropdownMenu({ children, className }: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
-  
+
   const dropdownRef = useClickOutside<HTMLDivElement>(() => {
     setIsOpen(false)
   })
@@ -48,10 +50,7 @@ interface DropdownButtonProps {
   className?: string
 }
 
-export function DropdownButton({ 
-  children, 
-  className,
-}: DropdownButtonProps) {
+export function DropdownButton({ children, className }: DropdownButtonProps) {
   const { isOpen, setIsOpen } = useDropdown()
 
   return (
@@ -75,10 +74,10 @@ interface DropdownContentProps {
   align?: 'left' | 'right' | 'center'
 }
 
-export function DropdownContent({ 
-  children, 
+export function DropdownContent({
+  children,
   className,
-  align = 'right' 
+  align = 'right'
 }: DropdownContentProps) {
   const { isOpen } = useDropdown()
 
@@ -89,12 +88,14 @@ export function DropdownContent({
   }
 
   return (
-    <div className={clsx(
-      'absolute top-full rounded-lg translate-y-0.5 border border-zinc-700 bg-zinc-800 z-[999]',
-      alignmentStyles[align],
-      !isOpen && 'hidden',
-      className
-    )}>
+    <div
+      className={clsx(
+        'absolute top-full rounded-lg translate-y-0.5 border border-zinc-700 bg-zinc-800 z-[999]',
+        alignmentStyles[align],
+        !isOpen && 'hidden',
+        className
+      )}
+    >
       {children}
     </div>
   )
@@ -107,11 +108,11 @@ interface DropdownOptionProps {
   asChild?: boolean
 }
 
-export function DropdownOption({ 
-  children, 
-  onClick, 
+export function DropdownOption({
+  children,
+  onClick,
   className,
-  asChild = false 
+  asChild = false
 }: DropdownOptionProps) {
   const { close } = useDropdown()
 
@@ -120,7 +121,8 @@ export function DropdownOption({
     close()
   }
 
-  const baseStyles = 'border border-transparent rounded m-1 px-1 hover:border-zinc-600 hover:bg-zinc-700'
+  const baseStyles =
+    'border border-transparent rounded m-1 px-1 hover:border-zinc-600 hover:bg-zinc-700'
 
   if (asChild) {
     return (
@@ -132,8 +134,8 @@ export function DropdownOption({
 
   return (
     <div className={clsx(baseStyles, className)}>
-      <button 
-        className="w-full text-left cursor-pointer flex items-center gap-2" 
+      <button
+        className="w-full text-left cursor-pointer flex items-center gap-2"
         onClick={handleClick}
       >
         {children}

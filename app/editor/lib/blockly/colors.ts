@@ -14,5 +14,5 @@ export const colors = {
   LOGIC: '#7EBF41',
   VARIABLES: '#3E429C',
   FUNCTIONS: '#C2524C',
-  MATH: '#4FB0C1',
+  MATH: '#4FB0C1'
 }

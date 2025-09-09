@@ -1,8 +1,8 @@
-import { DockviewDefaultTab, IDockviewPanelHeaderProps } from "dockview-react"
-import { Star } from "lucide-react"
-import { JSX } from "react"
+import { DockviewDefaultTab, IDockviewPanelHeaderProps } from 'dockview-react'
+import { Star } from 'lucide-react'
+import { JSX } from 'react'
 
-type TabParams = { Icon: JSX.Element, closable: boolean }
+type TabParams = { Icon: JSX.Element; closable: boolean }
 
 export default function TabHeader(props: IDockviewPanelHeaderProps<TabParams>) {
   return (

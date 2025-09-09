@@ -1,10 +1,12 @@
-import type { WorkspaceSvg, utils } from "blockly"
+import type { WorkspaceSvg, utils } from 'blockly'
 
 /**
  * @override variable category
  */
 
-export function variableCategory(workspace: WorkspaceSvg): utils.toolbox.FlyoutItemInfoArray {
+export function variableCategory(
+  workspace: WorkspaceSvg
+): utils.toolbox.FlyoutItemInfoArray {
   const variables = workspace.getVariableMap().getAllVariables()
   const blockList = []
 
@@ -21,7 +23,7 @@ export function variableCategory(workspace: WorkspaceSvg): utils.toolbox.FlyoutI
     a.getName().localeCompare(b.getName(), undefined, { sensitivity: 'base' })
   )
 
-  sortedVariables.forEach(variable => {
+  sortedVariables.forEach((variable) => {
     blockList.push({
       kind: 'block',
       type: 'variables_get',

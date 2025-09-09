@@ -2,19 +2,19 @@ import type { NextAuthConfig } from 'next-auth'
 
 export const authConfig = {
   pages: {
-    signIn: '/login',
+    signIn: '/login'
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
 
       const protectedPaths = ['/editor', '/mystuff', 'account']
-      const isOnProtected = protectedPaths.some(path =>
+      const isOnProtected = protectedPaths.some((path) =>
         nextUrl.pathname.startsWith(path)
       )
 
       const adminOnlyPaths = ['/admin']
-      const isOnAdminOnly = adminOnlyPaths.some(path =>
+      const isOnAdminOnly = adminOnlyPaths.some((path) =>
         nextUrl.pathname.startsWith(path)
       )
 
@@ -33,7 +33,7 @@ export const authConfig = {
       }
 
       return true
-    },
+    }
   },
-  providers: [],
+  providers: []
 } satisfies NextAuthConfig

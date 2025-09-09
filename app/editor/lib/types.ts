@@ -1,4 +1,4 @@
-import { Object3D, Object3DEventMap, Scene } from "three"
+import { Object3D, Object3DEventMap, Scene } from 'three'
 
 export interface Action {
   type: string
@@ -9,8 +9,8 @@ export interface Action {
 }
 
 export interface ValueWrapper {
-  id?: string,
-  content?: Value,
+  id?: string
+  content?: Value
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   compute?: Function
   nestedValues?: ValueWrapper[]
@@ -18,13 +18,13 @@ export interface ValueWrapper {
 }
 
 export type ScriptType =
-    'procedures_defreturn'
+  | 'procedures_defreturn'
   | 'procedures_defnoreturn'
   | 'onclickrun'
 
 export interface ActionScript {
   type: ScriptType
-  name?: string,
+  name?: string
   actions: Action[]
 }
 

@@ -1,4 +1,11 @@
-import { bumpObjects, common, DropDownDiv, Tooltip, WidgetDiv, WorkspaceSvg } from "blockly"
+import {
+  bumpObjects,
+  common,
+  DropDownDiv,
+  Tooltip,
+  WidgetDiv,
+  WorkspaceSvg
+} from 'blockly'
 
 export function resize(workspace: WorkspaceSvg) {
   Tooltip.hide()

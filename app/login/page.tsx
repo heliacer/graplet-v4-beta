@@ -59,30 +59,31 @@ export default function Login() {
   return (
     <>
       <form
-        className='relative flex flex-col gap-2.5 w-80'
-        id='login-form'
+        className="relative flex flex-col gap-2.5 w-80"
+        id="login-form"
         onSubmit={handleSubmit}
         noValidate
       >
         <CredentialsInput
-          placeholder='Enter granted Email'
-          type='email'
+          placeholder="Enter granted Email"
+          type="email"
           value={email}
           setValue={setEmail}
         />
-        <SubmitButton isLoading={isLoading}/>
+        <SubmitButton isLoading={isLoading} />
       </form>
-      {message ?
-        <div className='flex gap-2.5 items-center'>
-          <AlertTriangle size={14} className='text-red-400' />
-          <p className='text-red-400'>{message}</p>
+      {message ? (
+        <div className="flex gap-2.5 items-center">
+          <AlertTriangle size={14} className="text-red-400" />
+          <p className="text-red-400">{message}</p>
         </div>
-        :
-        <div className='flex gap-2.5 items-center'>
+      ) : (
+        <div className="flex gap-2.5 items-center">
           <Mail size={14} />
           <p>Invitation only.</p>
-        </div>}
-      <span className='h-7'></span>
+        </div>
+      )}
+      <span className="h-7"></span>
     </>
   )
 }

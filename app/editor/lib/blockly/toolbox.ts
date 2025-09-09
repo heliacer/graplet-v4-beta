@@ -1,4 +1,4 @@
-import { utils } from "blockly"
+import { utils } from 'blockly'
 
 export const toolbox: utils.toolbox.ToolboxDefinition = {
   kind: 'categoryToolbox',
@@ -16,7 +16,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
               shadow: {
                 type: 'math_number',
                 fields: {
-                  NUM: .5
+                  NUM: 0.5
                 }
               }
             }
@@ -120,14 +120,14 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'translatexyz',
           fields: {
-            AXIS: 'Z',
+            AXIS: 'Z'
           },
           inputs: {
             UNITS: {
               shadow: {
                 type: 'math_number',
                 fields: {
-                  NUM: .5
+                  NUM: 0.5
                 }
               }
             }
@@ -137,7 +137,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'rotatexyz',
           fields: {
-            AXIS: 'Y',
+            AXIS: 'Y'
           },
           inputs: {
             ANGLE: {
@@ -174,7 +174,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             A: {
               shadow: {
-                type: 'input',
+                type: 'input'
               }
             },
             B: {
@@ -257,7 +257,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             A: {
               shadow: {
-                type: 'math_number',
+                type: 'math_number'
               }
             },
             B: {
@@ -418,27 +418,27 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             NUM: {
               shadow: {
                 type: 'math_number'
-              }  
+              }
             },
             FROM_MIN: {
               shadow: {
                 type: 'math_number'
-              }  
+              }
             },
             FROM_MAX: {
               shadow: {
                 type: 'math_number'
-              }  
+              }
             },
             TO_MIN: {
               shadow: {
                 type: 'math_number'
-              }  
+              }
             },
             TO_MAX: {
               shadow: {
                 type: 'math_number'
-              }  
+              }
             }
           }
         },
@@ -467,7 +467,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
               }
             },
             NUM: {
-              shadow : {
+              shadow: {
                 type: 'math_number'
               }
             }
@@ -515,13 +515,13 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       kind: 'category',
       name: 'Variables',
       custom: 'VARIABLE',
-      categorystyle: 'variables_category',
+      categorystyle: 'variables_category'
     },
     {
       kind: 'category',
       name: 'Functions',
       custom: 'PROCEDURE',
-      categorystyle: 'procedure_category',
+      categorystyle: 'procedure_category'
     }
   ]
 }

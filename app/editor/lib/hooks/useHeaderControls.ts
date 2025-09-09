@@ -11,17 +11,18 @@ export function useHeaderControls(props: IDockviewHeaderActionsProps) {
   }))
 
   useEffect(() => {
-    const updateState = () => setState({
-      isMaximised: containerApi.hasMaximizedGroup(),
-      isFloating: api.location.type === 'floating'
-    })
+    const updateState = () =>
+      setState({
+        isMaximised: containerApi.hasMaximizedGroup(),
+        isFloating: api.location.type === 'floating'
+      })
 
     const disposables = [
       containerApi.onDidMaximizedGroupChange?.(updateState),
       api.onDidLocationChange?.(updateState)
     ].filter(Boolean)
 
-    return () => disposables.forEach(d => d?.dispose())
+    return () => disposables.forEach((d) => d?.dispose())
   }, [api, containerApi])
 
   const toggleMaximized = () => {

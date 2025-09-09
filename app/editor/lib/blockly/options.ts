@@ -1,6 +1,6 @@
-import { BlocklyOptions } from "blockly"
-import { toolbox } from "./toolbox"
-import { theme } from "./theme"
+import { BlocklyOptions } from 'blockly'
+import { toolbox } from './toolbox'
+import { theme } from './theme'
 
 export const blocklyOptions: BlocklyOptions = {
   toolbox: toolbox,
@@ -17,8 +17,8 @@ export const blocklyOptions: BlocklyOptions = {
     wheel: true,
     controls: true,
     maxScale: 2,
-    startScale: .45,
-    minScale: .1
+    startScale: 0.45,
+    minScale: 0.1
   },
   plugins: {
     metricsManager: 'ContinuousMetrics',

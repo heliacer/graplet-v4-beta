@@ -1,30 +1,31 @@
-import { Action, Context, IR, Value, ValueWrapper } from "../types"
+import { Action, Context, IR, Value, ValueWrapper } from '../types'
 
 export async function interpret(ir: IR, context: Context) {
   const { functions } = context
   // TODO: get func name, also, update varEnv / funcEnv on var / func delete
   ir.scripts
-    .filter(script => script.type === 'procedures_defnoreturn')
-    .forEach(script => {
+    .filter((script) => script.type === 'procedures_defnoreturn')
+    .forEach((script) => {
       if (!script.name) throw Error('Function does not have a name.')
       functions.set(script.name, script.actions)
     })
-    
+
   console.log(context.functions)
   const promises = ir.scripts
-    .filter(script => script.type === 'onclickrun')
-    .map(script => executeActions(script.actions, context))
+    .filter((script) => script.type === 'onclickrun')
+    .map((script) => executeActions(script.actions, context))
   await Promise.all(promises)
 }
 
 export async function executeActions(actions: Action[], context: Context) {
   for (const action of actions) {
-    const fields = [...(action.fields) || []]
+    const fields = [...(action.fields || [])]
 
     action.values?.forEach((value, i) => {
       const resolver = action.resolvers?.[i]
       const raw = resolveValueWrapper(value, context)
-      if (raw === undefined) throw Error(`Fields or Values are missing on Action ${action.type}`)
+      if (raw === undefined)
+        throw Error(`Fields or Values are missing on Action ${action.type}`)
       const resolved = resolver ? resolver(raw) : raw
       fields.push(resolved)
     })
@@ -48,7 +49,7 @@ export async function executeActions(actions: Action[], context: Context) {
       }
       case 'wait': {
         const [ms] = fields as [number]
-        await new Promise(res => setTimeout(res, ms))
+        await new Promise((res) => setTimeout(res, ms))
         break
       }
       case 'repeat': {
@@ -64,7 +65,7 @@ export async function executeActions(actions: Action[], context: Context) {
       case 'procedures_callnoreturn': {
         const [funcName] = fields as [string]
         const actions = functions.get(funcName)
-        if (actions){
+        if (actions) {
           await executeActions(actions, context)
         }
       }
@@ -125,7 +126,7 @@ export async function executeActions(actions: Action[], context: Context) {
         const [objectId, axis, angle] = fields as [string, string, number]
         const object = objects.get(objectId)
         if (object) {
-          const rad = angle * Math.PI / 180
+          const rad = (angle * Math.PI) / 180
           switch (axis) {
             case 'X':
               object.rotateX(rad)
@@ -137,14 +138,21 @@ export async function executeActions(actions: Action[], context: Context) {
               object.rotateZ(rad)
               break
           }
-          console.log(`Rotated cube around ${axis} by ${angle}° (${rad} radians)`)
+          console.log(
+            `Rotated cube around ${axis} by ${angle}° (${rad} radians)`
+          )
         } else {
           console.log(`${objectId} does not exist.`)
         }
         break
       }
       case 'translatexyz': {
-        const [objectId, axis, direction, distance] = fields as [string, string, number, number]
+        const [objectId, axis, direction, distance] = fields as [
+          string,
+          string,
+          number,
+          number
+        ]
         const object = objects.get(objectId)
         if (object) {
           switch (axis) {
@@ -158,7 +166,9 @@ export async function executeActions(actions: Action[], context: Context) {
               object.translateZ(distance * direction)
               break
           }
-          console.log(`Translated ${object.name} around ${axis} by ${distance * direction} units`)
+          console.log(
+            `Translated ${object.name} around ${axis} by ${distance * direction} units`
+          )
         } else {
           console.log(`${objectId} does not exist.`)
         }
@@ -171,7 +181,7 @@ export async function executeActions(actions: Action[], context: Context) {
 }
 
 function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
-  const { nestedValues, compute, content, id} = wrapper
+  const { nestedValues, compute, content, id } = wrapper
   const { variables } = context
 
   // variable reference
@@ -179,12 +189,15 @@ function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
 
   // resolve nested values
   if (nestedValues && nestedValues.length > 0 && compute) {
-    const resolvedValues = nestedValues.map(nestedValue =>
+    const resolvedValues = nestedValues.map((nestedValue) =>
       resolveValueWrapper(nestedValue, context)
     )
     return compute(...resolvedValues)
   }
 
-  if (content === undefined) throw new Error('Invalid ValueWrapper: No id, content, or compute function found')
+  if (content === undefined)
+    throw new Error(
+      'Invalid ValueWrapper: No id, content, or compute function found'
+    )
   return content
 }

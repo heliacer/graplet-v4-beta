@@ -1,12 +1,12 @@
-import { Box, FileText, type LucideIcon, Plus } from "lucide-react"
-import { useTrigger } from "../../lib/TriggerContext"
-import { useEditor } from "../../lib/EditorContext"
-import { useEffect, useReducer } from "react"
-import clsx from "clsx"
+import { Box, FileText, type LucideIcon, Plus } from 'lucide-react'
+import { useTrigger } from '../../lib/TriggerContext'
+import { useEditor } from '../../lib/EditorContext'
+import { useEffect, useReducer } from 'react'
+import clsx from 'clsx'
 
 const ITEM_TYPE_ICONS: Record<string, LucideIcon> = {
-  'Mesh': Box,
-  'default': FileText,
+  Mesh: Box,
+  default: FileText
 }
 
 function ItemIcon({ itemType }: { itemType: string }) {
@@ -23,21 +23,25 @@ type ObjectItemProps = {
 function ObjectListItem({ name, id, type }: ObjectItemProps) {
   const { currentObject, setCurrentObject } = useEditor()
   const isSelected = currentObject === id
-  
+
   return (
     <button
       className={clsx(
         'rounded-md cursor-pointer border border-b-0 overflow-clip',
-        isSelected 
-          ? 'bg-zinc-800 border-zinc-700' 
+        isSelected
+          ? 'bg-zinc-800 border-zinc-700'
           : 'border-transparent hover:bg-zinc-800 hover:border-zinc-700'
       )}
       onClick={() => setCurrentObject(id)}
     >
-      <div className={clsx(
-        'flex gap-1 px-1 py-0.5 items-center border-b',
-        isSelected ? 'border-accent' : 'hover:border-zinc-700 border-transparent'
-      )}>
+      <div
+        className={clsx(
+          'flex gap-1 px-1 py-0.5 items-center border-b',
+          isSelected
+            ? 'border-accent'
+            : 'hover:border-zinc-700 border-transparent'
+        )}
+      >
         <ItemIcon itemType={type} />
         <p className="text-sm">{name}</p>
         <span className="text-zinc-400 text-sm ml-auto">{id}</span>
@@ -49,7 +53,7 @@ function ObjectListItem({ name, id, type }: ObjectItemProps) {
 export default function ExplorerPanel() {
   const emitter = useTrigger()
   const { objects } = useEditor()
-  const [, forceUpdate] = useReducer(x => x + 1, 0)
+  const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
   useEffect(() => {
     emitter.on('objectCreated', forceUpdate)
