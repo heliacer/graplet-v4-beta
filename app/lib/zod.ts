@@ -5,5 +5,5 @@ export const passwordSchema = z.string().min(6)
 
 export const credentialsSchema = z.object({
   email: emailSchema,
-  password: passwordSchema,
+  password: passwordSchema
 })

@@ -43,7 +43,7 @@ export default function Password() {
         const result = await signIn('credentials', {
           email: email.toLowerCase(),
           password,
-          redirect: false,
+          redirect: false
         })
 
         if (result?.error) {
@@ -78,14 +78,14 @@ export default function Password() {
   return (
     <>
       <form
-        className='relative flex flex-col gap-2.5 w-80'
-        id='login-form'
+        className="relative flex flex-col gap-2.5 w-80"
+        id="login-form"
         onSubmit={handleSubmit}
         noValidate
       >
-        <CredentialsInput type='email' value={email} disabled />
+        <CredentialsInput type="email" value={email} disabled />
         <button
-          type='reset'
+          type="reset"
           onClick={() => router.push('/login')}
           className={clsx(
             'absolute right-2 top-[7px] border px-2 py-0.5 rounded-full',
@@ -96,35 +96,36 @@ export default function Password() {
           <Pen size={18} />
         </button>
         <CredentialsInput
-          placeholder='Enter Password'
+          placeholder="Enter Password"
           value={password}
-          name='password'
+          name="password"
           type={showPassword ? 'text' : 'password'}
           setValue={setPassword}
         />
         <button
-          type='button'
+          type="button"
           className={clsx(
             'absolute right-[50px] bottom-[7px] border px-2 py-0.5 rounded-full',
             'dark:bg-zinc-800 dark:border-zinc-600 border-zinc-400',
             !isLoading && 'cursor-pointer'
           )}
-          onClick={() => setShowPassword(prev => !prev)}
+          onClick={() => setShowPassword((prev) => !prev)}
         >
           {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
         </button>
-        <SubmitButton isLoading={isLoading}/>
+        <SubmitButton isLoading={isLoading} />
       </form>
-      {message ?
-        <div className='flex gap-2.5 items-center'>
-          <AlertTriangle size={14} className='text-red-400' />
-          <p className='text-red-400'>{message}</p>
+      {message ? (
+        <div className="flex gap-2.5 items-center">
+          <AlertTriangle size={14} className="text-red-400" />
+          <p className="text-red-400">{message}</p>
         </div>
-        :
-        <div className='flex gap-2.5 items-center'>
+      ) : (
+        <div className="flex gap-2.5 items-center">
           <Award size={14} />
           <p>Welcome back.</p>
-        </div>}
+        </div>
+      )}
     </>
   )
 }

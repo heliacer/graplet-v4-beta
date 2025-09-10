@@ -1,15 +1,24 @@
-import { useCallback, useEffect, useState } from "react"
-import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from "three"
-import { useEditor } from "../../lib/EditorContext"
-import { irGenerator } from "../../lib/blockly/irGenerator"
-import { executeActions, interpret } from "../../lib/blockly/interpreter"
-import { Block, Events } from "blockly"
-import { Action, VariableManager } from "../../lib/types"
-import { useTrigger } from "../../lib/TriggerContext"
-import { ThreeEvent, useThree } from "@react-three/fiber"
-import { Grid, OrbitControls, TransformControls, useCursor } from "@react-three/drei"
+import { useCallback, useEffect, useState } from 'react'
+import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from 'three'
+import { useEditor } from '../../lib/EditorContext'
+import { irGenerator } from '../../lib/blockly/irGenerator'
+import { executeActions, interpret } from '../../lib/blockly/interpreter'
+import { Block, Events, serialization } from 'blockly'
+import { Action, VariableEnv, FunctionsEnv } from '../../lib/types'
+import { useTrigger } from '../../lib/TriggerContext'
+import { ThreeEvent, useThree } from '@react-three/fiber'
+import {
+  Grid,
+  OrbitControls,
+  TransformControls,
+  useCursor
+} from '@react-three/drei'
 
-function Object({ object, onSelect, onDeselect }: {
+function Object({
+  object,
+  onSelect,
+  onDeselect
+}: {
   object: Object3D
   onSelect: (id: string) => void
   onDeselect: () => void
@@ -20,16 +29,23 @@ function Object({ object, onSelect, onDeselect }: {
   return (
     <primitive
       object={object}
-      onClick={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), onSelect(object.uuid))}
+      onClick={(e: ThreeEvent<MouseEvent>) => (
+        e.stopPropagation(),
+        onSelect(object.name)
+      )}
       onPointerMissed={(e: MouseEvent) => e.type === 'click' && onDeselect()}
-      onPointerOver={(e: ThreeEvent<PointerEvent>) => (e.stopPropagation(), setHovered(true))}
+      onPointerOver={(e: ThreeEvent<PointerEvent>) => (
+        e.stopPropagation(),
+        setHovered(true)
+      )}
       onPointerOut={() => setHovered(false)}
     />
   )
 }
 
 export default function ScenePanel() {
-  const [variableManager] = useState(() => new VariableManager())
+  const [variableEnv] = useState<VariableEnv>(new Map())
+  const [functionsEnv] = useState<FunctionsEnv>(new Map())
   const [objectCounter, setObjectCounter] = useState(0)
   const { scene } = useThree()
   const { workspace, objects, currentObject, setCurrentObject } = useEditor()
@@ -44,32 +60,50 @@ export default function ScenePanel() {
     cube.name = `Cube ${objectCounter + 1}`
 
     scene.add(cube)
-    objects.current.set(cube.uuid, cube)
-    emitter.emit('objectCreated', { id: cube.uuid, object: cube })
+    objects.current.set(cube.name, cube)
+    setCurrentObject(cube.name)
+    emitter.emit('objectCreated', { object: cube })
     setObjectCounter(objectCounter + 1)
-  }, [objectCounter, scene, objects, emitter])
+  }, [objectCounter, scene, objects, emitter, setCurrentObject])
 
   useEffect(() => {
-    if (objects.current.size === 0) {
+    if (objects.current.size === 0 && workspace) {
       handleCreateObject()
+
+      // TODO: load objects state
+
+      // load workspace state
+      const data = localStorage.getItem('projectData')
+      if (data) {
+        try {
+          const workspaceState = JSON.parse(data)
+          serialization.workspaces.load(workspaceState, workspace)
+          console.log(
+            'Loaded workspace state from localStorage: ',
+            workspaceState
+          )
+        } catch (err) {
+          console.error('Could not parse localStorage data.', err)
+        }
+      }
     }
-  }, [handleCreateObject, objects])
+  }, [handleCreateObject, objects, workspace])
 
   useEffect(() => {
     function runAction(action: Action) {
       console.log('Running single Action...')
-      executeActions(
-        [action],
-        {
-          scene,
-          objects: objects.current,
-          variables: variableManager
-        }
-      ).then(() => {
-        console.log('Execution completed')
-      }).catch((error) => {
-        console.error('Execution error', error)
+      executeActions([action], {
+        scene,
+        objects: objects.current,
+        variables: variableEnv,
+        functions: functionsEnv
       })
+        .then(() => {
+          console.log('Execution completed')
+        })
+        .catch((error) => {
+          console.error('Execution error', error)
+        })
     }
 
     function handleWorkspaceClick(event: Events.Abstract) {
@@ -78,7 +112,9 @@ export default function ScenePanel() {
         if (clickEvent.blockId) {
           const block = workspace?.getBlockById(clickEvent.blockId)
           const action = irGenerator.blockToAction(block as Block)
-          if (action) { runAction(action) }
+          if (action) {
+            runAction(action)
+          }
         }
       }
     }
@@ -87,46 +123,57 @@ export default function ScenePanel() {
       if (event.type === Events.CLICK) {
         const clickEvent = event as Events.Click
         if (clickEvent.blockId) {
-          const block = workspace?.getFlyout()?.getWorkspace().getBlockById(clickEvent.blockId)
+          const block = workspace
+            ?.getFlyout()
+            ?.getWorkspace()
+            .getBlockById(clickEvent.blockId)
           const action = irGenerator.blockToAction(block as Block)
-          if (action) { runAction(action) }
+          if (action) {
+            runAction(action)
+          }
         }
       }
     }
 
     workspace?.addChangeListener(handleWorkspaceClick)
-    workspace?.getFlyout()?.getWorkspace().addChangeListener(handleFlyoutWorkspaceClick)
-    
+    workspace
+      ?.getFlyout()
+      ?.getWorkspace()
+      .addChangeListener(handleFlyoutWorkspaceClick)
+
     return () => {
       workspace?.removeChangeListener(handleWorkspaceClick)
-      workspace?.getFlyout()?.getWorkspace().removeChangeListener(handleFlyoutWorkspaceClick)
+      workspace
+        ?.getFlyout()
+        ?.getWorkspace()
+        .removeChangeListener(handleFlyoutWorkspaceClick)
     }
-  }, [workspace, objects, scene, variableManager])
-  
+  }, [workspace, objects, scene, variableEnv, functionsEnv])
+
   useEffect(() => {
     const handleRunScene = () => {
       if (!workspace) return
       const IR = irGenerator.workspaceToIR(workspace)
       // TODO: Update run button, trigger runStart
       console.log('Running...')
-      interpret(
-        IR,
-        {
-          scene,
-          objects: objects.current,
-          variables: variableManager
-        }
-      ).then(() => {
-        // TODO: Update run button, trigger runEnd
-        console.log('Execution completed')
-      }).catch((error) => {
-        console.error('Execution error:', error)
+      interpret(IR, {
+        scene,
+        objects: objects.current,
+        variables: variableEnv,
+        functions: functionsEnv
       })
+        .then(() => {
+          // TODO: Update run button, trigger runEnd
+          console.log('Execution completed')
+        })
+        .catch((error) => {
+          console.error('Execution error:', error)
+        })
     }
     emitter.on('runScene', handleRunScene)
     return () => emitter.off('runScene', handleRunScene)
-  }, [objects, scene, emitter, workspace, variableManager])
-  
+  }, [objects, scene, emitter, workspace, variableEnv, functionsEnv])
+
   useEffect(() => {
     emitter.on('createObject', handleCreateObject)
     return () => emitter.off('createObject', handleCreateObject)
@@ -144,7 +191,9 @@ export default function ScenePanel() {
           onDeselect={() => setCurrentObject('')}
         />
       ))}
-      {currentObject && (<TransformControls object={objects.current.get(currentObject)}/>)}
+      {currentObject && (
+        <TransformControls object={objects.current.get(currentObject)} />
+      )}
       <ambientLight intensity={1} />
       <directionalLight position={[3, 5, 2]} intensity={2} />
     </>

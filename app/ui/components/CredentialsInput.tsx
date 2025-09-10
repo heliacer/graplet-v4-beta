@@ -15,12 +15,11 @@ export default function CredentialsInput({
   setValue?: (value: string) => void
   disabled?: boolean
 }) {
-
   const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {
     name: name || type,
     className: clsx(
       'w-full pr-12 border py-1.5 pl-3 rounded-full truncate',
-      'focus:outline-none',
+      'focus:outline-none'
     ),
     placeholder: placeholder || type,
     type,

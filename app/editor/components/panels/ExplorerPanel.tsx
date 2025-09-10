@@ -1,12 +1,13 @@
-import { Box, FileText, type LucideIcon, Plus } from "lucide-react"
-import { useTrigger } from "../../lib/TriggerContext"
-import { useEditor } from "../../lib/EditorContext"
-import { useEffect, useReducer } from "react"
-import clsx from "clsx"
+import { Box, FileText, type LucideIcon, Plus } from 'lucide-react'
+import { useTrigger } from '../../lib/TriggerContext'
+import { useEditor } from '../../lib/EditorContext'
+import { useEffect, useReducer } from 'react'
+import { Object3D } from 'three'
+import clsx from 'clsx'
 
 const ITEM_TYPE_ICONS: Record<string, LucideIcon> = {
-  'Mesh': Box,
-  'default': FileText,
+  Mesh: Box,
+  default: FileText
 }
 
 function ItemIcon({ itemType }: { itemType: string }) {
@@ -14,33 +15,30 @@ function ItemIcon({ itemType }: { itemType: string }) {
   return <Icon size={16} />
 }
 
-type ObjectItemProps = {
-  name: string
-  id: string
-  type: string
-}
-
-function ObjectListItem({ name, id, type }: ObjectItemProps) {
+function ObjectListItem({ object }: { object: Object3D }) {
   const { currentObject, setCurrentObject } = useEditor()
-  const isSelected = currentObject === id
-  
+
   return (
     <button
       className={clsx(
         'rounded-md cursor-pointer border border-b-0 overflow-clip',
-        isSelected 
-          ? 'bg-zinc-800 border-zinc-700' 
+        currentObject === object.name
+          ? 'bg-zinc-800 border-zinc-700'
           : 'border-transparent hover:bg-zinc-800 hover:border-zinc-700'
       )}
-      onClick={() => setCurrentObject(id)}
+      onClick={() => setCurrentObject(object.name)}
     >
-      <div className={clsx(
-        'flex gap-1 px-1 py-0.5 items-center border-b',
-        isSelected ? 'border-accent' : 'hover:border-zinc-700 border-transparent'
-      )}>
-        <ItemIcon itemType={type} />
-        <p className="text-sm">{name}</p>
-        <span className="text-zinc-400 text-sm ml-auto">{id}</span>
+      <div
+        className={clsx(
+          'flex gap-1 px-1 py-0.5 items-center border-b',
+          currentObject === object.name
+            ? 'border-accent'
+            : 'hover:border-zinc-700 border-transparent'
+        )}
+      >
+        <ItemIcon itemType={object.type} />
+        <p className="text-sm">{object.name}</p>
+        <span className="text-zinc-400 text-sm ml-auto">{object.uuid}</span>
       </div>
     </button>
   )
@@ -49,7 +47,7 @@ function ObjectListItem({ name, id, type }: ObjectItemProps) {
 export default function ExplorerPanel() {
   const emitter = useTrigger()
   const { objects } = useEditor()
-  const [, forceUpdate] = useReducer(x => x + 1, 0)
+  const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
   useEffect(() => {
     emitter.on('objectCreated', forceUpdate)
@@ -73,13 +71,8 @@ export default function ExplorerPanel() {
         {/* File Path */}
       </nav>
       <div className="flex gap-1 flex-col">
-        {Array.from(objects.current).map(([id, object]) => (
-          <ObjectListItem
-            key={id}
-            id={id}
-            name={object.name}
-            type={object.type}
-          />
+        {Array.from(objects.current).map(([key, object]) => (
+          <ObjectListItem key={key} object={object} />
         ))}
       </div>
     </main>

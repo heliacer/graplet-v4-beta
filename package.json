@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "dependencies": {
     "@blockly/continuous-toolbox": "^7.0.2",
@@ -40,6 +41,7 @@
     "@types/react-dom": "^19",
     "eslint": "9.31.0",
     "eslint-config-next": "15.4.2",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

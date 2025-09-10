@@ -1,25 +1,40 @@
 'use client'
 
-import { DockviewReact, DockviewReadyEvent } from "dockview-react"
+import { DockviewReact, DockviewReadyEvent } from 'dockview-react'
 import '../styles/base.css'
 import '../styles/dvtheme.css'
-import { Airplay, Folder, Package, PenTool, Puzzle, Shapes, Terminal, Wrench } from "lucide-react"
-import { LeftControls, RightControls } from "./controls"
-import TabHeader from "./tabHeader"
-import { Canvas } from "@react-three/fiber"
+import {
+  Airplay,
+  Folder,
+  Package,
+  PenTool,
+  Puzzle,
+  Shapes,
+  Terminal,
+  Wrench
+} from 'lucide-react'
+import { LeftControls, RightControls } from './controls'
+import TabHeader from './tabHeader'
+import { Canvas } from '@react-three/fiber'
 
 // Panels
-import DebugPanel from "./panels/DebugPanel"
-import ScenePanel from "./panels/ScenePanel"
-import AssetsPanel from "./panels/AssetsPanel"
-import ExplorerPanel from "./panels/ExplorerPanel"
-import CodePanel from "./panels/CodePanel"
-import PropertiesPanel from "./panels/PropertiesPanel"
+import DebugPanel from './panels/DebugPanel'
+import ScenePanel from './panels/ScenePanel'
+import AssetsPanel from './panels/AssetsPanel'
+import ExplorerPanel from './panels/ExplorerPanel'
+import CodePanel from './panels/CodePanel'
+import PropertiesPanel from './panels/PropertiesPanel'
 
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
-  scene: function () { return <Canvas><ScenePanel /></Canvas> },
+  scene: function () {
+    return (
+      <Canvas>
+        <ScenePanel />
+      </Canvas>
+    )
+  },
   explorer: ExplorerPanel,
   assets: AssetsPanel,
   properties: PropertiesPanel

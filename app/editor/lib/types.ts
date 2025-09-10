@@ -1,24 +1,32 @@
-import { Object3D, Object3DEventMap, Scene } from "three"
+import { Object3D, Object3DEventMap, Scene } from 'three'
 
 export interface Action {
   type: string
   fields?: Value[]
   values?: ValueWrapper[]
   resolvers?: Array<((v: Value) => Value) | undefined>
-  children?: Action[]
+  actionsList?: Array<Action[]>
 }
 
 export interface ValueWrapper {
-  id?: string,
-  content?: Value,
+  varId?: string
+  funcName?: string
+  content?: Value
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   compute?: Function
   nestedValues?: ValueWrapper[]
   resolvers?: Array<((v: Value) => Value) | undefined>
 }
 
+export type ScriptType =
+  | 'procedures_defreturn'
+  | 'procedures_defnoreturn'
+  | 'onclickrun'
+
 export interface ActionScript {
-  trigger: Action
+  type: ScriptType
+  name?: string
+  returns?: ValueWrapper
   actions: Action[]
 }
 
@@ -26,30 +34,20 @@ export interface IR {
   scripts: ActionScript[]
 }
 
-export type ObjectsRecord = Map<string, Object3D<Object3DEventMap>>
+export type ObjectsEnv = Map<string, Object3D<Object3DEventMap>>
+export type VariableEnv = Map<string, Value>
+export type FunctionsEnv = Map<string, Func>
+
+export interface Func {
+  actions: Action[]
+  returns: ValueWrapper | undefined
+}
 
 export interface Context {
   scene: Scene
-  objects: ObjectsRecord
-  variables: VariableManager
+  objects: ObjectsEnv
+  variables: VariableEnv
+  functions: FunctionsEnv
 }
 
-export type Value = string | number // More in future, such as Mesh, Vector3, etc...
-
-export class VariableManager {
-  private variables: Map<string, Value> = new Map()
-
-  set(varId: string, value: Value) {
-    const numValue = Number(value)
-    this.variables.set(varId, Number.isNaN(numValue) ? value : numValue)
-  }
-
-  get(varId: string): Value {
-    return this.variables.get(varId) ?? 0
-  }
-
-  change(varId: string, delta: number) {
-    const value = this.get(varId)
-    this.set(varId, (typeof value === 'number' ? value : 0) + delta)
-  }
-}
+export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...S

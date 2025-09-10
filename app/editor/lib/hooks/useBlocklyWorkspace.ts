@@ -1,13 +1,16 @@
-import { inject, Variables, Events, WorkspaceSvg } from "blockly"
-import { useEffect, useRef } from "react"
-import { useEditor } from "../EditorContext"
-import { blocklyOptions } from "../blockly/options"
-import { variableCategory } from "../blockly/variables"
-import { resize } from "../blockly/utils"
-import { useTrigger } from "../TriggerContext"
-import { objectRegistry } from "../blockly/blocks"
+import { inject, Variables, Events, WorkspaceSvg } from 'blockly'
+import { useEffect, useRef } from 'react'
+import { useEditor } from '../EditorContext'
+import { blocklyOptions } from '../blockly/options'
+import { variableCategory } from '../blockly/variables'
+import { procedureCategory } from '../blockly/procedures'
+import { resize } from '../blockly/utils'
+import { useTrigger } from '../TriggerContext'
+import { objectRegistry } from '../blockly/blocks'
 
-export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement>) {
+export function useBlocklyWorkspace(
+  containerRef: React.RefObject<HTMLDivElement>
+) {
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
   const { setWorkspace, objects } = useEditor()
   const emitter = useTrigger()
@@ -18,14 +21,19 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
     workspaceRef.current = ws
     setWorkspace(ws)
 
-    ws.getVariableMap().createVariable('foo')
+    ws.getVariableMap().createVariable('my variable')
     ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
+    ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
     ws.registerButtonCallback('CREATE_VARIABLE', function (button) {
       Variables.createVariableButtonHandler(button.getTargetWorkspace())
     })
 
     const variableListener = (event: Events.Abstract) => {
-      if (event.type === Events.VAR_CREATE || event.type === Events.VAR_DELETE || event.type === Events.VAR_RENAME) {
+      if (
+        event.type === Events.VAR_CREATE ||
+        event.type === Events.VAR_DELETE ||
+        event.type === Events.VAR_RENAME
+      ) {
         ws.refreshToolboxSelection()
       }
     }
@@ -35,24 +43,26 @@ export function useBlocklyWorkspace(containerRef: React.RefObject<HTMLDivElement
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(containerRef.current)
 
-    const handleObjectCreated = () => {
+    const handleObjects = () => {
       const newOptions: [string, string][] = []
-      objects.current.forEach((object, key) => {
-        newOptions.push([object.name, key])
+      objects.current.forEach((object) => {
+        newOptions.push([object.name, object.name])
       })
-      
-      if (newOptions.length === 0){
-        newOptions.push(['',''])
+
+      if (newOptions.length === 0) {
+        newOptions.push(['', ''])
       }
-      
+
       objectRegistry.options = newOptions
       ws.getToolbox()?.refreshSelection()
     }
 
-    emitter.on('objectCreated', handleObjectCreated)
+    emitter.on('objectCreated', handleObjects)
+    emitter.on('objectUpdated', handleObjects)
 
     return () => {
-      emitter.off('objectCreated', handleObjectCreated)
+      emitter.off('objectCreated', handleObjects)
+      emitter.off('objectUpdated', handleObjects)
       resizeObserver.disconnect()
       ws.removeChangeListener(variableListener)
       ws.dispose()

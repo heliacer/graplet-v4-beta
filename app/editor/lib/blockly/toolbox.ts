@@ -1,4 +1,4 @@
-import { utils } from "blockly"
+import { utils } from 'blockly'
 
 export const toolbox: utils.toolbox.ToolboxDefinition = {
   kind: 'categoryToolbox',
@@ -16,7 +16,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
               shadow: {
                 type: 'math_number',
                 fields: {
-                  NUM: .5
+                  NUM: 0.5
                 }
               }
             }
@@ -24,7 +24,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 32
+          gap: 40
         },
         {
           kind: 'block',
@@ -120,14 +120,14 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'translatexyz',
           fields: {
-            AXIS: 'Z',
+            AXIS: 'Z'
           },
           inputs: {
             UNITS: {
               shadow: {
                 type: 'math_number',
                 fields: {
-                  NUM: .5
+                  NUM: 0.5
                 }
               }
             }
@@ -137,7 +137,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'rotatexyz',
           fields: {
-            AXIS: 'Y',
+            AXIS: 'Y'
           },
           inputs: {
             ANGLE: {
@@ -148,7 +148,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
                 }
               }
             }
-          }          
+          }
         }
       ]
     },
@@ -165,9 +165,57 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
     },
     {
       kind: 'category',
-      name: 'Control',
-      categorystyle: 'control_category',
+      name: 'Logic',
+      categorystyle: 'logic_category',
       contents: [
+        {
+          kind: 'block',
+          type: 'logic_compare',
+          inputs: {
+            A: {
+              shadow: {
+                type: 'input'
+              }
+            },
+            B: {
+              shadow: {
+                type: 'input'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'logic_operation'
+        },
+        {
+          kind: 'sep',
+          gap: 40
+        },
+        {
+          kind: 'block',
+          type: 'logic_negate'
+        },
+        {
+          kind: 'block',
+          type: 'logic_boolean'
+        },
+        {
+          kind: 'sep',
+          gap: 40
+        },
+        {
+          kind: 'block',
+          type: 'controls_if'
+        },
+        {
+          kind: 'block',
+          type: 'controls_ifelse'
+        },
+        {
+          kind: 'sep',
+          gap: 40
+        },
         {
           kind: 'block',
           type: 'repeat',
@@ -188,21 +236,15 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             MS: {
               shadow: {
-                type: 'input',
+                type: 'math_number',
                 fields: {
-                  VALUE: '500'
+                  NUM: 500
                 }
               }
             }
           }
         }
       ]
-    },
-    {
-      kind: 'category',
-      name: 'Variables',
-      custom: 'VARIABLE',
-      categorystyle: 'variables_category',
     },
     {
       kind: 'category',
@@ -215,7 +257,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             A: {
               shadow: {
-                type: 'math_number',
+                type: 'math_number'
               }
             },
             B: {
@@ -226,15 +268,241 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           }
         },
         {
+          kind: 'sep',
+          gap: 40
+        },
+        {
           kind: 'block',
-          type: 'amodb',
+          type: 'math_constant'
+        },
+        {
+          kind: 'block',
+          type: 'math_trig',
           inputs: {
-            A: {
+            NUM: {
               shadow: {
-                type: 'math_number',
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_htrig',
+          inputs: {
+            NUM: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_round',
+          inputs: {
+            NUM: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_single',
+          inputs: {
+            NUM: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_atan2',
+          inputs: {
+            X: {
+              shadow: {
+                type: 'math_number'
               }
             },
-            B: {
+            Y: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_random_float'
+        },
+        {
+          kind: 'sep',
+          gap: 40
+        },
+        {
+          kind: 'block',
+          type: 'math_number_property',
+          inputs: {
+            NUMBER_TO_CHECK: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'sep',
+          gap: 40
+        },
+        {
+          kind: 'block',
+          type: 'math_modulo',
+          inputs: {
+            DIVIDEND: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            DIVISOR: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_constrain',
+          inputs: {
+            VALUE: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            LOW: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            HIGH: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_random_int',
+          inputs: {
+            FROM: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            TO: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_map',
+          inputs: {
+            NUM: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            FROM_MIN: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            FROM_MAX: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            TO_MIN: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            TO_MAX: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_deriviative',
+          inputs: {
+            PROCEDURE: {
+              block: {
+                inline: true,
+                type: 'procedures_callreturn',
+                extraState: {
+                  name: 'f',
+                  params: ['x']
+                },
+                inputs: {
+                  ARG0: {
+                    shadow: {
+                      type: 'input',
+                      fields: {
+                        VALUE: 0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            NUM: {
+              shadow: {
+                type: 'math_number'
+              }
+            }
+          }
+        },
+        {
+          kind: 'block',
+          type: 'math_integral',
+          inputs: {
+            PROCEDURE: {
+              block: {
+                inline: true,
+                type: 'procedures_callreturn',
+                extraState: {
+                  name: 'f',
+                  params: ['x']
+                },
+                inputs: {
+                  ARG0: {
+                    shadow: {
+                      type: 'input',
+                      fields: {
+                        VALUE: 0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            FROM: {
+              shadow: {
+                type: 'math_number'
+              }
+            },
+            TO: {
               shadow: {
                 type: 'math_number'
               }
@@ -242,6 +510,18 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           }
         }
       ]
+    },
+    {
+      kind: 'category',
+      name: 'Variables',
+      custom: 'VARIABLE',
+      categorystyle: 'variables_category'
+    },
+    {
+      kind: 'category',
+      name: 'Functions',
+      custom: 'PROCEDURE',
+      categorystyle: 'procedure_category'
     }
   ]
 }

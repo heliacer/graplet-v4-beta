@@ -20,11 +20,11 @@ export function useClickOutside<T extends HTMLElement = HTMLElement>(
     }
 
     document.addEventListener('mousedown', handleClickOutside)
-    
+
     if (listenToEscape) {
       document.addEventListener('keydown', handleEscapeKey)
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
       if (listenToEscape) {
