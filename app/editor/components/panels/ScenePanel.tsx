@@ -3,7 +3,7 @@ import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { useEditor } from '../../lib/EditorContext'
 import { irGenerator } from '../../lib/blockly/irGenerator'
 import { executeActions, interpret } from '../../lib/blockly/interpreter'
-import { Block, Events } from 'blockly'
+import { Block, Events, serialization } from 'blockly'
 import { Action, VariableEnv, FunctionsEnv } from '../../lib/types'
 import { useTrigger } from '../../lib/TriggerContext'
 import { ThreeEvent, useThree } from '@react-three/fiber'
@@ -31,7 +31,7 @@ function Object({
       object={object}
       onClick={(e: ThreeEvent<MouseEvent>) => (
         e.stopPropagation(),
-        onSelect(object.uuid)
+        onSelect(object.name)
       )}
       onPointerMissed={(e: MouseEvent) => e.type === 'click' && onDeselect()}
       onPointerOver={(e: ThreeEvent<PointerEvent>) => (
@@ -61,15 +61,33 @@ export default function ScenePanel() {
 
     scene.add(cube)
     objects.current.set(cube.name, cube)
-    emitter.emit('objectCreated', { id: cube.uuid, object: cube })
+    setCurrentObject(cube.name)
+    emitter.emit('objectCreated', { object: cube })
     setObjectCounter(objectCounter + 1)
-  }, [objectCounter, scene, objects, emitter])
+  }, [objectCounter, scene, objects, emitter, setCurrentObject])
 
   useEffect(() => {
-    if (objects.current.size === 0) {
+    if (objects.current.size === 0 && workspace) {
       handleCreateObject()
+
+      // TODO: load objects state
+
+      // load workspace state
+      const data = localStorage.getItem('projectData')
+      if (data) {
+        try {
+          const workspaceState = JSON.parse(data)
+          serialization.workspaces.load(workspaceState, workspace)
+          console.log(
+            'Loaded workspace state from localStorage: ',
+            workspaceState
+          )
+        } catch (err) {
+          console.error('Could not parse localStorage data.', err)
+        }
+      }
     }
-  }, [handleCreateObject, objects])
+  }, [handleCreateObject, objects, workspace])
 
   useEffect(() => {
     function runAction(action: Action) {

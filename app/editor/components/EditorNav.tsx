@@ -28,6 +28,13 @@ export default function EditorNav() {
   const { workspace } = useEditor()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
+  function handleSave() {
+    if (!workspace) throw Error('Missing workspace')
+    const workspacestate = serialization.workspaces.save(workspace)
+    localStorage.setItem('projectData', JSON.stringify(workspacestate))
+    console.log('Saved workspace state to localStorage: ', workspacestate)
+  }
+
   function handleSaveFile() {
     if (!workspace) throw Error('Missing workspace')
     const json = serialization.workspaces.save(workspace)
@@ -82,11 +89,15 @@ export default function EditorNav() {
             <p>File</p>
           </DropdownButton>
           <DropdownContent align="left" className="min-w-36">
+            <DropdownOption onClick={handleSave}>
+              <p>Save now</p>
+            </DropdownOption>
+            <DropdownSeparator />
             <DropdownOption onClick={handleSaveFile}>
-              <p>Save to File ...</p>
+              <p>Save to ...</p>
             </DropdownOption>
             <DropdownOption onClick={handleUploadFile}>
-              <p>Load from File ...</p>
+              <p>Load from ...</p>
             </DropdownOption>
           </DropdownContent>
         </DropdownMenu>

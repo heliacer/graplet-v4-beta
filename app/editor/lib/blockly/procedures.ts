@@ -14,7 +14,7 @@ export function procedureCategory(
     type: 'procedures_defnoreturn',
     gap: 16,
     fields: {
-      NAME: 'do something'
+      NAME: 'do ...'
     }
   })
 
@@ -23,7 +23,7 @@ export function procedureCategory(
     type: 'procedures_defreturn',
     gap: 16,
     fields: {
-      NAME: 'do something'
+      NAME: 'evaluate ...'
     },
     inputs: {
       RETURN: {

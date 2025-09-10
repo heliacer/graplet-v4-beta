@@ -7,7 +7,7 @@ type Events = {
   stopScene: void
   createObject: void
   objectUpdated: void
-  objectCreated: { id: string; object: Object3D }
+  objectCreated: { object: Object3D }
 }
 
 const TriggerContext = createContext<Emitter<Events>>(null!)

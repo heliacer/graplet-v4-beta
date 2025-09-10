@@ -57,6 +57,7 @@ export async function executeActions(
       }
       case 'wait': {
         const [ms] = fields as [number]
+        console.log(`Timeout for ${ms} ms`)
         await new Promise((res) => setTimeout(res, ms))
         break
       }
