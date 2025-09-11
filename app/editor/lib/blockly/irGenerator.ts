@@ -195,6 +195,7 @@ irGenerator.forBlock(
   'translatexyz',
   function (block: Block, generator: IRGenerator): Action {
     const objectId = block.getFieldValue('OBJECT') as string
+    console.log(objectId)
     const axis = block.getFieldValue('AXIS') as string
     const distance = generator.getInputValue(block, 'UNITS')
 

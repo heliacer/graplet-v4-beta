@@ -201,6 +201,7 @@ function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
     const func = functions.get(funcName)
     if (func) {
       executeActions(func.actions, context)
+      // get return from execute actions !!! TODO @possible solution
       if (func.returns) {
         const returnValue = resolveValueWrapper(func.returns, context)
         return returnValue

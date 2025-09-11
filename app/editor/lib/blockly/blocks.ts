@@ -44,8 +44,8 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
           ['backwards', '-Z'],
           ['left', '-X'],
           ['right', 'X'],
-          ['up', '-Y'],
-          ['down', 'Y']
+          ['up', 'Y'],
+          ['down', '-Y']
         ]
       }
     ],
@@ -177,7 +177,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     args0: [
       {
         type: 'field_dropdown',
-        name: 'OBJECTS',
+        name: 'OBJECT',
         options: () => objectRegistry.options
       },
       {

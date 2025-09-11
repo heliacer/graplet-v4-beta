@@ -76,6 +76,14 @@ export default function EditorNav() {
     e.target.value = ''
   }
 
+  function handleLoadEmpty() {
+    if (!workspace) throw Error('Missing workspace')
+    const isConfirmed = confirm('This will remove any existing progress. Are you sure?')
+    if (isConfirmed) {
+      serialization.workspaces.load({}, workspace)
+    }
+  }
+
   return (
     <nav className="h-11 flex items-center justify-between px-2">
       <div className="w-full h-full flex items-center gap-4">
@@ -94,10 +102,14 @@ export default function EditorNav() {
             </DropdownOption>
             <DropdownSeparator />
             <DropdownOption onClick={handleSaveFile}>
-              <p>Save to ...</p>
+              <p>Export</p>
             </DropdownOption>
+            <DropdownSeparator />
             <DropdownOption onClick={handleUploadFile}>
               <p>Load from ...</p>
+            </DropdownOption>
+            <DropdownOption onClick={handleLoadEmpty}>
+              <p>Load empty</p>
             </DropdownOption>
           </DropdownContent>
         </DropdownMenu>

@@ -14,7 +14,7 @@ export function procedureCategory(
     type: 'procedures_defnoreturn',
     gap: 16,
     fields: {
-      NAME: 'do ...'
+      NAME: 'do something'
     }
   })
 
@@ -23,7 +23,7 @@ export function procedureCategory(
     type: 'procedures_defreturn',
     gap: 16,
     fields: {
-      NAME: 'evaluate ...'
+      NAME: 'evaluate something'
     },
     inputs: {
       RETURN: {
@@ -56,14 +56,13 @@ export function procedureCategory(
   allProcedures.forEach((block) => {
     const name = block.getFieldValue('NAME')
     const hasReturn = block.type === 'procedures_defreturn'
-
     blockList.push({
       kind: 'block',
       type: hasReturn ? 'procedures_callreturn' : 'procedures_callnoreturn',
       gap: 16,
       fields: {
         NAME: name
-      }
+      },
     })
   })
 
