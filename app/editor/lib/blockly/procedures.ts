@@ -62,7 +62,7 @@ export function procedureCategory(
       gap: 16,
       fields: {
         NAME: name
-      },
+      }
     })
   })
 

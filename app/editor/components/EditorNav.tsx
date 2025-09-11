@@ -78,7 +78,9 @@ export default function EditorNav() {
 
   function handleLoadEmpty() {
     if (!workspace) throw Error('Missing workspace')
-    const isConfirmed = confirm('This will remove any existing progress. Are you sure?')
+    const isConfirmed = confirm(
+      'This will remove any existing progress. Are you sure?'
+    )
     if (isConfirmed) {
       serialization.workspaces.load({}, workspace)
     }
