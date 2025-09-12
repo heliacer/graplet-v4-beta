@@ -22,8 +22,8 @@ export const PROCEDURES_IFRETURN = {
     )
 
     valueInput.connection?.setShadowState({
-      type: 'math_number',
-      fields: { NUM: 0 }
+      type: 'input',
+      fields: { VALUE: '' }
     })
 
     this.setInputsInline(true)
@@ -67,8 +67,8 @@ export const PROCEDURES_IFRETURN = {
 
         // Add math_number as empty return value
         valueInput.connection?.setShadowState({
-          type: 'math_number',
-          fields: { NUM: 0 }
+          type: 'input',
+          fields: { VALUE: '' }
         })
 
         this.hasReturnValue_ = true

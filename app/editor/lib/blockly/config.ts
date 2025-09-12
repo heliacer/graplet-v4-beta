@@ -24,6 +24,10 @@ import {
   isDivisibleMutatorExtension
 } from './mutators/isDivisible'
 import { PROCEDURES_IFRETURN } from './mutators/ifReturn'
+import {
+  PROCEDURES_CALLRETURN,
+  PROCEDURES_CALLNORETURN
+} from './mutators/procedures'
 
 // TODO: Override ifreturn mutator mixins
 
@@ -36,6 +40,8 @@ export function initializeBlockly() {
   )
 
   Blocks['procedures_ifreturn'] = PROCEDURES_IFRETURN
+  Blocks['procedures_callnoreturn'] = PROCEDURES_CALLNORETURN
+  Blocks['procedures_callreturn'] = PROCEDURES_CALLRETURN
 
   Scrollbar.scrollbarThickness = 10
   registerFieldAngle()

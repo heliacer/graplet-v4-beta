@@ -28,7 +28,7 @@ export function procedureCategory(
     inputs: {
       RETURN: {
         shadow: {
-          type: 'math_number'
+          type: 'input'
         }
       }
     }
@@ -41,7 +41,7 @@ export function procedureCategory(
     inputs: {
       VALUE: {
         shadow: {
-          type: 'math_number'
+          type: 'input'
         }
       }
     }
@@ -56,13 +56,35 @@ export function procedureCategory(
   allProcedures.forEach((block) => {
     const name = block.getFieldValue('NAME')
     const hasReturn = block.type === 'procedures_defreturn'
+
+    const params: string[] = []
+    const inputs: Record<string, { shadow: { type: string } }> = {}
+
+    if (block.saveExtraState) {
+      const extraState = block.saveExtraState()
+      if (extraState && extraState.params && Array.isArray(extraState.params)) {
+        extraState.params.forEach(
+          (param: { name: string; id: string }, index: number) => {
+            params.push(param.name)
+            inputs[`ARG${index}`] = {
+              shadow: {
+                type: 'input'
+              }
+            }
+          }
+        )
+      }
+    }
+
     blockList.push({
       kind: 'block',
       type: hasReturn ? 'procedures_callreturn' : 'procedures_callnoreturn',
       gap: 16,
-      fields: {
-        NAME: name
-      }
+      extraState: {
+        name: name,
+        params: params
+      },
+      inputs: inputs
     })
   })
 
