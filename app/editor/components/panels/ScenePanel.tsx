@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { useEditor } from '../../lib/EditorContext'
 import { exprGenerator } from '../../lib/blockly/exprGenerator'
-import { executeActions, interpret } from '../../lib/blockly/interpreter'
+import { evaluateExpression } from '../../lib/blockly/interpreter'
 import { Block, Events, serialization } from 'blockly'
-import { Action, VariableEnv, FunctionsEnv } from '../../lib/types'
+import { VariableEnv, FunctionsEnv } from '../../lib/types'
 import { useTrigger } from '../../lib/TriggerContext'
 import { ThreeEvent, useThree } from '@react-three/fiber'
 import {
@@ -90,31 +90,29 @@ export default function ScenePanel() {
   }, [handleCreateObject, objects, workspace])
 
   useEffect(() => {
-    function runAction(action: Action) {
-      console.log('Running single Action...')
-      executeActions([action], {
-        scene,
-        objects: objects.current,
-        variables: variableEnv,
-        functions: functionsEnv
-      })
-        .then(() => {
-          console.log('Execution completed')
-        })
-        .catch((error) => {
-          console.error('Execution error', error)
-        })
-    }
+    // this is extreme doodoo cheese code right now, but once the Program instance is introduced, this will be a lot better
 
     function handleWorkspaceClick(event: Events.Abstract) {
       if (event.type === Events.CLICK) {
         const clickEvent = event as Events.Click
         if (clickEvent.blockId) {
           const block = workspace?.getBlockById(clickEvent.blockId)
-          const action = exprGenerator.blockToExpression(block as Block)
-          if (action) {
-            runAction(action)
-          }
+          const expr = exprGenerator.blockToExpression(block as Block)
+
+          evaluateExpression(expr, {
+            scene,
+            objects: objects.current,
+            variables: variableEnv,
+            functions: functionsEnv
+          })
+            .then((result) => {
+              console.log('Execution completed')
+              console.log(result)
+              alert(result)
+            })
+            .catch((err) => {
+              console.error('Execution error:', err)
+            })
         }
       }
     }
@@ -127,10 +125,21 @@ export default function ScenePanel() {
             ?.getFlyout()
             ?.getWorkspace()
             .getBlockById(clickEvent.blockId)
-          const action = exprGenerator.blockToExpression(block as Block)
-          if (action) {
-            runAction(action)
-          }
+          const expr = exprGenerator.blockToExpression(block as Block)
+          evaluateExpression(expr, {
+            scene,
+            objects: objects.current,
+            variables: variableEnv,
+            functions: functionsEnv
+          })
+            .then((result) => {
+              console.log('Execution completed')
+              console.log(result)
+              alert(result)
+            })
+            .catch((err) => {
+              console.error('Execution error:', err)
+            })
         }
       }
     }
@@ -153,21 +162,19 @@ export default function ScenePanel() {
   useEffect(() => {
     const handleRunScene = () => {
       if (!workspace) return
-      const IR = exprGenerator.workspaceToExpression(workspace)
-      // TODO: Update run button, trigger runStart
+      const expr = exprGenerator.workspaceToExpression(workspace)
       console.log('Running...')
-      interpret(IR, {
+      evaluateExpression(expr, {
         scene,
         objects: objects.current,
         variables: variableEnv,
         functions: functionsEnv
       })
         .then(() => {
-          // TODO: Update run button, trigger runEnd
           console.log('Execution completed')
         })
-        .catch((error) => {
-          console.error('Execution error:', error)
+        .catch((err) => {
+          console.error('Execution error:', err)
         })
     }
     emitter.on('runScene', handleRunScene)

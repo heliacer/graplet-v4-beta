@@ -1,253 +1,9 @@
 import {
-  Action,
   ProgramState,
-  IR,
   Value,
-  ValueWrapper,
-  Func,
   Expression
 } from '../types'
 
-/**
- * @deprecated
- */
-export async function interpret(ir: IR, context: ProgramState) {
-  const { functions } = context
-  // TODO: get func name, also, update varEnv / funcEnv on var / func delete
-  ir.scripts
-    .filter(
-      (script) =>
-        script.type === 'procedures_defnoreturn' ||
-        script.type === 'procedures_defreturn'
-    )
-    .forEach((script) => {
-      if (!script.name) throw Error('Function does not have a name')
-      const { actions, returns } = script
-      const func: Func = { actions, returns }
-      functions.set(script.name, func)
-    })
-
-  const promises = ir.scripts
-    .filter((script) => script.type === 'onclickrun')
-    .map((script) => executeActions(script.actions, context))
-  await Promise.all(promises)
-}
-
-/**
- * @deprecated use the new evaluateExpression instead
- */
-export async function executeActions(
-  actions: Action[],
-  context: ProgramState
-): Promise<void | ValueWrapper[]> {
-  for (const action of actions) {
-    const fields = [...(action.fields || [])]
-
-    action.values?.forEach((value, i) => {
-      const resolver = action.resolvers?.[i]
-      const raw = resolveValueWrapper(value, context)
-      if (raw === undefined)
-        throw Error(`Fields or Values are missing on Action ${action.type}`)
-      const resolved = resolver ? resolver(raw) : raw
-      fields.push(resolved)
-    })
-
-    const { objects, variables, functions } = context
-
-    switch (action.type) {
-      case 'setvar': {
-        const [varId, value] = fields as [string, Value]
-        console.log(`set variable ${varId} to ${value}`)
-        const numValue = Number(value)
-        variables.set(varId, Number.isNaN(numValue) ? value : numValue)
-        break
-      }
-      case 'changevar': {
-        const [varId, delta] = fields as [string, number]
-        console.log(`changed variable ${varId} by ${delta}`)
-        const value = variables.get(varId)
-        variables.set(varId, (typeof value === 'number' ? value : 0) + delta)
-        break
-      }
-      case 'wait': {
-        const [ms] = fields as [number]
-        console.log(`Timeout for ${ms} ms`)
-        await new Promise((res) => setTimeout(res, ms))
-        break
-      }
-      case 'repeat': {
-        const [times] = fields as [number]
-        for (let i = 0; i < times; i++) {
-          console.log(`Repeat iteration ${i + 1}/${times}`)
-          if (action.actionsList && action.actionsList[0]) {
-            await executeActions(action.actionsList[0], context)
-          }
-        }
-        break
-      }
-      case 'procedures_callnoreturn': {
-        const [funcName] = fields as [string]
-        const func = functions.get(funcName)
-        if (func) {
-          await executeActions(func.actions, context)
-        }
-      }
-      case 'if': {
-        const [condition, ...restConditions] = fields as [boolean, ...boolean[]]
-        const [ifActions, ...restActions] = action.actionsList || []
-
-        if (condition && ifActions) {
-          await executeActions(ifActions, context)
-        } else {
-          for (let i = 0; i < restConditions.length; i++) {
-            if (restConditions[i] && restActions[i]) {
-              await executeActions(restActions[i], context)
-              return
-            }
-          }
-          const elseActions = restActions[restConditions.length]
-          if (elseActions) {
-            await executeActions(elseActions, context)
-          }
-        }
-        break
-      }
-      case 'setposxyz': {
-        const [objectId, x, y, z] = fields as [string, number, number, number]
-        const object = objects.get(objectId)
-        if (object) {
-          object.position.set(x, y, z)
-          console.log(`Set position to: ${x}, ${y}, ${z}`)
-        } else {
-          console.log(`${objectId} does not exist.`)
-        }
-        break
-      }
-      case 'setscalexyz': {
-        const [objectId, x, y, z] = fields as [string, number, number, number]
-        const object = objects.get(objectId)
-        if (object) {
-          object.scale.set(x, y, z)
-          console.log(`Set scale to: ${x}, ${y}, ${z}`)
-        } else {
-          console.log(`${objectId} does not exist.`)
-        }
-        break
-      }
-      case 'setroteulerxyz': {
-        const [objectId, x, y, z] = fields as [string, number, number, number]
-        const object = objects.get(objectId)
-        if (object) {
-          object.rotation.set(x, y, z)
-          console.log(`Set rotation to euler: ${x}, ${y}, ${z}`)
-        } else {
-          console.log(`${objectId} does not exist.`)
-        }
-        break
-      }
-      case 'rotatexyz': {
-        const [objectId, axis, angle] = fields as [string, string, number]
-        const object = objects.get(objectId)
-        if (object) {
-          const rad = (angle * Math.PI) / 180
-          switch (axis) {
-            case 'X':
-              object.rotateX(rad)
-              break
-            case 'Y':
-              object.rotateY(rad)
-              break
-            case 'Z':
-              object.rotateZ(rad)
-              break
-          }
-          console.log(
-            `Rotated cube around ${axis} by ${angle}° (${rad} radians)`
-          )
-        } else {
-          console.log(`${objectId} does not exist.`)
-        }
-        break
-      }
-      case 'translatexyz': {
-        const [objectId, axis, direction, distance] = fields as [
-          string,
-          string,
-          number,
-          number
-        ]
-        const object = objects.get(objectId)
-        if (object) {
-          switch (axis) {
-            case 'X':
-              object.translateX(distance * direction)
-              break
-            case 'Y':
-              object.translateY(distance * direction)
-              break
-            case 'Z':
-              object.translateZ(distance * direction)
-              break
-          }
-          console.log(
-            `Translated ${object.name} around ${axis} by ${distance * direction} units`
-          )
-        } else {
-          console.log(`${objectId} does not exist.`)
-        }
-        break
-      }
-      default:
-        console.warn(`Unknown action type: ${action.type}`)
-    }
-  }
-}
-
-/**
- * @deprecated use the new evaluateExpression instead
- */
-function resolveValueWrapper(
-  wrapper: ValueWrapper,
-  context: ProgramState
-): Value {
-  const { nestedValues, compute, content, varId, funcName } = wrapper
-  const { variables, functions } = context
-
-  // variable reference
-  if (varId !== undefined) return variables.get(varId) || 0
-
-  // function reference
-  if (funcName !== undefined) {
-    const func = functions.get(funcName)
-    if (func) {
-      executeActions(func.actions, context)
-      // get return from execute actions !!! TODO @possible solution (nvm, this will make this even a bigger mess - time for a rewrite!!)
-      if (func.returns) {
-        const returnValue = resolveValueWrapper(func.returns, context)
-        return returnValue
-      }
-      return 0
-    }
-  }
-
-  // resolve nested values
-  if (nestedValues && nestedValues.length > 0 && compute) {
-    const resolvedValues = nestedValues.map((nestedValue) =>
-      resolveValueWrapper(nestedValue, context)
-    )
-    return compute(...resolvedValues)
-  }
-
-  if (content === undefined)
-    throw new Error(
-      'Invalid ValueWrapper: No id, content, or compute function found'
-    )
-  return content
-}
-
-/**
- * @todo
- */
 export async function evaluateExpression(
   expression: Expression,
   state: ProgramState
@@ -297,10 +53,42 @@ export async function evaluateExpression(
       return variable
     }
 
+    case 'setvar': {
+      if (!value) throw Error('Variable name is undefined')
+      if (!args || args.length === 0) throw Error('No value provided for setvar')
+      const varValue = await evaluateExpression(args[0], state)
+      variables.set(value as string, varValue as Value)
+      console.log(`Set variable ${value} to ${varValue}`)
+      return
+    }
+
+    case 'changevar': {
+      if (!value) throw Error('Variable name is undefined')
+      if (!args || args.length === 0) throw Error('No delta provided for changevar')
+      const delta = await evaluateExpression(args[0], state) as number
+      const currentValue = variables.get(value as string) as number || 0
+      variables.set(value as string, currentValue + delta)
+      console.log(`Changed variable ${value} by ${delta}`)
+      return
+    }
+
+    case 'setfunc': {
+      if (!value) throw Error('Function name is undefined')
+      const funcExpr: Expression = {
+        type: 'runseq',
+        children,
+        args, // return value if exists
+        value: args && args.length > 0 ? await evaluateExpression(args[0], state) : undefined
+      }
+      functions.set(value as string, funcExpr)
+      console.log(`Registered function ${value}`)
+      return
+    }
+
     case 'call': {
       if (!value) throw Error('Function name is undefined')
       const func = functions.get(value as string)
-      if (func === undefined) throw Error(`Function ${func} not found`)
+      if (func === undefined) throw Error(`Function ${value} not found`)
       if (args) {
         // set parameters as global variables, expecting them to be setvar
         for (const expr of args) {
@@ -318,8 +106,341 @@ export async function evaluateExpression(
           if (res !== undefined) return res
         }
       }
-      if (func.value) {
+      if (func.value !== undefined) {
         return func.value
+      }
+      return
+    }
+
+    case 'andor': {
+      if (!args) throw Error(`No args were given to ${type}`)
+      if (!value) throw Error(`No value was given to ${type}`)
+      
+      const [aExpr, bExpr] = args
+      const a = await evaluateExpression(aExpr, state)
+      const b = await evaluateExpression(bExpr, state)
+
+      switch (value) {
+        case 'AND': 
+          return a && b
+        case 'OR':
+          return a || b
+        default:
+          throw Error(`Unknown andor operator: ${value}`)
+      }
+    }
+
+    case 'neg': {
+      if (!args) throw Error(`No args were given to ${type}`)
+      const [boolExpr] = args
+      const bool = await evaluateExpression(boolExpr, state)
+      return !bool
+    }
+
+    case 'compare': {
+      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
+      if (!value) throw Error(`No operator provided for ${type}`)
+      
+      const [aExpr, bExpr] = args
+      const a = await evaluateExpression(aExpr, state)
+      const b = await evaluateExpression(bExpr, state)
+
+      switch (value) {
+        case 'EQ': return a == b
+        case 'NEQ': return a != b
+        case 'LT': return (a as number) < (b as number)
+        case 'LTE': return (a as number) <= (b as number)
+        case 'GT': return (a as number) > (b as number)
+        case 'GTE': return (a as number) >= (b as number)
+        default: throw Error(`Unknown compare operator: ${value}`)
+      }
+    }
+
+    case 'arithmetic': {
+      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
+      if (!value) throw Error(`No operator provided for ${type}`)
+      
+      const [aExpr, bExpr] = args
+      const a = await evaluateExpression(aExpr, state) as number
+      const b = await evaluateExpression(bExpr, state) as number
+
+      switch (value) {
+        case 'ADD': return a + b
+        case 'MINUS': return a - b
+        case 'MULTIPLY': return a * b
+        case 'DIVIDE': return a / b
+        case 'POWER': return a ** b
+        default: throw Error(`Unknown arithmetic operator: ${value}`)
+      }
+    }
+
+    case 'map': {
+      if (!args || args.length < 5) throw Error(`Invalid args for ${type}`)
+      const [xExpr, fromMinExpr, fromMaxExpr, toMinExpr, toMaxExpr] = args
+      const x = await evaluateExpression(xExpr, state) as number
+      const fromMin = await evaluateExpression(fromMinExpr, state) as number
+      const fromMax = await evaluateExpression(fromMaxExpr, state) as number
+      const toMin = await evaluateExpression(toMinExpr, state) as number
+      const toMax = await evaluateExpression(toMaxExpr, state) as number
+      
+      return ((x - fromMin) / (fromMax - fromMin)) * (toMax - toMin) + toMin
+    }
+
+    case 'trig': {
+      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      if (!value) throw Error(`No operator provided for ${type}`)
+      
+      const x = await evaluateExpression(args[0], state) as number
+      
+      switch (value) {
+        case 'SIN': return Math.sin(x)
+        case 'COS': return Math.cos(x)
+        case 'TAN': return Math.tan(x)
+        case 'ASIN': return Math.asin(x)
+        case 'ACOS': return Math.acos(x)
+        case 'ATAN': return Math.atan(x)
+        default: throw Error(`Unknown trig operator: ${value}`)
+      }
+    }
+
+    case 'htrig': {
+      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      if (!value) throw Error(`No operator provided for ${type}`)
+      
+      const x = await evaluateExpression(args[0], state) as number
+      
+      switch (value) {
+        case 'SINH': return Math.sinh(x)
+        case 'COSH': return Math.cosh(x)
+        case 'TANH': return Math.tanh(x)
+        case 'ASINH': return Math.asinh(x)
+        case 'ACOSH': return Math.acosh(x)
+        case 'ATANH': return Math.atanh(x)
+        default: throw Error(`Unknown htrig operator: ${value}`)
+      }
+    }
+
+    case 'round': {
+      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      if (!value) throw Error(`No operator provided for ${type}`)
+      
+      const x = await evaluateExpression(args[0], state) as number
+      
+      switch (value) {
+        case 'ROUND': return Math.round(x)
+        case 'ROUNDUP': return Math.ceil(x)
+        case 'ROUNDDOWN': return Math.floor(x)
+        default: throw Error(`Unknown round operator: ${value}`)
+      }
+    }
+
+    case 'single': {
+      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      if (!value) throw Error(`No operator provided for ${type}`)
+      
+      const x = await evaluateExpression(args[0], state) as number
+      
+      switch (value) {
+        case 'ROOT': return Math.sqrt(x)
+        case 'ABS': return Math.abs(x)
+        case 'NEG': return -x
+        case 'LN': return Math.log(x)
+        case 'LOG10': return Math.log10(x)
+        case 'EXP': return Math.E ** x
+        case 'POW10': return x ** 10
+        default: throw Error(`Unknown single operator: ${value}`)
+      }
+    }
+
+    case 'atan2': {
+      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
+      const x = await evaluateExpression(args[0], state) as number
+      const y = await evaluateExpression(args[1], state) as number
+      return Math.atan2(x, y)
+    }
+
+    case 'modulo': {
+      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
+      const dividend = await evaluateExpression(args[0], state) as number
+      const divisor = await evaluateExpression(args[1], state) as number
+      return dividend % divisor
+    }
+
+    case 'constrain': {
+      if (!args || args.length < 3) throw Error(`Invalid args for ${type}`)
+      const val = await evaluateExpression(args[0], state) as number
+      const low = await evaluateExpression(args[1], state) as number
+      const high = await evaluateExpression(args[2], state) as number
+      return Math.min(Math.max(val, low), high)
+    }
+
+    case 'randomfloat': {
+      return Math.random()
+    }
+
+    case 'randomint': {
+      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
+      const from = await evaluateExpression(args[0], state) as number
+      const to = await evaluateExpression(args[1], state) as number
+      const min = Math.min(from, to)
+      const max = Math.max(from, to)
+      return Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
+    case 'wait': {
+      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      const ms = await evaluateExpression(args[0], state) as number
+      console.log(`Waiting for ${ms} ms`)
+      await new Promise((res) => setTimeout(res, ms))
+      return
+    }
+
+    case 'repeat': {
+      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      const times = await evaluateExpression(args[0], state) as number
+      if (children) {
+        for (let i = 0; i < times; i++) {
+          console.log(`Repeat iteration ${i + 1}/${times}`)
+          for (const expr of children) {
+            await evaluateExpression(expr, state)
+          }
+        }
+      }
+      return
+    }
+
+    case 'if': {
+      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      if (!children) return
+      
+      // Evaluate conditions
+      const conditions: boolean[] = []
+      for (const condExpr of args) {
+        conditions.push(await evaluateExpression(condExpr, state) as boolean)
+      }
+      
+      // Find first true condition and execute corresponding branch
+      for (let i = 0; i < conditions.length; i++) {
+        if (conditions[i] && children[i]) {
+          await evaluateExpression(children[i], state)
+          return
+        }
+      }
+      
+      // Execute else branch if exists
+      const elseBranch = children[conditions.length]
+      if (elseBranch) {
+        await evaluateExpression(elseBranch, state)
+      }
+      return
+    }
+
+    case 'setposxyz': {
+      if (!args || args.length < 4) throw Error(`Invalid args for ${type}`)
+      const objectId = await evaluateExpression(args[0], state) as string
+      const x = await evaluateExpression(args[1], state) as number
+      const y = await evaluateExpression(args[2], state) as number
+      const z = await evaluateExpression(args[3], state) as number
+      
+      const object = objects.get(objectId)
+      if (object) {
+        object.position.set(x, y, z)
+        console.log(`Set position to: ${x}, ${y}, ${z}`)
+      } else {
+        console.log(`${objectId} does not exist.`)
+      }
+      return
+    }
+
+    case 'setscalexyz': {
+      if (!args || args.length < 4) throw Error(`Invalid args for ${type}`)
+      const objectId = await evaluateExpression(args[0], state) as string
+      const x = await evaluateExpression(args[1], state) as number
+      const y = await evaluateExpression(args[2], state) as number
+      const z = await evaluateExpression(args[3], state) as number
+      
+      const object = objects.get(objectId)
+      if (object) {
+        object.scale.set(x, y, z)
+        console.log(`Set scale to: ${x}, ${y}, ${z}`)
+      } else {
+        console.log(`${objectId} does not exist.`)
+      }
+      return
+    }
+
+    case 'setroteulerxyz': {
+      if (!args || args.length < 4) throw Error(`Invalid args for ${type}`)
+      const objectId = await evaluateExpression(args[0], state) as string
+      const x = await evaluateExpression(args[1], state) as number
+      const y = await evaluateExpression(args[2], state) as number
+      const z = await evaluateExpression(args[3], state) as number
+      
+      const object = objects.get(objectId)
+      if (object) {
+        object.rotation.set(x, y, z)
+        console.log(`Set rotation to euler: ${x}, ${y}, ${z}`)
+      } else {
+        console.log(`${objectId} does not exist.`)
+      }
+      return
+    }
+
+    case 'rotatexyz': {
+      if (!args || args.length < 3) throw Error(`Invalid args for ${type}`)
+      const objectId = await evaluateExpression(args[0], state) as string
+      const axis = await evaluateExpression(args[1], state) as string
+      const angle = await evaluateExpression(args[2], state) as number
+      
+      const object = objects.get(objectId)
+      if (object) {
+        const rad = (angle * Math.PI) / 180
+        switch (axis) {
+          case 'X':
+            object.rotateX(rad)
+            break
+          case 'Y':
+            object.rotateY(rad)
+            break
+          case 'Z':
+            object.rotateZ(rad)
+            break
+        }
+        console.log(`Rotated object around ${axis} by ${angle}° (${rad} radians)`)
+      } else {
+        console.log(`${objectId} does not exist.`)
+      }
+      return
+    }
+
+    case 'translatexyz': {
+      if (!args || args.length < 3) throw Error(`Invalid args for ${type}`)
+      const objectId = await evaluateExpression(args[0], state) as string
+      const axis = await evaluateExpression(args[1], state) as string
+      let distance = await evaluateExpression(args[2], state) as number
+      
+      // Handle direction multiplier if present
+      if (args.length >= 4) {
+        const direction = await evaluateExpression(args[3], state) as number
+        distance = distance * direction
+      }
+      
+      const object = objects.get(objectId)
+      if (object) {
+        switch (axis) {
+          case 'X':
+            object.translateX(distance)
+            break
+          case 'Y':
+            object.translateY(distance)
+            break
+          case 'Z':
+            object.translateZ(distance)
+            break
+        }
+        console.log(`Translated ${object.name} around ${axis} by ${distance} units`)
+      } else {
+        console.log(`${objectId} does not exist.`)
       }
       return
     }
