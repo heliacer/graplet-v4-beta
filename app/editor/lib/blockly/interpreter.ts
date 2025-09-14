@@ -1,6 +1,17 @@
-import { Action, Context, IR, Value, ValueWrapper, Func } from '../types'
+import {
+  Action,
+  ProgramState,
+  IR,
+  Value,
+  ValueWrapper,
+  Func,
+  Expression
+} from '../types'
 
-export async function interpret(ir: IR, context: Context) {
+/**
+ * @deprecated
+ */
+export async function interpret(ir: IR, context: ProgramState) {
   const { functions } = context
   // TODO: get func name, also, update varEnv / funcEnv on var / func delete
   ir.scripts
@@ -22,9 +33,12 @@ export async function interpret(ir: IR, context: Context) {
   await Promise.all(promises)
 }
 
+/**
+ * @deprecated use the new evaluateExpression instead
+ */
 export async function executeActions(
   actions: Action[],
-  context: Context
+  context: ProgramState
 ): Promise<void | ValueWrapper[]> {
   for (const action of actions) {
     const fields = [...(action.fields || [])]
@@ -189,7 +203,13 @@ export async function executeActions(
   }
 }
 
-function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
+/**
+ * @deprecated use the new evaluateExpression instead
+ */
+function resolveValueWrapper(
+  wrapper: ValueWrapper,
+  context: ProgramState
+): Value {
   const { nestedValues, compute, content, varId, funcName } = wrapper
   const { variables, functions } = context
 
@@ -223,4 +243,15 @@ function resolveValueWrapper(wrapper: ValueWrapper, context: Context): Value {
       'Invalid ValueWrapper: No id, content, or compute function found'
     )
   return content
+}
+
+/**
+ * @todo
+ */
+export async function evaluateExpression(
+  expr: Expression,
+  state: ProgramState
+): Promise<void | Value> {
+  const { scene, objects, variables, functions } = state
+  // ...
 }
