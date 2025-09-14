@@ -262,7 +262,7 @@ export async function evaluateExpression(
       for (const expr of children) {
         switch (expr.type) {
           // Add to run stack
-          case 'onclickrun':
+          case 'runseq':
             runExprs.push(expr)
             break
           // Register Function
@@ -276,15 +276,15 @@ export async function evaluateExpression(
       return
     }
 
-    case 'onclickrun': {
+    case 'runseq': {
       if (!children) return
-      // sequentially evaluate connected blocks
+      // sequentially evaluate children expressions
       for (const expr of children) {
         await evaluateExpression(expr, state)
       }
       return
     }
-
+    
     case 'literal': {
       if (value === undefined) throw Error('Literal value is undefined')
       return value

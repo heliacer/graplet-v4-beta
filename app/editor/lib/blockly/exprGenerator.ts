@@ -1,5 +1,5 @@
 import { Block, Input, Workspace } from 'blockly'
-import { Value, Expression } from '../types'
+import { Value, Expression, ExpressionT } from '../types'
 
 export class ExpressionGenerator {
   private blockGenerators: Record<
@@ -10,11 +10,6 @@ export class ExpressionGenerator {
     string,
     (block: Block, generator: ExpressionGenerator) => Expression
   > = {}
-
-  private procedureDefs = new Set([
-    'procedure_defnoreturn',
-    'procedure_defreturn'
-  ])
 
   forBlock(
     blockType: string,
@@ -33,18 +28,15 @@ export class ExpressionGenerator {
   getInputValue(
     block: Block,
     inputName: string,
-    defaultValue: Value | undefined
-  ): Expression | undefined {
+    defaultValue: Value
+  ): Expression {
+
     const input = block.getInput(inputName)
     if (!input || !input.connection)
       throw Error(`Block input ${inputName} was not found`)
 
     const connectedBlock = input.connection.targetBlock()
     if (!connectedBlock) {
-      if (!defaultValue)
-        throw Error(
-          `Block input ${inputName} was undefined without a default value`
-        )
       return {
         type: 'literal',
         value: defaultValue
@@ -71,16 +63,8 @@ export class ExpressionGenerator {
     const entries: Expression[] = []
 
     for (const block of topBlocks) {
-      if (block.type === 'onclickrun') {
-        const expr = this.blockToExpression(block)
-        const connectedExprs = this.getConnectedExpressions(block)
-        expr.children = connectedExprs
-        entries.push(expr)
-      }
-      if (this.procedureDefs.has(block.type)) {
-        const expr = this.blockToExpression(block)
-        entries.push(expr)
-      }
+      const expr = this.blockToExpression(block)
+      entries.push(expr)
     }
 
     // return one single expression and let the expression evaluator handle it
@@ -90,7 +74,7 @@ export class ExpressionGenerator {
     }
   }
 
-  private getConnectedExpressions(triggerBlock: Block): Expression[] {
+  getConnectedExpressions(triggerBlock: Block): Expression[] {
     const exprs: Expression[] = []
     let currentBlock = triggerBlock.getNextBlock()
     while (currentBlock) {
@@ -107,188 +91,180 @@ export const exprGenerator = new ExpressionGenerator()
 /**
  * @todo migrate all generators to use Expression as return
  */
-exprGenerator.forValueBlock('math_number', function (block: Block) {
+exprGenerator.forValueBlock('math_number', function (block: Block): Expression {
   return {
     type: 'literal',
     value: block.getFieldValue('NUM')
   }
 })
 
-exprGenerator.forValueBlock('text', function (block: Block) {
+exprGenerator.forValueBlock('text', function (block: Block): Expression {
   return {
     type: 'literal',
     value: block.getFieldValue('TEXT')
   }
 })
 
-exprGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
+exprGenerator.forValueBlock('input', function (block: Block): Expression {
   const value = block.getFieldValue('VALUE') as Value
-  return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
+  // "input" blocks are text inputs in disguise, this allows for numeric inputs aswell
+  const resolved = Number.isNaN(Number(value)) ? value : Number(value)
+  return {
+    type: 'literal',
+    value: resolved
+  }
 })
 
 // MOTION
 exprGenerator.forBlock(
   'moveunitsxyz',
-  function (block: Block, generator: ExpressionGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Expression {
     const objectId = block.getFieldValue('OBJECT') as string
-    const units = generator.getInputValue(block, 'UNITS')
+    const unitsExpr = generator.getInputValue(block, 'UNITS', 0)
     const direction = block.getFieldValue('DIRECTION') as string
     const axis = direction.slice(-1)
+
     return {
       type: 'translatexyz',
-      fields: [objectId, axis, direction.startsWith('-') ? -1 : 1],
-      values: units,
-      resolvers: [Number]
+      args: [
+        { type: 'literal', value: objectId },
+        { type: 'literal', value: axis },
+        { type: 'literal', value: direction.startsWith('-') ? -1 : 1 },
+        unitsExpr
+      ]
     }
   }
 )
 
-exprGenerator.forBlock(
-  'setposxyz',
-  function (block: Block, generator: ExpressionGenerator): Action {
-    const objectId = block.getFieldValue('OBJECT') as string
-    const x = generator.getInputValue(block, 'X')
-    const y = generator.getInputValue(block, 'Y')
-    const z = generator.getInputValue(block, 'Z')
-    return createXyzAction('setposxyz', objectId, x, y, z)
-  }
-)
-
-exprGenerator.forBlock(
-  'setscalexyz',
-  function (block: Block, generator: ExpressionGenerator): Action {
-    const objectId = block.getFieldValue('OBJECT') as string
-    const x = generator.getInputValue(block, 'X')
-    const y = generator.getInputValue(block, 'Y')
-    const z = generator.getInputValue(block, 'Z')
-    return createXyzAction('setscalexyz', objectId, x, y, z)
-  }
-)
-
-exprGenerator.forBlock(
-  'setroteulerxyz',
-  function (block: Block, generator: ExpressionGenerator): Action {
-    const objectId = block.getFieldValue('OBJECT') as string
-    const x = generator.getInputValue(block, 'X')
-    const y = generator.getInputValue(block, 'Y')
-    const z = generator.getInputValue(block, 'Z')
-    return createXyzAction('setroteulerxyz', objectId, x, y, z)
-  }
-)
+exprGenerator.forBlock('setposxyz', createXYZExpr('setposxyz'))
+exprGenerator.forBlock('setscalexyz', createXYZExpr('setscalexyz'))
+exprGenerator.forBlock('setroteulerxyz', createXYZExpr('setroteulerxyz'))
 
 exprGenerator.forBlock(
   'rotatexyz',
-  function (block: Block, generator: ExpressionGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Expression {
     const objectId = block.getFieldValue('OBJECT') as string
     const axis = block.getFieldValue('AXIS') as string
-    const angle = generator.getInputValue(block, 'ANGLE')
+    const angle = generator.getInputValue(block, 'ANGLE', 0)
     return {
       type: 'rotatexyz',
-      fields: [objectId, axis],
-      values: angle,
-      resolvers: [Number]
+      args: [
+        { type: 'literal', value: objectId },
+        { type: 'literal', value: axis },
+        angle
+      ]
     }
   }
 )
 
 exprGenerator.forBlock(
   'translatexyz',
-  function (block: Block, generator: ExpressionGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Expression {
     const objectId = block.getFieldValue('OBJECT') as string
-    console.log(objectId)
     const axis = block.getFieldValue('AXIS') as string
-    const distance = generator.getInputValue(block, 'UNITS')
+    const distanceExpr = generator.getInputValue(block, 'UNITS', 0)
 
     return {
       type: 'translatexyz',
-      fields: [objectId, axis, 1],
-      values: distance,
-      resolvers: [Number]
+      args: [
+        { type: 'literal', value: objectId },
+        { type: 'literal', value: axis },
+        distanceExpr
+      ]
     }
   }
 )
 
 // EVENTS
-exprGenerator.forBlock('onclickrun', function (): Action {
-  return { type: 'onclickrun' }
+exprGenerator.forBlock('onclickrun', function (block: Block): Expression {
+  const connectedExprs = exprGenerator.getConnectedExpressions(block)
+  return { type: 'runseq', children: connectedExprs }
 })
 
 // LOGIC
 exprGenerator.forBlock(
   'repeat',
-  function (block: Block, generator: ExpressionGenerator): Action {
-    const value = generator.getInputValue(block, 'TIMES')
-    const actions: Action[] = generateActionsFromInput(
+  function (block: Block, generator: ExpressionGenerator): Expression {
+    const valueExpr = generator.getInputValue(block, 'TIMES', 0)
+    const exprs: Expression[] = generateExprsFromInput(
       block.getInput('ACTIONS'),
       generator
     )
 
     return {
       type: 'repeat',
-      values: value,
-      resolvers: [Number],
-      actionsList: [actions]
+      args: [valueExpr],
+      children: exprs
     }
   }
 )
 
 exprGenerator.forBlock(
   'controls_if',
-  function (block: Block, generator: ExpressionGenerator): Action {
-    const branches: Action[][] = []
-    const conditions: ValueWrapper[] = []
+  function (block: Block, generator: ExpressionGenerator): Expression {
+    const branches: Expression[] = []
+    const conditions: Expression[] = []
 
     let i = 0
     while (block.getInput('IF' + i)) {
-      const condition = generator.getInputValue(block, 'IF' + i, false)
-      conditions.push(...condition)
-      const doActions: Action[] = generateActionsFromInput(
+      const conditionExpr = generator.getInputValue(block, 'IF' + i, false)
+      conditions.push(conditionExpr)
+      const doExprs: Expression[] = generateExprsFromInput(
         block.getInput('DO' + i),
         generator
       )
-      branches.push(doActions)
+      branches.push({
+        type: 'runseq',
+        children: doExprs
+      })
       i++
     }
 
-    const elseActions: Action[] = generateActionsFromInput(
+    const elseExprs: Expression[] = generateExprsFromInput(
       block.getInput('ELSE'),
       generator
     )
-    branches.push(elseActions)
+    branches.push({
+      type: 'runseq',
+      children: elseExprs
+    })
 
     return {
       type: 'if',
-      values: conditions,
-      actionsList: branches // [if_actions, elseif1_actions, elseif2_actions, ..., else_actions]
+      args: conditions,
+      children: branches // {[doExprs]} , {[elseExprs]}
     }
   }
 )
 
 exprGenerator.forBlock(
   'controls_ifelse',
-  function (block: Block, generator: ExpressionGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Expression {
     const condition = generator.getInputValue(block, 'IF0', false)
-    const doActions: Action[] = generateActionsFromInput(
+    const doExprs: Expression[] = generateExprsFromInput(
       block.getInput('DO0'),
       generator
     )
-    const elseActions: Action[] = generateActionsFromInput(
+    const elseExprs: Expression[] = generateExprsFromInput(
       block.getInput('ELSE'),
       generator
     )
 
     return {
       type: 'if',
-      values: condition,
-      actionsList: [doActions, elseActions]
+      args: [condition],
+      children: [
+        { type: 'runseq', children: doExprs },
+        { type: 'runseq', children: elseExprs }
+      ]
     }
   }
 )
 
 exprGenerator.forBlock(
   'wait',
-  function (block: Block, generator: ExpressionGenerator): Action {
-    const ms = generator.getInputValue(block, 'MS')
+  function (block: Block, generator: ExpressionGenerator): Expression {
+    const ms = generator.getInputValue(block, 'MS', 0)
 
     return {
       type: 'wait',
@@ -652,7 +628,7 @@ exprGenerator.forBlock(
 exprGenerator.forBlock(
   'procedures_defnoreturn',
   function (block: Block, generator: ExpressionGenerator): Action {
-    const actions: Action[] = generateActionsFromInput(
+    const actions: Action[] = generateExprsFromInput(
       block.getInput('STACK'),
       generator
     )
@@ -669,7 +645,7 @@ exprGenerator.forBlock(
 exprGenerator.forBlock(
   'procedures_defreturn',
   function (block: Block, generator: ExpressionGenerator): Action {
-    const actions: Action[] = generateActionsFromInput(
+    const actions: Action[] = generateExprsFromInput(
       block.getInput('STACK'),
       generator
     )
@@ -712,35 +688,36 @@ exprGenerator.forValueBlock(
 
 // Helper Functions
 
-export function generateActionsFromInput(
+export function generateExprsFromInput(
   input: Input | null,
   generator: ExpressionGenerator
-): Action[] {
-  const actions: Action[] = []
+): Expression[] {
+  const exprs: Expression[] = []
   if (input?.connection?.targetBlock()) {
     let currentBlock = input.connection.targetBlock()
     while (currentBlock) {
       const action = generator.blockToExpression(currentBlock)
       if (action) {
-        actions.push(action)
+        exprs.push(action)
       }
       currentBlock = currentBlock.getNextBlock()
     }
   }
-  return actions
+  return exprs
 }
 
-function createXyzAction(
-  type: string,
-  objectId: string,
-  x: ValueWrapper[],
-  y: ValueWrapper[],
-  z: ValueWrapper[]
-): Action {
-  return {
-    type,
-    fields: [objectId],
-    values: x.concat(y).concat(z),
-    resolvers: [Number, Number, Number]
+function createXYZExpr(type: ExpressionT) {
+  return function (block: Block, generator: ExpressionGenerator): Expression {
+    const objectId = block.getFieldValue('OBJECT') as string
+    const xExpr = generator.getInputValue(block, 'X', 0)
+    const yExpr = generator.getInputValue(block, 'Y', 0)
+    const zExpr = generator.getInputValue(block, 'Z', 0)
+    return {
+      type,
+      args: [
+        { type: 'literal', value: objectId },
+        xExpr, yExpr, zExpr
+      ]
+    }
   }
 }

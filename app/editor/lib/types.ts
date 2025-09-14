@@ -18,14 +18,13 @@ export interface ValueWrapper {
   varId?: string
   funcName?: string
   content?: Value
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   compute?: Function
   nestedValues?: ValueWrapper[]
   resolvers?: Array<((v: Value) => Value) | undefined>
 }
 
 /**
- * @deprecated
+ * @deprecated this is the old entry type
  */
 export type ScriptType =
   | 'procedures_defreturn'
@@ -33,7 +32,7 @@ export type ScriptType =
   | 'onclickrun'
 
 /**
- * @deprecated
+ * @deprecated this is the old entry (ActionScript)
  */
 export interface ActionScript {
   type: ScriptType
@@ -43,7 +42,7 @@ export interface ActionScript {
 }
 
 /**
- * @deprecated
+ * @deprecated this is the old main representation
  */
 export interface IR {
   scripts: ActionScript[]
@@ -78,17 +77,27 @@ export interface Expression {
 export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
 
 export type ExpressionT =
-  // Main Entry Point
+  // Entry Point
   | 'main'
-
-  // Entry Points
-  | 'onclickrun'
 
   // Value Expressions
   | 'literal' // Value (string, number, boolean ...)
   | 'var'
   | 'call'
 
-  // Statement Expressions
+  // Effect Expressions
   | 'setvar'
   | 'setfunc'
+
+  // Statement Expressions
+  | 'runseq'
+  | 'runsync'
+
+  | 'setposxyz'
+  | 'translatexyz'
+  | 'setscalexyz'
+  | 'setroteulerxyz'
+  | 'rotatexyz'
+
+  | 'repeat'
+  | 'if'
