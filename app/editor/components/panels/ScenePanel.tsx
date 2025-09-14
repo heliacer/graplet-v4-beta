@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { useEditor } from '../../lib/EditorContext'
-import { irGenerator } from '../../lib/blockly/irGenerator'
+import { exprGenerator } from '../../lib/blockly/exprGenerator'
 import { executeActions, interpret } from '../../lib/blockly/interpreter'
 import { Block, Events, serialization } from 'blockly'
 import { Action, VariableEnv, FunctionsEnv } from '../../lib/types'
@@ -111,7 +111,7 @@ export default function ScenePanel() {
         const clickEvent = event as Events.Click
         if (clickEvent.blockId) {
           const block = workspace?.getBlockById(clickEvent.blockId)
-          const action = irGenerator.blockToAction(block as Block)
+          const action = exprGenerator.blockToExpression(block as Block)
           if (action) {
             runAction(action)
           }
@@ -127,7 +127,7 @@ export default function ScenePanel() {
             ?.getFlyout()
             ?.getWorkspace()
             .getBlockById(clickEvent.blockId)
-          const action = irGenerator.blockToAction(block as Block)
+          const action = exprGenerator.blockToExpression(block as Block)
           if (action) {
             runAction(action)
           }
@@ -153,7 +153,7 @@ export default function ScenePanel() {
   useEffect(() => {
     const handleRunScene = () => {
       if (!workspace) return
-      const IR = irGenerator.workspaceToIR(workspace)
+      const IR = exprGenerator.workspaceToExpression(workspace)
       // TODO: Update run button, trigger runStart
       console.log('Running...')
       interpret(IR, {

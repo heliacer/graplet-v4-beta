@@ -21,7 +21,7 @@ export async function interpret(ir: IR, context: ProgramState) {
         script.type === 'procedures_defreturn'
     )
     .forEach((script) => {
-      if (!script.name) throw Error('Function does not have a name.')
+      if (!script.name) throw Error('Function does not have a name')
       const { actions, returns } = script
       const func: Func = { actions, returns }
       functions.set(script.name, func)
@@ -249,9 +249,83 @@ function resolveValueWrapper(
  * @todo
  */
 export async function evaluateExpression(
-  expr: Expression,
+  expression: Expression,
   state: ProgramState
-): Promise<void | Value> {
+): Promise<Value | undefined> {
+  const { type, args, value, children } = expression
   const { scene, objects, variables, functions } = state
-  // ...
+
+  switch (type) {
+    case 'main': {
+      if (!children) return // -> empty program (stoopid)
+      const runExprs: Expression[] = []
+      for (const expr of children) {
+        switch (expr.type) {
+          // Add to run stack
+          case 'onclickrun':
+            runExprs.push(expr)
+            break
+          // Register Function
+          case 'setfunc':
+            await evaluateExpression(expr, state)
+            break
+        }
+      }
+      const promises = runExprs.map((expr) => evaluateExpression(expr, state))
+      await Promise.all(promises)
+      return
+    }
+
+    case 'onclickrun': {
+      if (!children) return
+      // sequentially evaluate connected blocks
+      for (const expr of children) {
+        await evaluateExpression(expr, state)
+      }
+      return
+    }
+
+    case 'literal': {
+      if (value === undefined) throw Error('Literal value is undefined')
+      return value
+    }
+
+    case 'var': {
+      if (!value) throw Error('Variable name is undefined')
+      const variable = variables.get(value as string)
+      if (variable === undefined) throw Error(`Variable ${value} not found`)
+      return variable
+    }
+
+    case 'call': {
+      if (!value) throw Error('Function name is undefined')
+      const func = functions.get(value as string)
+      if (func === undefined) throw Error(`Function ${func} not found`)
+      if (args) {
+        // set parameters as global variables, expecting them to be setvar
+        for (const expr of args) {
+          if (expr.type !== 'setvar')
+            throw Error(
+              `Expected Expression of type setvar but got ${expr.type} instead`
+            )
+          await evaluateExpression(expr, state)
+        }
+      }
+      if (func.children) {
+        // sequentially evaluate inner blocks
+        for (const expr of func.children) {
+          const res = await evaluateExpression(expr, state)
+          if (res !== undefined) return res
+        }
+      }
+      if (func.value) {
+        return func.value
+      }
+      return
+    }
+
+    default: {
+      throw new Error(`Unknown expression type: ${type}`)
+    }
+  }
 }

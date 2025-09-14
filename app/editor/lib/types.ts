@@ -59,7 +59,7 @@ export interface Func {
 
 export type ObjectsEnv = Map<string, Object3D<Object3DEventMap>>
 export type VariableEnv = Map<string, Value>
-export type FunctionsEnv = Map<string, Func> // Func -> Expression
+export type FunctionsEnv = Map<string, Expression> // Func -> Expression
 
 export interface ProgramState {
   scene: Scene
@@ -78,6 +78,17 @@ export interface Expression {
 export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
 
 export type ExpressionT =
+  // Main Entry Point
+  | 'main'
+
+  // Entry Points
+  | 'onclickrun'
+
+  // Value Expressions
   | 'literal' // Value (string, number, boolean ...)
   | 'var'
   | 'call'
+
+  // Statement Expressions
+  | 'setvar'
+  | 'setfunc'

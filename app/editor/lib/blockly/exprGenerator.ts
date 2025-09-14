@@ -1,38 +1,31 @@
 import { Block, Input, Workspace } from 'blockly'
-import {
-  Action,
-  ActionScript,
-  IR,
-  Value,
-  ValueWrapper,
-  ScriptType
-} from '../types'
+import { Value, Expression } from '../types'
 
-export class IRGenerator {
+export class ExpressionGenerator {
   private blockGenerators: Record<
     string,
-    (block: Block, generator: IRGenerator) => Action | null
+    (block: Block, generator: ExpressionGenerator) => Expression
   > = {}
   private valueGenerators: Record<
     string,
-    (block: Block, generator: IRGenerator) => ValueWrapper[]
+    (block: Block, generator: ExpressionGenerator) => Expression
   > = {}
-  private scriptTypes = new Set<ScriptType>([
-    'onclickrun',
-    'procedures_defnoreturn',
-    'procedures_defreturn'
+
+  private procedureDefs = new Set([
+    'procedure_defnoreturn',
+    'procedure_defreturn'
   ])
 
   forBlock(
     blockType: string,
-    generatorFn: (block: Block, generator: IRGenerator) => Action | null
+    generatorFn: (block: Block, generator: ExpressionGenerator) => Expression
   ) {
     this.blockGenerators[blockType] = generatorFn
   }
 
   forValueBlock(
     blockType: string,
-    generatorFn: (block: Block, generator: IRGenerator) => ValueWrapper[]
+    generatorFn: (block: Block, generator: ExpressionGenerator) => Expression
   ) {
     this.valueGenerators[blockType] = generatorFn
   }
@@ -40,96 +33,103 @@ export class IRGenerator {
   getInputValue(
     block: Block,
     inputName: string,
-    preset?: Value
-  ): ValueWrapper[] {
+    defaultValue: Value | undefined
+  ): Expression | undefined {
     const input = block.getInput(inputName)
-    if (!input || !input.connection) {
-      return [{}]
-    }
+    if (!input || !input.connection)
+      throw Error(`Block input ${inputName} was not found`)
+
     const connectedBlock = input.connection.targetBlock()
     if (!connectedBlock) {
-      return [{ content: preset }]
+      if (!defaultValue)
+        throw Error(
+          `Block input ${inputName} was undefined without a default value`
+        )
+      return {
+        type: 'literal',
+        value: defaultValue
+      }
     }
+
     const valueGenerator = this.valueGenerators[connectedBlock.type]
-    if (valueGenerator) {
-      return valueGenerator(connectedBlock, this)
-    }
-    console.warn(
-      `No value generator found for block type: ${connectedBlock.type}`
-    )
-    return [{}]
+    if (!valueGenerator)
+      throw Error(
+        `No value generator found for block type ${connectedBlock.type}`
+      )
+    return valueGenerator(connectedBlock, this)
   }
 
-  blockToAction(block: Block): Action | null {
+  blockToExpression(block: Block): Expression {
     const generator = this.blockGenerators[block.type]
-    if (!generator) {
-      console.warn(`No IR generator found for block type: ${block.type}`)
-      return null
-    }
+    if (!generator)
+      throw Error(`No block generator found for block type ${block.type}`)
     return generator(block, this)
   }
 
-  workspaceToIR(workspace: Workspace): IR {
+  workspaceToExpression(workspace: Workspace): Expression {
     const topBlocks = workspace.getTopBlocks(true)
-    const scripts: ActionScript[] = []
+    const entries: Expression[] = []
+
     for (const block of topBlocks) {
-      if (this.scriptTypes.has(block.type as ScriptType)) {
-        const action = this.blockToAction(block)
-        if (action) {
-          const actions = this.getConnectedActions(block)
-          const { fields, values } = action
-          const actionScript: ActionScript = {
-            type: action.type as ScriptType,
-            actions: action.actionsList ? action.actionsList[0] : actions
-          }
-          if (fields && fields[0]) {
-            actionScript.name = fields[0] as string
-          }
-          if (values && values[0]) {
-            actionScript.returns = values[0]
-          }
-          scripts.push(actionScript)
-        }
+      if (block.type === 'onclickrun') {
+        const expr = this.blockToExpression(block)
+        const connectedExprs = this.getConnectedExpressions(block)
+        expr.children = connectedExprs
+        entries.push(expr)
+      }
+      if (this.procedureDefs.has(block.type)) {
+        const expr = this.blockToExpression(block)
+        entries.push(expr)
       }
     }
-    return { scripts: scripts }
+
+    // return one single expression and let the expression evaluator handle it
+    return {
+      type: 'main',
+      children: entries
+    }
   }
-  private getConnectedActions(triggerBlock: Block): Action[] {
-    const actions: Action[] = []
+
+  private getConnectedExpressions(triggerBlock: Block): Expression[] {
+    const exprs: Expression[] = []
     let currentBlock = triggerBlock.getNextBlock()
     while (currentBlock) {
-      const action = this.blockToAction(currentBlock)
-      if (action) {
-        actions.push(action)
-      }
+      const expression = this.blockToExpression(currentBlock)
+      exprs.push(expression)
       currentBlock = currentBlock.getNextBlock()
     }
-    return actions
+    return exprs
   }
 }
 
-export const irGenerator = new IRGenerator()
+export const exprGenerator = new ExpressionGenerator()
 
-irGenerator.forValueBlock(
-  'math_number',
-  function (block: Block): ValueWrapper[] {
-    return [{ content: block.getFieldValue('NUM') }]
+/**
+ * @todo migrate all generators to use Expression as return
+ */
+exprGenerator.forValueBlock('math_number', function (block: Block) {
+  return {
+    type: 'literal',
+    value: block.getFieldValue('NUM')
   }
-)
-
-irGenerator.forValueBlock('text', function (block: Block): ValueWrapper[] {
-  return [{ content: block.getFieldValue('TEXT') }]
 })
 
-irGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
+exprGenerator.forValueBlock('text', function (block: Block) {
+  return {
+    type: 'literal',
+    value: block.getFieldValue('TEXT')
+  }
+})
+
+exprGenerator.forValueBlock('input', function (block: Block): ValueWrapper[] {
   const value = block.getFieldValue('VALUE') as Value
   return [{ content: Number.isNaN(Number(value)) ? value : Number(value) }]
 })
 
 // MOTION
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'moveunitsxyz',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const objectId = block.getFieldValue('OBJECT') as string
     const units = generator.getInputValue(block, 'UNITS')
     const direction = block.getFieldValue('DIRECTION') as string
@@ -143,9 +143,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'setposxyz',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const objectId = block.getFieldValue('OBJECT') as string
     const x = generator.getInputValue(block, 'X')
     const y = generator.getInputValue(block, 'Y')
@@ -154,9 +154,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'setscalexyz',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const objectId = block.getFieldValue('OBJECT') as string
     const x = generator.getInputValue(block, 'X')
     const y = generator.getInputValue(block, 'Y')
@@ -165,9 +165,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'setroteulerxyz',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const objectId = block.getFieldValue('OBJECT') as string
     const x = generator.getInputValue(block, 'X')
     const y = generator.getInputValue(block, 'Y')
@@ -176,9 +176,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'rotatexyz',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const objectId = block.getFieldValue('OBJECT') as string
     const axis = block.getFieldValue('AXIS') as string
     const angle = generator.getInputValue(block, 'ANGLE')
@@ -191,9 +191,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'translatexyz',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const objectId = block.getFieldValue('OBJECT') as string
     console.log(objectId)
     const axis = block.getFieldValue('AXIS') as string
@@ -209,14 +209,14 @@ irGenerator.forBlock(
 )
 
 // EVENTS
-irGenerator.forBlock('onclickrun', function (): Action {
+exprGenerator.forBlock('onclickrun', function (): Action {
   return { type: 'onclickrun' }
 })
 
 // LOGIC
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'repeat',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const value = generator.getInputValue(block, 'TIMES')
     const actions: Action[] = generateActionsFromInput(
       block.getInput('ACTIONS'),
@@ -232,9 +232,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'controls_if',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const branches: Action[][] = []
     const conditions: ValueWrapper[] = []
 
@@ -264,9 +264,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'controls_ifelse',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const condition = generator.getInputValue(block, 'IF0', false)
     const doActions: Action[] = generateActionsFromInput(
       block.getInput('DO0'),
@@ -285,9 +285,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'wait',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const ms = generator.getInputValue(block, 'MS')
 
     return {
@@ -298,16 +298,16 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'logic_boolean',
   function (block: Block): ValueWrapper[] {
     const bool = block.getFieldValue('BOOL') as 'TRUE' | 'FALSE'
     return [{ content: bool === 'TRUE' ? true : false }]
   }
 )
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'logic_operation',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const operator = block.getFieldValue('OP') as keyof typeof operations
     const a = generator.getInputValue(block, 'A', false)
     const b = generator.getInputValue(block, 'B', false)
@@ -327,9 +327,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'logic_negate',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const bool = generator.getInputValue(block, 'BOOL', false)
 
     return [
@@ -342,9 +342,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'logic_compare',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const operator = block.getFieldValue('OP') as keyof typeof operations
     const a = generator.getInputValue(block, 'A')
     const b = generator.getInputValue(block, 'B')
@@ -368,9 +368,9 @@ irGenerator.forValueBlock(
 )
 
 // MATH
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'math_change',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const varId = block.getFieldValue('VAR') as string
     const delta = generator.getInputValue(block, 'DELTA')
     return {
@@ -381,9 +381,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_arithmetic',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const operator = block.getFieldValue('OP') as keyof typeof operations
     const a = generator.getInputValue(block, 'A')
     const b = generator.getInputValue(block, 'B')
@@ -406,9 +406,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_map',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const x = generator.getInputValue(block, 'NUM')
     const fromMin = generator.getInputValue(block, 'FROM_MIN')
     const fromMax = generator.getInputValue(block, 'FROM_MAX')
@@ -439,7 +439,7 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock('math_constant', function (block: Block) {
+exprGenerator.forValueBlock('math_constant', function (block: Block) {
   const constant = block.getFieldValue('CONSTANT') as keyof typeof constants
 
   const constants = {
@@ -454,9 +454,9 @@ irGenerator.forValueBlock('math_constant', function (block: Block) {
   return [{ content: constants[constant] }]
 })
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_trig',
-  function (block: Block, generator: IRGenerator) {
+  function (block: Block, generator: ExpressionGenerator) {
     const x = generator.getInputValue(block, 'NUM')
     const operator = block.getFieldValue('OP') as keyof typeof operations
 
@@ -479,9 +479,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_htrig',
-  function (block: Block, generator: IRGenerator) {
+  function (block: Block, generator: ExpressionGenerator) {
     const x = generator.getInputValue(block, 'NUM')
     const operator = block.getFieldValue('OP') as keyof typeof operations
 
@@ -504,9 +504,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_round',
-  function (block: Block, generator: IRGenerator) {
+  function (block: Block, generator: ExpressionGenerator) {
     const x = generator.getInputValue(block, 'NUM')
     const operator = block.getFieldValue('OP') as keyof typeof operations
 
@@ -526,9 +526,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_single',
-  function (block: Block, generator: IRGenerator) {
+  function (block: Block, generator: ExpressionGenerator) {
     const x = generator.getInputValue(block, 'NUM')
     const operator = block.getFieldValue('OP') as keyof typeof operations
 
@@ -552,9 +552,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_atan2',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const x = generator.getInputValue(block, 'X')
     const y = generator.getInputValue(block, 'Y')
 
@@ -568,9 +568,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_modulo',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const dividend = generator.getInputValue(block, 'DIVIDEND')
     const divisor = generator.getInputValue(block, 'DIVISOR')
 
@@ -584,9 +584,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_constrain',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const value = generator.getInputValue(block, 'VALUE')
     const low = generator.getInputValue(block, 'LOW')
     const high = generator.getInputValue(block, 'HIGH')
@@ -602,13 +602,13 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forValueBlock('math_random_float', function (): ValueWrapper[] {
+exprGenerator.forValueBlock('math_random_float', function (): ValueWrapper[] {
   return [{ content: Math.random() }]
 })
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'math_modulo',
-  function (block: Block, generator: IRGenerator): ValueWrapper[] {
+  function (block: Block, generator: ExpressionGenerator): ValueWrapper[] {
     const from = generator.getInputValue(block, 'DIVIDEND')
     const to = generator.getInputValue(block, 'DIVISOR')
 
@@ -627,7 +627,7 @@ irGenerator.forValueBlock(
 )
 
 // VARIABLES
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'variables_get',
   function (block: Block): ValueWrapper[] {
     const varId = block.getFieldValue('VAR') as string
@@ -635,9 +635,9 @@ irGenerator.forValueBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'variables_set',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const varId = block.getFieldValue('VAR') as string
     const value = generator.getInputValue(block, 'VALUE')
     return {
@@ -649,9 +649,9 @@ irGenerator.forBlock(
 )
 
 // FUNCTIONS
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'procedures_defnoreturn',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const actions: Action[] = generateActionsFromInput(
       block.getInput('STACK'),
       generator
@@ -666,9 +666,9 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'procedures_defreturn',
-  function (block: Block, generator: IRGenerator): Action {
+  function (block: Block, generator: ExpressionGenerator): Action {
     const actions: Action[] = generateActionsFromInput(
       block.getInput('STACK'),
       generator
@@ -685,7 +685,7 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forBlock(
+exprGenerator.forBlock(
   'procedures_callnoreturn',
   function (block: Block): Action {
     const extraState =
@@ -699,7 +699,7 @@ irGenerator.forBlock(
   }
 )
 
-irGenerator.forValueBlock(
+exprGenerator.forValueBlock(
   'procedures_callreturn',
   function (block: Block): ValueWrapper[] {
     const extraState =
@@ -714,13 +714,13 @@ irGenerator.forValueBlock(
 
 export function generateActionsFromInput(
   input: Input | null,
-  generator: IRGenerator
+  generator: ExpressionGenerator
 ): Action[] {
   const actions: Action[] = []
   if (input?.connection?.targetBlock()) {
     let currentBlock = input.connection.targetBlock()
     while (currentBlock) {
-      const action = generator.blockToAction(currentBlock)
+      const action = generator.blockToExpression(currentBlock)
       if (action) {
         actions.push(action)
       }

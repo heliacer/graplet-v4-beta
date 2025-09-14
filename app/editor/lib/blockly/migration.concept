@@ -1,0 +1,63 @@
+program.stop() // emitter.on('stopScene')
+program.resume() // emitter.on('resumeScene')
+program.pause() // emitter.on('pauseScene')
+
+emitter.on('runScene') -> 
+
+const exprs = generator.workspaceToExp()
+const envs = {
+  scene,
+  funcs: funcEnv
+  vars: varEnv,
+  objects: objects.current,
+}
+
+program.execute(
+  Expressions[], // previously mix of actionscript, action, valuewrappers etc..
+  Environments // previously context
+)
+
+-----
+
+async function evaluateExpression(): Promise<void | Value> {
+  ...
+}
+
+
+// not sure if program is a class, I'd like to keep it functional to be honest...
+execute: {
+  for (expression in this.expressions){
+    // check should pause / resume / stop ? I don't know
+      -> this.shouldStop ? ...
+      -> this.shouldResume ? ... 
+      -> this.shouldPause ? ...
+    await evaluateExpression(expression)
+  }
+}
+
+-----
+
+
+Type of Expression:
+
+
+type Expression = {
+  type: ExpressionType
+  args?: Expression[]
+  value?: Value  // literals
+  children?: Expression[]  // control flow
+}
+
+type ExpressionType =
+    'literal'
+  | 'var'
+  | 'call'
+
+  | 'setvar'
+  | 'setfunc'
+  | 'setposxyz'
+
+
+  ... // gonna add more
+
+type Value = string | number | boolean
