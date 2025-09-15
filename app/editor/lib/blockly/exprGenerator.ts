@@ -19,7 +19,6 @@ export class ExpressionGenerator {
     inputName: string,
     defaultValue: Value
   ): Expression {
-
     const input = block.getInput(inputName)
     if (!input || !input.connection)
       throw Error(`Block input ${inputName} was not found`)
@@ -34,9 +33,7 @@ export class ExpressionGenerator {
 
     const generator = this.generators[connectedBlock.type]
     if (!generator)
-      throw Error(
-        `No generator found for block type ${connectedBlock.type}`
-      )
+      throw Error(`No generator found for block type ${connectedBlock.type}`)
     return generator(connectedBlock, this)
   }
 
@@ -256,21 +253,18 @@ exprGenerator.forBlock(
     const msExpr = generator.getInputValue(block, 'MS', 0)
     return {
       type: 'wait',
-      args: [msExpr],
+      args: [msExpr]
     }
   }
 )
 
-exprGenerator.forBlock(
-  'logic_boolean',
-  function (block: Block): Expression {
-    const bool = block.getFieldValue('BOOL') as 'TRUE' | 'FALSE'
-    return {
-      type: 'literal',
-      value: bool === 'TRUE' ? true : false
-    }
+exprGenerator.forBlock('logic_boolean', function (block: Block): Expression {
+  const bool = block.getFieldValue('BOOL') as 'TRUE' | 'FALSE'
+  return {
+    type: 'literal',
+    value: bool === 'TRUE' ? true : false
   }
-)
+})
 exprGenerator.forBlock(
   'logic_operation',
   function (block: Block, generator: ExpressionGenerator): Expression {
@@ -491,25 +485,25 @@ exprGenerator.forBlock(
 )
 
 // VARIABLES
-exprGenerator.forBlock(
-  'variables_get',
-  function (block: Block): Expression {
-    const varId = block.getFieldValue('VAR') as string
-    return {
-      type: 'var',
-      value: varId
-    }
+exprGenerator.forBlock('variables_get', function (block: Block): Expression {
+  const varId = block.getFieldValue('VAR') as string
+  const variable = block.workspace.getVariableMap().getVariableById(varId)
+  return {
+    type: 'var',
+    value: variable?.getName()
   }
-)
+})
 
 exprGenerator.forBlock(
   'variables_set',
   function (block: Block, generator: ExpressionGenerator): Expression {
     const varId = block.getFieldValue('VAR') as string
+    const variable = block.workspace.getVariableMap().getVariableById(varId)
+
     const valueExpr = generator.getInputValue(block, 'VALUE', 0)
     return {
       type: 'setvar',
-      value: varId,
+      value: variable?.getName(),
       args: [valueExpr]
     }
   }
@@ -554,13 +548,24 @@ exprGenerator.forBlock(
 
 exprGenerator.forBlock(
   'procedures_callnoreturn',
-  function (block: Block): Expression {
+  function (block: Block, generator: ExpressionGenerator): Expression {
     const extraState =
-      block.saveExtraState && (block.saveExtraState(true) as { name: string })
+      block.saveExtraState &&
+      (block.saveExtraState(true) as { name: string; params: string[] })
     if (!extraState) throw Error('Extrastate does not exist.')
 
+    const argsExprs: Expression[] = []
+    extraState.params.forEach((param, i) => {
+      const argExpr = generator.getInputValue(block, `ARG${i}`, 0)
+      argsExprs.push({
+        type: 'setvar',
+        value: param,
+        args: [argExpr]
+      })
+    })
     return {
       type: 'call',
+      args: argsExprs,
       value: extraState.name
     }
   }
@@ -568,13 +573,24 @@ exprGenerator.forBlock(
 
 exprGenerator.forBlock(
   'procedures_callreturn',
-  function (block: Block): Expression {
+  function (block: Block, generator: ExpressionGenerator): Expression {
     const extraState =
-      block.saveExtraState && (block.saveExtraState(true) as { name: string })
+      block.saveExtraState &&
+      (block.saveExtraState(true) as { name: string; params: string[] })
     if (!extraState) throw Error('Extrastate does not exist.')
 
+    const argsExprs: Expression[] = []
+    extraState.params.forEach((param, i) => {
+      const argExpr = generator.getInputValue(block, `ARG${i}`, 0)
+      argsExprs.push({
+        type: 'setvar',
+        value: param,
+        args: [argExpr]
+      })
+    })
     return {
       type: 'call',
+      args: argsExprs,
       value: extraState.name
     }
   }
@@ -608,10 +624,7 @@ function createXYZExpr(type: ExpressionT) {
     const zExpr = generator.getInputValue(block, 'Z', 0)
     return {
       type,
-      args: [
-        { type: 'literal', value: objectId },
-        xExpr, yExpr, zExpr
-      ]
+      args: [{ type: 'literal', value: objectId }, xExpr, yExpr, zExpr]
     }
   }
 }

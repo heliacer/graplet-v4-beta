@@ -107,8 +107,10 @@ export default function ScenePanel() {
           })
             .then((result) => {
               console.log('Execution completed')
-              console.log(result)
-              alert(result)
+              console.log('result: ', result)
+              if (result !== undefined) {
+                alert(result)
+              }
             })
             .catch((err) => {
               console.error('Execution error:', err)

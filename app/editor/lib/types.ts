@@ -24,6 +24,9 @@ export type ExpressionT =
   // Entry Point
   | 'main'
 
+  // Function Expression
+  | 'func'
+
   // Value Expressions
   | 'literal' // Value (string, number, boolean ...)
   | 'var'
@@ -53,13 +56,11 @@ export type ExpressionT =
   // Statement Expressions
   | 'runseq'
   | 'runsync'
-
   | 'setposxyz'
   | 'translatexyz'
   | 'setscalexyz'
   | 'setroteulerxyz'
   | 'rotatexyz'
-
   | 'repeat'
   | 'if'
   | 'wait'
@@ -69,9 +70,9 @@ export class Program {
   private shouldPause = false
 
   stop() {}
-  
+
   pause() {}
-  
+
   resume() {}
 
   async execute() {}
