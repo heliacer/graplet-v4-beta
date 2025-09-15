@@ -32,7 +32,7 @@ export default function EditorNav() {
     if (!workspace) throw Error('Missing workspace')
     const workspacestate = serialization.workspaces.save(workspace)
     localStorage.setItem('projectData', JSON.stringify(workspacestate))
-    console.log('Saved workspace state to localStorage: ', workspacestate)
+    console.log('Saved workspace state to localStorage')
   }
 
   function handleSaveFile() {
