@@ -45,7 +45,7 @@ export async function evaluateExpression(
     case 'var': {
       if (!value) throw Error('Variable name is undefined')
       const variable = variables.get(value as string)
-      if (variable === undefined) throw Error(`Variable ${value} not found`)
+      if (variable === undefined) throw Error(`Variable "${value}" not found`)
       return variable
     }
 
@@ -55,7 +55,7 @@ export async function evaluateExpression(
         throw Error('No value provided for setvar')
       const varValue = await evaluateExpression(args[0], state)
       variables.set(value as string, varValue as Value)
-      console.log(`Set variable ${value} to ${varValue}`)
+      console.log(`Set variable "${value}" to ${varValue}`)
       return
     }
 
@@ -66,7 +66,7 @@ export async function evaluateExpression(
       const delta = (await evaluateExpression(args[0], state)) as number
       const currentValue = (variables.get(value as string) as number) || 0
       variables.set(value as string, currentValue + delta)
-      console.log(`Changed variable ${value} by ${delta}`)
+      console.log(`Changed variable "${value}" by ${delta}`)
       return
     }
 
@@ -78,20 +78,23 @@ export async function evaluateExpression(
         args // return expr
       }
       functions.set(value as string, funcExpr)
-      console.log(`Registered function ${value}`)
+      console.log(`Registered function "${value}"`)
       return
     }
 
     case 'call': {
       if (!value) throw Error('Function name is undefined')
       const func = functions.get(value as string)
-      if (func === undefined) throw Error(`Function ${value} not found`)
+      if (func === undefined)
+        throw Error(
+          `Function "${value}" not found. Maybe you forgot to register it?`
+        )
       if (args) {
         // set parameters as global variables, expecting them to setvar to param name
         for (const expr of args) {
           if (expr.type !== 'setvar')
             throw Error(
-              `Expected Expression of type setvar but got ${expr.type} instead`
+              `Expected Expression of type setvar but got "${expr.type}" instead`
             )
           await evaluateExpression(expr, state)
         }
@@ -110,8 +113,8 @@ export async function evaluateExpression(
     }
 
     case 'andor': {
-      if (!args) throw Error(`No args were given to ${type}`)
-      if (!value) throw Error(`No value was given to ${type}`)
+      if (!args) throw Error(`No args were given to "${type}"`)
+      if (!value) throw Error(`No value was given to "${type}"`)
 
       const [aExpr, bExpr] = args
       const a = await evaluateExpression(aExpr, state)
@@ -123,20 +126,20 @@ export async function evaluateExpression(
         case 'OR':
           return a || b
         default:
-          throw Error(`Unknown andor operator: ${value}`)
+          throw Error(`Unknown andor operator: "${value}"`)
       }
     }
 
     case 'neg': {
-      if (!args) throw Error(`No args were given to ${type}`)
+      if (!args) throw Error(`No args were given to "${type}"`)
       const [boolExpr] = args
       const bool = await evaluateExpression(boolExpr, state)
       return !bool
     }
 
     case 'compare': {
-      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
-      if (!value) throw Error(`No operator provided for ${type}`)
+      if (!args || args.length < 2) throw Error(`Invalid args for "${type}"`)
+      if (!value) throw Error(`No operator provided for "${type}"`)
 
       const [aExpr, bExpr] = args
       const a = await evaluateExpression(aExpr, state)
@@ -156,7 +159,7 @@ export async function evaluateExpression(
         case 'GTE':
           return (a as number) >= (b as number)
         default:
-          throw Error(`Unknown compare operator: ${value}`)
+          throw Error(`Unknown compare operator: "${value}"`)
       }
     }
 

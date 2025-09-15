@@ -24,7 +24,7 @@ import AssetsPanel from './panels/AssetsPanel'
 import ExplorerPanel from './panels/ExplorerPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
-
+import ConsolePanel from './panels/ConsolePanel'
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
@@ -37,7 +37,8 @@ const panelComponents = {
   },
   explorer: ExplorerPanel,
   assets: AssetsPanel,
-  properties: PropertiesPanel
+  properties: PropertiesPanel,
+  console: ConsolePanel
 }
 
 export default function Dockview() {
@@ -91,7 +92,7 @@ export default function Dockview() {
     event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Console',
-      component: 'debug',
+      component: 'console',
       params: {
         Icon: <Terminal size={16} />
       }

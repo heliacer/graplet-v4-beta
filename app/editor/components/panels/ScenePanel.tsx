@@ -4,7 +4,12 @@ import { useEditor } from '../../lib/EditorContext'
 import { exprGenerator } from '../../lib/blockly/exprGenerator'
 import { evaluateExpression } from '../../lib/blockly/interpreter'
 import { Block, Events, serialization } from 'blockly'
-import { VariableEnv, FunctionsEnv } from '../../lib/types'
+import {
+  VariableEnv,
+  FunctionsEnv,
+  Expression,
+  ProgramState
+} from '../../lib/types'
 import { useTrigger } from '../../lib/TriggerContext'
 import { ThreeEvent, useThree } from '@react-three/fiber'
 import {
@@ -13,6 +18,22 @@ import {
   TransformControls,
   useCursor
 } from '@react-three/drei'
+
+/**
+ * @todo This method is temporary
+ */
+function tempExec(expr: Expression, state: ProgramState) {
+  console.log('Running...')
+  console.time('Done in')
+  evaluateExpression(expr, state)
+    .then(() => {
+      console.timeEnd('Done in')
+    })
+    .catch((err) => {
+      console.timeEnd('Done in')
+      console.error(err)
+    })
+}
 
 function Object({
   object,
@@ -98,23 +119,12 @@ export default function ScenePanel() {
         if (clickEvent.blockId) {
           const block = workspace?.getBlockById(clickEvent.blockId)
           const expr = exprGenerator.blockToExpression(block as Block)
-
-          evaluateExpression(expr, {
+          tempExec(expr, {
             scene,
             objects: objects.current,
             variables: variableEnv,
             functions: functionsEnv
           })
-            .then((result) => {
-              console.log('Execution completed')
-              console.log('result: ', result)
-              if (result !== undefined) {
-                alert(result)
-              }
-            })
-            .catch((err) => {
-              console.error('Execution error:', err)
-            })
         }
       }
     }
@@ -128,20 +138,12 @@ export default function ScenePanel() {
             ?.getWorkspace()
             .getBlockById(clickEvent.blockId)
           const expr = exprGenerator.blockToExpression(block as Block)
-          evaluateExpression(expr, {
+          tempExec(expr, {
             scene,
             objects: objects.current,
             variables: variableEnv,
             functions: functionsEnv
           })
-            .then((result) => {
-              console.log('Execution completed')
-              console.log(result)
-              alert(result)
-            })
-            .catch((err) => {
-              console.error('Execution error:', err)
-            })
         }
       }
     }
@@ -165,19 +167,12 @@ export default function ScenePanel() {
     const handleRunScene = () => {
       if (!workspace) return
       const expr = exprGenerator.workspaceToExpression(workspace)
-      console.log('Running...')
-      evaluateExpression(expr, {
+      tempExec(expr, {
         scene,
         objects: objects.current,
         variables: variableEnv,
         functions: functionsEnv
       })
-        .then(() => {
-          console.log('Execution completed')
-        })
-        .catch((err) => {
-          console.error('Execution error:', err)
-        })
     }
     emitter.on('runScene', handleRunScene)
     return () => emitter.off('runScene', handleRunScene)
