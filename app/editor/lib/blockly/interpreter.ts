@@ -9,15 +9,13 @@ export async function evaluateExpression(
 
   switch (type) {
     case 'main': {
-      if (!children) return // -> empty program (stoopid)
+      if (!children) return
       const runExprs: Expression[] = []
       for (const expr of children) {
         switch (expr.type) {
-          // Add to run stack
           case 'runseq':
             runExprs.push(expr)
             break
-          // Register Function
           case 'setfunc':
             await evaluateExpression(expr, state)
             break
@@ -30,7 +28,6 @@ export async function evaluateExpression(
 
     case 'runseq': {
       if (!children) return
-      // sequentially evaluate children expressions
       for (const expr of children) {
         await evaluateExpression(expr, state)
       }
@@ -44,7 +41,7 @@ export async function evaluateExpression(
 
     case 'var': {
       if (!value) throw Error('Variable name is undefined')
-      const variable = variables.get(value as string)
+      const variable = variables.get(String(value))
       if (variable === undefined) throw Error(`Variable "${value}" not found`)
       return variable
     }
@@ -54,7 +51,7 @@ export async function evaluateExpression(
       if (!args || args.length === 0)
         throw Error('No value provided for setvar')
       const varValue = await evaluateExpression(args[0], state)
-      variables.set(value as string, varValue as Value)
+      variables.set(String(value), varValue as Value)
       console.log(`Set variable "${value}" to ${varValue}`)
       return
     }
@@ -63,9 +60,9 @@ export async function evaluateExpression(
       if (!value) throw Error('Variable name is undefined')
       if (!args || args.length === 0)
         throw Error('No delta provided for changevar')
-      const delta = (await evaluateExpression(args[0], state)) as number
-      const currentValue = (variables.get(value as string) as number) || 0
-      variables.set(value as string, currentValue + delta)
+      const delta = Number(await evaluateExpression(args[0], state))
+      const currentValue = Number(variables.get(String(value))) || 0
+      variables.set(String(value), currentValue + delta)
       console.log(`Changed variable "${value}" by ${delta}`)
       return
     }
@@ -75,22 +72,21 @@ export async function evaluateExpression(
       const funcExpr: Expression = {
         type: 'func',
         children,
-        args // return expr
+        args
       }
-      functions.set(value as string, funcExpr)
+      functions.set(String(value), funcExpr)
       console.log(`Registered function "${value}"`)
       return
     }
 
     case 'call': {
       if (!value) throw Error('Function name is undefined')
-      const func = functions.get(value as string)
+      const func = functions.get(String(value))
       if (func === undefined)
         throw Error(
           `Function "${value}" not found. Maybe you forgot to register it?`
         )
       if (args) {
-        // set parameters as global variables, expecting them to setvar to param name
         for (const expr of args) {
           if (expr.type !== 'setvar')
             throw Error(
@@ -100,7 +96,6 @@ export async function evaluateExpression(
         }
       }
       if (func.children) {
-        // sequentially evaluate inner blocks
         for (const expr of func.children) {
           const res = await evaluateExpression(expr, state)
           if (res !== undefined) return res
@@ -117,8 +112,8 @@ export async function evaluateExpression(
       if (!value) throw Error(`No value was given to "${type}"`)
 
       const [aExpr, bExpr] = args
-      const a = await evaluateExpression(aExpr, state)
-      const b = await evaluateExpression(bExpr, state)
+      const a = Boolean(await evaluateExpression(aExpr, state))
+      const b = Boolean(await evaluateExpression(bExpr, state))
 
       switch (value) {
         case 'AND':
@@ -133,7 +128,7 @@ export async function evaluateExpression(
     case 'neg': {
       if (!args) throw Error(`No args were given to "${type}"`)
       const [boolExpr] = args
-      const bool = await evaluateExpression(boolExpr, state)
+      const bool = Boolean(await evaluateExpression(boolExpr, state))
       return !bool
     }
 
@@ -151,25 +146,25 @@ export async function evaluateExpression(
         case 'NEQ':
           return a != b
         case 'LT':
-          return (a as number) < (b as number)
+          return Number(a) < Number(b)
         case 'LTE':
-          return (a as number) <= (b as number)
+          return Number(a) <= Number(b)
         case 'GT':
-          return (a as number) > (b as number)
+          return Number(a) > Number(b)
         case 'GTE':
-          return (a as number) >= (b as number)
+          return Number(a) >= Number(b)
         default:
           throw Error(`Unknown compare operator: "${value}"`)
       }
     }
 
     case 'arithmetic': {
-      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
-      if (!value) throw Error(`No operator provided for ${type}`)
+      if (!args || args.length < 2) throw Error(`Invalid args for "${type}"`)
+      if (!value) throw Error(`No operator provided for "${type}"`)
 
       const [aExpr, bExpr] = args
-      const a = (await evaluateExpression(aExpr, state)) as number
-      const b = (await evaluateExpression(bExpr, state)) as number
+      const a = Number(await evaluateExpression(aExpr, state))
+      const b = Number(await evaluateExpression(bExpr, state))
 
       switch (value) {
         case 'ADD':
@@ -183,27 +178,27 @@ export async function evaluateExpression(
         case 'POWER':
           return a ** b
         default:
-          throw Error(`Unknown arithmetic operator: ${value}`)
+          throw Error(`Unknown arithmetic operator: "${value}"`)
       }
     }
 
     case 'map': {
-      if (!args || args.length < 5) throw Error(`Invalid args for ${type}`)
+      if (!args || args.length < 5) throw Error(`Invalid args for "${type}"`)
       const [xExpr, fromMinExpr, fromMaxExpr, toMinExpr, toMaxExpr] = args
-      const x = (await evaluateExpression(xExpr, state)) as number
-      const fromMin = (await evaluateExpression(fromMinExpr, state)) as number
-      const fromMax = (await evaluateExpression(fromMaxExpr, state)) as number
-      const toMin = (await evaluateExpression(toMinExpr, state)) as number
-      const toMax = (await evaluateExpression(toMaxExpr, state)) as number
+      const x = Number(await evaluateExpression(xExpr, state))
+      const fromMin = Number(await evaluateExpression(fromMinExpr, state))
+      const fromMax = Number(await evaluateExpression(fromMaxExpr, state))
+      const toMin = Number(await evaluateExpression(toMinExpr, state))
+      const toMax = Number(await evaluateExpression(toMaxExpr, state))
 
       return ((x - fromMin) / (fromMax - fromMin)) * (toMax - toMin) + toMin
     }
 
     case 'trig': {
-      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
-      if (!value) throw Error(`No operator provided for ${type}`)
+      if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
+      if (!value) throw Error(`No operator provided for "${type}"`)
 
-      const x = (await evaluateExpression(args[0], state)) as number
+      const x = Number(await evaluateExpression(args[0], state))
 
       switch (value) {
         case 'SIN':
@@ -219,7 +214,7 @@ export async function evaluateExpression(
         case 'ATAN':
           return Math.atan(x)
         default:
-          throw Error(`Unknown trig operator: ${value}`)
+          throw Error(`Unknown trig operator: "${value}"`)
       }
     }
 
@@ -227,7 +222,7 @@ export async function evaluateExpression(
       if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
       if (!value) throw Error(`No operator provided for ${type}`)
 
-      const x = (await evaluateExpression(args[0], state)) as number
+      const x = Number(await evaluateExpression(args[0], state))
 
       switch (value) {
         case 'SINH':
@@ -243,7 +238,7 @@ export async function evaluateExpression(
         case 'ATANH':
           return Math.atanh(x)
         default:
-          throw Error(`Unknown htrig operator: ${value}`)
+          throw Error(`Unknown htrig operator: "${value}"`)
       }
     }
 
@@ -251,7 +246,7 @@ export async function evaluateExpression(
       if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
       if (!value) throw Error(`No operator provided for ${type}`)
 
-      const x = (await evaluateExpression(args[0], state)) as number
+      const x = Number(await evaluateExpression(args[0], state))
 
       switch (value) {
         case 'ROUND':
@@ -261,15 +256,15 @@ export async function evaluateExpression(
         case 'ROUNDDOWN':
           return Math.floor(x)
         default:
-          throw Error(`Unknown round operator: ${value}`)
+          throw Error(`Unknown round operator: "${value}"`)
       }
     }
 
     case 'single': {
       if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
-      if (!value) throw Error(`No operator provided for ${type}`)
+      if (!value) throw Error(`No operator provided for "${type}"`)
 
-      const x = (await evaluateExpression(args[0], state)) as number
+      const x = Number(await evaluateExpression(args[0], state))
 
       switch (value) {
         case 'ROOT':
@@ -287,29 +282,29 @@ export async function evaluateExpression(
         case 'POW10':
           return x ** 10
         default:
-          throw Error(`Unknown single operator: ${value}`)
+          throw Error(`Unknown single operator: "${value}"`)
       }
     }
 
     case 'atan2': {
-      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
-      const x = (await evaluateExpression(args[0], state)) as number
-      const y = (await evaluateExpression(args[1], state)) as number
+      if (!args || args.length < 2) throw Error(`Invalid args for "${type}"`)
+      const x = Number(await evaluateExpression(args[0], state))
+      const y = Number(await evaluateExpression(args[1], state))
       return Math.atan2(x, y)
     }
 
     case 'modulo': {
-      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
-      const dividend = (await evaluateExpression(args[0], state)) as number
-      const divisor = (await evaluateExpression(args[1], state)) as number
+      if (!args || args.length < 2) throw Error(`Invalid args for "${type}"`)
+      const dividend = Number(await evaluateExpression(args[0], state))
+      const divisor = Number(await evaluateExpression(args[1], state))
       return dividend % divisor
     }
 
     case 'constrain': {
-      if (!args || args.length < 3) throw Error(`Invalid args for ${type}`)
-      const val = (await evaluateExpression(args[0], state)) as number
-      const low = (await evaluateExpression(args[1], state)) as number
-      const high = (await evaluateExpression(args[2], state)) as number
+      if (!args || args.length < 3) throw Error(`Invalid args for "${type}"`)
+      const val = Number(await evaluateExpression(args[0], state))
+      const low = Number(await evaluateExpression(args[1], state))
+      const high = Number(await evaluateExpression(args[2], state))
       return Math.min(Math.max(val, low), high)
     }
 
@@ -318,25 +313,25 @@ export async function evaluateExpression(
     }
 
     case 'randomint': {
-      if (!args || args.length < 2) throw Error(`Invalid args for ${type}`)
-      const from = (await evaluateExpression(args[0], state)) as number
-      const to = (await evaluateExpression(args[1], state)) as number
+      if (!args || args.length < 2) throw Error(`Invalid args for "${type}"`)
+      const from = Number(await evaluateExpression(args[0], state))
+      const to = Number(await evaluateExpression(args[1], state))
       const min = Math.min(from, to)
       const max = Math.max(from, to)
       return Math.floor(Math.random() * (max - min + 1)) + min
     }
 
     case 'wait': {
-      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
-      const ms = (await evaluateExpression(args[0], state)) as number
+      if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
+      const ms = Number(await evaluateExpression(args[0], state))
       console.log(`Waiting for ${ms} ms`)
       await new Promise((res) => setTimeout(res, ms))
       return
     }
 
     case 'repeat': {
-      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
-      const times = (await evaluateExpression(args[0], state)) as number
+      if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
+      const times = Number(await evaluateExpression(args[0], state))
       if (children) {
         for (let i = 0; i < times; i++) {
           console.log(`Repeat iteration ${i + 1}/${times}`)
@@ -349,16 +344,14 @@ export async function evaluateExpression(
     }
 
     case 'if': {
-      if (!args || args.length < 1) throw Error(`Invalid args for ${type}`)
+      if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
       if (!children) return
 
-      // Evaluate conditions
       const conditions: boolean[] = []
       for (const condExpr of args) {
-        conditions.push((await evaluateExpression(condExpr, state)) as boolean)
+        conditions.push(Boolean(await evaluateExpression(condExpr, state)))
       }
 
-      // Find first true condition and execute corresponding branch
       for (let i = 0; i < conditions.length; i++) {
         if (conditions[i] && children[i]) {
           await evaluateExpression(children[i], state)
@@ -366,7 +359,6 @@ export async function evaluateExpression(
         }
       }
 
-      // Execute else branch if exists
       const elseBranch = children[conditions.length]
       if (elseBranch) {
         await evaluateExpression(elseBranch, state)
@@ -375,61 +367,61 @@ export async function evaluateExpression(
     }
 
     case 'setposxyz': {
-      if (!args || args.length < 4) throw Error(`Invalid args for ${type}`)
-      const objectId = (await evaluateExpression(args[0], state)) as string
-      const x = (await evaluateExpression(args[1], state)) as number
-      const y = (await evaluateExpression(args[2], state)) as number
-      const z = (await evaluateExpression(args[3], state)) as number
+      if (!args || args.length < 4) throw Error(`Invalid args for "${type}"`)
+      const objectId = String(await evaluateExpression(args[0], state))
+      const x = Number(await evaluateExpression(args[1], state))
+      const y = Number(await evaluateExpression(args[2], state))
+      const z = Number(await evaluateExpression(args[3], state))
 
       const object = objects.get(objectId)
       if (object) {
         object.position.set(x, y, z)
         console.log(`Set position to: ${x}, ${y}, ${z}`)
       } else {
-        console.log(`${objectId} does not exist.`)
+        console.log(`object with id "${objectId}" does not exist.`)
       }
       return
     }
 
     case 'setscalexyz': {
-      if (!args || args.length < 4) throw Error(`Invalid args for ${type}`)
-      const objectId = (await evaluateExpression(args[0], state)) as string
-      const x = (await evaluateExpression(args[1], state)) as number
-      const y = (await evaluateExpression(args[2], state)) as number
-      const z = (await evaluateExpression(args[3], state)) as number
+      if (!args || args.length < 4) throw Error(`Invalid args for "${type}"`)
+      const objectId = String(await evaluateExpression(args[0], state))
+      const x = Number(await evaluateExpression(args[1], state))
+      const y = Number(await evaluateExpression(args[2], state))
+      const z = Number(await evaluateExpression(args[3], state))
 
       const object = objects.get(objectId)
       if (object) {
         object.scale.set(x, y, z)
         console.log(`Set scale to: ${x}, ${y}, ${z}`)
       } else {
-        console.log(`${objectId} does not exist.`)
+        console.log(`object with id "${objectId}" does not exist.`)
       }
       return
     }
 
     case 'setroteulerxyz': {
-      if (!args || args.length < 4) throw Error(`Invalid args for ${type}`)
-      const objectId = (await evaluateExpression(args[0], state)) as string
-      const x = (await evaluateExpression(args[1], state)) as number
-      const y = (await evaluateExpression(args[2], state)) as number
-      const z = (await evaluateExpression(args[3], state)) as number
+      if (!args || args.length < 4) throw Error(`Invalid args for "${type}"`)
+      const objectId = String(await evaluateExpression(args[0], state))
+      const x = Number(await evaluateExpression(args[1], state))
+      const y = Number(await evaluateExpression(args[2], state))
+      const z = Number(await evaluateExpression(args[3], state))
 
       const object = objects.get(objectId)
       if (object) {
         object.rotation.set(x, y, z)
         console.log(`Set rotation to euler: ${x}, ${y}, ${z}`)
       } else {
-        console.log(`${objectId} does not exist.`)
+        console.log(`object with id "${objectId}" does not exist.`)
       }
       return
     }
 
     case 'rotatexyz': {
-      if (!args || args.length < 3) throw Error(`Invalid args for ${type}`)
-      const objectId = (await evaluateExpression(args[0], state)) as string
-      const axis = (await evaluateExpression(args[1], state)) as string
-      const angle = (await evaluateExpression(args[2], state)) as number
+      if (!args || args.length < 3) throw Error(`Invalid args for "${type}"`)
+      const objectId = String(await evaluateExpression(args[0], state))
+      const axis = String(await evaluateExpression(args[1], state))
+      const angle = Number(await evaluateExpression(args[2], state))
 
       const object = objects.get(objectId)
       if (object) {
@@ -449,20 +441,19 @@ export async function evaluateExpression(
           `Rotated object around ${axis} by ${angle}° (${rad} radians)`
         )
       } else {
-        console.log(`${objectId} does not exist.`)
+        console.log(`object with id "${objectId}" does not exist.`)
       }
       return
     }
 
     case 'translatexyz': {
-      if (!args || args.length < 3) throw Error(`Invalid args for ${type}`)
-      const objectId = (await evaluateExpression(args[0], state)) as string
-      const axis = (await evaluateExpression(args[1], state)) as string
-      let distance = (await evaluateExpression(args[2], state)) as number
+      if (!args || args.length < 3) throw Error(`Invalid args for "${type}"`)
+      const objectId = String(await evaluateExpression(args[0], state))
+      const axis = String(await evaluateExpression(args[1], state))
+      let distance = Number(await evaluateExpression(args[2], state))
 
-      // Handle direction multiplier if present
       if (args.length >= 4) {
-        const direction = (await evaluateExpression(args[3], state)) as number
+        const direction = Number(await evaluateExpression(args[3], state))
         distance = distance * direction
       }
 
@@ -483,13 +474,13 @@ export async function evaluateExpression(
           `Translated ${object.name} around ${axis} by ${distance} units`
         )
       } else {
-        console.log(`${objectId} does not exist.`)
+        console.log(`object with id "${objectId}" does not exist.`)
       }
       return
     }
 
     default: {
-      throw new Error(`Unknown expression type: ${type}`)
+      throw new Error(`Unknown expression type: "${type}"`)
     }
   }
 }

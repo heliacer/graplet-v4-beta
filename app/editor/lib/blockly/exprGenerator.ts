@@ -72,6 +72,11 @@ export class ExpressionGenerator {
   }
 }
 
+type ExtraState = {
+  name: string
+  params?: string[]
+}
+
 export const exprGenerator = new ExpressionGenerator()
 
 /**
@@ -311,10 +316,11 @@ exprGenerator.forBlock(
   'math_change',
   function (block: Block, generator: ExpressionGenerator): Expression {
     const varId = block.getFieldValue('VAR') as string
+    const variable = block.workspace.getVariableMap().getVariableById(varId)
     const deltaExpr = generator.getInputValue(block, 'DELTA', 0)
     return {
       type: 'changevar',
-      value: varId,
+      value: variable?.getName(),
       args: [deltaExpr]
     }
   }
@@ -550,12 +556,11 @@ exprGenerator.forBlock(
   'procedures_callnoreturn',
   function (block: Block, generator: ExpressionGenerator): Expression {
     const extraState =
-      block.saveExtraState &&
-      (block.saveExtraState(true) as { name: string; params: string[] })
+      block.saveExtraState && (block.saveExtraState(true) as ExtraState)
     if (!extraState) throw Error('Extrastate does not exist.')
 
     const argsExprs: Expression[] = []
-    extraState.params.forEach((param, i) => {
+    extraState.params?.forEach((param, i) => {
       const argExpr = generator.getInputValue(block, `ARG${i}`, 0)
       argsExprs.push({
         type: 'setvar',
@@ -575,12 +580,11 @@ exprGenerator.forBlock(
   'procedures_callreturn',
   function (block: Block, generator: ExpressionGenerator): Expression {
     const extraState =
-      block.saveExtraState &&
-      (block.saveExtraState(true) as { name: string; params: string[] })
+      block.saveExtraState && (block.saveExtraState(true) as ExtraState)
     if (!extraState) throw Error('Extrastate does not exist.')
 
     const argsExprs: Expression[] = []
-    extraState.params.forEach((param, i) => {
+    extraState.params?.forEach((param, i) => {
       const argExpr = generator.getInputValue(block, `ARG${i}`, 0)
       argsExprs.push({
         type: 'setvar',
