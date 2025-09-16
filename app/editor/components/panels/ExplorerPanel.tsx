@@ -32,7 +32,7 @@ function ObjectListItem({ object }: { object: Object3D }) {
         className={clsx(
           'flex gap-1 px-1 py-0.5 items-center border-b',
           currentObject === object.name
-            ? 'border-accent'
+            ? 'border-teal-600'
             : 'hover:border-zinc-700 border-transparent'
         )}
       >
@@ -63,7 +63,7 @@ export default function ExplorerPanel() {
       <nav className="flex justify-between items-center">
         <button
           onClick={() => emitter.emit('createObject')}
-          className="text-sm text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 py-0.5 bg-accent"
+          className="text-sm text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 py-0.5 bg-teal-600"
         >
           <Plus size={14} />
           Add Cube

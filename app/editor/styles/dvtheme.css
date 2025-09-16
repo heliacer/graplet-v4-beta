@@ -6,7 +6,7 @@
   --color-zinc-800: oklch(27.4% 0.006 286.033);
   --color-zinc-850: oklch(24.2% 0.006 285.959);
   --color-zinc-900: oklch(21% 0.006 285.885);
-  --color-accent: oklch(0.6292 0.1145 175.84);
+  --color-accent: oklch(60% 0.118 184.704);
 
   /* Semantic Color assignments */
   --text-primary: var(--color-zinc-200);

@@ -9,6 +9,14 @@ export interface ProgramState {
   objects: ObjectsEnv
   variables: VariableEnv
   functions: FunctionsEnv
+  runState: React.RefObject<RunState>
+}
+
+export interface RunState {
+  shouldRun: boolean
+  shouldPause: boolean
+  shouldStop: boolean
+  shouldStep: boolean
 }
 
 export interface Expression {

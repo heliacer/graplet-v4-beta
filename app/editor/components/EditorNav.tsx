@@ -8,10 +8,14 @@ import {
 import {
   ChevronDown,
   File,
+  Flag,
   Folder,
   LogOut,
+  Octagon,
+  Pause,
   Play,
   Settings2,
+  StepForward,
   User
 } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
@@ -20,13 +24,29 @@ import Logo from '@/app/ui/logo'
 import { useTrigger } from '../lib/TriggerContext'
 import { useEditor } from '../lib/EditorContext'
 import { serialization } from 'blockly'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { clsx } from 'clsx'
 
 export default function EditorNav() {
   const { data: session } = useSession()
   const emitter = useTrigger()
-  const { workspace } = useEditor()
+  const { workspace, runState, isRunning } = useEditor()
+  const [isPaused, setIsPaused] = useState<boolean>(false)
+
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  function togglePaused() {
+    setIsPaused((prev) => {
+      const newVal = !prev
+      runState.current.shouldPause = newVal
+      return newVal
+    })
+  }
+
+  function handleStop() {
+    runState.current.shouldStop = true
+    setIsPaused(false)
+  }
 
   function handleSave() {
     if (!workspace) throw Error('Missing workspace')
@@ -117,13 +137,56 @@ export default function EditorNav() {
         </DropdownMenu>
       </div>
       <div className="w-full h-full flex items-center justify-center">
-        <button
-          onClick={() => emitter.emit('runScene')}
-          className="flex items-center gap-1 cursor-pointer rounded-lg px-1.5 bg-accent"
-        >
-          <Play size={16} />
-          <p>Run</p>
-        </button>
+        <div className="flex gap-1">
+          <button
+            onClick={() => emitter.emit('runScene')}
+            title="run"
+            className={clsx(
+              'p-1 rounded',
+              isRunning ? 'bg-zinc-700' : 'cursor-pointer bg-teal-600'
+            )}
+            disabled={isRunning}
+          >
+            <Flag size={16} />
+          </button>
+          <button
+            onClick={togglePaused}
+            title={isPaused ? 'resume' : 'pause'}
+            className={clsx(
+              'p-1 rounded',
+              isRunning
+                ? isPaused
+                  ? 'cursor-pointer bg-teal-600'
+                  : 'cursor-pointer bg-orange-400'
+                : 'bg-zinc-700'
+            )}
+            disabled={!isRunning}
+          >
+            {isPaused ? <Play size={16} /> : <Pause size={16} />}
+          </button>
+          <button
+            onClick={handleStop}
+            title="stop"
+            className={clsx(
+              'p-1 rounded',
+              isRunning ? 'cursor-pointer bg-rose-500' : 'bg-zinc-700'
+            )}
+          >
+            <Octagon size={16} />
+          </button>
+          <button
+            onClick={() => (runState.current.shouldStep = true)}
+            className={clsx(
+              'p-1 rounded',
+              isRunning && isPaused
+                ? 'cursor-pointer bg-sky-600'
+                : 'bg-zinc-700'
+            )}
+            title="step"
+          >
+            <StepForward size={16} />
+          </button>
+        </div>
       </div>
       <div className="w-full h-full flex items-center justify-end">
         <div className="flex gap-4">

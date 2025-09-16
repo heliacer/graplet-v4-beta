@@ -20,18 +20,30 @@ import {
 } from '@react-three/drei'
 
 /**
- * @todo This method is temporary
+ * This is not supposed to be the end result, I have to come up with something smarter than this
  */
-function tempExec(expr: Expression, state: ProgramState) {
-  console.log('Running...')
+function execHelper(
+  expr: Expression,
+  state: ProgramState,
+  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  setIsRunning(true)
+  console.log('%cRunning...', 'color: lightseagreen;')
   console.time('Done in')
   evaluateExpression(expr, state)
-    .then(() => {
+    .then((result) => {
       console.timeEnd('Done in')
+      console.log('%coutput:', 'color: cornflowerblue;', result)
+      setIsRunning(false)
+      state.runState.current.shouldStop = false
+      state.runState.current.shouldPause = false
     })
     .catch((err) => {
       console.timeEnd('Done in')
       console.error(err)
+      setIsRunning(false)
+      state.runState.current.shouldStop = false
+      state.runState.current.shouldPause = false
     })
 }
 
@@ -69,7 +81,15 @@ export default function ScenePanel() {
   const [functionsEnv] = useState<FunctionsEnv>(new Map())
   const [objectCounter, setObjectCounter] = useState(0)
   const { scene } = useThree()
-  const { workspace, objects, currentObject, setCurrentObject } = useEditor()
+  const {
+    workspace,
+    objects,
+    currentObject,
+    setCurrentObject,
+    runState,
+    isRunning,
+    setIsRunning
+  } = useEditor()
   const emitter = useTrigger()
 
   const handleCreateObject = useCallback(() => {
@@ -91,9 +111,11 @@ export default function ScenePanel() {
     if (objects.current.size === 0 && workspace) {
       handleCreateObject()
 
-      // TODO: load objects state
+      /**
+       * @todo Load objects state
+       */
 
-      // load workspace state
+      // Load workspace state
       const data = localStorage.getItem('projectData')
       if (data) {
         try {
@@ -111,20 +133,26 @@ export default function ScenePanel() {
   }, [handleCreateObject, objects, workspace])
 
   useEffect(() => {
-    // this is extreme doodoo cheese code right now, but once the Program instance is introduced, this will be a lot better
-
+    /**
+     * @todo REFACTOR!!!
+     */
     function handleWorkspaceClick(event: Events.Abstract) {
       if (event.type === Events.CLICK) {
         const clickEvent = event as Events.Click
         if (clickEvent.blockId) {
           const block = workspace?.getBlockById(clickEvent.blockId)
           const expr = exprGenerator.blockToExpression(block as Block)
-          tempExec(expr, {
-            scene,
-            objects: objects.current,
-            variables: variableEnv,
-            functions: functionsEnv
-          })
+          execHelper(
+            expr,
+            {
+              scene,
+              objects: objects.current,
+              variables: variableEnv,
+              functions: functionsEnv,
+              runState: runState
+            },
+            setIsRunning
+          )
         }
       }
     }
@@ -138,12 +166,17 @@ export default function ScenePanel() {
             ?.getWorkspace()
             .getBlockById(clickEvent.blockId)
           const expr = exprGenerator.blockToExpression(block as Block)
-          tempExec(expr, {
-            scene,
-            objects: objects.current,
-            variables: variableEnv,
-            functions: functionsEnv
-          })
+          execHelper(
+            expr,
+            {
+              scene,
+              objects: objects.current,
+              variables: variableEnv,
+              functions: functionsEnv,
+              runState: runState
+            },
+            setIsRunning
+          )
         }
       }
     }
@@ -161,22 +194,48 @@ export default function ScenePanel() {
         ?.getWorkspace()
         .removeChangeListener(handleFlyoutWorkspaceClick)
     }
-  }, [workspace, objects, scene, variableEnv, functionsEnv])
+  }, [
+    workspace,
+    objects,
+    scene,
+    variableEnv,
+    functionsEnv,
+    runState,
+    setIsRunning
+  ])
 
   useEffect(() => {
     const handleRunScene = () => {
+      if (isRunning)
+        throw Error('Wait for the current program to finish first.')
       if (!workspace) return
       const expr = exprGenerator.workspaceToExpression(workspace)
-      tempExec(expr, {
-        scene,
-        objects: objects.current,
-        variables: variableEnv,
-        functions: functionsEnv
-      })
+      execHelper(
+        expr,
+        {
+          scene,
+          objects: objects.current,
+          variables: variableEnv,
+          functions: functionsEnv,
+          runState: runState
+        },
+        setIsRunning
+      )
     }
+
     emitter.on('runScene', handleRunScene)
     return () => emitter.off('runScene', handleRunScene)
-  }, [objects, scene, emitter, workspace, variableEnv, functionsEnv])
+  }, [
+    objects,
+    scene,
+    workspace,
+    emitter,
+    variableEnv,
+    functionsEnv,
+    runState,
+    isRunning,
+    setIsRunning
+  ])
 
   useEffect(() => {
     emitter.on('createObject', handleCreateObject)

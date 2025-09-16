@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Hook, Unhook, Console } from 'console-feed'
 import type { Message } from 'console-feed/lib/definitions/Component'
 
 export default function CodePanel() {
   const [logs, setLogs] = useState<Message[]>([])
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const hookedConsole = Hook(
       window.console,
-      (log) =>
+      (log) => {
         setLogs((currLogs) => [
           ...currLogs,
           { ...log, id: crypto.randomUUID(), data: log.data ?? [] }
-        ]),
+        ])
+      },
       false
     )
     return () => {
@@ -20,8 +22,14 @@ export default function CodePanel() {
     }
   }, [])
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [logs])
+
   return (
-    <div className="overflow-auto h-full">
+    <div ref={scrollRef} className="overflow-auto h-full dvTabScrollBarColor">
       <Console logs={logs} variant="dark" />
     </div>
   )

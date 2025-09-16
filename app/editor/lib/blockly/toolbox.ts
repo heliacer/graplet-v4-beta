@@ -159,7 +159,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       contents: [
         {
           kind: 'block',
-          type: 'onclickrun'
+          type: 'onflagclick'
         }
       ]
     },
