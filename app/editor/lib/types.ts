@@ -16,6 +16,7 @@ export interface RunState {
   shouldRun: boolean
   shouldPause: boolean
   shouldStop: boolean
+  shouldStep: boolean
 }
 
 export interface Expression {

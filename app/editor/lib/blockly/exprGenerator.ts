@@ -167,7 +167,7 @@ exprGenerator.forBlock(
 )
 
 // EVENTS
-exprGenerator.forBlock('onclickrun', function (block: Block): Expression {
+exprGenerator.forBlock('onflagclick', function (block: Block): Expression {
   const connectedExprs = exprGenerator.getConnectedExpressions(block)
   return { type: 'runseq', children: connectedExprs }
 })

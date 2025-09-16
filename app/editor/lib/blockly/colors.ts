@@ -8,11 +8,10 @@
 */
 
 export const colors = {
-  MOTION: '#557EE8',
-  LOOKS: '#C58320',
-  EVENTS: '#C55FCF',
-  LOGIC: '#7EBF41',
-  VARIABLES: '#3E429C',
-  FUNCTIONS: '#C2524C',
-  MATH: '#4FB0C1'
+  MOTION: '#3b82f6', // Blue
+  EVENTS: '#10b981', //
+  LOGIC: '#84cc16', // Light Green
+  VARIABLES: '#6366f1', // Indigo
+  FUNCTIONS: '#ef4444', // Red
+  MATH: '#06b6d4' // Cyan
 }

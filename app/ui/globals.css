@@ -4,17 +4,14 @@
   --color-zinc-850: oklch(24.2% 0.006 285.959);
   --color-zinc-750: oklch(32.5% 0.006 285.959);
   --color-zinc-650: oklch(40.7% 0.006 285.959);
-
-  --color-accent: oklch(0.6292 0.1145 175.84);
-  --color-accent-dark: oklch(0.5532 0.0989 176.7);
 }
 
 button {
-  @apply focus:outline-none focus-visible:border-accent;
+  @apply focus:outline-none focus-visible:border-teal-600;
 }
 
 input {
-  @apply border-zinc-400 focus:border-accent-dark dark:border-zinc-700 dark:focus:border-accent;
+  @apply border-zinc-400 focus:border-teal-700 dark:border-zinc-700 dark:focus:border-teal-600;
 }
 
 input[type=number]::-webkit-inner-spin-button {

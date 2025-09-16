@@ -7,8 +7,14 @@ export async function evaluateExpression(
   const { type, args, value, children } = expression
   const { objects, variables, functions, runState } = state
 
+  // Runstate control
   if (runState.current.shouldStop) return
   while (runState.current.shouldPause) {
+    if (runState.current.shouldStop) return
+    if (runState.current.shouldStep) {
+      runState.current.shouldStep = false
+      break
+    }
     await new Promise((res) => setTimeout(res, 50))
   }
 

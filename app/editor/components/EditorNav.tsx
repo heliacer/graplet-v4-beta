@@ -25,11 +25,12 @@ import { useTrigger } from '../lib/TriggerContext'
 import { useEditor } from '../lib/EditorContext'
 import { serialization } from 'blockly'
 import { useRef, useState } from 'react'
+import { clsx } from 'clsx'
 
 export default function EditorNav() {
   const { data: session } = useSession()
   const emitter = useTrigger()
-  const { workspace, runState } = useEditor()
+  const { workspace, runState, isRunning } = useEditor()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -40,6 +41,11 @@ export default function EditorNav() {
       runState.current.shouldPause = newVal
       return newVal
     })
+  }
+
+  function handleStop() {
+    runState.current.shouldStop = true
+    setIsPaused(false)
   }
 
   function handleSave() {
@@ -134,20 +140,50 @@ export default function EditorNav() {
         <div className="flex gap-1">
           <button
             onClick={() => emitter.emit('runScene')}
-            className="cursor-pointer p-1 rounded bg-accent"
+            title="run"
+            className={clsx(
+              'p-1 rounded',
+              isRunning ? 'bg-zinc-700' : 'cursor-pointer bg-teal-600'
+            )}
+            disabled={isRunning}
           >
             <Flag size={16} />
           </button>
           <button
             onClick={togglePaused}
-            className="cursor-pointer p-1 rounded bg-accent"
+            title={isPaused ? 'resume' : 'pause'}
+            className={clsx(
+              'p-1 rounded',
+              isRunning
+                ? isPaused
+                  ? 'cursor-pointer bg-teal-600'
+                  : 'cursor-pointer bg-orange-400'
+                : 'bg-zinc-700'
+            )}
+            disabled={!isRunning}
           >
             {isPaused ? <Play size={16} /> : <Pause size={16} />}
           </button>
-          <button className="cursor-pointer p-1 rounded bg-accent">
+          <button
+            onClick={handleStop}
+            title="stop"
+            className={clsx(
+              'p-1 rounded',
+              isRunning ? 'cursor-pointer bg-rose-500' : 'bg-zinc-700'
+            )}
+          >
             <Octagon size={16} />
           </button>
-          <button className="cursor-pointer p-1 rounded bg-accent">
+          <button
+            onClick={() => (runState.current.shouldStep = true)}
+            className={clsx(
+              'p-1 rounded',
+              isRunning && isPaused
+                ? 'cursor-pointer bg-sky-600'
+                : 'bg-zinc-700'
+            )}
+            title="step"
+          >
             <StepForward size={16} />
           </button>
         </div>

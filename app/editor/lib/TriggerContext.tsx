@@ -4,7 +4,6 @@ import { Object3D } from 'three'
 
 type Events = {
   runScene: void
-  stopScene: void
   createObject: void
   objectUpdated: void
   objectCreated: { object: Object3D }

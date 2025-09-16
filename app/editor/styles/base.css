@@ -684,3 +684,7 @@
 .dv-tabs-and-actions-container .dv-right-actions-container {
   display: flex;
 }
+
+.dvTabScrollBarColor {
+  scrollbar-color: currentColor var(--surface-primary);
+}
