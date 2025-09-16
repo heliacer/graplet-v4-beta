@@ -37,7 +37,8 @@ export function EditorProvider({
   const runState = useRef<RunState>({
     shouldRun: false,
     shouldPause: false,
-    shouldStop: false
+    shouldStop: false,
+    shouldStep: false
   })
 
   return (
