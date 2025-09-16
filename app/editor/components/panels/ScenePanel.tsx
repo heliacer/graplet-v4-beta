@@ -69,7 +69,13 @@ export default function ScenePanel() {
   const [functionsEnv] = useState<FunctionsEnv>(new Map())
   const [objectCounter, setObjectCounter] = useState(0)
   const { scene } = useThree()
-  const { workspace, objects, currentObject, setCurrentObject } = useEditor()
+  const {
+    workspace,
+    objects,
+    currentObject,
+    setCurrentObject,
+    runState: runState
+  } = useEditor()
   const emitter = useTrigger()
 
   const handleCreateObject = useCallback(() => {
@@ -123,7 +129,8 @@ export default function ScenePanel() {
             scene,
             objects: objects.current,
             variables: variableEnv,
-            functions: functionsEnv
+            functions: functionsEnv,
+            runState: runState
           })
         }
       }
@@ -142,7 +149,8 @@ export default function ScenePanel() {
             scene,
             objects: objects.current,
             variables: variableEnv,
-            functions: functionsEnv
+            functions: functionsEnv,
+            runState: runState
           })
         }
       }
@@ -161,7 +169,7 @@ export default function ScenePanel() {
         ?.getWorkspace()
         .removeChangeListener(handleFlyoutWorkspaceClick)
     }
-  }, [workspace, objects, scene, variableEnv, functionsEnv])
+  }, [workspace, objects, scene, variableEnv, functionsEnv, runState])
 
   useEffect(() => {
     const handleRunScene = () => {
@@ -171,12 +179,13 @@ export default function ScenePanel() {
         scene,
         objects: objects.current,
         variables: variableEnv,
-        functions: functionsEnv
+        functions: functionsEnv,
+        runState: runState
       })
     }
     emitter.on('runScene', handleRunScene)
     return () => emitter.off('runScene', handleRunScene)
-  }, [objects, scene, emitter, workspace, variableEnv, functionsEnv])
+  }, [objects, scene, emitter, workspace, variableEnv, functionsEnv, runState])
 
   useEffect(() => {
     emitter.on('createObject', handleCreateObject)

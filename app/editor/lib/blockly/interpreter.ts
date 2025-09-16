@@ -5,7 +5,12 @@ export async function evaluateExpression(
   state: ProgramState
 ): Promise<Value | undefined> {
   const { type, args, value, children } = expression
-  const { objects, variables, functions } = state
+  const { objects, variables, functions, runState } = state
+
+  if (runState.current.shouldStop) return
+  while (runState.current.shouldPause) {
+    await new Promise((res) => setTimeout(res, 50))
+  }
 
   switch (type) {
     case 'main': {

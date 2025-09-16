@@ -1,19 +1,24 @@
 import React, {
   createContext,
   RefObject,
+  Dispatch,
   useContext,
+  SetStateAction,
   useRef,
   useState
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
-import { ObjectsEnv } from './types'
+import { ObjectsEnv, RunState } from './types'
 
 interface EditorContextType {
   workspace: WorkspaceSvg | null
-  setWorkspace: (workspace: WorkspaceSvg | null) => void
+  setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
   objects: RefObject<ObjectsEnv>
   currentObject: string
-  setCurrentObject: (key: string) => void
+  setCurrentObject: Dispatch<SetStateAction<string>>
+  runState: RefObject<RunState>
+  isRunning: boolean
+  setIsRunning: Dispatch<SetStateAction<boolean>>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -27,7 +32,13 @@ export function EditorProvider({
 }: Readonly<{ children: React.ReactNode }>) {
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [currentObject, setCurrentObject] = useState<string>('')
+  const [isRunning, setIsRunning] = useState<boolean>(false)
   const objects = useRef(new Map())
+  const runState = useRef<RunState>({
+    shouldRun: false,
+    shouldPause: false,
+    shouldStop: false
+  })
 
   return (
     <EditorContext.Provider
@@ -36,7 +47,10 @@ export function EditorProvider({
         setWorkspace,
         objects,
         currentObject,
-        setCurrentObject
+        setCurrentObject,
+        runState,
+        isRunning,
+        setIsRunning
       }}
     >
       {children}
