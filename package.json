@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@blockly/continuous-toolbox": "^7.0.2",
-    "@blockly/field-angle": "^6.0.2",
     "@prisma/client": "^6.12.0",
     "@react-three/drei": "^10.7.4",
     "@react-three/fiber": "^9.2.0",
@@ -22,16 +21,15 @@
     "bcrypt": "^6.0.0",
     "blockly": "^12.2.0",
     "clsx": "^2.1.1",
-    "console-feed": "^3.8.0",
     "dockview-react": "^4.5.0",
-    "lucide-react": "^0.525.0",
+    "lucide-react": "^0.544.0",
     "mitt": "^3.0.1",
     "next": "^15.5.2",
     "next-auth": "^5.0.0-beta.29",
     "prisma": "^6.12.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "three": "^0.178.0",
+    "three": "^0.180.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {
@@ -44,6 +42,6 @@
     "eslint-config-next": "15.4.2",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5.9.2"
   }
 }

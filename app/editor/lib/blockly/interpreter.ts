@@ -1,4 +1,4 @@
-import { ProgramState, Value, Expression } from '../types'
+import { ProgramState, Value, Expression, RunState } from '../types'
 
 export async function evaluateExpression(
   expression: Expression,
@@ -6,17 +6,6 @@ export async function evaluateExpression(
 ): Promise<Value | undefined> {
   const { type, args, value, children } = expression
   const { objects, variables, functions, runState } = state
-
-  // Runstate control
-  if (runState.current.shouldStop) return
-  while (runState.current.shouldPause) {
-    if (runState.current.shouldStop) return
-    if (runState.current.shouldStep) {
-      runState.current.shouldStep = false
-      break
-    }
-    await new Promise((res) => setTimeout(res, 50))
-  }
 
   switch (type) {
     case 'main': {
@@ -40,6 +29,7 @@ export async function evaluateExpression(
     case 'runseq': {
       if (!children) return
       for (const expr of children) {
+        if (!(await checkPoint(runState))) return
         await evaluateExpression(expr, state)
       }
       return
@@ -63,7 +53,6 @@ export async function evaluateExpression(
         throw Error('No value provided for setvar')
       const varValue = await evaluateExpression(args[0], state)
       variables.set(String(value), varValue as Value)
-      console.log(`Set variable "${value}" to ${varValue}`)
       return
     }
 
@@ -74,7 +63,6 @@ export async function evaluateExpression(
       const delta = Number(await evaluateExpression(args[0], state))
       const currentValue = Number(variables.get(String(value))) || 0
       variables.set(String(value), currentValue + delta)
-      console.log(`Changed variable "${value}" by ${delta}`)
       return
     }
 
@@ -86,11 +74,11 @@ export async function evaluateExpression(
         args
       }
       functions.set(String(value), funcExpr)
-      console.log(`Registered function "${value}"`)
       return
     }
 
     case 'call': {
+      // check here
       if (!value) throw Error('Function name is undefined')
       const func = functions.get(String(value))
       if (func === undefined)
@@ -108,6 +96,7 @@ export async function evaluateExpression(
       }
       if (func.children) {
         for (const expr of func.children) {
+          if (!(await checkPoint(runState))) return
           const res = await evaluateExpression(expr, state)
           if (res !== undefined) return res
         }
@@ -333,9 +322,9 @@ export async function evaluateExpression(
     }
 
     case 'wait': {
+      if (!(await checkPoint(runState))) return
       if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
       const ms = Number(await evaluateExpression(args[0], state))
-      console.log(`Waiting for ${ms} ms`)
       await new Promise((res) => setTimeout(res, ms))
       return
     }
@@ -345,8 +334,9 @@ export async function evaluateExpression(
       const times = Number(await evaluateExpression(args[0], state))
       if (children) {
         for (let i = 0; i < times; i++) {
-          console.log(`Repeat iteration ${i + 1}/${times}`)
+          if (!(await checkPoint(runState))) return
           for (const expr of children) {
+            if (!(await checkPoint(runState))) return
             await evaluateExpression(expr, state)
           }
         }
@@ -355,6 +345,7 @@ export async function evaluateExpression(
     }
 
     case 'if': {
+      if (!(await checkPoint(runState))) return
       if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
       if (!children) return
 
@@ -387,9 +378,8 @@ export async function evaluateExpression(
       const object = objects.get(objectId)
       if (object) {
         object.position.set(x, y, z)
-        console.log(`Set position to: ${x}, ${y}, ${z}`)
       } else {
-        console.log(`object with id "${objectId}" does not exist.`)
+        throw Error(`object with id "${objectId}" does not exist.`)
       }
       return
     }
@@ -404,9 +394,8 @@ export async function evaluateExpression(
       const object = objects.get(objectId)
       if (object) {
         object.scale.set(x, y, z)
-        console.log(`Set scale to: ${x}, ${y}, ${z}`)
       } else {
-        console.log(`object with id "${objectId}" does not exist.`)
+        throw Error(`object with id "${objectId}" does not exist.`)
       }
       return
     }
@@ -421,9 +410,8 @@ export async function evaluateExpression(
       const object = objects.get(objectId)
       if (object) {
         object.rotation.set(x, y, z)
-        console.log(`Set rotation to euler: ${x}, ${y}, ${z}`)
       } else {
-        console.log(`object with id "${objectId}" does not exist.`)
+        throw Error(`object with id "${objectId}" does not exist.`)
       }
       return
     }
@@ -448,11 +436,8 @@ export async function evaluateExpression(
             object.rotateZ(rad)
             break
         }
-        console.log(
-          `Rotated object around ${axis} by ${angle}° (${rad} radians)`
-        )
       } else {
-        console.log(`object with id "${objectId}" does not exist.`)
+        throw Error(`object with id "${objectId}" does not exist.`)
       }
       return
     }
@@ -481,11 +466,8 @@ export async function evaluateExpression(
             object.translateZ(distance)
             break
         }
-        console.log(
-          `Translated ${object.name} around ${axis} by ${distance} units`
-        )
       } else {
-        console.log(`object with id "${objectId}" does not exist.`)
+        throw Error(`object with id "${objectId}" does not exist.`)
       }
       return
     }
@@ -494,4 +476,21 @@ export async function evaluateExpression(
       throw new Error(`Unknown expression type: "${type}"`)
     }
   }
+}
+
+async function checkPoint(runState: React.RefObject<RunState>): Promise<boolean> {
+  if (runState.current.shouldStop) return false
+  
+  while (runState.current.shouldPause) {
+    if (runState.current.shouldStop) return false
+    
+    if (runState.current.shouldStep) {
+      runState.current.shouldStep = false
+      break
+    }
+    
+    await new Promise((res) => requestAnimationFrame(res))
+  }
+  
+  return true
 }
