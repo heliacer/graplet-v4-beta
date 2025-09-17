@@ -10,7 +10,6 @@ import {
   PenTool,
   Puzzle,
   Shapes,
-  Terminal,
   Wrench
 } from 'lucide-react'
 import { LeftControls, RightControls } from './controls'
@@ -24,7 +23,6 @@ import AssetsPanel from './panels/AssetsPanel'
 import ExplorerPanel from './panels/ExplorerPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
-import ConsolePanel from './panels/ConsolePanel'
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
@@ -38,7 +36,6 @@ const panelComponents = {
   explorer: ExplorerPanel,
   assets: AssetsPanel,
   properties: PropertiesPanel,
-  console: ConsolePanel
 }
 
 export default function Dockview() {
@@ -88,17 +85,6 @@ export default function Dockview() {
       title: 'Scene',
       position: { direction: 'right' }
     })
-
-    event.api.addPanel({
-      id: crypto.randomUUID(),
-      title: 'Console',
-      component: 'console',
-      params: {
-        Icon: <Terminal size={16} />
-      }
-    })
-
-    scenePanel.focus()
 
     const propertiesPanel = event.api.addPanel({
       id: crypto.randomUUID(),

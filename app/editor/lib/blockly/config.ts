@@ -16,7 +16,6 @@ import {
   ContinuousToolbox,
   RecyclableBlockFlyoutInflater
 } from '@blockly/continuous-toolbox'
-import { registerFieldAngle } from '@blockly/field-angle'
 import { GrapletRenderer } from './renderer'
 import { definitions } from './blocks'
 import {
@@ -44,7 +43,6 @@ export function initializeBlockly() {
   Blocks['procedures_callreturn'] = PROCEDURES_CALLRETURN
 
   Scrollbar.scrollbarThickness = 10
-  registerFieldAngle()
   common.defineBlocks(definitions)
   VerticalFlyout.prototype.getFlyoutScale = function () {
     return 0.45
