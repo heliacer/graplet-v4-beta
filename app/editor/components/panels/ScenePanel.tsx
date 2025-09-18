@@ -3,7 +3,7 @@ import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
 import { useEditor } from '../../lib/EditorContext'
 import { exprGenerator } from '../../lib/blockly/exprGenerator'
 import { evaluateExpression } from '../../lib/blockly/interpreter'
-import { Block, Events, serialization } from 'blockly'
+import { serialization } from 'blockly'
 import { Expression, ProgramState } from '../../lib/types'
 import { useTrigger } from '../../lib/TriggerContext'
 import { useThree } from '@react-three/fiber'
@@ -89,71 +89,6 @@ export default function ScenePanel() {
       }
     }
   }, [handleCreateObject, objects, workspace])
-
-  useEffect(() => {
-    /**
-     * @todo REFACTOR!!!
-     * @todo fix multiple runs of a block
-     */
-    async function handleWorkspaceClick(event: Events.Abstract) {
-      if (event.type === Events.CLICK) {
-        const clickEvent = event as Events.Click
-        if (clickEvent.blockId) {
-          const block = workspace?.getBlockById(clickEvent.blockId)
-          const expr = exprGenerator.blockToExpression(block as Block)
-          await execHelper(
-            expr,
-            {
-              scene,
-              objects: objects.current,
-              variables: varEnv.current,
-              functions: funcEnv.current,
-              runState: runState
-            },
-            setIsRunning
-          )
-        }
-      }
-    }
-
-    async function handleFlyoutWorkspaceClick(event: Events.Abstract) {
-      if (event.type === Events.CLICK) {
-        const clickEvent = event as Events.Click
-        if (clickEvent.blockId) {
-          const block = workspace
-            ?.getFlyout()
-            ?.getWorkspace()
-            .getBlockById(clickEvent.blockId)
-          const expr = exprGenerator.blockToExpression(block as Block)
-          await execHelper(
-            expr,
-            {
-              scene,
-              objects: objects.current,
-              variables: varEnv.current,
-              functions: funcEnv.current,
-              runState: runState
-            },
-            setIsRunning
-          )
-        }
-      }
-    }
-
-    workspace?.addChangeListener(handleWorkspaceClick)
-    workspace
-      ?.getFlyout()
-      ?.getWorkspace()
-      .addChangeListener(handleFlyoutWorkspaceClick)
-
-    return () => {
-      workspace?.removeChangeListener(handleWorkspaceClick)
-      workspace
-        ?.getFlyout()
-        ?.getWorkspace()
-        .removeChangeListener(handleFlyoutWorkspaceClick)
-    }
-  }, [workspace, objects, scene, varEnv, funcEnv, runState, setIsRunning])
 
   useEffect(() => {
     const handleRunScene = async () => {
