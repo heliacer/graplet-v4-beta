@@ -478,19 +478,21 @@ export async function evaluateExpression(
   }
 }
 
-async function checkPoint(runState: React.RefObject<RunState>): Promise<boolean> {
+async function checkPoint(
+  runState: React.RefObject<RunState>
+): Promise<boolean> {
   if (runState.current.shouldStop) return false
-  
+
   while (runState.current.shouldPause) {
     if (runState.current.shouldStop) return false
-    
+
     if (runState.current.shouldStep) {
       runState.current.shouldStep = false
       break
     }
-    
+
     await new Promise((res) => requestAnimationFrame(res))
   }
-  
+
   return true
 }

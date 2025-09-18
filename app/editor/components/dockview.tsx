@@ -35,7 +35,7 @@ const panelComponents = {
   },
   explorer: ExplorerPanel,
   assets: AssetsPanel,
-  properties: PropertiesPanel,
+  properties: PropertiesPanel
 }
 
 export default function Dockview() {
