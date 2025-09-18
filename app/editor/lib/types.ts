@@ -1,14 +1,14 @@
 import { Object3D, Object3DEventMap, Scene } from 'three'
 
 export type ObjectsEnv = Map<string, Object3D<Object3DEventMap>>
-export type VariableEnv = Map<string, Value>
-export type FunctionsEnv = Map<string, Expression> // Func -> Expression
+export type VarEnv = Map<string, Value>
+export type FuncEnv = Map<string, Expression>
 
 export interface ProgramState {
   scene: Scene
   objects: ObjectsEnv
-  variables: VariableEnv
-  functions: FunctionsEnv
+  variables: VarEnv
+  functions: FuncEnv
   runState: React.RefObject<RunState>
 }
 
@@ -72,16 +72,3 @@ export type ExpressionT =
   | 'repeat'
   | 'if'
   | 'wait'
-
-export class Program {
-  private shouldStop = false
-  private shouldPause = false
-
-  stop() {}
-
-  pause() {}
-
-  resume() {}
-
-  async execute() {}
-}

@@ -1,28 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BoxGeometry, Mesh, MeshStandardMaterial, Object3D } from 'three'
+import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
 import { useEditor } from '../../lib/EditorContext'
 import { exprGenerator } from '../../lib/blockly/exprGenerator'
 import { evaluateExpression } from '../../lib/blockly/interpreter'
 import { Block, Events, serialization } from 'blockly'
-import {
-  VariableEnv,
-  FunctionsEnv,
-  Expression,
-  ProgramState
-} from '../../lib/types'
+import { Expression, ProgramState } from '../../lib/types'
 import { useTrigger } from '../../lib/TriggerContext'
-import { ThreeEvent, useThree } from '@react-three/fiber'
-import {
-  Grid,
-  OrbitControls,
-  TransformControls,
-  useCursor
-} from '@react-three/drei'
+import { useThree } from '@react-three/fiber'
+import { Grid, OrbitControls, TransformControls } from '@react-three/drei'
+import SceneObject from '../sceneObject'
 
 /**
  * This is not supposed to be the end result, I have to come up with something smarter than this
  */
-function execHelper(
+async function execHelper(
   expr: Expression,
   state: ProgramState,
   setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
@@ -30,55 +21,20 @@ function execHelper(
   setIsRunning(true)
   console.log('%cRunning...', 'color: lightseagreen;')
   console.time('Done in')
-  evaluateExpression(expr, state)
-    .then((result) => {
-      console.timeEnd('Done in')
-      console.log('%coutput:', 'color: cornflowerblue;', result)
-      setIsRunning(false)
-      state.runState.current.shouldStop = false
-      state.runState.current.shouldPause = false
-    })
-    .catch((err) => {
-      console.timeEnd('Done in')
-      console.error(err)
-      setIsRunning(false)
-      state.runState.current.shouldStop = false
-      state.runState.current.shouldPause = false
-    })
-}
-
-function Object({
-  object,
-  onSelect,
-  onDeselect
-}: {
-  object: Object3D
-  onSelect: (id: string) => void
-  onDeselect: () => void
-}) {
-  const [hovered, setHovered] = useState(false)
-  useCursor(hovered)
-
-  return (
-    <primitive
-      object={object}
-      onClick={(e: ThreeEvent<MouseEvent>) => (
-        e.stopPropagation(),
-        onSelect(object.name)
-      )}
-      onPointerMissed={(e: MouseEvent) => e.type === 'click' && onDeselect()}
-      onPointerOver={(e: ThreeEvent<PointerEvent>) => (
-        e.stopPropagation(),
-        setHovered(true)
-      )}
-      onPointerOut={() => setHovered(false)}
-    />
-  )
+  try {
+    const result = await evaluateExpression(expr, state)
+    console.log('%coutput:', 'color: cornflowerblue;', result)
+  } catch (err) {
+    console.error(err)
+  } finally {
+    console.timeEnd('Done in')
+    setIsRunning(false)
+    state.runState.current.shouldStop = false
+    state.runState.current.shouldPause = false
+  }
 }
 
 export default function ScenePanel() {
-  const [variableEnv] = useState<VariableEnv>(new Map())
-  const [functionsEnv] = useState<FunctionsEnv>(new Map())
   const [objectCounter, setObjectCounter] = useState(0)
   const { scene } = useThree()
   const {
@@ -88,7 +44,9 @@ export default function ScenePanel() {
     setCurrentObject,
     runState,
     isRunning,
-    setIsRunning
+    setIsRunning,
+    funcEnv,
+    varEnv
   } = useEditor()
   const emitter = useTrigger()
 
@@ -135,20 +93,21 @@ export default function ScenePanel() {
   useEffect(() => {
     /**
      * @todo REFACTOR!!!
+     * @todo fix multiple runs of a block
      */
-    function handleWorkspaceClick(event: Events.Abstract) {
+    async function handleWorkspaceClick(event: Events.Abstract) {
       if (event.type === Events.CLICK) {
         const clickEvent = event as Events.Click
         if (clickEvent.blockId) {
           const block = workspace?.getBlockById(clickEvent.blockId)
           const expr = exprGenerator.blockToExpression(block as Block)
-          execHelper(
+          await execHelper(
             expr,
             {
               scene,
               objects: objects.current,
-              variables: variableEnv,
-              functions: functionsEnv,
+              variables: varEnv.current,
+              functions: funcEnv.current,
               runState: runState
             },
             setIsRunning
@@ -157,7 +116,7 @@ export default function ScenePanel() {
       }
     }
 
-    function handleFlyoutWorkspaceClick(event: Events.Abstract) {
+    async function handleFlyoutWorkspaceClick(event: Events.Abstract) {
       if (event.type === Events.CLICK) {
         const clickEvent = event as Events.Click
         if (clickEvent.blockId) {
@@ -166,13 +125,13 @@ export default function ScenePanel() {
             ?.getWorkspace()
             .getBlockById(clickEvent.blockId)
           const expr = exprGenerator.blockToExpression(block as Block)
-          execHelper(
+          await execHelper(
             expr,
             {
               scene,
               objects: objects.current,
-              variables: variableEnv,
-              functions: functionsEnv,
+              variables: varEnv.current,
+              functions: funcEnv.current,
               runState: runState
             },
             setIsRunning
@@ -194,29 +153,19 @@ export default function ScenePanel() {
         ?.getWorkspace()
         .removeChangeListener(handleFlyoutWorkspaceClick)
     }
-  }, [
-    workspace,
-    objects,
-    scene,
-    variableEnv,
-    functionsEnv,
-    runState,
-    setIsRunning
-  ])
+  }, [workspace, objects, scene, varEnv, funcEnv, runState, setIsRunning])
 
   useEffect(() => {
-    const handleRunScene = () => {
-      if (isRunning)
-        throw Error('Wait for the current program to finish first.')
+    const handleRunScene = async () => {
       if (!workspace) return
       const expr = exprGenerator.workspaceToExpression(workspace)
-      execHelper(
+      await execHelper(
         expr,
         {
           scene,
           objects: objects.current,
-          variables: variableEnv,
-          functions: functionsEnv,
+          variables: varEnv.current,
+          functions: funcEnv.current,
           runState: runState
         },
         setIsRunning
@@ -230,8 +179,8 @@ export default function ScenePanel() {
     scene,
     workspace,
     emitter,
-    variableEnv,
-    functionsEnv,
+    varEnv,
+    funcEnv,
     runState,
     isRunning,
     setIsRunning
@@ -247,7 +196,7 @@ export default function ScenePanel() {
       <OrbitControls makeDefault />
       <Grid args={[10, 10]} cellSize={1} />
       {Array.from(objects.current).map(([key, object]) => (
-        <Object
+        <SceneObject
           key={key}
           object={object}
           onSelect={setCurrentObject}

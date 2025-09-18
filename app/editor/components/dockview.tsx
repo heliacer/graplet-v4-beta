@@ -19,7 +19,7 @@ import { Canvas } from '@react-three/fiber'
 // Panels
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
-// import AssetsPanel from './panels/AssetsPanel' 
+// import AssetsPanel from './panels/AssetsPanel'
 import ExplorerPanel from './panels/ExplorerPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'

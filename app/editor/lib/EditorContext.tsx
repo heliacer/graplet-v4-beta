@@ -8,15 +8,18 @@ import React, {
   useState
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
-import { ObjectsEnv, RunState } from './types'
+import { ObjectsEnv, RunState, FuncEnv, VarEnv } from './types'
 
 interface EditorContextType {
+  objects: RefObject<ObjectsEnv>
+  runState: RefObject<RunState>
+  funcEnv: RefObject<FuncEnv>
+  varEnv: RefObject<VarEnv>
+
   workspace: WorkspaceSvg | null
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
-  objects: RefObject<ObjectsEnv>
   currentObject: string
   setCurrentObject: Dispatch<SetStateAction<string>>
-  runState: RefObject<RunState>
   isRunning: boolean
   setIsRunning: Dispatch<SetStateAction<boolean>>
 }
@@ -33,6 +36,9 @@ export function EditorProvider({
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [currentObject, setCurrentObject] = useState<string>('')
   const [isRunning, setIsRunning] = useState<boolean>(false)
+
+  const varEnv = useRef<VarEnv>(new Map())
+  const funcEnv = useRef<FuncEnv>(new Map())
   const objects = useRef(new Map())
   const runState = useRef<RunState>({
     shouldRun: false,
@@ -51,7 +57,9 @@ export function EditorProvider({
         setCurrentObject,
         runState,
         isRunning,
-        setIsRunning
+        setIsRunning,
+        funcEnv,
+        varEnv
       }}
     >
       {children}
