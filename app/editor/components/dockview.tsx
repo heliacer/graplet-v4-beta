@@ -19,7 +19,7 @@ import { Canvas } from '@react-three/fiber'
 // Panels
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
-import AssetsPanel from './panels/AssetsPanel'
+// import AssetsPanel from './panels/AssetsPanel' 
 import ExplorerPanel from './panels/ExplorerPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
@@ -34,7 +34,7 @@ const panelComponents = {
     )
   },
   explorer: ExplorerPanel,
-  assets: AssetsPanel,
+  // assets: AssetsPanel,
   properties: PropertiesPanel
 }
 
@@ -61,7 +61,7 @@ export default function Dockview() {
     event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Assets',
-      component: 'assets',
+      component: 'debug',
       params: {
         Icon: <Package size={16} />
       }
