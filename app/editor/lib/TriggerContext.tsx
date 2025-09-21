@@ -1,12 +1,8 @@
 import mitt, { Emitter } from 'mitt'
 import { createContext, useContext, useMemo } from 'react'
-import { Object3D } from 'three'
 
 type Events = {
   runScene: void
-  createObject: void
-  objectUpdated: void
-  objectCreated: { object: Object3D }
 }
 
 const TriggerContext = createContext<Emitter<Events>>(null!)

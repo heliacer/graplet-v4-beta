@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useState } from 'react'
-import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
+import { useEffect } from 'react'
 import { useEditor } from '../../lib/EditorContext'
 import { exprGenerator } from '../../lib/blockly/exprGenerator'
 import { evaluateExpression } from '../../lib/blockly/interpreter'
 import { serialization } from 'blockly'
-import { Expression, ProgramState } from '../../lib/types'
+import { Expression, ProgramState } from '../../lib/blockly/ast'
 import { useTrigger } from '../../lib/TriggerContext'
-import { useThree } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import { Grid, OrbitControls, TransformControls } from '@react-three/drei'
 import SceneObject from '../sceneObject'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
 
 /**
  * This is not supposed to be the end result, I have to come up with something smarter than this
@@ -35,45 +35,43 @@ async function execHelper(
 }
 
 export default function ScenePanel() {
-  const [objectCounter, setObjectCounter] = useState(0)
-  const { scene } = useThree()
   const {
-    workspace,
     objects,
-    currentObject,
-    setCurrentObject,
     runState,
-    isRunning,
-    setIsRunning,
+    varEnv,
     funcEnv,
-    varEnv
+    scene,
+
+    workspace,
+    currentObject,
+    isRunning,
+    objectNames,
+    shouldWorkspaceLoad,
+    shouldSceneLoad,
+    setShouldWorkspaceLoad,
+    setShouldSceneLoad,
+    setCurrentObject,
+    setObjectVersion,
+    setIsRunning
   } = useEditor()
+  const { createObject } = useObjectActions()
+
   const emitter = useTrigger()
 
-  const handleCreateObject = useCallback(() => {
-    const cube = new Mesh(
-      new BoxGeometry(1, 1, 1),
-      new MeshStandardMaterial({ color: '#ff6080' })
-    )
-
-    cube.name = `Cube ${objectCounter + 1}`
-
-    scene.add(cube)
-    objects.current.set(cube.name, cube)
-    setCurrentObject(cube.name)
-    emitter.emit('objectCreated', { object: cube })
-    setObjectCounter(objectCounter + 1)
-  }, [objectCounter, scene, objects, emitter, setCurrentObject])
-
   useEffect(() => {
-    if (objects.current.size === 0 && workspace) {
-      handleCreateObject()
-
+    if (shouldSceneLoad && objects.current.size === 0) {
       /**
        * @todo Load objects state
        */
 
-      // Load workspace state
+      createObject() // default cube
+      setShouldSceneLoad(false)
+    }
+    if (
+      workspace &&
+      shouldWorkspaceLoad &&
+      workspace.getTopBlocks.length === 0
+    ) {
       const data = localStorage.getItem('projectData')
       if (data) {
         try {
@@ -87,8 +85,18 @@ export default function ScenePanel() {
           console.error('Could not parse localStorage data.', err)
         }
       }
+      setShouldWorkspaceLoad(false)
     }
-  }, [handleCreateObject, objects, workspace])
+  }, [
+    objects,
+    workspace,
+    objectNames,
+    createObject,
+    setShouldWorkspaceLoad,
+    shouldWorkspaceLoad,
+    shouldSceneLoad,
+    setShouldSceneLoad
+  ])
 
   useEffect(() => {
     const handleRunScene = async () => {
@@ -97,7 +105,7 @@ export default function ScenePanel() {
       await execHelper(
         expr,
         {
-          scene,
+          scene: scene.current,
           objects: objects.current,
           variables: varEnv.current,
           functions: funcEnv.current,
@@ -121,13 +129,8 @@ export default function ScenePanel() {
     setIsRunning
   ])
 
-  useEffect(() => {
-    emitter.on('createObject', handleCreateObject)
-    return () => emitter.off('createObject', handleCreateObject)
-  }, [emitter, handleCreateObject])
-
   return (
-    <>
+    <Canvas scene={scene.current}>
       <OrbitControls makeDefault />
       <Grid args={[10, 10]} cellSize={1} />
       {Array.from(objects.current).map(([key, object]) => (
@@ -139,10 +142,16 @@ export default function ScenePanel() {
         />
       ))}
       {currentObject && (
-        <TransformControls object={objects.current.get(currentObject)} />
+        <TransformControls
+          object={objects.current.get(currentObject)}
+          translationSnap={0.5}
+          onObjectChange={() => {
+            setObjectVersion((prev) => prev + 1)
+          }}
+        />
       )}
       <ambientLight intensity={1} />
       <directionalLight position={[3, 5, 2]} intensity={2} />
-    </>
+    </Canvas>
   )
 }

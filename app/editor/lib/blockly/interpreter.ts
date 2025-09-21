@@ -1,4 +1,4 @@
-import { ProgramState, Value, Expression, RunState } from '../types'
+import { ProgramState, Value, Expression, RunState } from './ast'
 
 export async function evaluateExpression(
   expression: Expression,

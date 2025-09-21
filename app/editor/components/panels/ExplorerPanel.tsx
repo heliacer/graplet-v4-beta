@@ -1,7 +1,6 @@
 import { Box, FileText, type LucideIcon, Plus } from 'lucide-react'
-import { useTrigger } from '../../lib/TriggerContext'
 import { useEditor } from '../../lib/EditorContext'
-import { useEffect, useReducer } from 'react'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
 
@@ -45,24 +44,14 @@ function ObjectListItem({ object }: { object: Object3D }) {
 }
 
 export default function ExplorerPanel() {
-  const emitter = useTrigger()
-  const { objects } = useEditor()
-  const [, forceUpdate] = useReducer((x) => x + 1, 0)
-
-  useEffect(() => {
-    emitter.on('objectCreated', forceUpdate)
-    emitter.on('objectUpdated', forceUpdate)
-    return () => {
-      emitter.off('objectCreated', forceUpdate)
-      emitter.off('objectUpdated', forceUpdate)
-    }
-  }, [emitter])
+  const { objectNames, objects } = useEditor()
+  const { createObject } = useObjectActions()
 
   return (
     <main className="p-1.5 flex flex-col gap-1.5">
       <nav className="flex justify-between items-center">
         <button
-          onClick={() => emitter.emit('createObject')}
+          onClick={createObject}
           className="text-sm text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 py-0.5 bg-teal-600"
         >
           <Plus size={14} />
@@ -71,9 +60,10 @@ export default function ExplorerPanel() {
         {/* File Path */}
       </nav>
       <div className="flex gap-1 flex-col">
-        {Array.from(objects.current).map(([key, object]) => (
-          <ObjectListItem key={key} object={object} />
-        ))}
+        {objectNames.map((name) => {
+          const object = objects.current.get(name)
+          return object ? <ObjectListItem key={name} object={object} /> : null
+        })}
       </div>
     </main>
   )

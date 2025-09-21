@@ -2,7 +2,7 @@ import type { Block, WorkspaceSvg, Connection } from 'blockly'
 import { Msg, fieldRegistry } from 'blockly'
 import type { IVariableModel, IVariableState } from 'blockly'
 
-export interface CallBlock extends Block {
+interface CallBlock extends Block {
   argumentVarModels_: IVariableModel<IVariableState>[]
   arguments_: string[]
   defType_: string

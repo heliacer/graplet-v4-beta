@@ -5,7 +5,7 @@ import { Msg } from 'blockly'
  * @override ifReturn Block
  */
 
-export interface IfReturnBlock extends Block {
+interface IfReturnBlock extends Block {
   hasReturnValue_: boolean
   FUNCTION_TYPES: string[]
   workspace: WorkspaceSvg

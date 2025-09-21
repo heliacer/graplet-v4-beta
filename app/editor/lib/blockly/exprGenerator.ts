@@ -1,5 +1,5 @@
 import { Block, Input, Workspace } from 'blockly'
-import { Value, Expression, ExpressionT } from '../types'
+import { Value, Expression, ExpressionT } from './ast'
 
 export class ExpressionGenerator {
   private generators: Record<
@@ -79,9 +79,6 @@ type ExtraState = {
 
 export const exprGenerator = new ExpressionGenerator()
 
-/**
- * @todo migrate all generators to use Expression as return
- */
 exprGenerator.forBlock('math_number', function (block: Block): Expression {
   return {
     type: 'literal',

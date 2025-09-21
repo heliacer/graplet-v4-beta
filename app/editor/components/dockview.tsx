@@ -3,18 +3,9 @@
 import { DockviewReact, DockviewReadyEvent } from 'dockview-react'
 import '../styles/base.css'
 import '../styles/dvtheme.css'
-import {
-  Airplay,
-  Folder,
-  Package,
-  PenTool,
-  Puzzle,
-  Shapes,
-  Wrench
-} from 'lucide-react'
+import { Airplay, Folder, Puzzle, Wrench } from 'lucide-react'
 import { LeftControls, RightControls } from './controls'
 import TabHeader from './tabHeader'
-import { Canvas } from '@react-three/fiber'
 
 // Panels
 import DebugPanel from './panels/DebugPanel'
@@ -26,13 +17,7 @@ import PropertiesPanel from './panels/PropertiesPanel'
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
-  scene: function () {
-    return (
-      <Canvas>
-        <ScenePanel />
-      </Canvas>
-    )
-  },
+  scene: ScenePanel,
   explorer: ExplorerPanel,
   // assets: AssetsPanel,
   properties: PropertiesPanel
@@ -49,6 +34,7 @@ export default function Dockview() {
       }
     })
 
+    /* WIP    
     event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Model',
@@ -75,6 +61,7 @@ export default function Dockview() {
         Icon: <Shapes size={16} />
       }
     })
+    */
 
     const scenePanel = event.api.addPanel({
       id: crypto.randomUUID(),

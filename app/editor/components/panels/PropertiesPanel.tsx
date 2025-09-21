@@ -1,13 +1,30 @@
-import { useReducer } from 'react'
+import { useEffect, useState } from 'react'
 import { useEditor } from '../../lib/EditorContext'
-import { useTrigger } from '../../lib/TriggerContext'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
+import { Layers2, Trash } from 'lucide-react'
 
 export default function PropertiesPanel() {
-  // TODO: needs refactor + no direct state access, only commit on submit, to allow validate
-  const { objects, currentObject } = useEditor()
-  const [, forceUpdate] = useReducer((x) => x + 1, 0)
-  const emitter = useTrigger()
+  const { objects, currentObject, objectVersion } = useEditor()
+  const { deleteObject, duplicateObject } = useObjectActions()
   const obj = objects.current.get(currentObject)
+
+  const [formData, setFormData] = useState({
+    name: obj?.name || '',
+    positionX: obj?.position.x || 0,
+    positionY: obj?.position.y || 0,
+    positionZ: obj?.position.z || 0
+  })
+
+  useEffect(() => {
+    if (obj) {
+      setFormData({
+        name: obj.name,
+        positionX: obj.position.x,
+        positionY: obj.position.y,
+        positionZ: obj.position.z
+      })
+    }
+  }, [currentObject, obj, objectVersion])
 
   if (!obj) return <div className="p-1.5 italic">Select an object</div>
 
@@ -18,11 +35,10 @@ export default function PropertiesPanel() {
         <input
           className="rounded border outline-none w-full px-1"
           type="text"
-          value={obj.name}
+          value={formData.name}
           onChange={(e) => {
+            setFormData((prev) => ({ ...prev, name: e.target.value }))
             obj.name = e.target.value
-            emitter.emit('objectUpdated')
-            forceUpdate()
           }}
         />
       </div>
@@ -34,11 +50,11 @@ export default function PropertiesPanel() {
             className="rounded border outline-none px-1 w-10"
             type="number"
             name="x"
-            value={obj.position.x}
+            value={formData.positionX}
             onChange={(e) => {
-              obj.position.x = Number(e.target.value)
-              emitter.emit('objectUpdated')
-              forceUpdate()
+              const value = Number(e.target.value)
+              setFormData((prev) => ({ ...prev, positionX: value }))
+              obj.position.x = value
             }}
           />
           <p>Y</p>
@@ -46,11 +62,11 @@ export default function PropertiesPanel() {
             className="rounded border outline-none px-1 w-10"
             type="number"
             name="y"
-            value={obj.position.y}
+            value={formData.positionY}
             onChange={(e) => {
-              obj.position.y = Number(e.target.value)
-              emitter.emit('objectUpdated')
-              forceUpdate()
+              const value = Number(e.target.value)
+              setFormData((prev) => ({ ...prev, positionY: value }))
+              obj.position.y = value
             }}
           />
           <p>Z</p>
@@ -58,14 +74,30 @@ export default function PropertiesPanel() {
             className="rounded border outline-none px-1 w-10"
             type="number"
             name="z"
-            value={obj.position.z}
+            value={formData.positionZ}
             onChange={(e) => {
-              obj.position.z = Number(e.target.value)
-              emitter.emit('objectUpdated')
-              forceUpdate()
+              const value = Number(e.target.value)
+              setFormData((prev) => ({ ...prev, positionZ: value }))
+              obj.position.z = value
             }}
           />
         </div>
+      </div>
+      <div className="flex gap-2">
+        <button
+          className="flex gap-1 items-center cursor-pointer"
+          onClick={() => deleteObject(currentObject)}
+        >
+          <Trash size={14} />
+          <p>Delete</p>
+        </button>
+        <button
+          className="flex gap-1 items-center cursor-pointer"
+          onClick={() => duplicateObject(currentObject)}
+        >
+          <Layers2 size={14} />
+          <p>Duplicate</p>
+        </button>
       </div>
     </div>
   )

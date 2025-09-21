@@ -28,8 +28,6 @@ import {
   PROCEDURES_CALLNORETURN
 } from './mutators/procedures'
 
-// TODO: Override ifreturn mutator mixins
-
 export function initializeBlockly() {
   Extensions.unregister('math_is_divisibleby_mutator')
   Extensions.registerMutator(
