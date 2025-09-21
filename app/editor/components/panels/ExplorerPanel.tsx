@@ -51,7 +51,7 @@ export default function ExplorerPanel() {
     <main className="p-1.5 flex flex-col gap-1.5">
       <nav className="flex justify-between items-center">
         <button
-          onClick={createObject}
+          onClick={() => createObject()}
           className="text-sm text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 py-0.5 bg-teal-600"
         >
           <Plus size={14} />

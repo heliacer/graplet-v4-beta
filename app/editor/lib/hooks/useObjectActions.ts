@@ -1,6 +1,7 @@
 import { useEditor } from '../EditorContext'
 import { Mesh, BoxGeometry, MeshStandardMaterial } from 'three'
 import { objectRegistry } from '../blockly/blocks'
+import { ObjectProps } from '../types'
 
 export const useObjectActions = () => {
   const {
@@ -12,18 +13,31 @@ export const useObjectActions = () => {
     setCurrentObject
   } = useEditor()
 
-  const createObject = () => {
+  const createObject = (props?: ObjectProps) => {
+    const { name, position, rotation, scale } = props || {
+      name: `Cube ${objectNames.length + 1}`
+    }
+
     const cube = new Mesh(
       new BoxGeometry(1, 1, 1),
       new MeshStandardMaterial({ color: '#ff6080' })
     )
-    const name = `Cube ${objectNames.length + 1}`
     cube.name = name
+
+    if (position) {
+      cube.position.set(...position)
+    }
+    if (rotation) {
+      cube.rotation.set(...rotation)
+    }
+    if (scale) {
+      cube.scale.set(...scale)
+    }
 
     objects.current.set(cube.name, cube)
     scene.current.add(cube)
 
-    objectRegistry.options = [...objectRegistry.options, [name, name]]
+    objectRegistry.options = [[name, name], ...objectRegistry.options]
     workspace?.refreshToolboxSelection()
 
     setCurrentObject(cube.name)
@@ -60,7 +74,7 @@ export const useObjectActions = () => {
     objects.current.set(clone.name, clone)
     scene.current.add(clone)
 
-    objectRegistry.options = [...objectRegistry.options, [cloneName, cloneName]]
+    objectRegistry.options = [[cloneName, cloneName], ...objectRegistry.options]
     workspace?.refreshToolboxSelection()
 
     setObjectNames((prev) => [...prev, clone.name])

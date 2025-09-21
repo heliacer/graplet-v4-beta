@@ -9,6 +9,7 @@ import { Canvas } from '@react-three/fiber'
 import { Grid, OrbitControls, TransformControls } from '@react-three/drei'
 import SceneObject from '../sceneObject'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
+import { ProjectData } from '../../lib/types'
 
 /**
  * This is not supposed to be the end result, I have to come up with something smarter than this
@@ -58,34 +59,42 @@ export default function ScenePanel() {
 
   const emitter = useTrigger()
 
+  /**
+   * @todo needs heavy refactoring
+   */
   useEffect(() => {
-    if (shouldSceneLoad && objects.current.size === 0) {
-      /**
-       * @todo Load objects state
-       */
-
-      createObject() // default cube
-      setShouldSceneLoad(false)
-    }
-    if (
-      workspace &&
-      shouldWorkspaceLoad &&
-      workspace.getTopBlocks.length === 0
-    ) {
-      const data = localStorage.getItem('projectData')
-      if (data) {
-        try {
-          const workspaceState = JSON.parse(data)
-          serialization.workspaces.load(workspaceState, workspace)
-          console.log(
-            'Loaded workspace state from localStorage: ',
-            workspaceState
-          )
-        } catch (err) {
-          console.error('Could not parse localStorage data.', err)
+    const data = localStorage.getItem('projectData')
+    if (data) {
+      try {
+        const projectData = JSON.parse(data) as ProjectData
+        if (shouldSceneLoad && objects.current.size === 0) {
+          if (projectData.scene) {
+            for (const object of projectData.scene.objects) {
+              createObject(object)
+            }
+            console.log('Loaded scene state: ', projectData.scene)
+          } else {
+            createObject()
+            console.log('Starting with an empty scene.')
+          }
+          setShouldSceneLoad(false)
         }
+        if (
+          workspace &&
+          shouldWorkspaceLoad &&
+          workspace.getTopBlocks.length === 0
+        ) {
+          if (projectData.workspace) {
+            serialization.workspaces.load(projectData.workspace, workspace)
+            console.log('Loaded workspace state: ', projectData.workspace)
+          } else {
+            console.log('Starting with an empty workspace.')
+          }
+          setShouldWorkspaceLoad(false)
+        }
+      } catch (err) {
+        console.error('Could not parse localStorage data.', err)
       }
-      setShouldWorkspaceLoad(false)
     }
   }, [
     objects,

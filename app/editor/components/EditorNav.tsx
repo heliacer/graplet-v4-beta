@@ -26,11 +26,46 @@ import { useEditor } from '../lib/EditorContext'
 import { serialization } from 'blockly'
 import { useRef, useState } from 'react'
 import { clsx } from 'clsx'
+import { ProjectData } from '../lib/types'
+import { WorkspaceSvg } from 'blockly'
+import { ObjectsEnv } from '../lib/blockly/ast'
+import { useObjectActions } from '../lib/hooks/useObjectActions'
+import { objectRegistry } from '../lib/blockly/blocks'
+
+function createProjectData(
+  workspace: WorkspaceSvg,
+  objects: ObjectsEnv
+): ProjectData {
+  return {
+    workspace: serialization.workspaces.save(workspace),
+    scene: {
+      objects: Array.from(objects).map(([name, obj]) => ({
+        name,
+        position: obj.position.toArray() as [number, number, number],
+        rotation: obj.rotation.toArray().slice(0, 3) as [
+          number,
+          number,
+          number
+        ],
+        scale: obj.scale.toArray() as [number, number, number]
+      }))
+    }
+  }
+}
 
 export default function EditorNav() {
   const { data: session } = useSession()
   const emitter = useTrigger()
-  const { workspace, runState, isRunning } = useEditor()
+  const {
+    workspace,
+    runState,
+    isRunning,
+    objects,
+    scene,
+    setObjectNames,
+    setCurrentObject
+  } = useEditor()
+  const { createObject } = useObjectActions()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -50,21 +85,21 @@ export default function EditorNav() {
 
   function handleSave() {
     if (!workspace) throw Error('Missing workspace')
-    const workspacestate = serialization.workspaces.save(workspace)
-    localStorage.setItem('projectData', JSON.stringify(workspacestate))
-    console.log('Saved workspace state to localStorage')
+    const projectData = createProjectData(workspace, objects.current)
+    localStorage.setItem('projectData', JSON.stringify(projectData))
+    console.log('Saved project to localStorage', projectData)
   }
 
   function handleSaveFile() {
     if (!workspace) throw Error('Missing workspace')
-    const json = serialization.workspaces.save(workspace)
-    const blob = new Blob([JSON.stringify(json, null, 2)], {
+    const projectData = createProjectData(workspace, objects.current)
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], {
       type: 'application/json'
     })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'blocks.json'
+    a.download = 'project.json'
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -73,6 +108,9 @@ export default function EditorNav() {
     fileInputRef.current?.click()
   }
 
+  /**
+   * @todo needs heavy refactoring (same methods used in scene panel)
+   */
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -84,9 +122,35 @@ export default function EditorNav() {
     const reader = new FileReader()
     reader.onload = (event) => {
       try {
-        const json = JSON.parse(event.target?.result as string)
         if (!workspace) throw Error('Missing workspace')
-        serialization.workspaces.load(json, workspace)
+
+        const projectData = JSON.parse(
+          event.target?.result as string
+        ) as ProjectData
+
+        // clear scene
+        requestAnimationFrame(() => {
+          scene.current.remove(scene.current.children[0])
+        })
+        objects.current = new Map()
+        setObjectNames([])
+        setCurrentObject('')
+        objectRegistry.options = []
+
+        // load scene
+        if (projectData.scene) {
+          for (const object of projectData.scene.objects) {
+            createObject(object)
+          }
+          console.log('Loaded scene state: ', projectData.scene)
+        } else {
+          createObject()
+          console.log('Starting with an empty scene.')
+        }
+
+        // load workspace
+        serialization.workspaces.load(projectData.workspace, workspace)
+        console.log('Loaded workspace state: ', projectData.workspace)
       } catch (err) {
         console.error('Invalid JSON file', err)
         alert('Could not load JSON file.')
@@ -103,6 +167,13 @@ export default function EditorNav() {
     )
     if (isConfirmed) {
       serialization.workspaces.load({}, workspace)
+      requestAnimationFrame(() => {
+        scene.current.remove(scene.current.children[0])
+      })
+      objects.current = new Map()
+      setObjectNames([])
+      setCurrentObject('')
+      objectRegistry.options = []
     }
   }
 
