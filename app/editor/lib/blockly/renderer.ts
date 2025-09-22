@@ -62,7 +62,7 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
     this.EMPTY_INLINE_INPUT_PADDING = 5 * this.GRID_UNIT
     this.EMPTY_INLINE_INPUT_HEIGHT = 10 * this.GRID_UNIT
     this.DUMMY_INPUT_MIN_HEIGHT = 6 * this.GRID_UNIT
-    this.DUMMY_INPUT_SHADOW_MIN_HEIGHT = 4 * this.GRID_UNIT
+    this.DUMMY_INPUT_SHADOW_MIN_HEIGHT = 3 * this.GRID_UNIT
     this.CURSOR_WS_WIDTH = 20 * this.GRID_UNIT
     this.FIELD_TEXT_FONTSIZE = 3 * this.GRID_UNIT
     this.FIELD_BORDER_RECT_RADIUS = this.CORNER_RADIUS

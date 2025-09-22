@@ -12,6 +12,11 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'moveunitsxyz',
           inputs: {
+            OBJECT: {
+              shadow: {
+                type: 'object'
+              }
+            },
             UNITS: {
               shadow: {
                 type: 'math_number',
@@ -30,6 +35,11 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'setposxyz',
           inputs: {
+            OBJECT: {
+              shadow: {
+                type: 'object'
+              }
+            },
             X: {
               shadow: {
                 type: 'math_number',
@@ -60,6 +70,11 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'setscalexyz',
           inputs: {
+            OBJECT: {
+              shadow: {
+                type: 'object'
+              }
+            },
             X: {
               shadow: {
                 type: 'math_number',
@@ -90,6 +105,11 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           kind: 'block',
           type: 'setroteulerxyz',
           inputs: {
+            OBJECT: {
+              shadow: {
+                type: 'object'
+              }
+            },
             X: {
               shadow: {
                 type: 'math_number',
@@ -123,6 +143,11 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             AXIS: 'Z'
           },
           inputs: {
+            OBJECT: {
+              shadow: {
+                type: 'object'
+              }
+            },
             UNITS: {
               shadow: {
                 type: 'math_number',
@@ -140,6 +165,11 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             AXIS: 'Y'
           },
           inputs: {
+            OBJECT: {
+              shadow: {
+                type: 'object'
+              }
+            },
             ANGLE: {
               shadow: {
                 type: 'math_number',
@@ -149,6 +179,10 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
               }
             }
           }
+        },
+        {
+          kind: 'block',
+          type: 'object'
         }
       ]
     },

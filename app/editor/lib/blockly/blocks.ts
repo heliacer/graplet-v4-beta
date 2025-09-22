@@ -39,13 +39,26 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     output: null
   },
   {
+    type: 'object',
+    message0: '%1',
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'VALUE',
+        options
+      }
+    ],
+    output: 'Object',
+    style: 'motion_blocks'
+  },
+  {
     type: 'moveunitsxyz',
     message0: 'move %1 %2 units %3',
     args0: [
       {
-        type: 'field_dropdown',
+        type: 'input_value',
         name: 'OBJECT',
-        options
+        check: 'Object'
       },
       {
         type: 'input_value',
@@ -74,9 +87,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set position of %1 to x: %2 y: %3 z: %4',
     args0: [
       {
-        type: 'field_dropdown',
+        type: 'input_value',
         name: 'OBJECT',
-        options
+        check: 'Object'
       },
       {
         type: 'input_value',
@@ -104,9 +117,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set scale of %1 to x: %2 y: %3 z: %4',
     args0: [
       {
-        type: 'field_dropdown',
+        type: 'input_value',
         name: 'OBJECT',
-        options
+        check: 'Object'
       },
       {
         type: 'input_value',
@@ -134,9 +147,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'set rotation of %1 to euler x: %2 y: %3 z: %4',
     args0: [
       {
-        type: 'field_dropdown',
+        type: 'input_value',
         name: 'OBJECT',
-        options
+        check: 'Object'
       },
       {
         type: 'input_value',
@@ -164,9 +177,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'rotate %1 around %2 axis by %3 degrees',
     args0: [
       {
-        type: 'field_dropdown',
+        type: 'input_value',
         name: 'OBJECT',
-        options
+        check: 'Object'
       },
       {
         type: 'field_dropdown',
@@ -192,9 +205,9 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     message0: 'translate %1 along %2 axis by %3 units',
     args0: [
       {
-        type: 'field_dropdown',
+        type: 'input_value',
         name: 'OBJECT',
-        options
+        check: 'Object'
       },
       {
         type: 'field_dropdown',

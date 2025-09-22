@@ -104,10 +104,18 @@ exprGenerator.forBlock('input', function (block: Block): Expression {
 })
 
 // MOTION
+exprGenerator.forBlock('object', function (block: Block): Expression {
+  const objectId = block.getFieldValue('VALUE')
+  return {
+    type: 'literal',
+    value: objectId
+  }
+})
+
 exprGenerator.forBlock(
   'moveunitsxyz',
   function (block: Block, generator: ExpressionGenerator): Expression {
-    const objectId = block.getFieldValue('OBJECT') as string
+    const objectExpr = generator.getInputValue(block, 'OBJECT', '')
     const unitsExpr = generator.getInputValue(block, 'UNITS', 0)
     const direction = block.getFieldValue('DIRECTION') as string
     const axis = direction.slice(-1)
@@ -115,7 +123,7 @@ exprGenerator.forBlock(
     return {
       type: 'translatexyz',
       args: [
-        { type: 'literal', value: objectId },
+        objectExpr,
         { type: 'literal', value: axis },
         { type: 'literal', value: direction.startsWith('-') ? -1 : 1 },
         unitsExpr
@@ -619,13 +627,13 @@ export function generateExprsFromInput(
 
 function createXYZExpr(type: ExpressionT) {
   return function (block: Block, generator: ExpressionGenerator): Expression {
-    const objectId = block.getFieldValue('OBJECT') as string
+    const objectExpr = generator.getInputValue(block, 'OBJECT', 0)
     const xExpr = generator.getInputValue(block, 'X', 0)
     const yExpr = generator.getInputValue(block, 'Y', 0)
     const zExpr = generator.getInputValue(block, 'Z', 0)
     return {
       type,
-      args: [{ type: 'literal', value: objectId }, xExpr, yExpr, zExpr]
+      args: [objectExpr, xExpr, yExpr, zExpr]
     }
   }
 }
