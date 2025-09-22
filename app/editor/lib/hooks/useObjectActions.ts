@@ -1,5 +1,5 @@
 import { useEditor } from '../EditorContext'
-import { Mesh, BoxGeometry, MeshStandardMaterial } from 'three'
+import { Mesh, Group, BoxGeometry, MeshStandardMaterial } from 'three'
 import { objectRegistry } from '../blockly/blocks'
 import { ObjectProps } from '../types'
 
@@ -15,33 +15,36 @@ export const useObjectActions = () => {
 
   const createObject = (props?: ObjectProps) => {
     const { name, position, rotation, scale } = props || {
-      name: `Cube ${objectNames.length + 1}`
+      name: `Sprite ${objectNames.length + 1}`
     }
 
     const cube = new Mesh(
       new BoxGeometry(1, 1, 1),
       new MeshStandardMaterial({ color: '#ff6080' })
     )
-    cube.name = name
+    const group = new Group()
+    group.add(cube)
+    cube.name = 'cube'
+    group.name = name
 
     if (position) {
-      cube.position.set(...position)
+      group.position.set(...position)
     }
     if (rotation) {
-      cube.rotation.set(...rotation)
+      group.rotation.set(...rotation)
     }
     if (scale) {
-      cube.scale.set(...scale)
+      group.scale.set(...scale)
     }
 
-    objects.current.set(cube.name, cube)
-    scene.current.add(cube)
+    objects.current.set(name, group)
+    scene.current.add(group)
 
     objectRegistry.options = [[name, name], ...objectRegistry.options]
     workspace?.refreshToolboxSelection()
 
-    setCurrentObject(cube.name)
-    setObjectNames((prev) => [...prev, cube.name])
+    setCurrentObject(name)
+    setObjectNames((prev) => [...prev, name])
   }
 
   const deleteObject = (name: string) => {

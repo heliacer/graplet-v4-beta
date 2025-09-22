@@ -5,12 +5,12 @@ import { useCursor } from '@react-three/drei'
 
 export default function SceneObject({
   object,
-  onSelect,
-  onDeselect
+  onSelect = () => {},
+  onDeselect = () => {}
 }: {
   object: Object3D
-  onSelect: (id: string) => void
-  onDeselect: () => void
+  onSelect?: (id: string) => void
+  onDeselect?: () => void
 }) {
   const [hovered, setHovered] = useState(false)
   useCursor(hovered)

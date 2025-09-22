@@ -3,7 +3,7 @@
 import { DockviewReact, DockviewReadyEvent } from 'dockview-react'
 import '../styles/base.css'
 import '../styles/dvtheme.css'
-import { Airplay, Folder, Puzzle, Wrench } from 'lucide-react'
+import { Airplay, Folder, PenTool, Puzzle, Wrench } from 'lucide-react'
 import { LeftControls, RightControls } from './controls'
 import TabHeader from './tabHeader'
 
@@ -12,13 +12,16 @@ import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
 // import AssetsPanel from './panels/AssetsPanel'
 import ExplorerPanel from './panels/ExplorerPanel'
+import ModelPanel from './panels/ModelPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
+
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
   scene: ScenePanel,
   explorer: ExplorerPanel,
+  model: ModelPanel,
   // assets: AssetsPanel,
   properties: PropertiesPanel
 }
@@ -34,16 +37,16 @@ export default function Dockview() {
       }
     })
 
-    /* WIP    
     event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Model',
-      component: 'debug',
+      component: 'model',
       params: {
         Icon: <PenTool size={16} />
       }
     })
 
+    /* WIP    
     event.api.addPanel({
       id: crypto.randomUUID(),
       title: 'Assets',

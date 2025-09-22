@@ -18,6 +18,7 @@ interface EditorContextType {
   funcEnv: RefObject<FuncEnv>
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
+  modelScene: RefObject<Scene>
 
   // UI STATE
   workspace: WorkspaceSvg | null
@@ -49,6 +50,7 @@ export function EditorProvider({
   const funcEnv = useRef<FuncEnv>(new Map())
   const objects = useRef(new Map())
   const scene = useRef(new Scene())
+  const modelScene = useRef(new Scene())
   const runState = useRef<RunState>({
     shouldRun: false,
     shouldPause: false,
@@ -71,6 +73,7 @@ export function EditorProvider({
         varEnv,
         objects,
         scene,
+        modelScene,
         runState,
 
         workspace,

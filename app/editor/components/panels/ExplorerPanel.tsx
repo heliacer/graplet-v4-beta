@@ -5,7 +5,7 @@ import { Object3D } from 'three'
 import clsx from 'clsx'
 
 const ITEM_TYPE_ICONS: Record<string, LucideIcon> = {
-  Mesh: Box,
+  Group: Box,
   default: FileText
 }
 
