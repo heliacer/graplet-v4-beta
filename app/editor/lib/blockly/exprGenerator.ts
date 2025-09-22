@@ -139,16 +139,12 @@ exprGenerator.forBlock('setroteulerxyz', createXYZExpr('setroteulerxyz'))
 exprGenerator.forBlock(
   'rotatexyz',
   function (block: Block, generator: ExpressionGenerator): Expression {
-    const objectId = block.getFieldValue('OBJECT') as string
+    const objectExpr = generator.getInputValue(block, 'OBJECT', '')
     const axis = block.getFieldValue('AXIS') as string
     const angle = generator.getInputValue(block, 'ANGLE', 0)
     return {
       type: 'rotatexyz',
-      args: [
-        { type: 'literal', value: objectId },
-        { type: 'literal', value: axis },
-        angle
-      ]
+      args: [objectExpr, { type: 'literal', value: axis }, angle]
     }
   }
 )
@@ -156,17 +152,13 @@ exprGenerator.forBlock(
 exprGenerator.forBlock(
   'translatexyz',
   function (block: Block, generator: ExpressionGenerator): Expression {
-    const objectId = block.getFieldValue('OBJECT') as string
+    const objectExpr = generator.getInputValue(block, 'OBJECT', '')
     const axis = block.getFieldValue('AXIS') as string
     const distanceExpr = generator.getInputValue(block, 'UNITS', 0)
 
     return {
       type: 'translatexyz',
-      args: [
-        { type: 'literal', value: objectId },
-        { type: 'literal', value: axis },
-        distanceExpr
-      ]
+      args: [objectExpr, { type: 'literal', value: axis }, distanceExpr]
     }
   }
 )
@@ -627,7 +619,7 @@ export function generateExprsFromInput(
 
 function createXYZExpr(type: ExpressionT) {
   return function (block: Block, generator: ExpressionGenerator): Expression {
-    const objectExpr = generator.getInputValue(block, 'OBJECT', 0)
+    const objectExpr = generator.getInputValue(block, 'OBJECT', '')
     const xExpr = generator.getInputValue(block, 'X', 0)
     const yExpr = generator.getInputValue(block, 'Y', 0)
     const zExpr = generator.getInputValue(block, 'Z', 0)
