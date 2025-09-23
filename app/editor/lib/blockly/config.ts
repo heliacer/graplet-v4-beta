@@ -6,8 +6,7 @@ import {
   registry,
   Scrollbar,
   ToolboxCategory,
-  VerticalFlyout,
-  Blocks
+  VerticalFlyout
 } from 'blockly'
 import {
   ContinuousCategory,
@@ -22,11 +21,8 @@ import {
   isDivisibleMutatorMixin,
   isDivisibleMutatorExtension
 } from './mutators/isDivisible'
-import { PROCEDURES_IFRETURN } from './mutators/ifReturn'
-import {
-  PROCEDURES_CALLRETURN,
-  PROCEDURES_CALLNORETURN
-} from './mutators/procedures'
+import { unregisterProcedureBlocks } from '@blockly/block-shareable-procedures'
+import { procedureBlocks } from './procedures.test'
 
 export function initializeBlockly() {
   Extensions.unregister('math_is_divisibleby_mutator')
@@ -35,10 +31,9 @@ export function initializeBlockly() {
     isDivisibleMutatorMixin,
     isDivisibleMutatorExtension
   )
-
-  Blocks['procedures_ifreturn'] = PROCEDURES_IFRETURN
-  Blocks['procedures_callnoreturn'] = PROCEDURES_CALLNORETURN
-  Blocks['procedures_callreturn'] = PROCEDURES_CALLRETURN
+  
+  unregisterProcedureBlocks()
+  common.defineBlocks(procedureBlocks)
 
   Scrollbar.scrollbarThickness = 10
   common.defineBlocks(definitions)
