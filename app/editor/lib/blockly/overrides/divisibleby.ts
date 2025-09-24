@@ -1,7 +1,7 @@
 import { FieldDropdown, Block } from 'blockly'
 
 /**
- * @override isDivisibleBy mutator
+ * @override "divisible by" option mutator mixin
  */
 
 interface DivisiblebyBlock extends Block {

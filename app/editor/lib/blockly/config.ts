@@ -20,9 +20,7 @@ import { definitions } from './blocks'
 import {
   isDivisibleMutatorMixin,
   isDivisibleMutatorExtension
-} from './mutators/isDivisible'
-import { unregisterProcedureBlocks } from '@blockly/block-shareable-procedures'
-import { procedureBlocks } from './procedures.test'
+} from './overrides/divisibleby'
 
 export function initializeBlockly() {
   Extensions.unregister('math_is_divisibleby_mutator')
@@ -31,9 +29,6 @@ export function initializeBlockly() {
     isDivisibleMutatorMixin,
     isDivisibleMutatorExtension
   )
-  
-  unregisterProcedureBlocks()
-  common.defineBlocks(procedureBlocks)
 
   Scrollbar.scrollbarThickness = 10
   common.defineBlocks(definitions)

@@ -8,7 +8,7 @@ import React, {
   useState
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
-import { ObjectsEnv, RunState, FuncEnv, VarEnv } from './blockly/ast'
+import { ObjectsEnv, RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
 import { Scene } from 'three'
 
 interface EditorContextType {

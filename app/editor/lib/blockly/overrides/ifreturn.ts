@@ -2,7 +2,7 @@ import type { Block, WorkspaceSvg } from 'blockly'
 import { Msg } from 'blockly'
 
 /**
- * @override ifReturn Block
+ * @override ifreturn Block
  */
 
 interface IfReturnBlock extends Block {
@@ -65,7 +65,7 @@ export const PROCEDURES_IFRETURN = {
           Msg['PROCEDURES_DEFRETURN_RETURN']
         )
 
-        // Add math_number as empty return value
+        // in future, hold return type from procedure definition block
         valueInput.connection?.setShadowState({
           type: 'input',
           fields: { VALUE: '' }

@@ -2,6 +2,10 @@ import type { Block, WorkspaceSvg, Connection } from 'blockly'
 import { Msg, fieldRegistry } from 'blockly'
 import type { IVariableModel, IVariableState } from 'blockly'
 
+/**
+ * @override procedure blocks
+ */
+
 interface CallBlock extends Block {
   argumentVarModels_: IVariableModel<IVariableState>[]
   arguments_: string[]
@@ -63,8 +67,8 @@ const PROCEDURE_CALL_COMMON = {
     // Create variable models for arguments
     for (const argName of this.arguments_) {
       const variable =
-        this.workspace.getVariable(argName, '') ||
-        this.workspace.createVariable(argName, '')
+        this.workspace.getVariableMap().getVariable(argName, '') ||
+        this.workspace.getVariableMap().createVariable(argName, '')
       this.argumentVarModels_.push(variable)
     }
 
@@ -229,3 +233,7 @@ export const PROCEDURES_CALLRETURN = {
   },
   defType_: 'procedures_defreturn'
 }
+
+/**
+ * @todo @override the function definition blocks, and make its parameters draggable
+ */

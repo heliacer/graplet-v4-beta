@@ -2,7 +2,8 @@ import { inject, Variables, Events, WorkspaceSvg } from 'blockly'
 import { useEffect, useRef } from 'react'
 import { useEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
-import { variableCategory } from '../blockly/variables'
+import { variableCategory } from '../blockly/categories/variables'
+import { procedureCategory } from '../blockly/categories/procedures'
 import { resize } from '../blockly/utils'
 
 export function useBlocklyWorkspace(
@@ -19,6 +20,7 @@ export function useBlocklyWorkspace(
 
     ws.getVariableMap().createVariable('my variable')
     ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
+    ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
     ws.registerButtonCallback('CREATE_VARIABLE', function (button) {
       Variables.createVariableButtonHandler(button.getTargetWorkspace())
     })
