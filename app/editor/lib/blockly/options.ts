@@ -6,7 +6,6 @@ export const blocklyOptions: BlocklyOptions = {
   toolbox: toolbox,
   theme: theme,
   renderer: 'graplet',
-  scrollbars: true,
   trashcan: false,
   grid: {
     length: 2,

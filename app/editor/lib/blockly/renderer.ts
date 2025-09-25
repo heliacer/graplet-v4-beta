@@ -13,15 +13,15 @@ export class GrapletRenderer extends zelos.Renderer {
 class GrapletConstantProvider extends zelos.ConstantProvider {
   constructor() {
     super()
-    this.GRID_UNIT = 4
+    this.GRID_UNIT = 3
 
     this.SHAPE_IN_SHAPE_PADDING = {
       1: {
         // Outer shape: hexagon.
-        0: 5 * this.GRID_UNIT, // Field in hexagon.
-        1: 2 * this.GRID_UNIT, // Hexagon in hexagon.
-        2: 5 * this.GRID_UNIT, // Round in hexagon.
-        3: 5 * this.GRID_UNIT // Square in hexagon.
+        0: 8 * this.GRID_UNIT, // Field in hexagon.
+        1: 4 * this.GRID_UNIT, // Hexagon in hexagon.
+        2: 2 * this.GRID_UNIT, // Round in hexagon.
+        3: 2 * this.GRID_UNIT // Square in hexagon.
       },
       2: {
         // Outer shape: round.
@@ -39,10 +39,10 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
       }
     }
 
-    this.SMALL_PADDING = 0.5 * this.GRID_UNIT
-    this.MEDIUM_PADDING = 2 * this.GRID_UNIT
-    this.MEDIUM_LARGE_PADDING = 3 * this.GRID_UNIT
-    this.LARGE_PADDING = 4 * this.GRID_UNIT
+    this.SMALL_PADDING = 2 * this.GRID_UNIT
+    this.MEDIUM_PADDING = 3 * this.GRID_UNIT
+    this.MEDIUM_LARGE_PADDING = 4 * this.GRID_UNIT
+    this.LARGE_PADDING = 5 * this.GRID_UNIT
     this.CORNER_RADIUS = 1.5 * this.GRID_UNIT
     this.NOTCH_WIDTH = 10 * this.GRID_UNIT
     this.NOTCH_HEIGHT = 2 * this.GRID_UNIT
@@ -59,10 +59,10 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
     /* Minimum statement input spacer width. */
     this.STATEMENT_INPUT_SPACER_MIN_WIDTH = 40 * this.GRID_UNIT
     this.STATEMENT_INPUT_PADDING_LEFT = 4 * this.GRID_UNIT
-    this.EMPTY_INLINE_INPUT_PADDING = 5 * this.GRID_UNIT
-    this.EMPTY_INLINE_INPUT_HEIGHT = 10 * this.GRID_UNIT
+    this.EMPTY_INLINE_INPUT_PADDING = 6 * this.GRID_UNIT
+    this.EMPTY_INLINE_INPUT_HEIGHT = 12 * this.GRID_UNIT
     this.DUMMY_INPUT_MIN_HEIGHT = 6 * this.GRID_UNIT
-    this.DUMMY_INPUT_SHADOW_MIN_HEIGHT = 1 * this.GRID_UNIT
+    this.DUMMY_INPUT_SHADOW_MIN_HEIGHT = 6 * this.GRID_UNIT
     this.CURSOR_WS_WIDTH = 20 * this.GRID_UNIT
     this.FIELD_TEXT_FONTSIZE = 3 * this.GRID_UNIT
     this.FIELD_BORDER_RECT_RADIUS = this.CORNER_RADIUS
