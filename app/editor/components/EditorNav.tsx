@@ -206,6 +206,13 @@ export default function EditorNav() {
             </DropdownOption>
           </DropdownContent>
         </DropdownMenu>
+        <button
+          onClick={() => {
+            workspace?.getFlyout()?.setVisible(false)
+          }}
+        >
+          <p>toggle toolbox</p>
+        </button>
       </div>
       <div className="w-full h-full flex items-center justify-center">
         <div className="flex gap-1">
