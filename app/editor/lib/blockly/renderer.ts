@@ -34,12 +34,12 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
         // Outer shape: square.
         0: 2 * this.GRID_UNIT, // Field in square.
         1: 2 * this.GRID_UNIT, // Hexagon in square.
-        2: 2 * this.GRID_UNIT, // Round in square.
+        2: 20 * this.GRID_UNIT, // Round in square.
         3: 2 * this.GRID_UNIT // Square in square.
       }
     }
 
-    this.SMALL_PADDING = 2 * this.GRID_UNIT
+    this.SMALL_PADDING = 0.5 * this.GRID_UNIT
     this.MEDIUM_PADDING = 3 * this.GRID_UNIT
     this.MEDIUM_LARGE_PADDING = 4 * this.GRID_UNIT
     this.LARGE_PADDING = 5 * this.GRID_UNIT
@@ -61,7 +61,7 @@ class GrapletConstantProvider extends zelos.ConstantProvider {
     this.STATEMENT_INPUT_PADDING_LEFT = 4 * this.GRID_UNIT
     this.EMPTY_INLINE_INPUT_PADDING = 6 * this.GRID_UNIT
     this.EMPTY_INLINE_INPUT_HEIGHT = 12 * this.GRID_UNIT
-    this.DUMMY_INPUT_MIN_HEIGHT = 6 * this.GRID_UNIT
+    this.DUMMY_INPUT_MIN_HEIGHT = 8 * this.GRID_UNIT
     this.DUMMY_INPUT_SHADOW_MIN_HEIGHT = 6 * this.GRID_UNIT
     this.CURSOR_WS_WIDTH = 20 * this.GRID_UNIT
     this.FIELD_TEXT_FONTSIZE = 3 * this.GRID_UNIT

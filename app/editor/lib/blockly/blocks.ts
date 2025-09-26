@@ -28,6 +28,18 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     style: 'event_blocks'
   },
   {
+    type: 'param',
+    message0: '%1',
+    args0: [
+      {
+        type: 'field_label_serializable',
+        name: 'VALUE'
+      }
+    ],
+    output: null,
+    style: 'procedure_blocks'
+  },
+  {
     type: 'input',
     message0: '%1',
     args0: [

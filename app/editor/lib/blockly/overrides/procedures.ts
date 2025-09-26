@@ -102,6 +102,15 @@ const PROCEDURE_DEF_COMMON = {
     Events.disable()
     try {
       this.setFieldValue(paramString, 'PARAMS')
+      this.arguments_.forEach((arg, i) => {
+        const paramBlock = this.workspace.newBlock('param') as BlockSvg
+        paramBlock.setFieldValue(arg, 'VALUE')
+        paramBlock.initSvg()
+        paramBlock.render()
+        this.appendValueInput(`PARAM${i}`).connection?.connect(
+          paramBlock.outputConnection!
+        )
+      })
     } finally {
       Events.enable()
     }
