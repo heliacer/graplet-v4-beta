@@ -91,29 +91,36 @@ const PROCEDURE_DEF_COMMON = {
    * @internal
    */
   updateParams_: function (this: ProcedureBlock) {
-    // Merge the arguments into a human-readable list.
-    let paramString = ''
+    // Add 'with:' if there are parameters
     if (this.arguments_.length) {
-      paramString =
-        Msg['PROCEDURES_BEFORE_PARAMS'] + ' ' + this.arguments_.join(', ')
+      this.setFieldValue('with: ', 'WITH')
+    } else {
+      this.setFieldValue('', 'WITH')
     }
-    // The params field is deterministic based on the mutation,
-    // no need to fire a change event.
-    Events.disable()
-    try {
-      this.setFieldValue(paramString, 'PARAMS')
-      this.arguments_.forEach((arg, i) => {
-        const paramBlock = this.workspace.newBlock('param') as BlockSvg
-        paramBlock.setFieldValue(arg, 'VALUE')
-        paramBlock.initSvg()
-        paramBlock.render()
-        this.appendValueInput(`PARAM${i}`).connection?.connect(
-          paramBlock.outputConnection!
-        )
-      })
-    } finally {
-      Events.enable()
+
+    this.setStatements_(false)
+    let i = 0
+    while (this.getInput(`PARAM${i}`)) {
+      const source = this.getInput(`PARAM${i}`)
+        ?.getSourceBlock()
+        .getChildren(false)[0]
+      if (source) {
+        source.dispose()
+      }
+      this.removeInput(`PARAM${i}`)
+      i++
     }
+
+    this.arguments_.forEach((arg, i) => {
+      const paramBlock = this.workspace.newBlock('param') as BlockSvg
+      paramBlock.setFieldValue(arg, 'VALUE')
+      paramBlock.initSvg()
+      paramBlock.render()
+      this.appendValueInput(`PARAM${i}`).connection?.connect(
+        paramBlock.outputConnection!
+      )
+    })
+    this.setStatements_(true)
   },
   /**
    * Create XML to represent the argument inputs.
@@ -311,7 +318,7 @@ const PROCEDURE_DEF_COMMON = {
     while (paramBlock && !paramBlock.isInsertionMarker()) {
       const varName = paramBlock.getFieldValue('NAME')
       this.arguments_.push(varName)
-      const variable = this.workspace.getVariable(varName, '')!
+      const variable = this.workspace.getVariableMap().getVariable(varName, '')!
       this.argumentVarModels_.push(variable)
 
       this.paramIds_.push(paramBlock.id)
@@ -377,13 +384,13 @@ const PROCEDURE_DEF_COMMON = {
     oldId: string,
     newId: string
   ) {
-    const oldVariable = this.workspace.getVariableById(oldId)!
+    const oldVariable = this.workspace.getVariableMap().getVariableById(oldId)!
     if (oldVariable.getType() !== '') {
       // Procedure arguments always have the empty type.
       return
     }
     const oldName = oldVariable.getName()
-    const newVar = this.workspace.getVariableById(newId)!
+    const newVar = this.workspace.getVariableMap().getVariableById(newId)!
 
     let change = false
     for (let i = 0; i < this.argumentVarModels_.length; i++) {
@@ -518,7 +525,7 @@ procedureBlocks['procedures_defnoreturn'] = {
     this.appendDummyInput()
       .appendField(Msg['PROCEDURES_DEFNORETURN_TITLE'])
       .appendField(nameField, 'NAME')
-      .appendField('', 'PARAMS')
+      .appendField('', 'WITH')
     this.setMutator(new icons.MutatorIcon(['procedures_mutatorarg'], this))
     if (
       (this.workspace.options.comments ||
@@ -531,6 +538,7 @@ procedureBlocks['procedures_defnoreturn'] = {
     this.setStyle('procedure_blocks')
     this.setTooltip(Msg['PROCEDURES_DEFNORETURN_TOOLTIP'])
     this.setHelpUrl(Msg['PROCEDURES_DEFNORETURN_HELPURL'])
+    this.setInputsInline(true)
     this.arguments_ = []
     this.argumentVarModels_ = []
     this.setStatements_(true)
@@ -566,7 +574,7 @@ procedureBlocks['procedures_defreturn'] = {
     this.appendDummyInput()
       .appendField(Msg['PROCEDURES_DEFRETURN_TITLE'])
       .appendField(nameField, 'NAME')
-      .appendField('', 'PARAMS')
+      .appendField('', 'WITH')
     this.appendValueInput('RETURN')
       .setAlign(inputs.Align.RIGHT)
       .appendField(Msg['PROCEDURES_DEFRETURN_RETURN'])
@@ -584,6 +592,7 @@ procedureBlocks['procedures_defreturn'] = {
     this.setHelpUrl(Msg['PROCEDURES_DEFRETURN_HELPURL'])
     this.arguments_ = []
     this.argumentVarModels_ = []
+    this.setInputsInline(true)
     this.setStatements_(true)
     this.statementConnection_ = null
   },
