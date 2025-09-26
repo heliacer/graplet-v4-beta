@@ -91,6 +91,9 @@ const PROCEDURE_DEF_COMMON = {
    * @internal
    */
   updateParams_: function (this: ProcedureBlock) {
+    const hasReturn = !!this.getInput('RETURN')
+    console.log(hasReturn)
+
     // Add 'with:' if there are parameters
     if (this.arguments_.length) {
       this.setFieldValue('with: ', 'WITH')
@@ -99,6 +102,8 @@ const PROCEDURE_DEF_COMMON = {
     }
 
     this.setStatements_(false)
+    
+
     let i = 0
     while (this.getInput(`PARAM${i}`)) {
       const source = this.getInput(`PARAM${i}`)
