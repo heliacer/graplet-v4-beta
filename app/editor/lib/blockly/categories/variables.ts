@@ -52,7 +52,7 @@ export function variableCategory(
     inputs: {
       VALUE: {
         shadow: {
-          type: 'input',
+          type: 'text',
           fields: { VALUE: '0' }
         }
       }
@@ -72,7 +72,7 @@ export function variableCategory(
     inputs: {
       DELTA: {
         shadow: {
-          type: 'math_number',
+          type: 'number',
           fields: { NUM: 1 }
         }
       }

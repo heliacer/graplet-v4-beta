@@ -102,9 +102,7 @@ const PROCEDURE_DEF_COMMON = {
     // remove parameters
     let i = 0
     while (this.getInput(`PARAM${i}`)) {
-      const source = this.getInput(`PARAM${i}`)
-        ?.getSourceBlock()
-        .getChildren(false)[0]
+      const source = this.getInput(`PARAM${i}`)?.connection?.targetBlock()
       if (source) {
         source.dispose()
       }
@@ -1358,7 +1356,7 @@ const PROCEDURES_IFRETURN = {
         this.removeInput('VALUE')
         this.appendValueInput('VALUE')
           .appendField(Msg['PROCEDURES_DEFRETURN_RETURN'])
-          .connection?.setShadowState({ type: 'input' })
+          .connection?.setShadowState({ type: 'text' })
         this.hasReturnValue_ = true
       }
       this.setWarningText(null)

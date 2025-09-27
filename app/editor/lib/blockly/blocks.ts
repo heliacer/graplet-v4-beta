@@ -40,11 +40,22 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     style: 'procedure_blocks'
   },
   {
-    type: 'input',
+    type: 'text',
     message0: '%1',
     args0: [
       {
         type: 'field_input',
+        name: 'VALUE'
+      }
+    ],
+    output: null
+  },
+  {
+    type: 'number',
+    message0: '%1',
+    args0: [
+      {
+        type: 'field_number',
         name: 'VALUE'
       }
     ],

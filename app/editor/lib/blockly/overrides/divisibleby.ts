@@ -29,7 +29,7 @@ export const isDivisibleMutatorMixin = {
       if (!input) {
         const newInput = this.appendValueInput('DIVISOR').setCheck('Number')
         newInput.connection?.setShadowState({
-          type: 'math_number',
+          type: 'number',
           fields: { NUM: 2 }
         })
       }

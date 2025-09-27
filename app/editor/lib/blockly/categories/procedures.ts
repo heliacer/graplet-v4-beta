@@ -28,7 +28,7 @@ export function procedureCategory(
     inputs: {
       RETURN: {
         shadow: {
-          type: 'input'
+          type: 'text'
         }
       }
     }
@@ -41,7 +41,7 @@ export function procedureCategory(
     inputs: {
       VALUE: {
         shadow: {
-          type: 'input'
+          type: 'text'
         }
       }
     }
@@ -68,7 +68,7 @@ export function procedureCategory(
             params.push(param.name)
             inputs[`ARG${index}`] = {
               shadow: {
-                type: 'input'
+                type: 'text'
               }
             }
           }

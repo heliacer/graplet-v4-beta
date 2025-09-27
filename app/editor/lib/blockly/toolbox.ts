@@ -19,7 +19,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             UNITS: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0.5
                 }
@@ -42,7 +42,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             X: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0
                 }
@@ -50,7 +50,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             Y: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0
                 }
@@ -58,7 +58,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             Z: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0
                 }
@@ -77,7 +77,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             X: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 2
                 }
@@ -85,7 +85,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             Y: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 2
                 }
@@ -93,7 +93,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             Z: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 2
                 }
@@ -112,7 +112,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             X: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0
                 }
@@ -120,7 +120,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             Y: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0
                 }
@@ -128,7 +128,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             Z: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0
                 }
@@ -150,7 +150,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             UNITS: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 0.5
                 }
@@ -172,7 +172,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             ANGLE: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 15
                 }
@@ -208,12 +208,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             A: {
               shadow: {
-                type: 'input'
+                type: 'text'
               }
             },
             B: {
               shadow: {
-                type: 'input'
+                type: 'text'
               }
             }
           }
@@ -256,7 +256,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             TIMES: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 10
                 }
@@ -270,7 +270,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             MS: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
                   NUM: 500
                 }
@@ -291,12 +291,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             A: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             B: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -315,7 +315,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             NUM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -326,7 +326,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             NUM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -337,7 +337,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             NUM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -348,7 +348,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             NUM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -359,12 +359,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             X: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             Y: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -383,7 +383,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             NUMBER_TO_CHECK: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -398,12 +398,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             DIVIDEND: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             DIVISOR: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -414,17 +414,17 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             VALUE: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             LOW: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             HIGH: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -435,12 +435,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             FROM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             TO: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -451,27 +451,27 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             NUM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             FROM_MIN: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             FROM_MAX: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             TO_MIN: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             TO_MAX: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -491,7 +491,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
                 inputs: {
                   ARG0: {
                     shadow: {
-                      type: 'input',
+                      type: 'text',
                       fields: {
                         VALUE: 0
                       }
@@ -502,7 +502,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             NUM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
@@ -522,7 +522,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
                 inputs: {
                   ARG0: {
                     shadow: {
-                      type: 'input',
+                      type: 'text',
                       fields: {
                         VALUE: 0
                       }
@@ -533,12 +533,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
             },
             FROM: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             },
             TO: {
               shadow: {
-                type: 'math_number'
+                type: 'number'
               }
             }
           }
