@@ -45,6 +45,7 @@ export const procedureBlocks: { [key: string]: any } = {} // eslint-disable-line
 type ProcedureBlock = Block & ProcedureMixin
 interface ProcedureMixin extends ProcedureMixinType {
   arguments_: string[]
+  returnInputBlock_?: Block | null
   argumentVarModels_: IVariableModel<IVariableState>[]
   callType_: string
   paramIds_: string[]
@@ -91,9 +92,6 @@ const PROCEDURE_DEF_COMMON = {
    * @internal
    */
   updateParams_: function (this: ProcedureBlock) {
-    const hasReturn = !!this.getInput('RETURN')
-    console.log(hasReturn)
-
     // Add 'with:' if there are parameters
     if (this.arguments_.length) {
       this.setFieldValue('with: ', 'WITH')
@@ -101,9 +99,7 @@ const PROCEDURE_DEF_COMMON = {
       this.setFieldValue('', 'WITH')
     }
 
-    this.setStatements_(false)
-    
-
+    // remove parameters
     let i = 0
     while (this.getInput(`PARAM${i}`)) {
       const source = this.getInput(`PARAM${i}`)
@@ -116,6 +112,7 @@ const PROCEDURE_DEF_COMMON = {
       i++
     }
 
+    // add parameters
     this.arguments_.forEach((arg, i) => {
       const paramBlock = this.workspace.newBlock('param') as BlockSvg
       paramBlock.setFieldValue(arg, 'VALUE')
@@ -124,8 +121,9 @@ const PROCEDURE_DEF_COMMON = {
       this.appendValueInput(`PARAM${i}`).connection?.connect(
         paramBlock.outputConnection!
       )
+      this.moveInputBefore(`PARAM${i}`, 'STACK')
     })
-    this.setStatements_(true)
+
   },
   /**
    * Create XML to represent the argument inputs.
@@ -618,7 +616,7 @@ procedureBlocks['procedures_defreturn'] = {
 /** Type of a procedures_mutatorcontainer block. */
 type ContainerBlock = Block & ContainerMixin
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ContainerMixin extends ContainerMixinType {}
+interface ContainerMixin extends ContainerMixinType { }
 type ContainerMixinType = typeof PROCEDURES_MUTATORCONTAINER
 
 const PROCEDURES_MUTATORCONTAINER = {
@@ -650,7 +648,7 @@ procedureBlocks['procedures_mutatorcontainer'] = PROCEDURES_MUTATORCONTAINER
 /** Type of a procedures_mutatorarg block. */
 type ArgumentBlock = Block & ArgumentMixin
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ArgumentMixin extends ArgumentMixinType {}
+interface ArgumentMixin extends ArgumentMixinType { }
 type ArgumentMixinType = typeof PROCEDURES_MUTATORARGUMENT
 
 /**
@@ -1205,7 +1203,7 @@ const PROCEDURE_CALL_COMMON = {
       callback: function () {
         const def = Procedures.getDefinition(name, workspace)
         if (def) {
-          ;(workspace as WorkspaceSvg).centerOnBlock(def.id)
+          ; (workspace as WorkspaceSvg).centerOnBlock(def.id)
           getFocusManager().focusNode(def as BlockSvg)
         }
       }
