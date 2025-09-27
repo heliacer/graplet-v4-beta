@@ -116,7 +116,14 @@ const PROCEDURE_DEF_COMMON = {
       paramBlock.setFieldValue(arg, 'VALUE')
       paramBlock.initSvg()
       paramBlock.render()
-      this.appendValueInput(`PARAM${i}`).connection?.connect(
+      const input = this.appendValueInput(`PARAM${i}`)
+      input.connection?.setShadowState({
+        type: 'param',
+        fields: {
+          VALUE: arg
+        }
+      })
+      input.connection?.connect(
         paramBlock.outputConnection!
       )
       this.moveInputBefore(`PARAM${i}`, 'STACK')
@@ -544,6 +551,32 @@ procedureBlocks['procedures_defnoreturn'] = {
     this.argumentVarModels_ = []
     this.setStatements_(true)
     this.statementConnection_ = null
+
+
+    /** Very primitive, needs some better method to do this */
+    this.workspace.addChangeListener((event: Events.Abstract) => {
+      if (event instanceof Events.BlockDrag && event.blocks) {
+        if (event.isStart) {
+          console.log(event.blocks)
+          const paramBlock = event.blocks[0] as BlockSvg
+          const dragStrategy = paramBlock.getDragStrategy() as any // eslint-disable-line @typescript-eslint/no-explicit-any
+          const startParentConn = dragStrategy.startParentConn
+          if (startParentConn) {
+            const source = startParentConn.getSourceBlock() as ProcedureBlock
+            const name = paramBlock.getFieldValue('VALUE')
+            const n = source.arguments_.indexOf(name)
+            const conn = source.getInput(`PARAM${n}`)?.connection
+            if (conn) {
+              const paramBlock = this.workspace.newBlock('param') as BlockSvg
+              paramBlock.setFieldValue(name, 'VALUE')
+              paramBlock.initSvg()
+              paramBlock.render()
+              conn.connect(paramBlock.outputConnection)
+            }
+          }
+        }
+      }
+    })
   },
   /**
    * Return the signature of this procedure definition.
@@ -1070,8 +1103,8 @@ const PROCEDURE_CALL_COMMON = {
       return
     }
     if (
-      event.type === Events.BLOCK_CREATE &&
-      (event as Events.BlockCreate).ids!.includes(this.id)
+      event instanceof Events.BlockCreate &&
+      event.ids?.includes(this.id)
     ) {
       // Look for the case where a procedure call was created (usually through
       // paste) and there is no matching definition.  In this case, create
@@ -1130,7 +1163,7 @@ const PROCEDURE_CALL_COMMON = {
           Msg['PROCEDURES_CALL_DISABLED_DEF_WARNING'].replace('%1', name)
         )
       }
-    } else if (event.type === Events.BLOCK_DELETE) {
+    } else if (event instanceof Events.BlockDelete) {
       // Look for the case where a procedure definition has been deleted,
       // leaving this block (a procedure call) orphaned.  In this case, delete
       // the orphan.
@@ -1142,8 +1175,7 @@ const PROCEDURE_CALL_COMMON = {
         Events.setGroup(false)
       }
     } else if (
-      event.type === Events.BLOCK_CHANGE &&
-      (event as Events.BlockChange).element === 'disabled'
+      event instanceof Events.BlockChange && event.element === 'disabled'
     ) {
       const blockChangeEvent = event as Events.BlockChange
       const name = this.getProcedureCall()

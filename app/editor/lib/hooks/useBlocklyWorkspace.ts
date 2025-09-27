@@ -27,9 +27,9 @@ export function useBlocklyWorkspace(
 
     const variableListener = (event: Events.Abstract) => {
       if (
-        event.type === Events.VAR_CREATE ||
-        event.type === Events.VAR_DELETE ||
-        event.type === Events.VAR_RENAME
+        event instanceof Events.VarCreate ||
+        event instanceof Events.VarDelete ||
+        event instanceof Events.VarRename
       ) {
         ws.refreshToolboxSelection()
       }

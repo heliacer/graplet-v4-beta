@@ -56,7 +56,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     args0: [
       {
         type: 'field_number',
-        name: 'VALUE'
+        name: 'NUM'
       }
     ],
     output: null
