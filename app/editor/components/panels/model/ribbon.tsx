@@ -1,7 +1,8 @@
-import { useEditor } from "@/app/editor/lib/EditorContext"
-import { Mesh, MeshStandardMaterial, SphereGeometry } from "three"
+import { useEditor } from '@/app/editor/lib/EditorContext'
+import { IGridviewPanelProps } from 'dockview-react'
+import { Mesh, MeshStandardMaterial, SphereGeometry } from 'three'
 
-export default function Ribbon() {
+export default function Ribbon(props: IGridviewPanelProps) {
   const { objects, currentObject, setObjectVersion } = useEditor()
 
   function addBall() {
@@ -17,7 +18,9 @@ export default function Ribbon() {
   return (
     <div className="flex gap-1">
       <p>Ribbon</p>
-      <button className="cursor-pointer underline" onClick={addBall}>Add ball</button>
+      <button className="cursor-pointer underline" onClick={addBall}>
+        Add ball
+      </button>
     </div>
   )
 }

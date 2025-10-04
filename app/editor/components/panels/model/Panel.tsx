@@ -1,9 +1,14 @@
-import { GridviewReact, GridviewReadyEvent, LayoutPriority, Orientation } from 'dockview-react'
+import {
+  GridviewApi,
+  GridviewReact,
+  GridviewReadyEvent,
+  Orientation
+} from 'dockview-react'
 import ModelScene from './scene'
 import Ribbon from './ribbon'
 import Modifiers from './modifiers'
 import Outline from './outline'
-import { title } from 'process'
+import { useState } from 'react'
 
 const modelPanelComponents = {
   ribbon: Ribbon,
@@ -13,52 +18,64 @@ const modelPanelComponents = {
 }
 
 export default function ModelPanel() {
+  const [api, setApi] = useState<GridviewApi | undefined>()
+
+  function handleSize() {
+    api?.getPanel('ribbon')?.api.setSize({ height: 30 })
+    api?.getPanel('outline')?.api.setSize({ width: 220, height: 300 })
+  }
+
   function mount(event: GridviewReadyEvent) {
     const { api } = event
 
-    const ribbonPanel = api.addPanel({
-      id: crypto.randomUUID(),
+    api.addPanel({
+      id: 'ribbon',
       component: 'ribbon',
       params: {
         title: 'Model Ribbon'
       },
       minimumHeight: 30,
-      maximumHeight: 60,
+      maximumHeight: 60
     })
 
-    const scenePanel = api.addPanel({
-      id: crypto.randomUUID(),
+    api.addPanel({
+      id: 'scene',
       component: 'scene',
       params: {
         title: 'Model Scene'
       },
-      position: { referencePanel: ribbonPanel.id, direction: 'below' },
+      position: { referencePanel: 'ribbon', direction: 'below' }
     })
 
-    const outlinePanel = api.addPanel({
-      id: crypto.randomUUID(),
+    api.addPanel({
+      id: 'outline',
       component: 'outline',
       params: {
         title: 'Model Outline'
       },
-      position: { referencePanel: scenePanel.id, direction: 'right' },
+      position: { referencePanel: 'scene', direction: 'right' }
     })
 
     api.addPanel({
-      id: crypto.randomUUID(),
+      id: 'modifiers',
       component: 'modifiers',
       params: {
         title: 'Model Modifiers'
       },
-      position: { referencePanel: outlinePanel.id, direction: 'below' }
+      position: { referencePanel: 'outline', direction: 'below' }
     })
+
+    setApi(api)
   }
 
   return (
-    <GridviewReact
-      orientation={Orientation.HORIZONTAL}
-      components={modelPanelComponents}
-      onReady={mount}
-    />
+    <>
+      <button onClick={handleSize}>resize</button>
+      <GridviewReact
+        orientation={Orientation.VERTICAL}
+        components={modelPanelComponents}
+        onReady={mount}
+      />
+    </>
   )
 }

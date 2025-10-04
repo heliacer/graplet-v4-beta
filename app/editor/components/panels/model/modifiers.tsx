@@ -1,5 +1,3 @@
 export default function Modifiers() {
-  return (
-    <div>Modifiers</div>
-  )
+  return <div>Modifiers</div>
 }

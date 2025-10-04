@@ -11,12 +11,12 @@ export default function ModelScene() {
 
   useEffect(() => {
     setModel(objects.current.get(currentObject)?.clone())
-  }, [objectVersion, currentObject])
+  }, [objectVersion, currentObject, objects])
 
   return (
     <Canvas scene={modelScene.current}>
       <OrbitControls makeDefault />
-      { model && <SceneObject object={model} />}
+      {model && <SceneObject object={model} />}
       <ambientLight intensity={1} />
       <directionalLight position={[3, 5, 2]} intensity={2} />
     </Canvas>
