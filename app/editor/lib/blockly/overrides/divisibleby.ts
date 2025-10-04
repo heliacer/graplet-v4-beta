@@ -1,7 +1,7 @@
 import { FieldDropdown, Block } from 'blockly'
 
 /**
- * @override isDivisibleBy mutator
+ * @override "divisible by" option mutator mixin
  */
 
 interface DivisiblebyBlock extends Block {
@@ -29,7 +29,7 @@ export const isDivisibleMutatorMixin = {
       if (!input) {
         const newInput = this.appendValueInput('DIVISOR').setCheck('Number')
         newInput.connection?.setShadowState({
-          type: 'math_number',
+          type: 'number',
           fields: { NUM: 2 }
         })
       }

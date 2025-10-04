@@ -12,7 +12,7 @@ import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
 // import AssetsPanel from './panels/AssetsPanel'
 import ExplorerPanel from './panels/ExplorerPanel'
-import ModelPanel from './panels/ModelPanel'
+import ModelPanel from './panels/model/Panel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
 
@@ -28,7 +28,8 @@ const panelComponents = {
 
 export default function Dockview() {
   function mount(event: DockviewReadyEvent) {
-    const codePanel = event.api.addPanel({
+    const { api } = event
+    const codePanel = api.addPanel({
       id: crypto.randomUUID(),
       title: 'Code',
       component: 'code',
@@ -37,7 +38,7 @@ export default function Dockview() {
       }
     })
 
-    event.api.addPanel({
+    api.addPanel({
       id: crypto.randomUUID(),
       title: 'Model',
       component: 'model',
@@ -47,7 +48,7 @@ export default function Dockview() {
     })
 
     /* WIP    
-    event.api.addPanel({
+    api.addPanel({
       id: crypto.randomUUID(),
       title: 'Assets',
       component: 'debug',
@@ -56,7 +57,7 @@ export default function Dockview() {
       }
     })
 
-    event.api.addPanel({
+    api.addPanel({
       id: crypto.randomUUID(),
       title: 'Extensions',
       component: 'debug',
@@ -66,7 +67,7 @@ export default function Dockview() {
     })
     */
 
-    const scenePanel = event.api.addPanel({
+    const scenePanel = api.addPanel({
       id: crypto.randomUUID(),
       component: 'scene',
       params: {
@@ -76,7 +77,7 @@ export default function Dockview() {
       position: { direction: 'right' }
     })
 
-    const propertiesPanel = event.api.addPanel({
+    const propertiesPanel = api.addPanel({
       id: crypto.randomUUID(),
       title: 'Properties',
       component: 'properties',
@@ -86,7 +87,7 @@ export default function Dockview() {
       position: { referencePanel: scenePanel, direction: 'below' }
     })
 
-    event.api.addPanel({
+    api.addPanel({
       id: crypto.randomUUID(),
       component: 'explorer',
       title: 'Explorer',

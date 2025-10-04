@@ -28,7 +28,7 @@ import { useRef, useState } from 'react'
 import { clsx } from 'clsx'
 import { ProjectData } from '../lib/types'
 import { WorkspaceSvg } from 'blockly'
-import { ObjectsEnv } from '../lib/blockly/ast'
+import { ObjectsEnv } from '../lib/blockly/engine/ast'
 import { useObjectActions } from '../lib/hooks/useObjectActions'
 import { objectRegistry } from '../lib/blockly/blocks'
 

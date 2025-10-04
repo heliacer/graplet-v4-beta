@@ -29,7 +29,7 @@ export const theme: ITheme = {
   fontStyle: {
     family: 'Nunito, Nunito Fallback',
     weight: '600',
-    size: 19
+    size: 18
   },
   startHats: true,
   categoryStyles: {

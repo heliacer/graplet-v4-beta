@@ -4,10 +4,8 @@ import {
   ContextMenuItems,
   Extensions,
   registry,
-  Scrollbar,
   ToolboxCategory,
-  VerticalFlyout,
-  Blocks
+  VerticalFlyout
 } from 'blockly'
 import {
   ContinuousCategory,
@@ -16,17 +14,13 @@ import {
   ContinuousToolbox,
   RecyclableBlockFlyoutInflater
 } from '@blockly/continuous-toolbox'
-import { GrapletRenderer } from './renderer'
 import { definitions } from './blocks'
 import {
   isDivisibleMutatorMixin,
   isDivisibleMutatorExtension
-} from './mutators/isDivisible'
-import { PROCEDURES_IFRETURN } from './mutators/ifReturn'
-import {
-  PROCEDURES_CALLRETURN,
-  PROCEDURES_CALLNORETURN
-} from './mutators/procedures'
+} from './overrides/divisibleby'
+import { procedureBlocks } from './overrides/procedures'
+import { GrapletRenderer } from './renderer'
 
 export function initializeBlockly() {
   Extensions.unregister('math_is_divisibleby_mutator')
@@ -36,16 +30,17 @@ export function initializeBlockly() {
     isDivisibleMutatorExtension
   )
 
-  Blocks['procedures_ifreturn'] = PROCEDURES_IFRETURN
-  Blocks['procedures_callnoreturn'] = PROCEDURES_CALLNORETURN
-  Blocks['procedures_callreturn'] = PROCEDURES_CALLRETURN
-
-  Scrollbar.scrollbarThickness = 10
+  common.defineBlocks(procedureBlocks)
   common.defineBlocks(definitions)
-  VerticalFlyout.prototype.getFlyoutScale = function () {
-    return 0.45
-  }
+
   blockRendering.register('graplet', GrapletRenderer)
+  VerticalFlyout.prototype.getFlyoutScale = function () {
+    if (common.getMainWorkspace()?.id === this.getTargetWorkspace().id) {
+      return 0.45
+    } else {
+      return this.getTargetWorkspace().scale
+    }
+  }
 
   registry.register(
     registry.Type.TOOLBOX_ITEM,

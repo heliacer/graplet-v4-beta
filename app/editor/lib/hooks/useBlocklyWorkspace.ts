@@ -2,8 +2,8 @@ import { inject, Variables, Events, WorkspaceSvg } from 'blockly'
 import { useEffect, useRef } from 'react'
 import { useEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
-import { variableCategory } from '../blockly/variables'
-import { procedureCategory } from '../blockly/procedures'
+import { variableCategory } from '../blockly/categories/variables'
+import { procedureCategory } from '../blockly/categories/procedures'
 import { resize } from '../blockly/utils'
 
 export function useBlocklyWorkspace(
@@ -27,9 +27,9 @@ export function useBlocklyWorkspace(
 
     const variableListener = (event: Events.Abstract) => {
       if (
-        event.type === Events.VAR_CREATE ||
-        event.type === Events.VAR_DELETE ||
-        event.type === Events.VAR_RENAME
+        event instanceof Events.VarCreate ||
+        event instanceof Events.VarDelete ||
+        event instanceof Events.VarRename
       ) {
         ws.refreshToolboxSelection()
       }

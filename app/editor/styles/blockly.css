@@ -70,6 +70,10 @@
   font-size: 28px !important;
 }
 
-.blocklyTextarea{
+.blocklyTextarea {
   color: oklch(27.4% 0.006 286.033);
+}
+
+.blocklyScrollbarHandle {
+  display: none;
 }

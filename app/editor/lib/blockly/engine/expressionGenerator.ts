@@ -79,7 +79,7 @@ type ExtraState = {
 
 export const exprGenerator = new ExpressionGenerator()
 
-exprGenerator.forBlock('math_number', function (block: Block): Expression {
+exprGenerator.forBlock('number', function (block: Block): Expression {
   return {
     type: 'literal',
     value: block.getFieldValue('NUM')
@@ -93,7 +93,7 @@ exprGenerator.forBlock('text', function (block: Block): Expression {
   }
 })
 
-exprGenerator.forBlock('input', function (block: Block): Expression {
+exprGenerator.forBlock('text', function (block: Block): Expression {
   const value = block.getFieldValue('VALUE') as Value
   // "input" blocks are text inputs in disguise, this allows for numeric inputs aswell
   const resolved = Number.isNaN(Number(value)) ? value : Number(value)
