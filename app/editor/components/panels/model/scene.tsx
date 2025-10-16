@@ -10,7 +10,11 @@ export default function ModelScene() {
   const [model, setModel] = useState<Object3D>()
 
   useEffect(() => {
-    setModel(objects.current.get(currentObject)?.clone())
+    const clone = currentObject?.clone()
+    clone?.position.set(0, 0, 0)
+    clone?.rotation.set(0, 0, 0)
+    clone?.scale.set(1, 1, 1)
+    setModel(clone)
   }, [objectVersion, currentObject, objects])
 
   return (

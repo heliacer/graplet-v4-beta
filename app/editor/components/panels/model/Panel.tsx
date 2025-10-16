@@ -1,5 +1,4 @@
 import {
-  GridviewApi,
   GridviewReact,
   GridviewReadyEvent,
   Orientation
@@ -8,7 +7,6 @@ import ModelScene from './scene'
 import Ribbon from './ribbon'
 import Modifiers from './modifiers'
 import Outline from './outline'
-import { useState } from 'react'
 
 const modelPanelComponents = {
   ribbon: Ribbon,
@@ -18,17 +16,10 @@ const modelPanelComponents = {
 }
 
 export default function ModelPanel() {
-  const [api, setApi] = useState<GridviewApi | undefined>()
-
-  function handleSize() {
-    api?.getPanel('ribbon')?.api.setSize({ height: 30 })
-    api?.getPanel('outline')?.api.setSize({ width: 220, height: 300 })
-  }
-
   function mount(event: GridviewReadyEvent) {
     const { api } = event
 
-    api.addPanel({
+    const ribbon = api.addPanel({
       id: 'ribbon',
       component: 'ribbon',
       params: {
@@ -47,7 +38,7 @@ export default function ModelPanel() {
       position: { referencePanel: 'ribbon', direction: 'below' }
     })
 
-    api.addPanel({
+    const outline = api.addPanel({
       id: 'outline',
       component: 'outline',
       params: {
@@ -65,12 +56,14 @@ export default function ModelPanel() {
       position: { referencePanel: 'outline', direction: 'below' }
     })
 
-    setApi(api)
+    setTimeout(() => {
+      ribbon.api.setSize({ height: 30 })
+      outline.api.setSize({ width: 220, height: 300 })
+    }, 1000)
   }
 
   return (
     <>
-      <button onClick={handleSize}>resize</button>
       <GridviewReact
         orientation={Orientation.VERTICAL}
         components={modelPanelComponents}

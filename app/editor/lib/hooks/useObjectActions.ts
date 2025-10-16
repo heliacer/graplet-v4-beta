@@ -1,5 +1,5 @@
 import { useEditor } from '../EditorContext'
-import { Mesh, Group, BoxGeometry, MeshStandardMaterial } from 'three'
+import { Mesh, Group, BoxGeometry, MeshStandardMaterial, Object3D } from 'three'
 import { objectRegistry } from '../blockly/blocks'
 import { ObjectProps } from '../types'
 
@@ -18,13 +18,14 @@ export const useObjectActions = () => {
       name: `Sprite ${objectNames.length + 1}`
     }
 
-    const cube = new Mesh(
+    const defaultCube = new Mesh(
       new BoxGeometry(1, 1, 1),
       new MeshStandardMaterial({ color: '#ff6080' })
     )
+
     const group = new Group()
-    group.add(cube)
-    cube.name = 'cube'
+    group.add(defaultCube)
+    defaultCube.name = 'Cube'
     group.name = name
 
     if (position) {
@@ -43,34 +44,28 @@ export const useObjectActions = () => {
     objectRegistry.options = [[name, name], ...objectRegistry.options]
     workspace?.refreshToolboxSelection()
 
-    setCurrentObject(name)
+    setCurrentObject(group)
     setObjectNames((prev) => [...prev, name])
   }
 
-  const deleteObject = (name: string) => {
-    const obj = objects.current.get(name)
-    if (!obj) return
-
+  const deleteObject = (object: Object3D) => {
     requestAnimationFrame(() => {
-      scene.current.remove(obj)
+      scene.current.remove(object)
     })
-    objects.current.delete(name)
+    objects.current.delete(object.name)
 
     objectRegistry.options = objectRegistry.options.filter(
-      ([label, value]) => label !== name || value !== name
+      ([label, value]) => label !== object.name || value !== object.name
     )
     workspace?.refreshToolboxSelection()
 
-    setObjectNames((prev) => prev.filter((n) => n !== name))
-    setCurrentObject((prev) => (prev === name ? '' : prev))
+    setObjectNames((prev) => prev.filter((n) => n !== object.name))
+    setCurrentObject((prev) => (prev?.id === object.id ? null : prev))
   }
 
-  const duplicateObject = (name: string) => {
-    const original = objects.current.get(name)
-    if (!original) return
-
-    const clone = original.clone()
-    const cloneName = `${original.name} Copy`
+  const duplicateObject = (object: Object3D) => {
+    const clone = object.clone()
+    const cloneName = `${object.name} Copy`
     clone.name = cloneName
     clone.position.x += 2
 
@@ -81,7 +76,7 @@ export const useObjectActions = () => {
     workspace?.refreshToolboxSelection()
 
     setObjectNames((prev) => [...prev, clone.name])
-    setCurrentObject(clone.name)
+    setCurrentObject(clone)
   }
 
   return { createObject, deleteObject, duplicateObject }

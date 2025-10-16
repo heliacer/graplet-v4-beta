@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { ObjectsEnv, RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
-import { Scene } from 'three'
+import { Object3D, Scene } from 'three'
 
 interface EditorContextType {
   // REFS
@@ -22,7 +22,7 @@ interface EditorContextType {
 
   // UI STATE
   workspace: WorkspaceSvg | null
-  currentObject: string
+  currentObject: Object3D | null
   isRunning: boolean
   objectNames: string[]
   objectVersion: number
@@ -33,7 +33,7 @@ interface EditorContextType {
   setObjectVersion: Dispatch<SetStateAction<number>>
   setObjectNames: Dispatch<SetStateAction<string[]>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
-  setCurrentObject: Dispatch<SetStateAction<string>>
+  setCurrentObject: Dispatch<SetStateAction<Object3D | null>>
   setIsRunning: Dispatch<SetStateAction<boolean>>
 }
 
@@ -59,7 +59,7 @@ export function EditorProvider({
   })
 
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
-  const [currentObject, setCurrentObject] = useState<string>('')
+  const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
   const [isRunning, setIsRunning] = useState<boolean>(false)
   const [objectNames, setObjectNames] = useState<Array<string>>([])
   const [objectVersion, setObjectVersion] = useState(0)

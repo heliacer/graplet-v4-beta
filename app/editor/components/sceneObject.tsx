@@ -9,7 +9,7 @@ export default function SceneObject({
   onDeselect = () => {}
 }: {
   object: Object3D
-  onSelect?: (id: string) => void
+  onSelect?: (object: Object3D) => void
   onDeselect?: () => void
 }) {
   const [hovered, setHovered] = useState(false)
@@ -20,7 +20,7 @@ export default function SceneObject({
       object={object}
       onClick={(e: ThreeEvent<MouseEvent>) => (
         e.stopPropagation(),
-        onSelect(object.name)
+        onSelect(object)
       )}
       onPointerMissed={(e: MouseEvent) => e.type === 'click' && onDeselect()}
       onPointerOver={(e: ThreeEvent<PointerEvent>) => (

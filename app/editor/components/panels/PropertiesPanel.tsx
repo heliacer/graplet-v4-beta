@@ -4,29 +4,29 @@ import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Layers2, Trash } from 'lucide-react'
 
 export default function PropertiesPanel() {
-  const { objects, currentObject, objectVersion } = useEditor()
+  const { currentObject, objectVersion } = useEditor()
   const { deleteObject, duplicateObject } = useObjectActions()
-  const obj = objects.current.get(currentObject)
 
   const [formData, setFormData] = useState({
-    name: obj?.name || '',
-    positionX: obj?.position.x || 0,
-    positionY: obj?.position.y || 0,
-    positionZ: obj?.position.z || 0
+    name: currentObject?.name || '',
+    positionX: currentObject?.position.x || 0,
+    positionY: currentObject?.position.y || 0,
+    positionZ: currentObject?.position.z || 0
   })
 
   useEffect(() => {
-    if (obj) {
+    if (currentObject) {
       setFormData({
-        name: obj.name,
-        positionX: obj.position.x,
-        positionY: obj.position.y,
-        positionZ: obj.position.z
+        name: currentObject.name,
+        positionX: currentObject.position.x,
+        positionY: currentObject.position.y,
+        positionZ: currentObject.position.z
       })
     }
-  }, [currentObject, obj, objectVersion])
+  }, [currentObject, objectVersion])
 
-  if (!obj) return <div className="p-1.5 italic">Select an object</div>
+  if (!currentObject)
+    return <div className="p-1.5 italic">Select an object</div>
 
   return (
     <div className="p-1.5 flex flex-col gap-2 text-sm">
@@ -38,7 +38,7 @@ export default function PropertiesPanel() {
           value={formData.name}
           onChange={(e) => {
             setFormData((prev) => ({ ...prev, name: e.target.value }))
-            obj.name = e.target.value
+            currentObject.name = e.target.value
           }}
         />
       </div>
@@ -54,7 +54,7 @@ export default function PropertiesPanel() {
             onChange={(e) => {
               const value = Number(e.target.value)
               setFormData((prev) => ({ ...prev, positionX: value }))
-              obj.position.x = value
+              currentObject.position.x = value
             }}
           />
           <p>Y</p>
@@ -66,7 +66,7 @@ export default function PropertiesPanel() {
             onChange={(e) => {
               const value = Number(e.target.value)
               setFormData((prev) => ({ ...prev, positionY: value }))
-              obj.position.y = value
+              currentObject.position.y = value
             }}
           />
           <p>Z</p>
@@ -78,7 +78,7 @@ export default function PropertiesPanel() {
             onChange={(e) => {
               const value = Number(e.target.value)
               setFormData((prev) => ({ ...prev, positionZ: value }))
-              obj.position.z = value
+              currentObject.position.z = value
             }}
           />
         </div>

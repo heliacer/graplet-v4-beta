@@ -134,7 +134,7 @@ export default function EditorNav() {
         })
         objects.current = new Map()
         setObjectNames([])
-        setCurrentObject('')
+        setCurrentObject(null)
         objectRegistry.options = []
 
         // load scene
@@ -172,7 +172,7 @@ export default function EditorNav() {
       })
       objects.current = new Map()
       setObjectNames([])
-      setCurrentObject('')
+      setCurrentObject(null)
       objectRegistry.options = []
     }
   }

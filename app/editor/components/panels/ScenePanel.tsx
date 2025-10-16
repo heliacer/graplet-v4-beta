@@ -147,12 +147,12 @@ export default function ScenePanel() {
           key={key}
           object={object}
           onSelect={setCurrentObject}
-          onDeselect={() => setCurrentObject('')}
+          onDeselect={() => setCurrentObject(null)}
         />
       ))}
       {currentObject && (
         <TransformControls
-          object={objects.current.get(currentObject)}
+          object={currentObject}
           translationSnap={0.5}
           onObjectChange={() => {
             setObjectVersion((prev) => prev + 1)

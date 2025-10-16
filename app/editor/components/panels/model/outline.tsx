@@ -33,17 +33,14 @@ function TreeNode({ node }: { node: TreeItem }) {
 }
 
 export default function Outline() {
-  const { objects, currentObject } = useEditor()
-  const obj = objects.current.get(currentObject)
+  const { currentObject } = useEditor()
 
-  if (!obj) return null
+  if (!currentObject) return null
 
-  const tree = getObjectTree(obj)
-
-  console.log(tree.children)
+  const tree = getObjectTree(currentObject)
 
   return (
-    <ul>
+    <ul className="w-full h-full">
       <TreeNode node={tree} />
     </ul>
   )

@@ -21,16 +21,16 @@ function ObjectListItem({ object }: { object: Object3D }) {
     <button
       className={clsx(
         'rounded-md cursor-pointer border border-b-0 overflow-clip',
-        currentObject === object.name
+        currentObject?.id === object.id
           ? 'bg-zinc-800 border-zinc-700'
           : 'border-transparent hover:bg-zinc-800 hover:border-zinc-700'
       )}
-      onClick={() => setCurrentObject(object.name)}
+      onClick={() => setCurrentObject(object)}
     >
       <div
         className={clsx(
           'flex gap-1 px-1 py-0.5 items-center border-b',
-          currentObject === object.name
+          currentObject?.id === object.id
             ? 'border-teal-600'
             : 'hover:border-zinc-700 border-transparent'
         )}
