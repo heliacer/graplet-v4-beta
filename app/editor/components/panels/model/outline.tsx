@@ -40,8 +40,13 @@ export default function Outline() {
   const tree = getObjectTree(currentObject)
 
   return (
-    <ul className="w-full h-full">
-      <TreeNode node={tree} />
-    </ul>
+    <>
+      <div className='flex w-full border-0 border-b border-zinc-700'>
+        <p>Outline</p>
+      </div>
+      <ul className="w-full h-full">
+        <TreeNode node={tree} />
+      </ul>    
+    </>
   )
 }

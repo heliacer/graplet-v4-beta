@@ -476,10 +476,6 @@
   width: 100%;
 }
 
-.dv-view.visible div{
-  overflow: visible !important;
-}
-
 .dv-split-view-container .dv-view-container .dv-view {
   height: 100%;
   box-sizing: border-box;
