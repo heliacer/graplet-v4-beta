@@ -229,7 +229,7 @@ export function DropdownFolder({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button type="button" className='w-full' onClick={handleClick}>
+      <button type="button" className="w-full" onClick={handleClick}>
         <div
           className={clsx(
             'flex cursor-pointer items-center gap-2 rounded px-1 mx-1 text-left',

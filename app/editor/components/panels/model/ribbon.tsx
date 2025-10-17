@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import {
   DropdownButton,
@@ -49,11 +48,6 @@ export default function Ribbon() {
 
   function addObject(object: Object3D, name: string) {
     object.name = name
-    object.position.set(
-      Math.random() * 5,
-      Math.random() * 5,
-      Math.random() * 5
-    )
     currentObject?.add(object)
     setObjectVersion((previous) => previous + 1)
   }

@@ -41,12 +41,12 @@ export default function Outline() {
 
   return (
     <>
-      <div className='flex w-full border-0 border-b border-zinc-700'>
+      <div className="flex w-full border-0 border-b border-zinc-700">
         <p>Outline</p>
       </div>
       <ul className="w-full h-full">
         <TreeNode node={tree} />
-      </ul>    
+      </ul>
     </>
   )
 }

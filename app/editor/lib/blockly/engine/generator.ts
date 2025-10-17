@@ -597,7 +597,9 @@ exprGenerator.forBlock(
   }
 )
 
-// Helper Functions
+/**
+ * Helper Functions
+ */
 
 export function generateExprsFromInput(
   input: Input | null,

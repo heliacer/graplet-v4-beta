@@ -27,7 +27,7 @@ export default function ModelPanel() {
       component: 'scene',
       params: {
         title: 'Model Scene'
-      },
+      }
     })
 
     api.addPanel({
@@ -57,8 +57,10 @@ export default function ModelPanel() {
 
   return (
     <>
-      <button className='absolute right-2' onClick={setSizesPrimitive}>resize</button>
-      <Ribbon/>
+      <button className="absolute right-2" onClick={setSizesPrimitive}>
+        resize
+      </button>
+      <Ribbon />
       <GridviewReact
         orientation={Orientation.VERTICAL}
         components={modelPanelComponents}

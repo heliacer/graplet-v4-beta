@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useEditor } from '../../lib/EditorContext'
-import { exprGenerator } from '../../lib/blockly/engine/expressionGenerator'
+import { exprGenerator } from '../../lib/blockly/engine/generator'
 import { evaluateExpression } from '../../lib/blockly/engine/interpreter'
 import { serialization } from 'blockly'
 import { Expression, ProgramState } from '../../lib/blockly/engine/ast'

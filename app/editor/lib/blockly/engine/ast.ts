@@ -29,18 +29,25 @@ export interface Expression {
 export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
 
 export type ExpressionT =
-  // Entry Point
+  // Control Flow
   | 'main'
+  | 'runseq'
+  | 'if'
+  | 'repeat'
+  | 'wait'
 
-  // Function Expression
-  | 'func'
+  // Effects
+  | 'setfunc'
+  | 'setvar'
+  | 'changevar'
 
-  // Value Expressions
+  // Values
   | 'literal' // Value (string, number, boolean ...)
+  | 'func'
   | 'var'
   | 'call'
 
-  // Operator Expressions
+  // Operators
   | 'andor'
   | 'neg'
   | 'compare'
@@ -56,19 +63,9 @@ export type ExpressionT =
   | 'randomfloat'
   | 'randomint'
 
-  // Effect Expressions
-  | 'setvar'
-  | 'changevar'
-  | 'setfunc'
-
-  // Statement Expressions
-  | 'runseq'
-  | 'runsync'
+  // Statements
   | 'setposxyz'
   | 'translatexyz'
   | 'setscalexyz'
   | 'setroteulerxyz'
   | 'rotatexyz'
-  | 'repeat'
-  | 'if'
-  | 'wait'
