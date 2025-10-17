@@ -50,9 +50,9 @@ export default function Ribbon() {
   function addObject(object: Object3D, name: string) {
     object.name = name
     object.position.set(
-      Math.random() * 19,
-      Math.random() * 10,
-      Math.random() * 10
+      Math.random() * 5,
+      Math.random() * 5,
+      Math.random() * 5
     )
     currentObject?.add(object)
     setObjectVersion((previous) => previous + 1)
@@ -134,7 +134,7 @@ export default function Ribbon() {
   ]
 
   return (
-    <div className="flex gap-1 items-center w-full h-full mx-1">
+    <div className="flex gap-1 items-center p-1 border-b border-zinc-700 border-0">
       <DropdownMenu className="text-sm">
         <DropdownButton className="rounded-md">
           <Box size={16} />
