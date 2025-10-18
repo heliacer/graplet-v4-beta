@@ -1,14 +1,8 @@
-import {
-  GridviewApi,
-  GridviewReact,
-  GridviewReadyEvent,
-  Orientation
-} from 'dockview-react'
+import { GridviewReact, GridviewReadyEvent, Orientation } from 'dockview-react'
 import ModelScene from './scene'
 import Ribbon from './ribbon'
 import Modifiers from './modifiers'
 import Outline from './outline'
-import { useState } from 'react'
 
 const modelPanelComponents = {
   outline: Outline,
@@ -17,49 +11,73 @@ const modelPanelComponents = {
 }
 
 export default function ModelPanel() {
-  const [api, setApi] = useState<GridviewApi>()
-
   function mount(event: GridviewReadyEvent) {
     const { api } = event
-
-    api.addPanel({
-      id: 'scene',
-      component: 'scene',
-      params: {
-        title: 'Model Scene'
+    api.fromJSON({
+      grid: {
+        root: {
+          type: 'branch',
+          data: [
+            {
+              type: 'branch',
+              data: [
+                {
+                  type: 'leaf',
+                  data: {
+                    id: 'scene',
+                    component: 'scene',
+                    params: {
+                      title: 'Model Scene'
+                    },
+                    snap: false
+                  },
+                  size: 460
+                },
+                {
+                  type: 'branch',
+                  data: [
+                    {
+                      type: 'leaf',
+                      data: {
+                        id: 'outline',
+                        component: 'outline',
+                        params: {
+                          title: 'Model Outline'
+                        },
+                        snap: false
+                      },
+                      size: 300
+                    },
+                    {
+                      type: 'leaf',
+                      data: {
+                        id: 'modifiers',
+                        component: 'modifiers',
+                        params: {
+                          title: 'Model Modifiers'
+                        },
+                        snap: false
+                      },
+                      size: 520
+                    }
+                  ],
+                  size: 140
+                }
+              ],
+              size: 810
+            }
+          ],
+          size: 680
+        },
+        width: 680,
+        height: 810,
+        orientation: Orientation.VERTICAL
       }
     })
-
-    api.addPanel({
-      id: 'outline',
-      component: 'outline',
-      params: {
-        title: 'Model Outline'
-      },
-      position: { referencePanel: 'scene', direction: 'right' }
-    })
-
-    api.addPanel({
-      id: 'modifiers',
-      component: 'modifiers',
-      params: {
-        title: 'Model Modifiers'
-      },
-      position: { referencePanel: 'outline', direction: 'below' }
-    })
-
-    setApi(api)
-  }
-
-  function setSizesPrimitive() {
-    api?.getPanel('outline')?.api.setSize({ width: 220, height: 300 })
   }
 
   return (
     <>
-      <button className="absolute right-2" onClick={setSizesPrimitive}>
-        resize
-      </button>
       <Ribbon />
       <GridviewReact
         orientation={Orientation.VERTICAL}
