@@ -1,10 +1,18 @@
 import { Canvas } from '@react-three/fiber'
-import { Grid, OrbitControls, TransformControls } from '@react-three/drei'
+import {
+  GizmoHelper,
+  GizmoViewport,
+  Grid,
+  OrbitControls,
+  TransformControls
+} from '@react-three/drei'
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import SceneObject from '../../sceneObject'
 import { useEffect, useRef, useState } from 'react'
 import type { Object3D } from 'three'
 import type { TransformControls as TransformControlsImpl } from 'three-stdlib'
+import { MousePointer2, Rotate3D, Scale3D } from 'lucide-react'
+import clsx from 'clsx'
 
 function copyTransform(src: Object3D, dst: Object3D) {
   dst.position.copy(src.position)
@@ -23,7 +31,9 @@ export default function ModelScene() {
   const originalToMirror = useRef(new Map<Object3D, Object3D>())
   const selectedOriginalRef = useRef<Object3D | null>(null)
   const selectedRef = useRef<Object3D | null>(null)
-  const [mode, setMode] = useState<'translate' | 'rotate' | 'scale'>('translate') /** Gonna be more in future, such as path, origin */
+  const [mode, setMode] = useState<'translate' | 'rotate' | 'scale'>(
+    'translate'
+  ) /** Gonna be more in future, such as path, origin */
 
   useEffect(() => {
     selectedRef.current = selected
@@ -34,7 +44,7 @@ export default function ModelScene() {
   useEffect(() => {
     const controls = tcRef.current
     if (!controls || !controls.addEventListener) return
-    
+
     /** This is a mess, needs cleanup */
     type DraggingChangedEvent = {
       type: 'dragging-changed'
@@ -107,7 +117,8 @@ export default function ModelScene() {
             object={obj}
             onSelect={(o) => {
               setSelected(o)
-              selectedOriginalRef.current = mirrorToOriginal.current.get(o) ?? null
+              selectedOriginalRef.current =
+                mirrorToOriginal.current.get(o) ?? null
             }}
             onDeselect={() => {
               setSelected(null)
@@ -122,6 +133,8 @@ export default function ModelScene() {
             key={`${selected.uuid}-${objectVersion}`}
             ref={tcRef}
             object={selected}
+            rotationSnap={Math.PI / 8}
+            scaleSnap={0.25}
             translationSnap={0.5}
             onChange={() => {
               const original = mirrorToOriginal.current.get(selected)
@@ -132,16 +145,46 @@ export default function ModelScene() {
 
         <ambientLight intensity={1} />
         <directionalLight position={[3, 5, 2]} intensity={2} />
+        <GizmoHelper alignment="bottom-right" margin={[70, 70]}>
+          <GizmoViewport
+            axisColors={['#ff2056', '#009689', '#0084d1']}
+            labelColor="black"
+          />
+        </GizmoHelper>
       </Canvas>
-      <div className='absolute flex flex-col gap-1 bottom-3 left-3'>
-        <button onClick={() => setMode('translate')}>
-          translate
+      <div className="absolute flex flex-col gap-4 bottom-4 left-4">
+        <button
+          onClick={() => setMode('scale')}
+          className={clsx(
+            'border p-1 rounded-md cursor-pointer',
+            mode === 'scale'
+              ? 'bg-teal-600 border-teal-600'
+              : 'bg-zinc-800 border-zinc-700'
+          )}
+        >
+          <Scale3D size={18} />
         </button>
-        <button onClick={() => setMode('rotate')}>
-          rotate
+        <button
+          onClick={() => setMode('rotate')}
+          className={clsx(
+            'border p-1 rounded-md cursor-pointer',
+            mode === 'rotate'
+              ? 'bg-teal-600 border-teal-600'
+              : 'bg-zinc-800 border-zinc-700'
+          )}
+        >
+          <Rotate3D size={18} />
         </button>
-        <button onClick={() => setMode('scale')}>
-          scale
+        <button
+          onClick={() => setMode('translate')}
+          className={clsx(
+            'border p-1 rounded-md cursor-pointer',
+            mode === 'translate'
+              ? 'bg-teal-600 border-teal-600'
+              : 'bg-zinc-800 border-zinc-700'
+          )}
+        >
+          <MousePointer2 size={18} />
         </button>
       </div>
     </>

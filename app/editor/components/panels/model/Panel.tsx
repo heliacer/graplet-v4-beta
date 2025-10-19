@@ -16,77 +16,77 @@ export default function ModelPanel() {
     const { api } = event
     api.fromJSON({
       grid: {
-      root: {
-        type: "branch",
-        data: [
-        {
-          type: "leaf",
-          data: {
-          id: "ribbon",
-          component: "ribbon",
-          params: {
-            title: "Model Ribbon"
-          },
-          snap: false
-          },
-          size: 34
-        },
-        {
-          type: "branch",
+        root: {
+          type: 'branch',
           data: [
-          {
-            type: "leaf",
-            data: {
-            id: "scene",
-            component: "scene",
-            params: {
-              title: "Model Scene"
-            },
-            snap: false
-            },
-            size: 700
-          },
-          {
-            type: "branch",
-            data: [
             {
-              type: "leaf",
+              type: 'leaf',
               data: {
-              id: "outline",
-              component: "outline",
-              params: {
-                title: "Model Outline"
+                id: 'ribbon',
+                component: 'ribbon',
+                params: {
+                  title: 'Model Ribbon'
+                },
+                snap: false
               },
-              snap: false
-              },
-              size: 400
+              size: 32
             },
             {
-              type: "leaf",
-              data: {
-              id: "modifiers",
-              component: "modifiers",
-              params: {
-                title: "Model Modifiers"
-              },
-              snap: false
-              },
-              size: 400
+              type: 'branch',
+              data: [
+                {
+                  type: 'leaf',
+                  data: {
+                    id: 'scene',
+                    component: 'scene',
+                    params: {
+                      title: 'Model Scene'
+                    },
+                    snap: false
+                  },
+                  size: 700
+                },
+                {
+                  type: 'branch',
+                  data: [
+                    {
+                      type: 'leaf',
+                      data: {
+                        id: 'outline',
+                        component: 'outline',
+                        params: {
+                          title: 'Model Outline'
+                        },
+                        snap: false
+                      },
+                      size: 400
+                    },
+                    {
+                      type: 'leaf',
+                      data: {
+                        id: 'modifiers',
+                        component: 'modifiers',
+                        params: {
+                          title: 'Model Modifiers'
+                        },
+                        snap: false
+                      },
+                      size: 400
+                    }
+                  ],
+                  size: 210
+                }
+              ],
+              size: 800
             }
-            ],
-            size: 210
-          }
           ],
-          size: 800
-        }
-        ],
-        size: 950
+          size: 950
+        },
+        width: 950,
+        height: 800,
+        orientation: Orientation.VERTICAL
       },
-      width: 950,
-      height: 800,
-      orientation: Orientation.VERTICAL
-      },
-      activePanel: "modifiers"
+      activePanel: 'modifiers'
     })
   }
 

@@ -41,71 +41,104 @@ export async function evaluateExpression(
   state: ProgramState
 ): Promise<Value | undefined> {
   switch (expression.type) {
-    case 'main':
+    case 'main': {
       await interpMain(expression, state)
-    case 'runseq':
+      break
+    }
+    case 'runseq': {
       await interpRunseq(expression, state)
-    case 'if':
+      break
+    }
+    case 'if': {
       await interpIf(expression, state)
-    case 'repeat':
+      break
+    }
+    case 'repeat': {
       await interpRepeat(expression, state)
-    case 'wait':
+      break
+    }
+    case 'wait': {
       await interpWait(expression, state)
-
-    case 'setfunc':
+      break
+    }
+    case 'setfunc': {
       interpSetfunc(expression, state)
-    case 'setvar':
+      break
+    }
+    case 'setvar': {
       await interpSetvar(expression, state)
-    case 'changevar':
+      break
+    }
+    case 'changevar': {
       await interpChangevar(expression, state)
-
-    case 'literal':
+      break
+    }
+    case 'literal': {
       return interpLiteral(expression)
-    case 'var':
+    }
+    case 'var': {
       return interpVar(expression, state)
-    case 'call':
+    }
+    case 'call': {
       return await interpCall(expression, state)
-
-    case 'andor':
+    }
+    case 'andor': {
       return await interpAndor(expression, state)
-    case 'neg':
+    }
+    case 'neg': {
       return await interpNeg(expression, state)
-    case 'compare':
+    }
+    case 'compare': {
       return await interpCompare(expression, state)
-    case 'arithmetic':
+    }
+    case 'arithmetic': {
       return await interpArithmetic(expression, state)
-    case 'map':
+    }
+    case 'map': {
       return await interpMap(expression, state)
-    case 'trig':
+    }
+    case 'trig': {
       return await interpTrig(expression, state)
-    case 'htrig':
+    }
+    case 'htrig': {
       return await interpHtrig(expression, state)
-    case 'round':
+    }
+    case 'round': {
       return await interpRound(expression, state)
-    case 'single':
+    }
+    case 'single': {
       return await interpSingle(expression, state)
-    case 'atan2':
+    }
+    case 'atan2': {
       return await interpAtan2(expression, state)
-    case 'modulo':
+    }
+    case 'modulo': {
       return await interpModulo(expression, state)
-    case 'constrain':
+    }
+    case 'constrain': {
       return await interpConstrain(expression, state)
-    case 'randomfloat':
+    }
+    case 'randomfloat': {
       return interpRandomfloat()
-    case 'randomint':
+    }
+    case 'randomint': {
       return await interpRandomint(expression, state)
-
-    case 'setposxyz':
+    }
+    case 'setposxyz': {
       return await interpSetposxyz(expression, state)
-    case 'setscalexyz':
+    }
+    case 'setscalexyz': {
       return await interpSetscalexyz(expression, state)
-    case 'setroteulerxyz':
+    }
+    case 'setroteulerxyz': {
       return await interpSetroteulerxyz(expression, state)
-    case 'rotatexyz':
+    }
+    case 'rotatexyz': {
       return await interpRotatexyz(expression, state)
-    case 'translatexyz':
+    }
+    case 'translatexyz': {
       return await interpTranslatexyz(expression, state)
-
+    }
     default:
       throw new Error(`Unknown expression type: "${expression.type}"`)
   }

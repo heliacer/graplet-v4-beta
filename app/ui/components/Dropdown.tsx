@@ -91,14 +91,20 @@ interface DropdownButtonProps {
   disabled?: boolean
 }
 
-export function DropdownButton({ children, className, disabled }: DropdownButtonProps) {
+export function DropdownButton({
+  children,
+  className,
+  disabled
+}: DropdownButtonProps) {
   const { isOpen, setIsOpen } = useDropdown()
 
   return (
     <button
       className={clsx(
         'flex items-center gap-1 border border-transparent rounded-lg px-1',
-        disabled ? 'text-zinc-400' : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+        disabled
+          ? 'text-zinc-400'
+          : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
         isOpen && 'bg-zinc-800 border-zinc-700',
         className
       )}

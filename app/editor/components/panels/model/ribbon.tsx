@@ -128,7 +128,7 @@ export default function Ribbon() {
   ]
 
   return (
-    <div role='menu' className="flex gap-1 items-center p-1">
+    <div role="menu" className="flex gap-1 items-center p-1">
       <DropdownMenu className="text-sm">
         <DropdownButton disabled={!currentObject} className="rounded-md">
           <Box size={16} />
@@ -160,14 +160,20 @@ export default function Ribbon() {
         </DropdownContent>
       </DropdownMenu>
       <DropdownMenu>
-        <DropdownButton disabled={!currentObject} className="text-sm rounded-md">
+        <DropdownButton
+          disabled={!currentObject}
+          className="text-sm rounded-md"
+        >
           <ScanEye size={16} />
           <p>View</p>
           <ChevronDown size={16} />
         </DropdownButton>
       </DropdownMenu>
       <DropdownMenu>
-        <DropdownButton disabled={!currentObject} className="text-sm rounded-md">
+        <DropdownButton
+          disabled={!currentObject}
+          className="text-sm rounded-md"
+        >
           <Hammer size={16} />
           <p>Actions</p>
           <ChevronDown size={16} />
