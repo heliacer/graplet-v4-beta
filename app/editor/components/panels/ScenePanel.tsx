@@ -140,7 +140,7 @@ export default function ScenePanel() {
 
   return (
     <Canvas scene={scene.current}>
-      <OrbitControls makeDefault />
+      <OrbitControls enableDamping={false} makeDefault />
       <Grid args={[10, 10]} cellSize={1} />
       {Array.from(objects.current).map(([key, object]) => (
         <SceneObject

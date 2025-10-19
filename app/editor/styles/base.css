@@ -23,6 +23,10 @@
   overflow: hidden;
 }
 
+.dv-view [tabindex='-1']:has([role='menu']) {
+  overflow: visible !important;
+}
+
 /* Tab state styling */
 .dv-groupview>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-active-tab {
   background-color: var(--dv-active-tab-background-color);

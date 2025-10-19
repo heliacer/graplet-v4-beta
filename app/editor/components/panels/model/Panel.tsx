@@ -5,6 +5,7 @@ import Modifiers from './modifiers'
 import Outline from './outline'
 
 const modelPanelComponents = {
+  ribbon: Ribbon,
   outline: Outline,
   modifiers: Modifiers,
   scene: ModelScene
@@ -15,75 +16,85 @@ export default function ModelPanel() {
     const { api } = event
     api.fromJSON({
       grid: {
-        root: {
-          type: 'branch',
-          data: [
-            {
-              type: 'branch',
-              data: [
-                {
-                  type: 'leaf',
-                  data: {
-                    id: 'scene',
-                    component: 'scene',
-                    params: {
-                      title: 'Model Scene'
-                    },
-                    snap: false
-                  },
-                  size: 460
-                },
-                {
-                  type: 'branch',
-                  data: [
-                    {
-                      type: 'leaf',
-                      data: {
-                        id: 'outline',
-                        component: 'outline',
-                        params: {
-                          title: 'Model Outline'
-                        },
-                        snap: false
-                      },
-                      size: 300
-                    },
-                    {
-                      type: 'leaf',
-                      data: {
-                        id: 'modifiers',
-                        component: 'modifiers',
-                        params: {
-                          title: 'Model Modifiers'
-                        },
-                        snap: false
-                      },
-                      size: 520
-                    }
-                  ],
-                  size: 140
-                }
-              ],
-              size: 810
-            }
-          ],
-          size: 680
+      root: {
+        type: "branch",
+        data: [
+        {
+          type: "leaf",
+          data: {
+          id: "ribbon",
+          component: "ribbon",
+          params: {
+            title: "Model Ribbon"
+          },
+          snap: false
+          },
+          size: 34
         },
-        width: 680,
-        height: 810,
-        orientation: Orientation.VERTICAL
-      }
+        {
+          type: "branch",
+          data: [
+          {
+            type: "leaf",
+            data: {
+            id: "scene",
+            component: "scene",
+            params: {
+              title: "Model Scene"
+            },
+            snap: false
+            },
+            size: 700
+          },
+          {
+            type: "branch",
+            data: [
+            {
+              type: "leaf",
+              data: {
+              id: "outline",
+              component: "outline",
+              params: {
+                title: "Model Outline"
+              },
+              snap: false
+              },
+              size: 400
+            },
+            {
+              type: "leaf",
+              data: {
+              id: "modifiers",
+              component: "modifiers",
+              params: {
+                title: "Model Modifiers"
+              },
+              snap: false
+              },
+              size: 400
+            }
+            ],
+            size: 210
+          }
+          ],
+          size: 800
+        }
+        ],
+        size: 950
+      },
+      width: 950,
+      height: 800,
+      orientation: Orientation.VERTICAL
+      },
+      activePanel: "modifiers"
     })
   }
 
   return (
-    <>
-      <Ribbon />
-      <GridviewReact
-        orientation={Orientation.VERTICAL}
-        components={modelPanelComponents}
-        onReady={mount}
-      />
-    </>
+    <GridviewReact
+      orientation={Orientation.VERTICAL}
+      components={modelPanelComponents}
+      onReady={mount}
+    />
   )
 }
