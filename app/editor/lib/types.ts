@@ -6,16 +6,6 @@ export interface ProjectData {
 }
 
 /**
- * @deprecated
- */
-export interface ObjectProps {
-  name: string
-  position: [number, number, number]
-  rotation: [number, number, number]
-  scale: [number, number, number]
-}
-
-/**
  * Serialized Object3D Type
  */
 export type SObject3DT = 'Mesh' | 'Group'
