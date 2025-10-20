@@ -39,7 +39,7 @@ export const useObjectActions = () => {
     }
 
     scene.current.add(group)
-    
+
     objects.current.set(name, group)
     objectRegistry.options = [[name, name], ...objectRegistry.options]
     workspace?.refreshToolboxSelection()

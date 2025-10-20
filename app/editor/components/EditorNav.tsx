@@ -31,7 +31,9 @@ import { WorkspaceSvg } from 'blockly'
 import { ObjectsEnv } from '../lib/blockly/engine/ast'
 import { useObjectActions } from '../lib/hooks/useObjectActions'
 import { objectRegistry } from '../lib/blockly/blocks'
+import { serializeObject } from '../lib/utils/sobject3d'
 
+/** @todo needs update */
 function createProjectData(
   workspace: WorkspaceSvg,
   objects: ObjectsEnv
@@ -39,16 +41,23 @@ function createProjectData(
   return {
     workspace: serialization.workspaces.save(workspace),
     scene: {
-      objects: Array.from(objects).map(([name, obj]) => ({
-        name,
-        position: obj.position.toArray() as [number, number, number],
-        rotation: obj.rotation.toArray().slice(0, 3) as [
-          number,
-          number,
-          number
-        ],
-        scale: obj.scale.toArray() as [number, number, number]
-      }))
+      objects: Array.from(objects).map(([name, obj]) => {
+        /** @deprecated */
+        const oldSerialization = {
+          name,
+          position: obj.position.toArray() as [number, number, number],
+          rotation: obj.rotation.toArray().slice(0, 3) as [
+            number,
+            number,
+            number
+          ],
+          scale: obj.scale.toArray() as [number, number, number]
+        }
+
+        console.log('New object serialization (peak):', serializeObject(obj))
+        console.log('Old object serialization (shit):', oldSerialization)
+        return oldSerialization
+      })
     }
   }
 }

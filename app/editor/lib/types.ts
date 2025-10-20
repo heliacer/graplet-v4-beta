@@ -18,17 +18,15 @@ export interface ObjectProps {
 /**
  * Serialized Object3D Type
  */
-export type SObject3DT =
-  | 'Mesh'
-  | 'Group'
+export type SObject3DT = 'Mesh' | 'Group'
 
 /**
  * Serialized Object3D
-*/
+ */
 export interface SObject3D {
   type: SObject3DT
-  geometry: SGeometry
-  material: SMaterial
+  geometry?: SGeometry
+  material?: SMaterial
   name?: string
   position?: [number, number, number]
   rotation?: [number, number, number]
@@ -36,11 +34,7 @@ export interface SObject3D {
   children?: SObject3D[]
 }
 
-/**
- * Serialized Object3D Geometry
-*/
-export interface SGeometry {
-  type:
+export type SGeometryT =
   | 'Box'
   | 'Sphere'
   | 'Plane'
@@ -54,12 +48,18 @@ export interface SGeometry {
   | 'Tetrahedron'
   | 'Torus'
   | 'TorusKnot'
+/**
+ * Serialized Object3D Geometry
+ */
+export interface SGeometry {
+  type: SGeometryT
   args: number[]
 }
 
 /**
  * Serialized Object3D Material
  */
-export interface SMaterial{
-  color: string
+export interface SMaterial {
+  type: 'Standard' | 'Basic'
+  color?: string
 }
