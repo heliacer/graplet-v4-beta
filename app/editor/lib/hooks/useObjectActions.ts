@@ -38,12 +38,11 @@ export const useObjectActions = () => {
       group.scale.set(...scale)
     }
 
-    objects.current.set(name, group)
     scene.current.add(group)
-
+    
+    objects.current.set(name, group)
     objectRegistry.options = [[name, name], ...objectRegistry.options]
     workspace?.refreshToolboxSelection()
-
     setCurrentObject(group)
     setObjectNames((prev) => [...prev, name])
   }
