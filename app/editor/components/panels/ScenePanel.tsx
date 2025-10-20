@@ -55,7 +55,7 @@ export default function ScenePanel() {
     setObjectVersion,
     setIsRunning
   } = useEditor()
-  const { createObject } = useObjectActions()
+  const { addSprite, newSprite } = useObjectActions()
 
   const emitter = useTrigger()
 
@@ -70,11 +70,11 @@ export default function ScenePanel() {
         if (shouldSceneLoad && objects.current.size === 0) {
           if (projectData.scene) {
             for (const object of projectData.scene.objects) {
-              createObject(object)
+              addSprite(object)
             }
             console.log('Loaded scene state: ', projectData.scene)
           } else {
-            createObject()
+            newSprite()
             console.log('Starting with an empty scene.')
           }
           setShouldSceneLoad(false)
@@ -100,7 +100,8 @@ export default function ScenePanel() {
     objects,
     workspace,
     objectNames,
-    createObject,
+    newSprite,
+    addSprite,
     setShouldWorkspaceLoad,
     shouldWorkspaceLoad,
     shouldSceneLoad,

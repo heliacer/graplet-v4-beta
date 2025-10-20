@@ -18,14 +18,11 @@ import {
 import {
   BoxGeometry,
   BufferGeometry,
-  CapsuleGeometry,
-  CatmullRomCurve3,
   CircleGeometry,
   CylinderGeometry,
   DodecahedronGeometry,
   Group,
   IcosahedronGeometry,
-  LatheGeometry,
   Mesh,
   MeshStandardMaterial,
   OctahedronGeometry,
@@ -33,14 +30,10 @@ import {
   PlaneGeometry,
   RingGeometry,
   SphereGeometry,
-  Sprite,
-  SpriteMaterial,
   TetrahedronGeometry,
   TorusGeometry,
   TorusKnotGeometry,
-  TubeGeometry,
-  Vector2,
-  Vector3
+  ConeGeometry
 } from 'three'
 
 export default function Ribbon() {
@@ -67,64 +60,55 @@ export default function Ribbon() {
     setObjectVersion((previous) => previous + 1)
   }
 
-  const addBox = () => addMesh(new BoxGeometry(1, 1, 1), 'Box')
-  const addSphere = () => addMesh(new SphereGeometry(1, 16, 16), 'Sphere')
-  const addCapsule = () =>
-    addMesh(new CapsuleGeometry(0.5, 1, 8, 16), 'Capsule')
-  const addCircle = () => addMesh(new CircleGeometry(1, 32), 'Circle')
-  const addCylinder = () =>
-    addMesh(new CylinderGeometry(0.6, 0.6, 2, 32), 'Cylinder')
-  const addDodecahedron = () =>
-    addMesh(new DodecahedronGeometry(1), 'Dodecahedron')
-  const addIcosahedron = () =>
-    addMesh(new IcosahedronGeometry(1, 0), 'Icosahedron')
-  const addLathe = () => {
-    const points = Array.from({ length: 10 }, (_, index) => {
-      const angle = (index / 9) * Math.PI
-      return new Vector2(Math.sin(angle) * 0.5 + 0.5, index * 0.2 - 1)
-    })
-    addMesh(new LatheGeometry(points, 24), 'Lathe')
-  }
-  const addOctahedron = () => addMesh(new OctahedronGeometry(1), 'Octahedron')
-  const addPlane = () => addMesh(new PlaneGeometry(2, 2), 'Plane')
-  const addRing = () => addMesh(new RingGeometry(0.6, 1, 32), 'Ring')
-  const addTetrahedron = () =>
-    addMesh(new TetrahedronGeometry(1), 'Tetrahedron')
-  const addTorus = () => addMesh(new TorusGeometry(1, 0.3, 16, 32), 'Torus')
-  const addTorusKnot = () =>
-    addMesh(new TorusKnotGeometry(0.8, 0.3, 128, 32), 'TorusKnot')
-  const addTube = () => {
-    const path = new CatmullRomCurve3([
-      new Vector3(-1, 0, 0),
-      new Vector3(-0.5, 1, 0.5),
-      new Vector3(0.5, -1, 0),
-      new Vector3(1, 0, 0.5)
-    ])
-    addMesh(new TubeGeometry(path, 64, 0.2, 12, false), 'Tube')
-  }
+  /**
 
-  const addSprite = () => {
-    const sprite = new Sprite(new SpriteMaterial({ color: '#ffffff' }))
-    addObject(sprite, 'Sprite')
-  }
+
+
+    | 'Box'
+  | 'Sphere'
+  | 'Plane'
+  | 'Circle'
+  | 'Cylinder'
+  | 'Cone'
+  | 'Ring'
+  | 'Dodecahedron'
+  | 'Octahedron'
+  | 'Icosahedron'
+  | 'Tetrahedron'
+  | 'Torus'
+  | 'TorusKnot'
+   */
+
+  /** this is also bs, needs rework */
+  const addBox = () => addMesh(new BoxGeometry(), 'Box')
+  const addSphere = () => addMesh(new SphereGeometry(), 'Sphere')
+  const addPlane = () => addMesh(new PlaneGeometry(), 'Plane')
+  const addCircle = () => addMesh(new CircleGeometry(), 'Circle')
+  const addCylinder = () => addMesh(new CylinderGeometry(), 'Cylinder')
+  const addCone = () => addMesh(new ConeGeometry(), 'Cone')
+  const addRing = () => addMesh(new RingGeometry(), 'Ring')
+  const addDodecahedron = () =>
+    addMesh(new DodecahedronGeometry(), 'Dodecahedron')
+  const addOctahedron = () => addMesh(new OctahedronGeometry(), 'Octahedron')
+  const addIcosahedron = () => addMesh(new IcosahedronGeometry(), 'Icosahedron')
+  const addTetrahedron = () => addMesh(new TetrahedronGeometry(), 'Tetrahedron')
+  const addTorus = () => addMesh(new TorusGeometry(), 'Torus')
+  const addTorusKnot = () => addMesh(new TorusKnotGeometry(), 'TorusKnot')
 
   const meshItems = [
     { label: 'Box', action: addBox },
-    { label: 'Capsule', action: addCapsule },
+    { label: 'Sphere', action: addSphere },
+    { label: 'Plane', action: addPlane },
     { label: 'Circle', action: addCircle },
     { label: 'Cylinder', action: addCylinder },
-    { label: 'Dodecahedron', action: addDodecahedron },
-    { label: 'Icosahedron', action: addIcosahedron },
-    { label: 'Lathe', action: addLathe },
-    { label: 'Octahedron', action: addOctahedron },
-    { label: 'Plane', action: addPlane },
+    { label: 'Cone', action: addCone },
     { label: 'Ring', action: addRing },
-    { label: 'Sphere', action: addSphere },
-    { label: 'Sprite', action: addSprite },
+    { label: 'Dodecahedron', action: addDodecahedron },
+    { label: 'Octahedron', action: addOctahedron },
+    { label: 'Icosahedron', action: addIcosahedron },
     { label: 'Tetrahedron', action: addTetrahedron },
     { label: 'Torus', action: addTorus },
-    { label: 'TorusKnot', action: addTorusKnot },
-    { label: 'Tube', action: addTube }
+    { label: 'TorusKnot', action: addTorusKnot }
   ]
 
   return (

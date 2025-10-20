@@ -1,8 +1,10 @@
 import { useEditor } from '../EditorContext'
-import { Mesh, Group, BoxGeometry, MeshStandardMaterial, Object3D } from 'three'
+import { Object3D } from 'three'
 import { objectRegistry } from '../blockly/blocks'
-import { ObjectProps } from '../types'
+import { SObject3D } from '../types'
+import { addObject } from '../utils/sobject3d'
 
+/** @todo needs better wiring up with new serializer */
 export const useObjectActions = () => {
   const {
     objects,
@@ -13,39 +15,39 @@ export const useObjectActions = () => {
     setCurrentObject
   } = useEditor()
 
-  const createObject = (props?: ObjectProps) => {
-    const { name, position, rotation, scale } = props || {
-      name: `Sprite ${objectNames.length + 1}`
-    }
+  /** @info wire attempt  */
+  const addSprite = (props: SObject3D) => {
+    const { name } = props
+    const sprite = addObject(props)
 
-    const defaultCube = new Mesh(
-      new BoxGeometry(1, 1, 1),
-      new MeshStandardMaterial({ color: '#ff6080' })
-    )
-
-    const group = new Group()
-    group.add(defaultCube)
-    defaultCube.name = 'Cube'
-    group.name = name
-
-    if (position) {
-      group.position.set(...position)
-    }
-    if (rotation) {
-      group.rotation.set(...rotation)
-    }
-    if (scale) {
-      group.scale.set(...scale)
-    }
-
-    objects.current.set(name, group)
-    scene.current.add(group)
-
+    console.log('Adding sprite... ', sprite)
+    objects.current.set(name, sprite)
     objectRegistry.options = [[name, name], ...objectRegistry.options]
     workspace?.refreshToolboxSelection()
-
-    setCurrentObject(group)
+    setCurrentObject(sprite)
     setObjectNames((prev) => [...prev, name])
+  }
+
+  /** @info wire attempt  */
+  const newSprite = () => {
+    const name = `Sprite ${objectNames.length + 1}`
+    const cube: SObject3D = {
+      type: 'Mesh',
+      name: 'Cube',
+      geometry: {
+        type: 'Box',
+        args: [1, 1, 1]
+      },
+      material: {
+        type: 'Basic',
+        color: '#ffffff'
+      }
+    }
+    addSprite({
+      type: 'Group',
+      name,
+      children: [cube]
+    })
   }
 
   const deleteObject = (object: Object3D) => {
@@ -79,5 +81,5 @@ export const useObjectActions = () => {
     setCurrentObject(clone)
   }
 
-  return { createObject, deleteObject, duplicateObject }
+  return { addSprite, newSprite, deleteObject, duplicateObject }
 }

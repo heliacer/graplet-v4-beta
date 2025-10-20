@@ -4,7 +4,7 @@ import { useEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
 import { variableCategory } from '../blockly/categories/variables'
 import { procedureCategory } from '../blockly/categories/procedures'
-import { resize } from '../blockly/utils'
+import { resize } from '../utils/blockly'
 
 export function useBlocklyWorkspace(
   containerRef: React.RefObject<HTMLDivElement>

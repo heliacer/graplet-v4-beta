@@ -5,7 +5,6 @@
  * Copyright 2012 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  *
- * @todo depreceate global var use, move on to value input source blocks
  */
 
 import {

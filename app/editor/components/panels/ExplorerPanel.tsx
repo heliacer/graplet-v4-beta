@@ -45,13 +45,13 @@ function ObjectListItem({ object }: { object: Object3D }) {
 
 export default function ExplorerPanel() {
   const { objectNames, objects } = useEditor()
-  const { createObject } = useObjectActions()
+  const { newSprite } = useObjectActions()
 
   return (
     <main className="p-1.5 flex flex-col gap-1.5">
       <nav className="flex justify-between items-center">
         <button
-          onClick={() => createObject()}
+          onClick={newSprite}
           className="text-sm text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 py-0.5 bg-teal-600"
         >
           <Plus size={14} />
