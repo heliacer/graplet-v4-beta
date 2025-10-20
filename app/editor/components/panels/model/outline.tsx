@@ -22,7 +22,7 @@ function TreeNode({ node }: { node: TreeItem }) {
     <li>
       {node.name}
       {node.children.length > 0 && (
-        <ul>
+        <ul className="pl-3">
           {node.children.map((child, i) => (
             <TreeNode key={i} node={child} />
           ))}

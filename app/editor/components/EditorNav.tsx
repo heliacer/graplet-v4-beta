@@ -41,23 +41,7 @@ function createProjectData(
   return {
     workspace: serialization.workspaces.save(workspace),
     scene: {
-      objects: Array.from(objects).map(([name, obj]) => {
-        /** @deprecated */
-        const oldSerialization = {
-          name,
-          position: obj.position.toArray() as [number, number, number],
-          rotation: obj.rotation.toArray().slice(0, 3) as [
-            number,
-            number,
-            number
-          ],
-          scale: obj.scale.toArray() as [number, number, number]
-        }
-
-        console.log('New object serialization (peak):', serializeObject(obj))
-        console.log('Old object serialization (shit):', oldSerialization)
-        return oldSerialization
-      })
+      objects: Array.from(objects).map(([, obj]) => serializeObject(obj))
     }
   }
 }
@@ -74,7 +58,7 @@ export default function EditorNav() {
     setObjectNames,
     setCurrentObject
   } = useEditor()
-  const { createObject } = useObjectActions()
+  const { addSprite, newSprite } = useObjectActions()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -148,12 +132,13 @@ export default function EditorNav() {
 
         // load scene
         if (projectData.scene) {
+          console.log('objects:', projectData.scene.objects)
           for (const object of projectData.scene.objects) {
-            createObject(object)
+            addSprite(object)
           }
           console.log('Loaded scene state: ', projectData.scene)
         } else {
-          createObject()
+          newSprite()
           console.log('Starting with an empty scene.')
         }
 

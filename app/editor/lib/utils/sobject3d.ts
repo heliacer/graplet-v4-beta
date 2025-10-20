@@ -9,6 +9,7 @@ import {
   BoxGeometry,
   BufferGeometry,
   CircleGeometry,
+  Color,
   ConeGeometry,
   CylinderGeometry,
   DodecahedronGeometry,
@@ -143,13 +144,16 @@ export function serializeObject(object: Object3D): SObject3D {
     // nothing for now
   }
   if (object instanceof Mesh) {
+    const color = object.material.color as Color
+
+    /** @todo this is bs, types need probably entire type, not aliases (slices) */
     sObject.geometry = {
       type: object.geometry.type.slice(0, -8) as SGeometryT,
       args: Object.values(object.geometry.parameters)
     }
     sObject.material = {
-      type: 'Basic',
-      color: '#ffffff'
+      type: object.material.type.slice(4, -8),
+      color: color.getHexString()
     }
   }
 

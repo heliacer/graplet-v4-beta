@@ -1,7 +1,7 @@
 export interface ProjectData {
   workspace: { [key: string]: any } // eslint-disable-line @typescript-eslint/no-explicit-any
   scene: {
-    objects: ObjectProps[]
+    objects: SObject3D[]
   }
 }
 
@@ -25,9 +25,9 @@ export type SObject3DT = 'Mesh' | 'Group'
  */
 export interface SObject3D {
   type: SObject3DT
+  name: string
   geometry?: SGeometry
   material?: SMaterial
-  name?: string
   position?: [number, number, number]
   rotation?: [number, number, number]
   scale?: [number, number, number]
