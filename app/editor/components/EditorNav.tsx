@@ -26,39 +26,25 @@ import { useEditor } from '../lib/EditorContext'
 import { serialization } from 'blockly'
 import { useRef, useState } from 'react'
 import { clsx } from 'clsx'
-import { ProjectData } from '../lib/types'
+import { ProjectData, SScene } from '../lib/types'
 import { WorkspaceSvg } from 'blockly'
-import { ObjectsEnv } from '../lib/blockly/engine/ast'
 import { useObjectActions } from '../lib/hooks/useObjectActions'
-import { objectRegistry } from '../lib/blockly/blocks'
-import { serializeObject } from '../lib/utils/sobject3d'
+import { applyProps, serializeObject } from '../lib/utils/sobject3d'
+import { Scene } from 'three'
 
 /** @todo needs update */
-function createProjectData(
-  workspace: WorkspaceSvg,
-  objects: ObjectsEnv
-): ProjectData {
+function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {
     workspace: serialization.workspaces.save(workspace),
-    scene: {
-      objects: Array.from(objects).map(([, obj]) => serializeObject(obj))
-    }
+    scene: serializeObject(scene) as SScene
   }
 }
 
 export default function EditorNav() {
   const { data: session } = useSession()
   const emitter = useTrigger()
-  const {
-    workspace,
-    runState,
-    isRunning,
-    objects,
-    scene,
-    setObjectNames,
-    setCurrentObject
-  } = useEditor()
-  const { addSprite, newSprite } = useObjectActions()
+  const { workspace, runState, isRunning, scene } = useEditor()
+  const { clearScene, addObject, loadDefaultScene } = useObjectActions()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -78,14 +64,14 @@ export default function EditorNav() {
 
   function handleSave() {
     if (!workspace) throw Error('Missing workspace')
-    const projectData = createProjectData(workspace, objects.current)
+    const projectData = createProjectData(workspace, scene.current)
     localStorage.setItem('projectData', JSON.stringify(projectData))
     console.log('Saved project to localStorage', projectData)
   }
 
   function handleSaveFile() {
     if (!workspace) throw Error('Missing workspace')
-    const projectData = createProjectData(workspace, objects.current)
+    const projectData = createProjectData(workspace, scene.current)
     const blob = new Blob([JSON.stringify(projectData, null, 2)], {
       type: 'application/json'
     })
@@ -121,24 +107,19 @@ export default function EditorNav() {
           event.target?.result as string
         ) as ProjectData
 
-        // clear scene
-        requestAnimationFrame(() => {
-          scene.current.remove(scene.current.children[0])
-        })
-        objects.current = new Map()
-        setObjectNames([])
-        setCurrentObject(null)
-        objectRegistry.options = []
+        clearScene()
 
         // load scene
         if (projectData.scene) {
-          console.log('objects:', projectData.scene.objects)
-          for (const object of projectData.scene.objects) {
-            addSprite(object)
+          const { children } = projectData.scene
+          applyProps(scene.current, projectData.scene)
+          if (children) {
+            for (const sobject of children) {
+              addObject(sobject)
+            }
           }
           console.log('Loaded scene state: ', projectData.scene)
         } else {
-          newSprite()
           console.log('Starting with an empty scene.')
         }
 
@@ -154,20 +135,14 @@ export default function EditorNav() {
     e.target.value = ''
   }
 
-  function handleLoadEmpty() {
+  function handleStartFresh() {
     if (!workspace) throw Error('Missing workspace')
     const isConfirmed = confirm(
       'This will remove any existing progress. Are you sure?'
     )
     if (isConfirmed) {
       serialization.workspaces.load({}, workspace)
-      requestAnimationFrame(() => {
-        scene.current.remove(scene.current.children[0])
-      })
-      objects.current = new Map()
-      setObjectNames([])
-      setCurrentObject(null)
-      objectRegistry.options = []
+      loadDefaultScene()
     }
   }
 
@@ -195,8 +170,8 @@ export default function EditorNav() {
             <DropdownOption onClick={handleUploadFile}>
               <p>Load from ...</p>
             </DropdownOption>
-            <DropdownOption onClick={handleLoadEmpty}>
-              <p>Load empty</p>
+            <DropdownOption onClick={handleStartFresh}>
+              <p>Load New</p>
             </DropdownOption>
           </DropdownContent>
         </DropdownMenu>

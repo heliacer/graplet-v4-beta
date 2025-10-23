@@ -1,12 +1,10 @@
-import { Object3D, Object3DEventMap, Scene } from 'three'
+import { Scene } from 'three'
 
-export type ObjectsEnv = Map<string, Object3D<Object3DEventMap>>
 export type VarEnv = Map<string, Value>
 export type FuncEnv = Map<string, Expression>
 
 export interface ProgramState {
   scene: Scene
-  objects: ObjectsEnv
   variables: VarEnv
   functions: FuncEnv
   runState: React.RefObject<RunState>

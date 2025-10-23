@@ -10,7 +10,7 @@ export function useBlocklyWorkspace(
   containerRef: React.RefObject<HTMLDivElement>
 ) {
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
-  const { setWorkspace, objects } = useEditor()
+  const { setWorkspace } = useEditor()
   useEffect(() => {
     if (!containerRef.current || workspaceRef.current) return
 
@@ -47,6 +47,6 @@ export function useBlocklyWorkspace(
       workspaceRef.current = null
       setWorkspace(null)
     }
-  }, [containerRef, setWorkspace, objects])
+  }, [containerRef, setWorkspace])
   return workspaceRef.current
 }

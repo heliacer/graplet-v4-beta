@@ -1,16 +1,27 @@
-import { Box, FileText, type LucideIcon, Plus } from 'lucide-react'
+import {
+  Box,
+  FileText,
+  Lightbulb,
+  type LucideIcon,
+  Sun,
+  Telescope,
+  WandSparkles
+} from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
 
-const ITEM_TYPE_ICONS: Record<string, LucideIcon> = {
+const ItemIcons: Record<string, LucideIcon> = {
   Group: Box,
+  AmbientLight: Sun,
+  DirectionalLight: Lightbulb,
+  PerspectiveCamera: Telescope,
   default: FileText
 }
 
 function ItemIcon({ itemType }: { itemType: string }) {
-  const Icon = ITEM_TYPE_ICONS[itemType] || ITEM_TYPE_ICONS.default
+  const Icon = ItemIcons[itemType] || ItemIcons.default
   return <Icon size={16} />
 }
 
@@ -37,34 +48,38 @@ function ObjectListItem({ object }: { object: Object3D }) {
       >
         <ItemIcon itemType={object.type} />
         <p className="text-sm">{object.name}</p>
-        <span className="text-zinc-400 text-sm ml-auto">{object.uuid}</span>
+        <span className="text-zinc-400 text-sm ml-auto">{object.id}</span>
       </div>
     </button>
   )
 }
 
 export default function ExplorerPanel() {
-  const { objectNames, objects } = useEditor()
+  const { scene, objectVersion } = useEditor()
   const { newSprite } = useObjectActions()
 
   return (
-    <main className="p-1.5 flex flex-col gap-1.5">
-      <nav className="flex justify-between items-center">
-        <button
-          onClick={newSprite}
-          className="text-sm text-nowrap flex items-center gap-1 cursor-pointer rounded px-1.5 py-0.5 bg-teal-600"
-        >
-          <Plus size={14} />
-          Add Cube
-        </button>
-        {/* File Path */}
-      </nav>
-      <div className="flex gap-1 flex-col">
-        {objectNames.map((name) => {
-          const object = objects.current.get(name)
-          return object ? <ObjectListItem key={name} object={object} /> : null
-        })}
+    <>
+      <div
+        key={objectVersion}
+        className="h-full flex gap-1 flex-col p-1.5 overflow-y-auto"
+      >
+        {scene.current.children.map((obj) => (
+          <ObjectListItem key={obj.id} object={obj} />
+        ))}
+        <br />
+        <br />
       </div>
-    </main>
+      <button
+        onClick={newSprite}
+        className={clsx(
+          'flex items-center gap-1 px-1 absolute bottom-3 left-2',
+          'border rounded-md bg-zinc-800 border-teal-600 cursor-pointer'
+        )}
+      >
+        <WandSparkles size={14} />
+        <p className="text-sm">Add Sprite</p>
+      </button>
+    </>
   )
 }

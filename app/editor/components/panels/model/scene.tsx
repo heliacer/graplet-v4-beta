@@ -113,7 +113,7 @@ export default function ModelScene() {
 
         {mirrorChildren.map((obj) => (
           <SceneObject
-            key={obj.uuid}
+            key={obj.id}
             object={obj}
             onSelect={(o) => {
               setSelected(o)
@@ -130,7 +130,7 @@ export default function ModelScene() {
         {selected && (
           <TransformControls
             mode={mode}
-            key={`${selected.uuid}-${objectVersion}`}
+            key={`${selected.id}-${objectVersion}`}
             ref={tcRef}
             object={selected}
             rotationSnap={Math.PI / 8}
