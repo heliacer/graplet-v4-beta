@@ -8,30 +8,28 @@ import React, {
   useState
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
-import { ObjectsEnv, RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
-import { Object3D, Scene } from 'three'
+import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
+import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
 
 interface EditorContextType {
   // REFS
-  objects: RefObject<ObjectsEnv>
   runState: RefObject<RunState>
   funcEnv: RefObject<FuncEnv>
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
+  camera: RefObject<PerspectiveCamera | OrthographicCamera | undefined>
   modelScene: RefObject<Scene>
 
   // UI STATE
   workspace: WorkspaceSvg | null
   currentObject: Object3D | null
   isRunning: boolean
-  objectNames: string[]
   objectVersion: number
   shouldWorkspaceLoad: boolean
   shouldSceneLoad: boolean
   setShouldWorkspaceLoad: Dispatch<SetStateAction<boolean>>
   setShouldSceneLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
-  setObjectNames: Dispatch<SetStateAction<string[]>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
   setCurrentObject: Dispatch<SetStateAction<Object3D | null>>
   setIsRunning: Dispatch<SetStateAction<boolean>>
@@ -48,8 +46,8 @@ export function EditorProvider({
 }: Readonly<{ children: React.ReactNode }>) {
   const varEnv = useRef<VarEnv>(new Map())
   const funcEnv = useRef<FuncEnv>(new Map())
-  const objects = useRef(new Map())
   const scene = useRef(new Scene())
+  const camera = useRef<PerspectiveCamera | OrthographicCamera>(undefined)
   const modelScene = useRef(new Scene())
   const runState = useRef<RunState>({
     shouldRun: false,
@@ -61,7 +59,6 @@ export function EditorProvider({
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
   const [isRunning, setIsRunning] = useState<boolean>(false)
-  const [objectNames, setObjectNames] = useState<Array<string>>([])
   const [objectVersion, setObjectVersion] = useState(0)
   const [shouldWorkspaceLoad, setShouldWorkspaceLoad] = useState(true)
   const [shouldSceneLoad, setShouldSceneLoad] = useState(true)
@@ -71,22 +68,20 @@ export function EditorProvider({
       value={{
         funcEnv,
         varEnv,
-        objects,
         scene,
+        camera,
         modelScene,
         runState,
 
         workspace,
         currentObject,
         isRunning,
-        objectNames,
         objectVersion,
         shouldWorkspaceLoad,
         shouldSceneLoad,
         setShouldWorkspaceLoad,
         setShouldSceneLoad,
         setObjectVersion,
-        setObjectNames,
         setWorkspace,
         setCurrentObject,
         setIsRunning

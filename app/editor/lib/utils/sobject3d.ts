@@ -1,27 +1,27 @@
+import { SGeometry, SObject3D, SMaterial, SBase } from '../types'
 import {
-  SGeometry,
-  SObject3D,
-  SMaterial,
-  SObject3DT,
-  SGeometryT
-} from '../types'
-import {
+  AmbientLight,
   BoxGeometry,
   BufferGeometry,
   CircleGeometry,
   Color,
   ConeGeometry,
   CylinderGeometry,
+  DirectionalLight,
   DodecahedronGeometry,
   Group,
   IcosahedronGeometry,
   Material,
   Mesh,
+  MeshBasicMaterial,
   MeshStandardMaterial,
+  MeshToonMaterial,
   Object3D,
   OctahedronGeometry,
+  PerspectiveCamera,
   PlaneGeometry,
   RingGeometry,
+  Scene,
   SphereGeometry,
   TetrahedronGeometry,
   TorusGeometry,
@@ -29,64 +29,105 @@ import {
 } from 'three'
 
 /**
- * Adds a serialized Object3D
+ * creates a Object3D from serialization
  * @example
- * createObject({
+ * const object = createObject({
  *   type: 'Mesh',
  *   geometry: {
- *     type: 'Box',
+ *     type: 'BoxGeometry',
  *     args: [1,1,1]
  *   },
  *   material: {
  *     color: '#ffffff'
  *   }
- * }, scene)
+ * })
  */
-export function addObject(props: SObject3D, dest?: Object3D): Object3D {
-  const obj = buildObjectTree(props)
-  dest?.add(obj)
-  return obj
-}
-
-function buildObjectTree(node: SObject3D): Object3D {
-  const obj = createObject(node)
-  applyInitialProps(obj, node)
-
-  for (const child of node.children ?? []) {
-    const childObj = buildObjectTree(child)
-    obj.add(childObj)
+export function createObject(props: SObject3D) {
+  switch (props.type) {
+    case 'Scene': {
+      return new Scene()
+    }
+    case 'Group': {
+      return new Group()
+    }
+    case 'Mesh': {
+      return new Mesh(
+        createGeometry(props.geometry),
+        createMaterial(props.material)
+      )
+    }
+    case 'DirectionalLight': {
+      return new DirectionalLight(props.color, props.intensity)
+    }
+    case 'AmbientLight': {
+      return new AmbientLight(props.color, props.intensity)
+    }
+    case 'PerspectiveCamera': {
+      const { fov, aspect, near, far } = props
+      return new PerspectiveCamera(fov, aspect, near, far)
+    }
   }
-  return obj
 }
 
-function applyInitialProps(
-  obj: Object3D,
-  props: Pick<SObject3D, 'name' | 'position' | 'rotation' | 'scale'>
-) {
-  const { name, position, rotation, scale } = props
-  if (name) obj.name = name
-  if (position) obj.position.set(...position)
-  if (rotation) obj.rotation.set(...rotation)
-  if (scale) obj.scale.set(...scale)
+export function applyProps(object: Object3D, props: SObject3D) {
+  const { type, name, rotation, scale, position } = props
+
+  /** Ensure Object and Serialized Props are of same type */
+  if (object.type !== type) throw Error('Object must be of same type as props')
+
+  if (name) object.name = name
+  if (rotation) object.rotation.set(...rotation)
+  if (scale) object.scale.set(...scale)
+  if (position) object.position.set(...position)
+
+  if (object instanceof Scene && props.type === 'Scene') {
+    /** nothing for now */
+  }
+  if (object instanceof Group && props.type === 'Group') {
+    /** nothing for now */
+  }
+  if (object instanceof Mesh && props.type === 'Mesh') {
+    const { geometry, material } = props
+    /** @todo */
+    console.log(geometry, material)
+  }
+  if (object instanceof AmbientLight && props.type === 'AmbientLight') {
+    const { intensity } = props
+    /** @todo */
+    console.log(intensity)
+  }
+  if (object instanceof DirectionalLight && props.type === 'DirectionalLight') {
+    const { intensity } = props
+    /** @todo */
+    console.log(intensity)
+  }
+  if (
+    object instanceof PerspectiveCamera &&
+    props.type === 'PerspectiveCamera'
+  ) {
+    const { fov, aspect, near, far } = props
+    /** @todo */
+    console.log(fov, aspect, near, far)
+  }
 }
 
 const geometryFactory: Record<
   SGeometry['type'],
   (args: number[]) => BufferGeometry
 > = {
-  Box: (a) => new BoxGeometry(...a),
-  Sphere: (a) => new SphereGeometry(...a),
-  Plane: (a) => new PlaneGeometry(...a),
-  Circle: (a) => new CircleGeometry(...a),
-  Cylinder: (a) => new CylinderGeometry(...a),
-  Cone: (a) => new ConeGeometry(...a),
-  Ring: (a) => new RingGeometry(...a),
-  Dodecahedron: (a) => new DodecahedronGeometry(...a),
-  Octahedron: (a) => new OctahedronGeometry(...a),
-  Icosahedron: (a) => new IcosahedronGeometry(...a),
-  Tetrahedron: (a) => new TetrahedronGeometry(...a),
-  Torus: (a) => new TorusGeometry(...a),
-  TorusKnot: (a) => new TorusKnotGeometry(...a)
+  BoxGeometry: (a) => new BoxGeometry(...a),
+  SphereGeometry: (a) => new SphereGeometry(...a),
+  PlaneGeometry: (a) => new PlaneGeometry(...a),
+  CircleGeometry: (a) => new CircleGeometry(...a),
+  CylinderGeometry: (a) => new CylinderGeometry(...a),
+  ConeGeometry: (a) => new ConeGeometry(...a),
+  RingGeometry: (a) => new RingGeometry(...a),
+  DodecahedronGeometry: (a) => new DodecahedronGeometry(...a),
+  OctahedronGeometry: (a) => new OctahedronGeometry(...a),
+  IcosahedronGeometry: (a) => new IcosahedronGeometry(...a),
+  TetrahedronGeometry: (a) => new TetrahedronGeometry(...a),
+  TorusGeometry: (a) => new TorusGeometry(...a),
+  TorusKnotGeometry: (a) => new TorusKnotGeometry(...a)
 }
 
 function createGeometry(geometry: SGeometry): BufferGeometry {
@@ -95,34 +136,19 @@ function createGeometry(geometry: SGeometry): BufferGeometry {
   return make(geometry.args)
 }
 
-function createMaterial(m: SMaterial): Material {
-  return new MeshStandardMaterial({ color: m.color })
-}
-
-function createObject(
-  props: Pick<SObject3D, 'type' | 'geometry' | 'material'>
-) {
-  const { type, geometry, material } = props
+function createMaterial(material: SMaterial): Material {
+  const { type, color } = material
   switch (type) {
-    case 'Mesh': {
-      if (!geometry) throw Error('Mesh is missing geometry')
-      if (!material) throw Error('Mesh is missing material')
-      return new Mesh(createGeometry(geometry), createMaterial(material))
+    case 'MeshBasicMaterial': {
+      return new MeshBasicMaterial({ color })
     }
-    case 'Group': {
-      return new Group()
+    case 'MeshStandardMaterial': {
+      return new MeshStandardMaterial({ color })
+    }
+    case 'MeshToonMaterial': {
+      return new MeshToonMaterial({ color })
     }
   }
-}
-
-/**
- * @todo
- */
-export function updateObject(
-  props: Omit<SObject3D, 'geometry' | 'type'>,
-  dest: Object3D
-) {
-  console.log(props, dest)
 }
 
 /**
@@ -130,41 +156,72 @@ export function updateObject(
  */
 export function serializeObject(object: Object3D): SObject3D {
   /** Common Props */
-  const { type, name, position, rotation, scale } = object
-  const sObject: SObject3D = {
-    type: type as SObject3DT,
-    name,
+  const { name, position, rotation, scale } = object
+  const children =
+    object.children.length > 0
+      ? (object.children.map(serializeObject) as readonly SObject3D[])
+      : undefined
+
+  const base: SBase = {
+    name: name,
     position: [position.x, position.y, position.z],
     rotation: [rotation.x, rotation.y, rotation.z],
-    scale: [scale.x, scale.y, scale.z]
+    scale: [scale.x, scale.y, scale.z],
+    ...(children && { children })
   }
 
   /** Specific Props */
+  if (object instanceof Scene) {
+    return {
+      type: 'Scene',
+      ...base
+    }
+  }
   if (object instanceof Group) {
-    // nothing for now
+    return {
+      type: 'Group',
+      ...base
+    }
   }
   if (object instanceof Mesh) {
     const color = object.material.color as Color
-
-    /** @todo this is bs, types need probably entire type, not aliases (slices) */
-    sObject.geometry = {
-      type: object.geometry.type.slice(0, -8) as SGeometryT,
-      args: Object.values(object.geometry.parameters)
-    }
-    sObject.material = {
-      type: object.material.type.slice(4, -8),
-      color: color.getHexString()
-    }
-  }
-
-  /** Children */
-  if (object.children.length > 0) {
-    sObject.children = []
-    for (const child of object.children) {
-      const sChild = serializeObject(child)
-      sObject.children.push(sChild)
+    return {
+      type: 'Mesh',
+      material: {
+        type: object.material.type,
+        color: color.getHexString()
+      },
+      geometry: {
+        type: object.geometry.type,
+        args: Object.values(object.geometry.parameters)
+      },
+      ...base
     }
   }
-
-  return sObject
+  if (object instanceof AmbientLight) {
+    return {
+      type: 'AmbientLight',
+      intensity: object.intensity,
+      ...base
+    }
+  }
+  if (object instanceof DirectionalLight) {
+    return {
+      type: 'DirectionalLight',
+      intensity: object.intensity,
+      ...base
+    }
+  }
+  if (object instanceof PerspectiveCamera) {
+    const { fov, aspect, near, far } = object
+    return {
+      type: 'PerspectiveCamera',
+      fov,
+      aspect,
+      near,
+      far,
+      ...base
+    }
+  }
+  throw new Error(`Unsupported Object3D: ${object.constructor.name}`)
 }

@@ -6,15 +6,15 @@ export async function interpSetposxyz(
   state: ProgramState
 ): Promise<Value | undefined> {
   const { type, args } = expression
-  const { objects } = state
+  const { scene } = state
 
   if (!args || args.length < 4) throw Error(`Invalid args for "${type}"`)
-  const objectId = String(await evaluateExpression(args[0], state))
+  const objectId = Number(await evaluateExpression(args[0], state))
   const x = Number(await evaluateExpression(args[1], state))
   const y = Number(await evaluateExpression(args[2], state))
   const z = Number(await evaluateExpression(args[3], state))
 
-  const object = objects.get(objectId)
+  const object = scene.getObjectById(objectId)
   if (!object) throw Error(`object with id "${objectId}" does not exist.`)
   object.position.set(x, y, z)
   return
@@ -25,15 +25,15 @@ export async function interpSetscalexyz(
   state: ProgramState
 ): Promise<Value | undefined> {
   const { type, args } = expression
-  const { objects } = state
+  const { scene } = state
 
   if (!args || args.length < 4) throw Error(`Invalid args for "${type}"`)
-  const objectId = String(await evaluateExpression(args[0], state))
+  const objectId = Number(await evaluateExpression(args[0], state))
   const x = Number(await evaluateExpression(args[1], state))
   const y = Number(await evaluateExpression(args[2], state))
   const z = Number(await evaluateExpression(args[3], state))
 
-  const object = objects.get(objectId)
+  const object = scene.getObjectById(objectId)
   if (!object) throw Error(`object with id "${objectId}" does not exist.`)
   object.scale.set(x, y, z)
   return
@@ -44,15 +44,15 @@ export async function interpSetroteulerxyz(
   state: ProgramState
 ): Promise<Value | undefined> {
   const { type, args } = expression
-  const { objects } = state
+  const { scene } = state
 
   if (!args || args.length < 4) throw Error(`Invalid args for "${type}"`)
-  const objectId = String(await evaluateExpression(args[0], state))
+  const objectId = Number(await evaluateExpression(args[0], state))
   const x = Number(await evaluateExpression(args[1], state))
   const y = Number(await evaluateExpression(args[2], state))
   const z = Number(await evaluateExpression(args[3], state))
 
-  const object = objects.get(objectId)
+  const object = scene.getObjectById(objectId)
   if (!object) throw Error(`object with id "${objectId}" does not exist.`)
   object.rotation.set(x, y, z)
   return
@@ -63,14 +63,14 @@ export async function interpRotatexyz(
   state: ProgramState
 ): Promise<Value | undefined> {
   const { type, args } = expression
-  const { objects } = state
+  const { scene } = state
 
   if (!args || args.length < 3) throw Error(`Invalid args for "${type}"`)
-  const objectId = String(await evaluateExpression(args[0], state))
+  const objectId = Number(await evaluateExpression(args[0], state))
   const axis = String(await evaluateExpression(args[1], state))
   const angle = Number(await evaluateExpression(args[2], state))
 
-  const object = objects.get(objectId)
+  const object = scene.getObjectById(objectId)
   if (!object) throw Error(`object with id "${objectId}" does not exist.`)
 
   const rad = (angle * Math.PI) / 180
@@ -93,10 +93,10 @@ export async function interpTranslatexyz(
   state: ProgramState
 ): Promise<Value | undefined> {
   const { type, args } = expression
-  const { objects } = state
+  const { scene } = state
 
   if (!args || args.length < 3) throw Error(`Invalid args for "${type}"`)
-  const objectId = String(await evaluateExpression(args[0], state))
+  const objectId = Number(await evaluateExpression(args[0], state))
   const axis = String(await evaluateExpression(args[1], state))
   let distance = Number(await evaluateExpression(args[2], state))
 
@@ -105,7 +105,7 @@ export async function interpTranslatexyz(
     distance = distance * direction
   }
 
-  const object = objects.get(objectId)
+  const object = scene.getObjectById(objectId)
   if (!object) throw Error(`object with id "${objectId}" does not exist.`)
 
   switch (axis) {

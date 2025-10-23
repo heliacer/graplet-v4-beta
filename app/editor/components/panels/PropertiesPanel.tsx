@@ -4,7 +4,7 @@ import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Layers2, Trash } from 'lucide-react'
 
 export default function PropertiesPanel() {
-  const { currentObject, objectVersion } = useEditor()
+  const { currentObject, objectVersion, setObjectVersion } = useEditor()
   const { deleteObject, duplicateObject } = useObjectActions()
 
   const [formData, setFormData] = useState({
@@ -37,8 +37,23 @@ export default function PropertiesPanel() {
           type="text"
           value={formData.name}
           onChange={(e) => {
+            {
+            }
             setFormData((prev) => ({ ...prev, name: e.target.value }))
-            currentObject.name = e.target.value
+          }}
+          onBlur={() => {
+            if (formData.name) {
+              currentObject.name = formData.name
+            }
+            setObjectVersion((prev) => prev + 1)
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              if (formData.name) {
+                currentObject.name = formData.name
+              }
+              setObjectVersion((prev) => prev + 1)
+            }
           }}
         />
       </div>
@@ -85,18 +100,18 @@ export default function PropertiesPanel() {
       </div>
       <div className="flex gap-2">
         <button
-          className="flex gap-1 items-center cursor-pointer"
+          className="flex gap-1 items-center cursor-pointer p-1 rounded bg-zinc-750 hover:bg-zinc-650"
           onClick={() => deleteObject(currentObject)}
         >
           <Trash size={14} />
-          <p>Delete</p>
+          <p className="leading-0">Delete</p>
         </button>
         <button
-          className="flex gap-1 items-center cursor-pointer"
+          className="flex gap-1 items-center cursor-pointer p-1 rounded bg-zinc-750 hover:bg-zinc-650"
           onClick={() => duplicateObject(currentObject)}
         >
           <Layers2 size={14} />
-          <p>Duplicate</p>
+          <p className="leading-0">Duplicate</p>
         </button>
       </div>
     </div>

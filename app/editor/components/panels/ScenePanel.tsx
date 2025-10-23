@@ -6,10 +6,9 @@ import { serialization } from 'blockly'
 import { Expression, ProgramState } from '../../lib/blockly/engine/ast'
 import { useTrigger } from '../../lib/TriggerContext'
 import { Canvas } from '@react-three/fiber'
-import { Grid, OrbitControls, TransformControls } from '@react-three/drei'
-import SceneObject from '../sceneObject'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { ProjectData } from '../../lib/types'
+import { applyProps } from '../../lib/utils/sobject3d'
 
 /**
  * This is not supposed to be the end result, I have to come up with something smarter than this
@@ -37,25 +36,21 @@ async function execHelper(
 
 export default function ScenePanel() {
   const {
-    objects,
     runState,
     varEnv,
     funcEnv,
     scene,
+    camera,
 
     workspace,
-    currentObject,
     isRunning,
-    objectNames,
     shouldWorkspaceLoad,
     shouldSceneLoad,
     setShouldWorkspaceLoad,
     setShouldSceneLoad,
-    setCurrentObject,
-    setObjectVersion,
     setIsRunning
   } = useEditor()
-  const { addSprite, newSprite } = useObjectActions()
+  const { addObject, newSprite, loadDefaultScene } = useObjectActions()
 
   const emitter = useTrigger()
 
@@ -67,14 +62,17 @@ export default function ScenePanel() {
     if (data) {
       try {
         const projectData = JSON.parse(data) as ProjectData
-        if (shouldSceneLoad && objects.current.size === 0) {
+        if (shouldSceneLoad && scene.current.children.length === 0) {
           if (projectData.scene) {
-            for (const object of projectData.scene.objects) {
-              addSprite(object)
+            const { children } = projectData.scene
+            applyProps(scene.current, projectData.scene)
+            if (children) {
+              for (const sobject of children) {
+                addObject(sobject)
+              }
             }
             console.log('Loaded scene state: ', projectData.scene)
           } else {
-            newSprite()
             console.log('Starting with an empty scene.')
           }
           setShouldSceneLoad(false)
@@ -95,13 +93,29 @@ export default function ScenePanel() {
       } catch (err) {
         console.error('Could not parse localStorage data.', err)
       }
+    } else {
+      if (
+        workspace &&
+        shouldWorkspaceLoad &&
+        workspace.getTopBlocks.length === 0
+      ) {
+        setShouldWorkspaceLoad(false)
+        /**
+         * @todo maybe add default blocks
+         */
+      }
+      if (shouldSceneLoad && scene.current.children.length === 0) {
+        setShouldSceneLoad(false)
+        console.log('Starting with the default scene.')
+        loadDefaultScene()
+      }
     }
   }, [
-    objects,
+    scene,
+    loadDefaultScene,
     workspace,
-    objectNames,
     newSprite,
-    addSprite,
+    addObject,
     setShouldWorkspaceLoad,
     shouldWorkspaceLoad,
     shouldSceneLoad,
@@ -116,7 +130,6 @@ export default function ScenePanel() {
         expr,
         {
           scene: scene.current,
-          objects: objects.current,
           variables: varEnv.current,
           functions: funcEnv.current,
           runState: runState
@@ -128,7 +141,6 @@ export default function ScenePanel() {
     emitter.on('runScene', handleRunScene)
     return () => emitter.off('runScene', handleRunScene)
   }, [
-    objects,
     scene,
     workspace,
     emitter,
@@ -140,28 +152,8 @@ export default function ScenePanel() {
   ])
 
   return (
-    <Canvas scene={scene.current}>
-      <OrbitControls enableDamping={false} makeDefault />
-      <Grid args={[10, 10]} cellSize={1} />
-      {Array.from(objects.current).map(([key, object]) => (
-        <SceneObject
-          key={key}
-          object={object}
-          onSelect={setCurrentObject}
-          onDeselect={() => setCurrentObject(null)}
-        />
-      ))}
-      {currentObject && (
-        <TransformControls
-          object={currentObject}
-          translationSnap={0.5}
-          onObjectChange={() => {
-            setObjectVersion((prev) => prev + 1)
-          }}
-        />
-      )}
-      <ambientLight intensity={1} />
-      <directionalLight position={[3, 5, 2]} intensity={2} />
+    <Canvas camera={camera.current}>
+      <primitive object={scene.current} />
     </Canvas>
   )
 }
