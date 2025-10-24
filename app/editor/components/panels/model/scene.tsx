@@ -147,7 +147,7 @@ export default function ModelScene() {
         <directionalLight position={[3, 5, 2]} intensity={2} />
         <GizmoHelper alignment="bottom-right" margin={[70, 70]}>
           <GizmoViewport
-            axisColors={['#ff2056', '#009689', '#0084d1']}
+            axisColors={['#009689', '#0084d1', '#ff2056']}
             labelColor="black"
           />
         </GizmoHelper>

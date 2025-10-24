@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import { Layers2, Trash } from 'lucide-react'
+import { Layers2, SwitchCamera, Trash } from 'lucide-react'
+import { PerspectiveCamera } from 'three'
 
 export default function PropertiesPanel() {
-  const { currentObject, objectVersion, setObjectVersion } = useEditor()
+  const {
+    camera,
+    setCamera,
+    currentObject,
+    objectVersion,
+    canvas,
+    setObjectVersion
+  } = useEditor()
   const { deleteObject, duplicateObject } = useObjectActions()
 
   const [formData, setFormData] = useState({
@@ -25,6 +33,14 @@ export default function PropertiesPanel() {
     }
   }, [currentObject, objectVersion])
 
+  function handleSetCamera() {
+    if (currentObject instanceof PerspectiveCamera && canvas.current) {
+      currentObject.aspect = canvas.current.width / canvas.current.height
+      currentObject.updateProjectionMatrix()
+      setCamera(currentObject)
+    }
+  }
+
   if (!currentObject)
     return <div className="p-1.5 italic">Select an object</div>
 
@@ -37,8 +53,6 @@ export default function PropertiesPanel() {
           type="text"
           value={formData.name}
           onChange={(e) => {
-            {
-            }
             setFormData((prev) => ({ ...prev, name: e.target.value }))
           }}
           onBlur={() => {
@@ -51,6 +65,7 @@ export default function PropertiesPanel() {
             if (event.key === 'Enter') {
               if (formData.name) {
                 currentObject.name = formData.name
+                event.currentTarget.blur()
               }
               setObjectVersion((prev) => prev + 1)
             }
@@ -60,7 +75,7 @@ export default function PropertiesPanel() {
       <div className="flex justify-between">
         <p className="text-nowrap">Position</p>
         <div className="flex gap-1.5">
-          <p>X</p>
+          <p className="text-teal-600">X</p>
           <input
             className="rounded border outline-none px-1 w-10"
             type="number"
@@ -72,7 +87,7 @@ export default function PropertiesPanel() {
               currentObject.position.x = value
             }}
           />
-          <p>Y</p>
+          <p className="text-sky-600">Y</p>
           <input
             className="rounded border outline-none px-1 w-10"
             type="number"
@@ -84,7 +99,7 @@ export default function PropertiesPanel() {
               currentObject.position.y = value
             }}
           />
-          <p>Z</p>
+          <p className="text-rose-500">Z</p>
           <input
             className="rounded border outline-none px-1 w-10"
             type="number"
@@ -113,6 +128,16 @@ export default function PropertiesPanel() {
           <Layers2 size={14} />
           <p className="leading-0">Duplicate</p>
         </button>
+        {currentObject instanceof PerspectiveCamera &&
+          currentObject !== camera && (
+            <button
+              className="flex gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
+              onClick={handleSetCamera}
+            >
+              <SwitchCamera size={14} />
+              <p className="leading-0">Switch</p>
+            </button>
+          )}
       </div>
     </div>
   )

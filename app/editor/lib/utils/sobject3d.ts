@@ -87,27 +87,19 @@ export function applyProps(object: Object3D, props: SObject3D) {
     /** nothing for now */
   }
   if (object instanceof Mesh && props.type === 'Mesh') {
-    const { geometry, material } = props
     /** @todo */
-    console.log(geometry, material)
   }
   if (object instanceof AmbientLight && props.type === 'AmbientLight') {
-    const { intensity } = props
     /** @todo */
-    console.log(intensity)
   }
   if (object instanceof DirectionalLight && props.type === 'DirectionalLight') {
-    const { intensity } = props
     /** @todo */
-    console.log(intensity)
   }
   if (
     object instanceof PerspectiveCamera &&
     props.type === 'PerspectiveCamera'
   ) {
-    const { fov, aspect, near, far } = props
     /** @todo */
-    console.log(fov, aspect, near, far)
   }
 }
 

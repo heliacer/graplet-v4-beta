@@ -60,25 +60,6 @@ export default function Ribbon() {
     setObjectVersion((previous) => previous + 1)
   }
 
-  /**
-
-
-
-    | 'Box'
-  | 'Sphere'
-  | 'Plane'
-  | 'Circle'
-  | 'Cylinder'
-  | 'Cone'
-  | 'Ring'
-  | 'Dodecahedron'
-  | 'Octahedron'
-  | 'Icosahedron'
-  | 'Tetrahedron'
-  | 'Torus'
-  | 'TorusKnot'
-   */
-
   /** this is also bs, needs rework */
   const addBox = () => addMesh(new BoxGeometry(), 'Box')
   const addSphere = () => addMesh(new SphereGeometry(), 'Sphere')
@@ -114,7 +95,10 @@ export default function Ribbon() {
   return (
     <div role="menu" className="flex gap-1 items-center p-1">
       <DropdownMenu className="text-sm">
-        <DropdownButton disabled={!currentObject} className="rounded-md">
+        <DropdownButton
+          disabled={!currentObject || currentObject.type !== 'Group'}
+          className="rounded-md"
+        >
           <Box size={16} />
           <p>Add</p>
           <ChevronDown size={16} />
@@ -145,7 +129,7 @@ export default function Ribbon() {
       </DropdownMenu>
       <DropdownMenu>
         <DropdownButton
-          disabled={!currentObject}
+          disabled={!currentObject || currentObject.type !== 'Group'}
           className="text-sm rounded-md"
         >
           <ScanEye size={16} />
@@ -155,7 +139,7 @@ export default function Ribbon() {
       </DropdownMenu>
       <DropdownMenu>
         <DropdownButton
-          disabled={!currentObject}
+          disabled={!currentObject || currentObject.type !== 'Group'}
           className="text-sm rounded-md"
         >
           <Hammer size={16} />

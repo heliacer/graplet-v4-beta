@@ -1,10 +1,10 @@
 import {
   Box,
+  Camera,
   FileText,
   Lightbulb,
   type LucideIcon,
   Sun,
-  Telescope,
   WandSparkles
 } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
@@ -16,7 +16,7 @@ const ItemIcons: Record<string, LucideIcon> = {
   Group: Box,
   AmbientLight: Sun,
   DirectionalLight: Lightbulb,
-  PerspectiveCamera: Telescope,
+  PerspectiveCamera: Camera,
   default: FileText
 }
 
@@ -74,7 +74,7 @@ export default function ExplorerPanel() {
         onClick={newSprite}
         className={clsx(
           'flex items-center gap-1 px-1 absolute bottom-3 left-2',
-          'border rounded-md bg-zinc-800 border-teal-600 cursor-pointer'
+          'border rounded-md bg-zinc-800 border-zinc-600 cursor-pointer'
         )}
       >
         <WandSparkles size={14} />

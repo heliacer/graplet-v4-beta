@@ -40,8 +40,6 @@ export async function interpIf(expression: Expression, state: ProgramState) {
   const { args, type, children } = expression
   const { runState } = state
 
-  console.log(args)
-
   if (!(await checkPoint(runState))) return
   if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
   if (!children) return

@@ -552,7 +552,6 @@ procedureBlocks['procedures_defnoreturn'] = {
     this.workspace.addChangeListener((event: Events.Abstract) => {
       if (event instanceof Events.BlockDrag && event.blocks) {
         if (event.isStart) {
-          console.log(event.blocks)
           const paramBlock = event.blocks[0] as BlockSvg
           const dragStrategy = paramBlock.getDragStrategy() as any // eslint-disable-line @typescript-eslint/no-explicit-any
           const startParentConn = dragStrategy.startParentConn

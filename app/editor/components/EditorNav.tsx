@@ -66,7 +66,7 @@ export default function EditorNav() {
     if (!workspace) throw Error('Missing workspace')
     const projectData = createProjectData(workspace, scene.current)
     localStorage.setItem('projectData', JSON.stringify(projectData))
-    console.log('Saved project to localStorage', projectData)
+    console.info('Saved project to localStorage', projectData)
   }
 
   function handleSaveFile() {
@@ -118,14 +118,14 @@ export default function EditorNav() {
               addObject(sobject)
             }
           }
-          console.log('Loaded scene state: ', projectData.scene)
+          console.info('Loaded scene state: ', projectData.scene)
         } else {
-          console.log('Starting with an empty scene.')
+          console.info('Starting with an empty scene.')
         }
 
         // load workspace
         serialization.workspaces.load(projectData.workspace, workspace)
-        console.log('Loaded workspace state: ', projectData.workspace)
+        console.info('Loaded workspace state: ', projectData.workspace)
       } catch (err) {
         console.error('Invalid JSON file', err)
         alert('Could not load JSON file.')

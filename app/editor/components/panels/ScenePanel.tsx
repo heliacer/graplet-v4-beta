@@ -41,6 +41,7 @@ export default function ScenePanel() {
     funcEnv,
     scene,
     camera,
+    canvas,
 
     workspace,
     isRunning,
@@ -71,9 +72,9 @@ export default function ScenePanel() {
                 addObject(sobject)
               }
             }
-            console.log('Loaded scene state: ', projectData.scene)
+            console.info('Loaded scene state: ', projectData.scene)
           } else {
-            console.log('Starting with an empty scene.')
+            console.info('Starting with an empty scene.')
           }
           setShouldSceneLoad(false)
         }
@@ -84,9 +85,9 @@ export default function ScenePanel() {
         ) {
           if (projectData.workspace) {
             serialization.workspaces.load(projectData.workspace, workspace)
-            console.log('Loaded workspace state: ', projectData.workspace)
+            console.info('Loaded workspace state: ', projectData.workspace)
           } else {
-            console.log('Starting with an empty workspace.')
+            console.info('Starting with an empty workspace.')
           }
           setShouldWorkspaceLoad(false)
         }
@@ -106,7 +107,7 @@ export default function ScenePanel() {
       }
       if (shouldSceneLoad && scene.current.children.length === 0) {
         setShouldSceneLoad(false)
-        console.log('Starting with the default scene.')
+        console.info('Starting with the default scene.')
         loadDefaultScene()
       }
     }
@@ -151,9 +152,5 @@ export default function ScenePanel() {
     setIsRunning
   ])
 
-  return (
-    <Canvas camera={camera.current}>
-      <primitive object={scene.current} />
-    </Canvas>
-  )
+  return <Canvas ref={canvas} camera={camera} scene={scene.current} />
 }

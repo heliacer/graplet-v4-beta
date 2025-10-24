@@ -5,7 +5,7 @@ import { SMesh, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
 
 export function useObjectActions() {
-  const { scene, camera, workspace, setCurrentObject, setObjectVersion } =
+  const { scene, setCamera, workspace, setCurrentObject, setObjectVersion } =
     useEditor()
 
   /**
@@ -42,7 +42,7 @@ export function useObjectActions() {
     const object = createObject(props)
     applyProps(object, props)
     target.add(object)
-    console.log(`${object.name} added to ${target.name || target.type}`)
+    console.info(`${object.name} was added to ${target.name || target.type}`)
 
     /** Add children */
     if (props.children) {
@@ -52,9 +52,7 @@ export function useObjectActions() {
     }
 
     /** Apply camera if space is empty */
-    if (object instanceof Camera) {
-      camera.current = object
-    }
+    if (object instanceof Camera) setCamera(object)
 
     /** If it's a top level sprite, set it as current */
     if (target === scene.current) {
@@ -109,8 +107,20 @@ export function useObjectActions() {
     })
     addObject({
       type: 'PerspectiveCamera',
-      name: 'Perspective Camera',
+      name: 'Camera 1',
       position: [0, 2, 5],
+      rotation: [-0.4, 0, 0]
+    })
+    addObject({
+      type: 'PerspectiveCamera',
+      name: 'Camera 2',
+      position: [0, 2, 8],
+      rotation: [-0.4, 0, 0]
+    })
+    addObject({
+      type: 'PerspectiveCamera',
+      name: 'Camera 3',
+      position: [0, 2, 8],
       rotation: [-0.4, 0, 0]
     })
   }
