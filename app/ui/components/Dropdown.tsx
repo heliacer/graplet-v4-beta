@@ -211,6 +211,7 @@ interface DropdownFolderProps {
   className?: string
   contentClassName?: string
   align?: 'right' | 'left'
+  side?: 'top' | 'bottom'
 }
 
 export function DropdownFolder({
@@ -220,7 +221,8 @@ export function DropdownFolder({
   children,
   className,
   contentClassName,
-  align = 'right'
+  align = 'right',
+  side = 'top',
 }: DropdownFolderProps) {
   const { activeFolderId, openFolder, closeFolder, toggleFolder } =
     useDropdown()
@@ -259,7 +261,7 @@ export function DropdownFolder({
       </button>
       <div
         className={clsx(
-          'absolute top-0 min-w-[160px] rounded-lg border pt-1 pb-1 border-zinc-700 bg-zinc-800',
+          `absolute ${side}-0 min-w-[160px] rounded-lg border pt-1 pb-1 border-zinc-700 bg-zinc-800`,
           'shadow-lg',
           contentAlignment,
           !isOpen && 'hidden',

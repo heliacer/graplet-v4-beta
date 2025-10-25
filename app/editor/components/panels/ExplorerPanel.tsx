@@ -1,9 +1,11 @@
 import {
   Box,
   Camera,
+  Component,
   FileText,
   Lightbulb,
   type LucideIcon,
+  SquareSquare,
   Sun,
   WandSparkles
 } from 'lucide-react'
@@ -14,10 +16,12 @@ import clsx from 'clsx'
 import { ObjectDropdown } from '../ObjectDropdown'
 
 const ItemIcons: Record<string, LucideIcon> = {
-  Group: Box,
+  Mesh: Box,
+  Group: Component,
   AmbientLight: Sun,
   DirectionalLight: Lightbulb,
   PerspectiveCamera: Camera,
+  OrthographicCamera: SquareSquare,
   default: FileText
 }
 

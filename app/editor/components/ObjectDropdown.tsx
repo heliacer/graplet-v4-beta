@@ -1,6 +1,7 @@
 import {
   DropdownButton,
   DropdownContent,
+  DropdownFolder,
   DropdownMenu,
   DropdownOption
 } from '@/app/ui/components/Dropdown'
@@ -14,9 +15,26 @@ import {
   Lightbulb
 } from 'lucide-react'
 import { useObjectActions } from '../lib/hooks/useObjectActions'
+import { SGeometryT } from '../lib/types'
 
 export function ObjectDropdown() {
   const { addObject } = useObjectActions()
+
+  const geometries: SGeometryT[] = [
+    'BoxGeometry',
+    'CircleGeometry',
+    'ConeGeometry',
+    'CylinderGeometry',
+    'DodecahedronGeometry',
+    'IcosahedronGeometry',
+    'OctahedronGeometry',
+    'PlaneGeometry',
+    'RingGeometry',
+    'SphereGeometry',
+    'TetrahedronGeometry',
+    'TorusGeometry',
+    'TorusKnotGeometry'
+  ]
 
   return (
     <DropdownMenu className="text-sm">
@@ -39,18 +57,79 @@ export function ObjectDropdown() {
           <Component size={14} />
           <p>Group</p>
         </DropdownOption>
-        <DropdownOption>
-          <Box size={14} />
-          <p>Mesh</p>
-        </DropdownOption>
-        <DropdownOption>
-          <Lightbulb size={14} />
-          <p>Light</p>
-        </DropdownOption>
-        <DropdownOption>
-          <Camera size={14} />
-          <p>Camera</p>
-        </DropdownOption>
+        <DropdownFolder
+          label="Mesh"
+          side='bottom'
+          icon={<Box size={14} />}
+        >
+          {geometries.map((geometryType) => (
+            <DropdownOption
+              key={geometryType}
+              onClick={() => {
+                addObject({
+                  name: geometryType.slice(0, -8),
+                  type: 'Mesh',
+                  geometry: { type: geometryType, args: [] },
+                  material: { type: 'MeshStandardMaterial' }
+                })
+              }}
+            >
+              {geometryType.slice(0, -8)}
+            </DropdownOption>
+          ))}
+        </DropdownFolder>
+        <DropdownFolder
+          label='Light'
+          side='bottom'
+          icon={<Lightbulb size={14} />}
+        >
+          <DropdownOption
+            onClick={() => {
+              addObject({
+                type: 'AmbientLight',
+                name: 'Ambient Light'
+              })
+            }}
+          >
+            <p>Ambient Light</p>
+          </DropdownOption>
+          <DropdownOption
+            onClick={() => {
+              addObject({
+                type: 'DirectionalLight',
+                name: 'Directional Light'
+              })
+            }}
+          >
+            <p>Directional Light</p>
+          </DropdownOption>
+        </DropdownFolder>
+        <DropdownFolder
+          label='Camera'
+          side='bottom'
+          icon={<Camera size={14} />}
+        >
+          <DropdownOption
+            onClick={() => {
+              addObject({
+                type: 'PerspectiveCamera',
+                name: 'Perspective Camera'
+              })
+            }}
+          >
+            <p>Perspective Camera</p>
+          </DropdownOption>
+          <DropdownOption
+            onClick={() => {
+              addObject({
+                type: 'OrthographicCamera',
+                name: 'Orthographic Camera'
+              })
+            }}
+          >
+            <p>Orthographic Camera</p>
+          </DropdownOption>
+        </DropdownFolder>
       </DropdownContent>
     </DropdownMenu>
   )

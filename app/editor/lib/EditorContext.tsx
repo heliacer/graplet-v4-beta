@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
-import { Object3D, PerspectiveCamera, Scene } from 'three'
+import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
 
 interface EditorContextType {
   // REFS
@@ -17,7 +17,7 @@ interface EditorContextType {
   funcEnv: RefObject<FuncEnv>
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
-  camera: PerspectiveCamera | undefined
+  camera: PerspectiveCamera | OrthographicCamera | undefined
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement | null>
 
@@ -28,7 +28,7 @@ interface EditorContextType {
   objectVersion: number
   shouldWorkspaceLoad: boolean
   shouldSceneLoad: boolean
-  setCamera: Dispatch<PerspectiveCamera | undefined>
+  setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | undefined>
   setShouldWorkspaceLoad: Dispatch<SetStateAction<boolean>>
   setShouldSceneLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
@@ -49,7 +49,7 @@ export function EditorProvider({
   const varEnv = useRef<VarEnv>(new Map())
   const funcEnv = useRef<FuncEnv>(new Map())
   const scene = useRef(new Scene())
-  const [camera, setCamera] = useState<PerspectiveCamera>()
+  const [camera, setCamera] = useState<PerspectiveCamera | OrthographicCamera>()
   const modelScene = useRef(new Scene())
   const canvas = useRef<HTMLCanvasElement>(null)
   const runState = useRef<RunState>({

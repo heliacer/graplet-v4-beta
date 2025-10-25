@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Layers2, SwitchCamera, Trash } from 'lucide-react'
-import { PerspectiveCamera } from 'three'
+import { Camera, OrthographicCamera, PerspectiveCamera } from 'three'
 
 export default function PropertiesPanel() {
   const {
@@ -34,10 +34,25 @@ export default function PropertiesPanel() {
   }, [currentObject, objectVersion])
 
   function handleSetCamera() {
-    if (currentObject instanceof PerspectiveCamera && canvas.current) {
-      currentObject.aspect = canvas.current.width / canvas.current.height
-      currentObject.updateProjectionMatrix()
-      setCamera(currentObject)
+    if (currentObject instanceof Camera && canvas.current) {
+      if (currentObject instanceof PerspectiveCamera) {
+        currentObject.aspect = canvas.current.width / canvas.current.height
+        currentObject.updateProjectionMatrix()
+        setCamera(currentObject)
+      }
+      if (currentObject instanceof OrthographicCamera) {
+        const aspect = canvas.current.width / canvas.current.height
+
+        const zoom = camera?.zoom || 1
+        const halfH = 6 / zoom
+        const halfW = aspect * halfH
+        currentObject.left = -halfW
+        currentObject.right = halfW
+        currentObject.top = halfH
+        currentObject.bottom = -halfH
+        currentObject.updateProjectionMatrix()
+        setCamera(currentObject)
+      }
     }
   }
 
@@ -128,7 +143,7 @@ export default function PropertiesPanel() {
           <Layers2 size={14} />
           <p className="leading-0">Duplicate</p>
         </button>
-        {currentObject instanceof PerspectiveCamera &&
+        {currentObject instanceof Camera &&
           currentObject !== camera && (
             <button
               className="flex gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"

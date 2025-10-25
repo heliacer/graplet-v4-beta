@@ -18,6 +18,7 @@ import {
   MeshToonMaterial,
   Object3D,
   OctahedronGeometry,
+  OrthographicCamera,
   PerspectiveCamera,
   PlaneGeometry,
   RingGeometry,
@@ -66,6 +67,10 @@ export function createObject(props: SObject3D) {
       const { fov, aspect, near, far } = props
       return new PerspectiveCamera(fov, aspect, near, far)
     }
+    case 'OrthographicCamera': {
+      const { left, right, top, bottom, near, far } = props
+      return new OrthographicCamera(left, right, top, bottom, near, far)
+    }
   }
 }
 
@@ -98,6 +103,12 @@ export function applyProps(object: Object3D, props: SObject3D) {
   if (
     object instanceof PerspectiveCamera &&
     props.type === 'PerspectiveCamera'
+  ) {
+    /** @todo */
+  }
+  if (
+    object instanceof OrthographicCamera &&
+    props.type === 'OrthographicCamera'
   ) {
     /** @todo */
   }
@@ -210,6 +221,19 @@ export function serializeObject(object: Object3D): SObject3D {
       type: 'PerspectiveCamera',
       fov,
       aspect,
+      near,
+      far,
+      ...base
+    }
+  }
+  if (object instanceof OrthographicCamera) {
+    const { left, right, top, bottom, near, far } = object
+    return {
+      type: 'OrthographicCamera',
+      left,
+      right,
+      top,
+      bottom,
       near,
       far,
       ...base

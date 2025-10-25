@@ -15,6 +15,7 @@ export type SObject3D =
   | SDirectionalLight
   | SAmbientLight
   | SPerspectiveCamera
+  | SOrthographicCamera
 
 /**
  * Serialized Object3D Base
@@ -67,22 +68,36 @@ export interface SPerspectiveCamera extends SBase {
   far?: number
 }
 
+/** Serialized PerspectiveCamera */
+export interface SOrthographicCamera extends SBase {
+  type: 'OrthographicCamera'
+  left?: number
+  right?: number
+  top?: number
+  bottom?: number
+  near?: number
+  far?: number
+}
+
+/** Serialized Geometry type */
+export type SGeometryT =
+  | 'BoxGeometry'
+  | 'SphereGeometry'
+  | 'PlaneGeometry'
+  | 'CircleGeometry'
+  | 'CylinderGeometry'
+  | 'ConeGeometry'
+  | 'RingGeometry'
+  | 'DodecahedronGeometry'
+  | 'OctahedronGeometry'
+  | 'IcosahedronGeometry'
+  | 'TetrahedronGeometry'
+  | 'TorusGeometry'
+  | 'TorusKnotGeometry'
+
 /** Serialized Object3D Geometry */
 export interface SGeometry {
-  type:
-    | 'BoxGeometry'
-    | 'SphereGeometry'
-    | 'PlaneGeometry'
-    | 'CircleGeometry'
-    | 'CylinderGeometry'
-    | 'ConeGeometry'
-    | 'RingGeometry'
-    | 'DodecahedronGeometry'
-    | 'OctahedronGeometry'
-    | 'IcosahedronGeometry'
-    | 'TetrahedronGeometry'
-    | 'TorusGeometry'
-    | 'TorusKnotGeometry'
+  type: SGeometryT
   args: number[]
 }
 
@@ -91,5 +106,5 @@ export interface SGeometry {
  */
 export interface SMaterial {
   type: 'MeshBasicMaterial' | 'MeshStandardMaterial' | 'MeshToonMaterial'
-  color: string
+  color?: string
 }
