@@ -11,6 +11,7 @@ import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
+import { ObjectDropdown } from '../ObjectDropdown'
 
 const ItemIcons: Record<string, LucideIcon> = {
   Group: Box,
@@ -70,16 +71,19 @@ export default function ExplorerPanel() {
         <br />
         <br />
       </div>
-      <button
-        onClick={newSprite}
-        className={clsx(
-          'flex items-center gap-1 px-1 absolute bottom-3 left-2',
-          'border rounded-md bg-zinc-800 border-zinc-600 cursor-pointer'
-        )}
-      >
-        <WandSparkles size={14} />
-        <p className="text-sm">Add Sprite</p>
-      </button>
+      <div className="flex gap-2 absolute bottom-3 left-2">
+        <button
+          onClick={newSprite}
+          className={clsx(
+            'flex items-center gap-1 px-1',
+            'border rounded-md bg-zinc-800 border-zinc-600 cursor-pointer'
+          )}
+        >
+          <WandSparkles size={14} />
+          <p className="text-sm">Add Sprite</p>
+        </button>
+        <ObjectDropdown />
+      </div>
     </>
   )
 }

@@ -9,12 +9,12 @@ import {
 import clsx from 'clsx'
 import {
   Box,
+  Camera,
   ChevronDown,
   Component,
   Hammer,
-  LampDesk,
-  ScanEye,
-  Video
+  Lightbulb,
+  ScanEye
 } from 'lucide-react'
 import {
   BoxGeometry,
@@ -98,13 +98,15 @@ export default function Ribbon() {
       <DropdownMenu className="text-sm">
         <DropdownButton
           disabled={!currentObject || currentObject.type !== 'Group'}
-          className={(isOpen, disabled) => clsx(
-            'flex items-center gap-1 border border-transparent rounded-md px-1',
-            disabled
-              ? 'text-zinc-400'
-              : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
-            isOpen && 'bg-zinc-800 border-zinc-700',
-          )}
+          className={(isOpen, disabled) =>
+            clsx(
+              'flex items-center gap-1 border border-transparent rounded-md px-1',
+              disabled
+                ? 'text-zinc-400'
+                : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+              isOpen && 'bg-zinc-800 border-zinc-700'
+            )
+          }
         >
           <Box size={16} />
           <p>Add</p>
@@ -122,44 +124,48 @@ export default function Ribbon() {
               </DropdownOption>
             ))}
           </DropdownFolder>
-          <DropdownFolder icon={<LampDesk size={16} />} label="Light">
+          <DropdownFolder icon={<Lightbulb size={16} />} label="Light">
             <DropdownOption>
               <p>Point Light</p>
             </DropdownOption>
           </DropdownFolder>
-          <DropdownFolder label="Camera" icon={<Video size={16} />}>
+          <DropdownFolder label="Camera" icon={<Camera size={16} />}>
             <DropdownOption>
               <p>Perspective Camera</p>
             </DropdownOption>
           </DropdownFolder>
         </DropdownContent>
       </DropdownMenu>
-      <DropdownMenu className='text-sm'>
+      <DropdownMenu className="text-sm">
         <DropdownButton
           disabled={!currentObject || currentObject.type !== 'Group'}
-          className={(isOpen, disabled) => clsx(
-            'flex items-center gap-1 border border-transparent rounded-md px-1',
-            disabled
-              ? 'text-zinc-400'
-              : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
-            isOpen && 'bg-zinc-800 border-zinc-700',
-          )}
+          className={(isOpen, disabled) =>
+            clsx(
+              'flex items-center gap-1 border border-transparent rounded-md px-1',
+              disabled
+                ? 'text-zinc-400'
+                : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+              isOpen && 'bg-zinc-800 border-zinc-700'
+            )
+          }
         >
           <ScanEye size={16} />
           <p>View</p>
           <ChevronDown size={16} />
         </DropdownButton>
       </DropdownMenu>
-      <DropdownMenu className='text-sm'>
+      <DropdownMenu className="text-sm">
         <DropdownButton
           disabled={!currentObject || currentObject.type !== 'Group'}
-          className={(isOpen, disabled) => clsx(
-            'flex items-center gap-1 border border-transparent rounded-md px-1',
-            disabled
-              ? 'text-zinc-400'
-              : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
-            isOpen && 'bg-zinc-800 border-zinc-700',
-          )}
+          className={(isOpen, disabled) =>
+            clsx(
+              'flex items-center gap-1 border border-transparent rounded-md px-1',
+              disabled
+                ? 'text-zinc-400'
+                : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+              isOpen && 'bg-zinc-800 border-zinc-700'
+            )
+          }
         >
           <Hammer size={16} />
           <p>Actions</p>

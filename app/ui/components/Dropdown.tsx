@@ -93,13 +93,14 @@ interface DropdownButtonProps {
 
 export function DropdownButton({
   children,
-  className = (isOpen, disabled) => clsx(
-    'flex items-center gap-1 border border-transparent rounded-lg px-1',
-    disabled
-      ? 'text-zinc-400'
-      : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
-    isOpen && 'bg-zinc-800 border-zinc-700',
-  ),
+  className = (isOpen, disabled) =>
+    clsx(
+      'flex items-center gap-1 border border-transparent rounded-lg px-1',
+      disabled
+        ? 'text-zinc-400'
+        : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+      isOpen && 'bg-zinc-800 border-zinc-700'
+    ),
   disabled
 }: DropdownButtonProps) {
   const { isOpen, setIsOpen } = useDropdown()
@@ -107,7 +108,7 @@ export function DropdownButton({
   return (
     <button
       className={className(isOpen, disabled)}
-      onClick={disabled ? () => { } : () => setIsOpen(!isOpen)}
+      onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
     >
       {children}
     </button>
@@ -118,12 +119,14 @@ interface DropdownContentProps {
   children: ReactNode
   className?: string
   align?: 'left' | 'right' | 'center'
+  side?: 'top' | 'bottom'
 }
 
 export function DropdownContent({
   children,
   className,
-  align = 'right'
+  align = 'right',
+  side = 'bottom'
 }: DropdownContentProps) {
   const { isOpen } = useDropdown()
 
@@ -133,11 +136,17 @@ export function DropdownContent({
     center: 'left-1/2 -translate-x-1/2'
   }
 
+  const sideStyles = {
+    top: 'bottom-full -translate-y-0.5',
+    bottom: 'top-full translate-y-0.5'
+  }
+
   return (
     <div
       className={clsx(
-        'absolute top-full rounded-lg translate-y-0.5 pt-1 pb-1 border border-zinc-700 bg-zinc-800 z-[999]',
+        'absolute rounded-lg pt-1 pb-1 border border-zinc-700 bg-zinc-800 z-[999]',
         alignmentStyles[align],
+        sideStyles[side],
         !isOpen && 'hidden',
         className
       )}
