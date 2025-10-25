@@ -107,19 +107,13 @@ export function useObjectActions() {
     })
     addObject({
       type: 'PerspectiveCamera',
-      name: 'Camera 1',
+      name: 'Cam 1',
       position: [0, 2, 5],
       rotation: [-0.4, 0, 0]
     })
     addObject({
       type: 'PerspectiveCamera',
-      name: 'Camera 2',
-      position: [0, 2, 8],
-      rotation: [-0.4, 0, 0]
-    })
-    addObject({
-      type: 'PerspectiveCamera',
-      name: 'Camera 3',
+      name: 'Cam 2',
       position: [0, 2, 8],
       rotation: [-0.4, 0, 0]
     })

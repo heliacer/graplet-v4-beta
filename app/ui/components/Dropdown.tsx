@@ -87,28 +87,27 @@ export function DropdownMenu({ children, className }: DropdownMenuProps) {
 
 interface DropdownButtonProps {
   children: ReactNode
-  className?: string
+  className?: (isOpen: boolean, disabled?: boolean) => string
   disabled?: boolean
 }
 
 export function DropdownButton({
   children,
-  className,
+  className = (isOpen, disabled) => clsx(
+    'flex items-center gap-1 border border-transparent rounded-lg px-1',
+    disabled
+      ? 'text-zinc-400'
+      : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+    isOpen && 'bg-zinc-800 border-zinc-700',
+  ),
   disabled
 }: DropdownButtonProps) {
   const { isOpen, setIsOpen } = useDropdown()
 
   return (
     <button
-      className={clsx(
-        'flex items-center gap-1 border border-transparent rounded-lg px-1',
-        disabled
-          ? 'text-zinc-400'
-          : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
-        isOpen && 'bg-zinc-800 border-zinc-700',
-        className
-      )}
-      onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
+      className={className(isOpen, disabled)}
+      onClick={disabled ? () => { } : () => setIsOpen(!isOpen)}
     >
       {children}
     </button>

@@ -6,6 +6,7 @@ import {
   DropdownOption,
   DropdownFolder
 } from '@/app/ui/components/Dropdown'
+import clsx from 'clsx'
 import {
   Box,
   ChevronDown,
@@ -97,7 +98,13 @@ export default function Ribbon() {
       <DropdownMenu className="text-sm">
         <DropdownButton
           disabled={!currentObject || currentObject.type !== 'Group'}
-          className="rounded-md"
+          className={(isOpen, disabled) => clsx(
+            'flex items-center gap-1 border border-transparent rounded-md px-1',
+            disabled
+              ? 'text-zinc-400'
+              : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+            isOpen && 'bg-zinc-800 border-zinc-700',
+          )}
         >
           <Box size={16} />
           <p>Add</p>
@@ -127,20 +134,32 @@ export default function Ribbon() {
           </DropdownFolder>
         </DropdownContent>
       </DropdownMenu>
-      <DropdownMenu>
+      <DropdownMenu className='text-sm'>
         <DropdownButton
           disabled={!currentObject || currentObject.type !== 'Group'}
-          className="text-sm rounded-md"
+          className={(isOpen, disabled) => clsx(
+            'flex items-center gap-1 border border-transparent rounded-md px-1',
+            disabled
+              ? 'text-zinc-400'
+              : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+            isOpen && 'bg-zinc-800 border-zinc-700',
+          )}
         >
           <ScanEye size={16} />
           <p>View</p>
           <ChevronDown size={16} />
         </DropdownButton>
       </DropdownMenu>
-      <DropdownMenu>
+      <DropdownMenu className='text-sm'>
         <DropdownButton
           disabled={!currentObject || currentObject.type !== 'Group'}
-          className="text-sm rounded-md"
+          className={(isOpen, disabled) => clsx(
+            'flex items-center gap-1 border border-transparent rounded-md px-1',
+            disabled
+              ? 'text-zinc-400'
+              : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
+            isOpen && 'bg-zinc-800 border-zinc-700',
+          )}
         >
           <Hammer size={16} />
           <p>Actions</p>
