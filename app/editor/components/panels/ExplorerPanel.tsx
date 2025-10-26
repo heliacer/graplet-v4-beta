@@ -86,7 +86,15 @@ export default function ExplorerPanel() {
           <WandSparkles size={14} />
           <p className="text-sm">Add Sprite</p>
         </button>
-        <ObjectDropdown />
+        <ObjectDropdown
+          buttonStyle={() =>
+            clsx(
+              'flex items-center gap-1 px-1',
+              'border rounded-md bg-zinc-800 border-zinc-600 cursor-pointer'
+            )
+          }
+          side="top"
+        />
       </div>
     </>
   )

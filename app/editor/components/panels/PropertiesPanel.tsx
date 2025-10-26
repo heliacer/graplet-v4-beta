@@ -35,14 +35,13 @@ export default function PropertiesPanel() {
 
   function handleSetCamera() {
     if (currentObject instanceof Camera && canvas.current) {
+      const aspect = canvas.current.width / canvas.current.height
       if (currentObject instanceof PerspectiveCamera) {
-        currentObject.aspect = canvas.current.width / canvas.current.height
+        currentObject.aspect = aspect
         currentObject.updateProjectionMatrix()
         setCamera(currentObject)
       }
       if (currentObject instanceof OrthographicCamera) {
-        const aspect = canvas.current.width / canvas.current.height
-
         const zoom = camera?.zoom || 1
         const halfH = 6 / zoom
         const halfW = aspect * halfH
@@ -143,16 +142,15 @@ export default function PropertiesPanel() {
           <Layers2 size={14} />
           <p className="leading-0">Duplicate</p>
         </button>
-        {currentObject instanceof Camera &&
-          currentObject !== camera && (
-            <button
-              className="flex gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
-              onClick={handleSetCamera}
-            >
-              <SwitchCamera size={14} />
-              <p className="leading-0">Switch</p>
-            </button>
-          )}
+        {currentObject instanceof Camera && currentObject !== camera && (
+          <button
+            className="flex gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
+            onClick={handleSetCamera}
+          >
+            <SwitchCamera size={14} />
+            <p className="leading-0">Switch</p>
+          </button>
+        )}
       </div>
     </div>
   )

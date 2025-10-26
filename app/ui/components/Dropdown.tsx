@@ -222,7 +222,7 @@ export function DropdownFolder({
   className,
   contentClassName,
   align = 'right',
-  side = 'top',
+  side = 'bottom'
 }: DropdownFolderProps) {
   const { activeFolderId, openFolder, closeFolder, toggleFolder } =
     useDropdown()
@@ -239,6 +239,7 @@ export function DropdownFolder({
   const handleMouseLeave = () => closeFolder(folderId)
 
   const contentAlignment = align === 'right' ? 'left-full' : 'right-full'
+  const sideAlignment = side === 'top' ? 'top-0' : 'bottom-0'
 
   return (
     <div
@@ -261,9 +262,10 @@ export function DropdownFolder({
       </button>
       <div
         className={clsx(
-          `absolute ${side}-0 min-w-[160px] rounded-lg border pt-1 pb-1 border-zinc-700 bg-zinc-800`,
+          `absolute min-w-[160px] rounded-lg border pt-1 pb-1 border-zinc-700 bg-zinc-800`,
           'shadow-lg',
           contentAlignment,
+          sideAlignment,
           !isOpen && 'hidden',
           contentClassName
         )}
