@@ -29,7 +29,7 @@ export default function ModelPanel() {
                 },
                 snap: false
               },
-              size: 42
+              size: 32
             },
             {
               type: 'branch',

@@ -71,20 +71,32 @@ export function useObjectActions() {
     const name = `Sprite ${scene.current.children.length + 1}`
     const cube: SMesh = {
       type: 'Mesh',
-      name: 'Cube',
+      name: 'Block',
       geometry: {
         type: 'BoxGeometry',
-        args: [1, 1, 1]
+        args: [1, 2, 1]
       },
       material: {
         type: 'MeshStandardMaterial',
-        color: '#ffffff'
+        color: '#0000ff'
+      }
+    }
+    const sphere: SMesh = {
+      type: 'Mesh',
+      name: 'Ball',
+      geometry: {
+        type: 'SphereGeometry',
+        args: []
+      },
+      material: {
+        type: 'MeshStandardMaterial',
+        color: '#ff0000'
       }
     }
     const temp: SGroup = {
       type: 'Group',
-      name: 'Folder',
-      children: [cube, cube]
+      name: 'Group  ',
+      children: [cube, sphere]
     }
     addObject({
       type: 'Group',

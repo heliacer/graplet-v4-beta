@@ -1,34 +1,10 @@
-import {
-  Box,
-  Camera,
-  Component,
-  FileText,
-  Lightbulb,
-  type LucideIcon,
-  SquareSquare,
-  Sun,
-  WandSparkles
-} from 'lucide-react'
+import { WandSparkles } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
 import { ObjectDropdown } from '../ObjectDropdown'
-
-const ItemIcons: Record<string, LucideIcon> = {
-  Mesh: Box,
-  Group: Component,
-  AmbientLight: Sun,
-  DirectionalLight: Lightbulb,
-  PerspectiveCamera: Camera,
-  OrthographicCamera: SquareSquare,
-  default: FileText
-}
-
-function ItemIcon({ itemType }: { itemType: string }) {
-  const Icon = ItemIcons[itemType] || ItemIcons.default
-  return <Icon size={16} />
-}
+import { IconT, Object3DIcon } from '../../lib/utils/icons'
 
 function ObjectListItem({ object }: { object: Object3D }) {
   const { currentObject, setCurrentObject } = useEditor()
@@ -51,7 +27,7 @@ function ObjectListItem({ object }: { object: Object3D }) {
             : 'hover:border-zinc-700 border-transparent'
         )}
       >
-        <ItemIcon itemType={object.type} />
+        <Object3DIcon size={16} iconType={object.type as IconT} />
         <p className="text-sm">{object.name}</p>
         <span className="text-zinc-400 text-sm ml-auto">{object.id}</span>
       </div>
