@@ -1,7 +1,7 @@
 import { useEditor } from '../EditorContext'
 import { Camera, Object3D } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
-import { SMesh, SObject3D } from '../types'
+import { SGroup, SMesh, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
 
 export function useObjectActions() {
@@ -81,10 +81,15 @@ export function useObjectActions() {
         color: '#ffffff'
       }
     }
+    const temp: SGroup = {
+      type: 'Group',
+      name: 'Folder',
+      children: [cube, cube]
+    }
     addObject({
       type: 'Group',
       name,
-      children: [cube]
+      children: [temp, temp]
     })
   }
 

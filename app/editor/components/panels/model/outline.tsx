@@ -6,6 +6,7 @@ import {
 } from '@headless-tree/core'
 import { useTree } from '@headless-tree/react'
 import clsx from 'clsx'
+import { Box } from 'lucide-react'
 import { useEffect } from 'react'
 import { Object3D } from 'three'
 
@@ -21,6 +22,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
     rootItemId: currentObject.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
     isItemFolder: (item) => item.getItemData()?.hasChildren === true,
+    canReorder: true,
     dataLoader: {
       getItem: (itemId) => {
         const object = scene.current.getObjectById(Number(itemId))
@@ -46,24 +48,29 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
   }, [objectVersion, tree, currentObject])
 
   return (
-    <div {...tree.getContainerProps()} className="flex flex-col items-start">
+    <div {...tree.getContainerProps()} className="flex flex-col gap-1 items-start">
       <div className="border-b border-zinc-700 w-full">
         <p>Outline</p>
       </div>
       {tree.getItems().map((item) => (
         <button
+          className='bg-zinc-800 border rounded border-zinc-700 w-full'
           {...item.getProps()}
           key={item.getId()}
-          style={{ paddingLeft: `${item.getItemMeta().level * 20}px` }}
+          style={{ marginLeft: `${item.getItemMeta().level * 20}px` }}
         >
           <div
-            className={clsx({
-              focused: item.isFocused(),
-              expanded: item.isExpanded(),
-              selected: item.isSelected(),
-              folder: item.isFolder()
-            })}
+            className={clsx(
+            {
+              'underline': item.isFocused(),
+              'text-blue-500': item.isExpanded(),
+              'italic': item.isSelected(),
+              'bg-red-600': item.isFolder()
+            },
+            'flex flex-start items-center gap-1 text-xs'
+          )}
           >
+            <Box size={12}/>
             {item.getItemName()}
           </div>
         </button>
