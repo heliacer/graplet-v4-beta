@@ -80,15 +80,24 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
           <Fragment key={item.getId()}>
             {item.isRenaming() ? (
               <div
-                className="renaming-item"
-                style={{ marginLeft: `${item.getItemMeta().level * 20}px` }}
+                className="w-full border border-l-0 rounded-l border-zinc-600"
+                style={{ marginLeft: `${item.getItemMeta().level * 8}px` }}
               >
-                <input {...item.getRenameInputProps()} />
+                <div className="flex items-center pl-1 gap-1 rounded-l border-l border-teal-600 bg-zinc-800">
+                  <Object3DIcon
+                    size={14}
+                    iconType={item.getItemData().iconType}
+                  />
+                  <input
+                    className="outline-0"
+                    {...item.getRenameInputProps()}
+                  />
+                </div>
               </div>
             ) : (
               <button
                 className={clsx(
-                  'cursor-pointer w-full border border-b-0 rounded-l',
+                  'cursor-pointer w-full border border-l-0 rounded-l',
                   item.isSelected()
                     ? 'border-zinc-700'
                     : 'hover:border-zinc-700 border-transparent'
@@ -100,7 +109,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
                 <div
                   className={clsx(
                     'flex flex-start pl-1 items-center gap-1',
-                    'border-b rounded-l',
+                    'border-l rounded-l',
                     item.isSelected()
                       ? 'border-teal-600 bg-zinc-800'
                       : 'hover:border-zinc-700 hover:bg-zinc-800 border-transparent'

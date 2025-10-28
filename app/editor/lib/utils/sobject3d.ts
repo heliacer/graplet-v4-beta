@@ -141,6 +141,7 @@ function createGeometry(geometry: SGeometry): BufferGeometry {
 
 function createMaterial(material: SMaterial): Material {
   const { type, color } = material
+  console.log(color)
   switch (type) {
     case 'MeshBasicMaterial': {
       return new MeshBasicMaterial({ color })
@@ -192,7 +193,7 @@ export function serializeObject(object: Object3D): SObject3D {
       type: 'Mesh',
       material: {
         type: object.material.type,
-        color: color.getHexString()
+        color: `#${color.getHexString()}`
       },
       geometry: {
         type: object.geometry.type,
