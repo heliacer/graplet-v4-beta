@@ -1,12 +1,18 @@
 import { useEditor } from '../EditorContext'
-import { Camera, Object3D } from 'three'
+import { Object3D, OrthographicCamera, PerspectiveCamera } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
 import { SGroup, SMesh, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
 
 export function useObjectActions() {
-  const { scene, setCamera, workspace, setCurrentObject, setObjectVersion } =
-    useEditor()
+  const {
+    scene,
+    canvas,
+    setCamera,
+    workspace,
+    setCurrentObject,
+    setObjectVersion
+  } = useEditor()
 
   /**
    * Adds an object to the blockly object registry
@@ -52,7 +58,8 @@ export function useObjectActions() {
     }
 
     /** Apply camera if space is empty */
-    if (object instanceof Camera) setCamera(object)
+    if (object instanceof PerspectiveCamera) setCamP(object)
+    if (object instanceof OrthographicCamera) setCamO(object)
 
     /** If it's a top level sprite, set it as current */
     if (target === scene.current) {
@@ -62,6 +69,33 @@ export function useObjectActions() {
 
     setObjectVersion((prev) => prev + 1)
     return object
+  }
+
+  /**
+   * Sets a PerspectiveCamera as currently active Viewport camera
+   */
+  function setCamP(camera: PerspectiveCamera) {
+    if (!canvas.current) throw Error('No canvas')
+    camera.aspect = canvas.current.width / canvas.current.height
+    camera.updateProjectionMatrix()
+    setCamera(camera)
+  }
+
+  /**
+   * Sets an OrthographpicCamera as currently active viewport camera
+   */
+  function setCamO(camera: OrthographicCamera) {
+    if (!canvas.current) throw Error('No canvas')
+    const aspect = canvas.current.width / canvas.current.height
+    const zoom = camera?.zoom || 1
+    const halfH = 6 / zoom
+    const halfW = aspect * halfH
+    camera.left = -halfW
+    camera.right = halfW
+    camera.top = halfH
+    camera.bottom = -halfH
+    camera.updateProjectionMatrix()
+    setCamera(camera)
   }
 
   /**
@@ -181,6 +215,8 @@ export function useObjectActions() {
     newSprite,
     deleteObject,
     duplicateObject,
-    clearScene
+    clearScene,
+    setCamO,
+    setCamP
   }
 }

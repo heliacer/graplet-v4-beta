@@ -5,15 +5,8 @@ import { Layers2, SwitchCamera, Trash } from 'lucide-react'
 import { Camera, OrthographicCamera, PerspectiveCamera } from 'three'
 
 export default function PropertiesPanel() {
-  const {
-    camera,
-    setCamera,
-    currentObject,
-    objectVersion,
-    canvas,
-    setObjectVersion
-  } = useEditor()
-  const { deleteObject, duplicateObject } = useObjectActions()
+  const { camera, currentObject, objectVersion, setObjectVersion } = useEditor()
+  const { deleteObject, duplicateObject, setCamO, setCamP } = useObjectActions()
 
   const [formData, setFormData] = useState({
     name: currentObject?.name || '',
@@ -34,25 +27,8 @@ export default function PropertiesPanel() {
   }, [currentObject, objectVersion])
 
   function handleSetCamera() {
-    if (currentObject instanceof Camera && canvas.current) {
-      const aspect = canvas.current.width / canvas.current.height
-      if (currentObject instanceof PerspectiveCamera) {
-        currentObject.aspect = aspect
-        currentObject.updateProjectionMatrix()
-        setCamera(currentObject)
-      }
-      if (currentObject instanceof OrthographicCamera) {
-        const zoom = camera?.zoom || 1
-        const halfH = 6 / zoom
-        const halfW = aspect * halfH
-        currentObject.left = -halfW
-        currentObject.right = halfW
-        currentObject.top = halfH
-        currentObject.bottom = -halfH
-        currentObject.updateProjectionMatrix()
-        setCamera(currentObject)
-      }
-    }
+    if (currentObject instanceof OrthographicCamera) setCamO(currentObject)
+    if (currentObject instanceof PerspectiveCamera) setCamP(currentObject)
   }
 
   if (!currentObject)
