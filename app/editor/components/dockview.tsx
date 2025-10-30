@@ -22,7 +22,6 @@ const panelComponents = {
   scene: ScenePanel,
   explorer: ExplorerPanel,
   model: ModelPanel,
-  // assets: AssetsPanel,
   properties: PropertiesPanel
 }
 
@@ -30,74 +29,58 @@ export default function Dockview() {
   function mount(event: DockviewReadyEvent) {
     const { api } = event
     const codePanel = api.addPanel({
-      id: crypto.randomUUID(),
-      title: 'Code',
-      component: 'code',
+      id: 'scene',
+      title: 'Scene',
+      component: 'scene',
+      initialWidth: 10,
       params: {
-        Icon: <Puzzle size={16} />
-      }
+        Icon: <Airplay size={16} />
+      },
     })
 
     api.addPanel({
-      id: crypto.randomUUID(),
-      title: 'Model',
+      id: 'model',
+      title: 'Model (Deprecated)',
       component: 'model',
       params: {
         Icon: <PenTool size={16} />
       }
     })
 
-    /* WIP    
-    api.addPanel({
-      id: crypto.randomUUID(),
-      title: 'Assets',
-      component: 'debug',
+    const explorerPanel = api.addPanel({
+      id: 'explorer',
+      component: 'explorer',
+      title: 'Explorer',
+      initialWidth: 1250,
       params: {
-        Icon: <Package size={16} />
-      }
-    })
-
-    api.addPanel({
-      id: crypto.randomUUID(),
-      title: 'Extensions',
-      component: 'debug',
-      params: {
-        Icon: <Shapes size={16} />
-      }
-    })
-    */
-
-    const scenePanel = api.addPanel({
-      id: crypto.randomUUID(),
-      component: 'scene',
-      params: {
-        Icon: <Airplay size={16} />
+        Icon: <Folder size={16} />
       },
-      title: 'Scene',
       position: { direction: 'right' }
     })
 
-    const propertiesPanel = api.addPanel({
-      id: crypto.randomUUID(),
+    api.addPanel({
+      id: 'properties',
       title: 'Properties',
       component: 'properties',
       params: {
         Icon: <Wrench size={16} />
       },
-      position: { referencePanel: scenePanel, direction: 'below' }
-    })
-
-    api.addPanel({
-      id: crypto.randomUUID(),
-      component: 'explorer',
-      title: 'Explorer',
-      params: {
-        Icon: <Folder size={16} />
-      },
-      position: { referencePanel: propertiesPanel, direction: 'right' }
+      position: { referencePanel: explorerPanel, direction: 'below' }
     })
 
     codePanel.focus()
+
+    api.addPanel({
+      id: 'code',
+      initialWidth: 1000, // not working
+      title: 'Code',
+      component: 'code',
+      params: {
+        Icon: <Puzzle size={16} />
+      },
+      position: { referencePanel: codePanel, direction: 'left' }
+    })
+
   }
 
   return (
