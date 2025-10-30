@@ -1,59 +1,24 @@
 import { useEffect } from 'react'
 import { useEditor } from '../../lib/EditorContext'
-import { exprGenerator } from '../../lib/blockly/engine/generator'
-import { evaluateExpression } from '../../lib/blockly/engine/interpreter'
 import { serialization } from 'blockly'
-import { Expression, ProgramState } from '../../lib/blockly/engine/ast'
-import { useTrigger } from '../../lib/TriggerContext'
 import { Canvas } from '@react-three/fiber'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { ProjectData } from '../../lib/types'
 import { applyProps } from '../../lib/utils/sobject3d'
 
-/**
- * This is not supposed to be the end result, I have to come up with something smarter than this
- */
-async function execHelper(
-  expr: Expression,
-  state: ProgramState,
-  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
-) {
-  setIsRunning(true)
-  console.log('%cRunning...', 'color: lightseagreen;')
-  console.time('Done in')
-  try {
-    const result = await evaluateExpression(expr, state)
-    console.log('%coutput:', 'color: cornflowerblue;', result)
-  } catch (err) {
-    console.error(err)
-  } finally {
-    console.timeEnd('Done in')
-    setIsRunning(false)
-    state.runState.current.shouldStop = false
-    state.runState.current.shouldPause = false
-  }
-}
-
 export default function ScenePanel() {
   const {
-    runState,
-    varEnv,
-    funcEnv,
     scene,
     camera,
     canvas,
 
     workspace,
-    isRunning,
     shouldWorkspaceLoad,
     shouldSceneLoad,
     setShouldWorkspaceLoad,
     setShouldSceneLoad,
-    setIsRunning
   } = useEditor()
   const { addObject, newSprite, loadDefaultScene } = useObjectActions()
-
-  const emitter = useTrigger()
 
   /**
    * @todo needs heavy refactoring
@@ -103,6 +68,7 @@ export default function ScenePanel() {
         setShouldWorkspaceLoad(false)
         /**
          * @todo maybe add default blocks
+         * @todo add tutorial floating panel
          */
       }
       if (shouldSceneLoad && scene.current.children.length === 0) {
@@ -121,35 +87,6 @@ export default function ScenePanel() {
     shouldWorkspaceLoad,
     shouldSceneLoad,
     setShouldSceneLoad
-  ])
-
-  useEffect(() => {
-    const handleRunScene = async () => {
-      if (!workspace) return
-      const expr = exprGenerator.workspaceToExpression(workspace)
-      await execHelper(
-        expr,
-        {
-          scene: scene.current,
-          variables: varEnv.current,
-          functions: funcEnv.current,
-          runState: runState
-        },
-        setIsRunning
-      )
-    }
-
-    emitter.on('runScene', handleRunScene)
-    return () => emitter.off('runScene', handleRunScene)
-  }, [
-    scene,
-    workspace,
-    emitter,
-    varEnv,
-    funcEnv,
-    runState,
-    isRunning,
-    setIsRunning
   ])
 
   return <Canvas ref={canvas} camera={camera} scene={scene.current} />

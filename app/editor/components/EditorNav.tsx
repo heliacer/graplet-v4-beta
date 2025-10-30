@@ -21,7 +21,6 @@ import {
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Logo from '@/app/ui/logo'
-import { useTrigger } from '../lib/TriggerContext'
 import { useEditor } from '../lib/EditorContext'
 import { serialization } from 'blockly'
 import { useRef, useState } from 'react'
@@ -31,6 +30,8 @@ import { WorkspaceSvg } from 'blockly'
 import { useObjectActions } from '../lib/hooks/useObjectActions'
 import { applyProps, serializeObject } from '../lib/utils/sobject3d'
 import { Scene } from 'three'
+import { exprGenerator } from '../lib/blockly/engine/generator'
+import { execute } from '../lib/utils/blockly'
 
 /** @todo needs update */
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
@@ -42,8 +43,7 @@ function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
 
 export default function EditorNav() {
   const { data: session } = useSession()
-  const emitter = useTrigger()
-  const { workspace, runState, isRunning, scene } = useEditor()
+  const { workspace, runState, isRunning, scene, varEnv, funcEnv, setIsRunning } = useEditor()
   const { clearScene, addObject, loadDefaultScene } = useObjectActions()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
@@ -51,10 +51,24 @@ export default function EditorNav() {
 
   function togglePaused() {
     setIsPaused((prev) => {
-      const newVal = !prev
-      runState.current.shouldPause = newVal
-      return newVal
+      runState.current.shouldPause = !prev
+      return !prev
     })
+  }
+
+  async function handleRun() {
+    if (!workspace) return
+    const expr = exprGenerator.workspaceToExpression(workspace)
+    await execute(
+      expr,
+      {
+        scene: scene.current,
+        variables: varEnv.current,
+        functions: funcEnv.current,
+        runState: runState
+      },
+      setIsRunning
+    )
   }
 
   function handleStop() {
@@ -179,7 +193,7 @@ export default function EditorNav() {
       <div className="w-full h-full flex items-center justify-center">
         <div className="flex gap-1">
           <button
-            onClick={() => emitter.emit('runScene')}
+            onClick={handleRun}
             title="run"
             className={clsx(
               'p-1 rounded',
