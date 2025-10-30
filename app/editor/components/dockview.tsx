@@ -35,7 +35,7 @@ export default function Dockview() {
       initialWidth: 10,
       params: {
         Icon: <Airplay size={16} />
-      },
+      }
     })
 
     api.addPanel({
@@ -80,7 +80,6 @@ export default function Dockview() {
       },
       position: { referencePanel: codePanel, direction: 'left' }
     })
-
   }
 
   return (

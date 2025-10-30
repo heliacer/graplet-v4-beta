@@ -43,7 +43,15 @@ function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
 
 export default function EditorNav() {
   const { data: session } = useSession()
-  const { workspace, runState, isRunning, scene, varEnv, funcEnv, setIsRunning } = useEditor()
+  const {
+    workspace,
+    runState,
+    isRunning,
+    scene,
+    varEnv,
+    funcEnv,
+    setIsRunning
+  } = useEditor()
   const { clearScene, addObject, loadDefaultScene } = useObjectActions()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 

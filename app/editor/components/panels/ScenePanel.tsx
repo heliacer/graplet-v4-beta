@@ -16,7 +16,7 @@ export default function ScenePanel() {
     shouldWorkspaceLoad,
     shouldSceneLoad,
     setShouldWorkspaceLoad,
-    setShouldSceneLoad,
+    setShouldSceneLoad
   } = useEditor()
   const { addObject, newSprite, loadDefaultScene } = useObjectActions()
 
