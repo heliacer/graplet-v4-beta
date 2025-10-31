@@ -4,7 +4,7 @@ import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
 import { ObjectDropdown } from '../ObjectDropdown'
-import { IconT, Object3DIcon } from '../../lib/utils/icons'
+import { IconT, ItemIcon } from '../../lib/utils/icons'
 
 function ObjectListItem({ object }: { object: Object3D }) {
   const { currentObject, setCurrentObject } = useEditor()
@@ -27,7 +27,7 @@ function ObjectListItem({ object }: { object: Object3D }) {
             : 'hover:border-zinc-700 border-transparent'
         )}
       >
-        <Object3DIcon size={16} iconType={object.type as IconT} />
+        <ItemIcon size={16} iconType={object.type as IconT} />
         <p className="text-sm">{object.name}</p>
         <span className="text-zinc-400 text-sm ml-auto">{object.id}</span>
       </div>

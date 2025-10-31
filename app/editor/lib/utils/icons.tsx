@@ -1,15 +1,27 @@
 import {
+  Airplay,
   Box,
   Camera,
   Component,
   FileText,
+  Folder,
   Lightbulb,
   LucideIcon,
+  PenTool,
+  Puzzle,
   SquareSquare,
-  Sun
+  Sun,
+  Wrench
 } from 'lucide-react'
 
 export type IconT =
+  | 'Puzzle'
+  | 'Airplay'
+  | 'PenTool'
+  | 'Folder'
+  | 'Wrench'
+
+  /* Special Mappings for Object3D type */
   | 'Group'
   | 'Mesh'
   | 'DirectionalLight'
@@ -19,6 +31,13 @@ export type IconT =
   | 'TextFile'
 
 const ItemIcons: Record<IconT, LucideIcon> = {
+  Puzzle,
+  Airplay,
+  PenTool,
+  Folder,
+  Wrench,
+
+  /* Special Mappings for Object3D type */
   Mesh: Box,
   Group: Component,
   AmbientLight: Sun,
@@ -28,7 +47,7 @@ const ItemIcons: Record<IconT, LucideIcon> = {
   TextFile: FileText
 }
 
-export function Object3DIcon({
+export function ItemIcon({
   iconType,
   ...props
 }: { iconType: IconT } & React.ComponentProps<LucideIcon>) {

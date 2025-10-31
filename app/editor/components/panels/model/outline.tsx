@@ -1,5 +1,5 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
-import { IconT, Object3DIcon } from '@/app/editor/lib/utils/icons'
+import { IconT, ItemIcon } from '@/app/editor/lib/utils/icons'
 import {
   dragAndDropFeature,
   hotkeysCoreFeature,
@@ -31,7 +31,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
   const tree = useTree<TreeItem>({
     rootItemId: currentObject.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
-    isItemFolder: (item) => item.getItemData().type === 'Group',
+    isItemFolder: (item) => item.getItemData().type === 'Box',
     onRename: (item, value) => {
       console.log(value)
       const id = item.getItemData().id
@@ -63,7 +63,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
       getItem: (itemId) => {
         const object = scene.current.getObjectById(Number(itemId))
         if (!object)
-          return { id: 0, name: '', type: 'Mesh', hasChildren: false }
+          return { id: 0, name: '', type: 'Component', hasChildren: false }
         return {
           id: object.id,
           name: object.name || 'Unnamed',
@@ -107,7 +107,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
                   style={{ marginLeft: `${item.getItemMeta().level * 8}px` }}
                 />
                 <div className="flex items-center w-full px-1 gap-1 rounded-l border border-teal-600 bg-zinc-800">
-                  <Object3DIcon size={14} iconType={item.getItemData().type} />
+                  <ItemIcon size={14} iconType={item.getItemData().type} />
                   <input
                     className="outline-0"
                     {...item.getRenameInputProps()}
@@ -139,10 +139,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
                         : 'hover:border-zinc-700 border-transparent'
                     )}
                   >
-                    <Object3DIcon
-                      size={14}
-                      iconType={item.getItemData().type}
-                    />
+                    <ItemIcon size={14} iconType={item.getItemData().type} />
                     {item.getItemName()}
                     {item.isFolder() ? (
                       item.isExpanded() ? (

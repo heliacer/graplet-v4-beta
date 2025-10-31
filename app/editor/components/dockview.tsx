@@ -1,16 +1,19 @@
 'use client'
 
-import { DockviewReact, DockviewReadyEvent } from 'dockview-react'
+import {
+  DockviewReact,
+  DockviewReadyEvent,
+  Orientation,
+  SerializedDockview
+} from 'dockview-react'
 import '../styles/base.css'
 import '../styles/dvtheme.css'
-import { Airplay, Folder, PenTool, Puzzle, Wrench } from 'lucide-react'
 import { LeftControls, RightControls } from './controls'
 import TabHeader from './tabHeader'
 
 // Panels
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
-// import AssetsPanel from './panels/AssetsPanel'
 import ExplorerPanel from './panels/ExplorerPanel'
 import ModelPanel from './panels/model/Panel'
 import CodePanel from './panels/CodePanel'
@@ -25,61 +28,104 @@ const panelComponents = {
   properties: PropertiesPanel
 }
 
+const jsonLayout: SerializedDockview = {
+  grid: {
+    root: {
+      type: 'branch',
+      data: [
+        {
+          type: 'leaf',
+          data: {
+            views: ['scene'],
+            activeView: 'scene',
+            id: '2'
+          },
+          size: 3
+        },
+        {
+          type: 'leaf',
+          data: {
+            views: ['code', 'model'],
+            activeView: 'code',
+            id: '1'
+          },
+          size: 4
+        },
+        {
+          type: 'branch',
+          data: [
+            {
+              type: 'leaf',
+              data: {
+                views: ['explorer'],
+                activeView: 'explorer',
+                id: '3'
+              },
+              size: 1
+            },
+            {
+              type: 'leaf',
+              data: {
+                views: ['properties'],
+                activeView: 'properties',
+                id: '4'
+              },
+              size: 1
+            }
+          ],
+          size: 1
+        }
+      ],
+      size: 1
+    },
+    width: 1,
+    height: 1,
+    orientation: Orientation.HORIZONTAL
+  },
+  panels: {
+    code: {
+      id: 'code',
+      contentComponent: 'code',
+      tabComponent: 'props.defaultTabComponent',
+      params: { iconType: 'Puzzle' },
+      title: 'Code'
+    },
+    model: {
+      id: 'model',
+      contentComponent: 'model',
+      tabComponent: 'props.defaultTabComponent',
+      params: { iconType: 'PenTool' },
+      title: 'Model'
+    },
+    scene: {
+      id: 'scene',
+      contentComponent: 'scene',
+      tabComponent: 'props.defaultTabComponent',
+      params: { iconType: 'Airplay' },
+      title: 'Scene'
+    },
+    explorer: {
+      id: 'explorer',
+      contentComponent: 'explorer',
+      tabComponent: 'props.defaultTabComponent',
+      params: { iconType: 'Folder' },
+      title: 'Explorer'
+    },
+    properties: {
+      id: 'properties',
+      contentComponent: 'properties',
+      tabComponent: 'props.defaultTabComponent',
+      params: { iconType: 'Wrench' },
+      title: 'Properties'
+    }
+  },
+  activeGroup: '1'
+}
+
 export default function Dockview() {
   function mount(event: DockviewReadyEvent) {
     const { api } = event
-    const codePanel = api.addPanel({
-      id: 'scene',
-      title: 'Scene',
-      component: 'scene',
-      initialWidth: 10,
-      params: {
-        Icon: <Airplay size={16} />
-      }
-    })
-
-    api.addPanel({
-      id: 'model',
-      title: 'Model (Deprecated)',
-      component: 'model',
-      params: {
-        Icon: <PenTool size={16} />
-      }
-    })
-
-    const explorerPanel = api.addPanel({
-      id: 'explorer',
-      component: 'explorer',
-      title: 'Explorer',
-      initialWidth: 1250,
-      params: {
-        Icon: <Folder size={16} />
-      },
-      position: { direction: 'right' }
-    })
-
-    api.addPanel({
-      id: 'properties',
-      title: 'Properties',
-      component: 'properties',
-      params: {
-        Icon: <Wrench size={16} />
-      },
-      position: { referencePanel: explorerPanel, direction: 'below' }
-    })
-
-    codePanel.focus()
-
-    api.addPanel({
-      id: 'code',
-      initialWidth: 1000, // not working
-      title: 'Code',
-      component: 'code',
-      params: {
-        Icon: <Puzzle size={16} />
-      },
-      position: { referencePanel: codePanel, direction: 'left' }
-    })
+    api.fromJSON(jsonLayout)
   }
 
   return (
