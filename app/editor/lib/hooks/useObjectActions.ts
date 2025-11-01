@@ -4,7 +4,6 @@ import { blocklyObjectRegistry } from '../blockly/blocks'
 import { ProjectData, SGroup, SMesh, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
 import { serialization } from 'blockly'
-import { useEffect } from 'react'
 
 export function useObjectActions() {
   const {
@@ -12,34 +11,9 @@ export function useObjectActions() {
     canvas,
     setCamera,
     workspace,
-    shouldLoad,
-    setShouldLoad,
     setCurrentObject,
     setObjectVersion
   } = useEditor()
-
-
-  /** Project Loader */
-  useEffect(() => {
-    if (
-      workspace &&
-      shouldLoad &&
-      scene.current.children.length === 0 &&
-      workspace.getTopBlocks().length === 0
-    ) {
-      const data = localStorage.getItem('projectData')
-      if (data) {
-        loadProjectData(data)
-      } else {
-        /**
-         * @todo maybe add default blocks
-         * @todo add tutorial floating panel
-         */
-        loadDefaultScene()
-        setShouldLoad(false)
-      }
-    }
-  }, [loadDefaultScene, workspace])
 
   /**
    * Adds an object to the blockly object registry
@@ -226,7 +200,7 @@ export function useObjectActions() {
     target.remove(object)
 
     /** If it's a top level sprite, remove it */
-    if ((target = scene.current)) {
+    if (target === scene.current) {
       const next = scene.current.children.at(-1)
       console.log(next)
       setCurrentObject((prev) => (prev?.id === object.id ? next || null : prev))
