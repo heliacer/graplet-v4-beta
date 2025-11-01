@@ -17,7 +17,7 @@ interface EditorContextType {
   funcEnv: RefObject<FuncEnv>
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
-  camera: PerspectiveCamera | OrthographicCamera | undefined
+  camera?: PerspectiveCamera | OrthographicCamera
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement | null>
 
@@ -27,7 +27,7 @@ interface EditorContextType {
   isRunning: boolean
   objectVersion: number
   shouldLoad: boolean
-  setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | undefined>
+  setCamera: Dispatch<PerspectiveCamera | OrthographicCamera>
   setShouldLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
