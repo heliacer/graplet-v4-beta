@@ -20,15 +20,13 @@ export type IconT =
   | 'PenTool'
   | 'Folder'
   | 'Wrench'
-
-  /* Special Mappings for Object3D type */
-  | 'Group'
-  | 'Mesh'
-  | 'DirectionalLight'
-  | 'AmbientLight'
-  | 'PerspectiveCamera'
-  | 'OrthographicCamera'
-  | 'TextFile'
+  | 'Box'
+  | 'Component'
+  | 'Sun'
+  | 'Lightbulb'
+  | 'Camera'
+  | 'SquareSquare'
+  | 'FileText'
 
 const ItemIcons: Record<IconT, LucideIcon> = {
   Puzzle,
@@ -36,15 +34,13 @@ const ItemIcons: Record<IconT, LucideIcon> = {
   PenTool,
   Folder,
   Wrench,
-
-  /* Special Mappings for Object3D type */
-  Mesh: Box,
-  Group: Component,
-  AmbientLight: Sun,
-  DirectionalLight: Lightbulb,
-  PerspectiveCamera: Camera,
-  OrthographicCamera: SquareSquare,
-  TextFile: FileText
+  Box,
+  Component,
+  Sun,
+  Lightbulb,
+  Camera,
+  SquareSquare,
+  FileText
 }
 
 export function ItemIcon({
@@ -53,4 +49,16 @@ export function ItemIcon({
 }: { iconType: IconT } & React.ComponentProps<LucideIcon>) {
   const Icon = ItemIcons[iconType]
   return <Icon {...props} />
+}
+
+export function getIconT(type: string): IconT{
+  switch (type){
+    case 'Group': return 'Component'
+    case 'Mesh': return 'Box'
+    case 'AmbientLight': return 'Sun'
+    case 'DirectionalLight': return 'Lightbulb'
+    case 'PerspecitveCamera': return 'Camera'
+    case 'OrthographicCamera': return 'SquareSquare'
+    default: return 'FileText'
+  }
 }
