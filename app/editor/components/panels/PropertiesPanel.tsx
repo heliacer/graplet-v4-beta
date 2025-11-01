@@ -31,8 +31,7 @@ export default function PropertiesPanel() {
     if (currentObject instanceof PerspectiveCamera) setCamP(currentObject)
   }
 
-  if (!currentObject)
-    return <div className="p-1.5 italic">Select an object</div>
+  if (!currentObject) return
 
   return (
     <div className="p-1.5 flex flex-col gap-2 text-sm">

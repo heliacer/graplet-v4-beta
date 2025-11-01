@@ -52,6 +52,15 @@ export default function ExplorerPanel() {
         <br />
       </div>
       <div className="flex gap-2 absolute bottom-3 left-2">
+        <ObjectDropdown
+          buttonStyle={() =>
+            clsx(
+              'flex items-center gap-1 px-1',
+              'border rounded-md text-sm bg-zinc-800 border-zinc-600 cursor-pointer'
+            )
+          }
+          side="top"
+        />
         <button
           onClick={newSprite}
           className={clsx(
@@ -62,15 +71,6 @@ export default function ExplorerPanel() {
           <WandSparkles size={14} />
           <p className="text-sm">Add Sprite</p>
         </button>
-        <ObjectDropdown
-          buttonStyle={() =>
-            clsx(
-              'flex items-center gap-1 px-1',
-              'border rounded-md bg-zinc-800 border-zinc-600 cursor-pointer'
-            )
-          }
-          side="top"
-        />
       </div>
     </>
   )

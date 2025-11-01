@@ -31,7 +31,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
   const tree = useTree<TreeItem>({
     rootItemId: currentObject.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
-    isItemFolder: (item) => item.getItemData().type === 'Box',
+    isItemFolder: (item) => item.getItemData().type === 'Group',
     onRename: (item, value) => {
       console.log(value)
       const id = item.getItemData().id
@@ -63,7 +63,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
       getItem: (itemId) => {
         const object = scene.current.getObjectById(Number(itemId))
         if (!object)
-          return { id: 0, name: '', type: 'Component', hasChildren: false }
+          return { id: 0, name: '', type: 'Mesh', hasChildren: false }
         return {
           id: object.id,
           name: object.name || 'Unnamed',

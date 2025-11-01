@@ -15,7 +15,7 @@ export default function Ribbon() {
         target={currentObject}
         buttonStyle={(isOpen, disabled) =>
           clsx(
-            'flex items-center gap-1 border border-transparent rounded-md px-1',
+            'flex items-center gap-1 border border-transparent rounded-md text-sm px-1',
             disabled
               ? 'text-zinc-400'
               : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
@@ -25,12 +25,12 @@ export default function Ribbon() {
         disabled={currentObject.type !== 'Group'}
         folderSide="top"
       />
-      <DropdownMenu className="text-sm">
+      <DropdownMenu>
         <DropdownButton
           disabled={currentObject.type !== 'Group'}
           className={(isOpen, disabled) =>
             clsx(
-              'flex items-center gap-1 border border-transparent rounded-md px-1',
+              'flex items-center gap-1 border border-transparent rounded-md text-sm px-1',
               disabled
                 ? 'text-zinc-400'
                 : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
@@ -43,12 +43,12 @@ export default function Ribbon() {
           <ChevronDown size={14} />
         </DropdownButton>
       </DropdownMenu>
-      <DropdownMenu className="text-sm">
+      <DropdownMenu>
         <DropdownButton
           disabled={currentObject.type !== 'Group'}
           className={(isOpen, disabled) =>
             clsx(
-              'flex items-center gap-1 border border-transparent rounded-md px-1',
+              'flex items-center gap-1 border border-transparent rounded-md text-sm px-1',
               disabled
                 ? 'text-zinc-400'
                 : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',

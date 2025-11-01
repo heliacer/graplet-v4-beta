@@ -36,20 +36,20 @@ const jsonLayout: SerializedDockview = {
         {
           type: 'leaf',
           data: {
-            views: ['scene'],
-            activeView: 'scene',
-            id: '2'
-          },
-          size: 3
-        },
-        {
-          type: 'leaf',
-          data: {
             views: ['code', 'model'],
             activeView: 'code',
             id: '1'
           },
           size: 4
+        },
+        {
+          type: 'leaf',
+          data: {
+            views: ['scene'],
+            activeView: 'scene',
+            id: '2'
+          },
+          size: 3
         },
         {
           type: 'branch',

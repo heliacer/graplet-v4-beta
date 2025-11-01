@@ -95,7 +95,7 @@ export function DropdownButton({
   children,
   className = (isOpen, disabled) =>
     clsx(
-      'flex items-center gap-1 border border-transparent rounded-lg px-1',
+      'flex items-center gap-1 border border-transparent rounded-md text-sm px-1',
       disabled
         ? 'text-zinc-400'
         : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
@@ -144,7 +144,7 @@ export function DropdownContent({
   return (
     <div
       className={clsx(
-        'absolute rounded-lg pt-1 pb-1 border border-zinc-700 bg-zinc-800 z-[999]',
+        'absolute rounded-lg text-sm py-1 border border-zinc-700 bg-zinc-800 z-[999]',
         alignmentStyles[align],
         sideStyles[side],
         !isOpen && 'hidden',
@@ -200,7 +200,7 @@ export function DropdownOption({
 }
 
 export function DropdownSeparator({ className }: { className?: string }) {
-  return <hr className={clsx('my-0.5 border-zinc-600', className)} />
+  return <hr className={clsx('my-1 border-zinc-600', className)} />
 }
 
 interface DropdownFolderProps {
@@ -262,7 +262,7 @@ export function DropdownFolder({
       </button>
       <div
         className={clsx(
-          `absolute min-w-[160px] rounded-lg border pt-1 pb-1 border-zinc-700 bg-zinc-800`,
+          `absolute min-w-[160px] rounded-lg border py-1 border-zinc-700 bg-zinc-800`,
           'shadow-lg',
           contentAlignment,
           sideAlignment,

@@ -51,7 +51,7 @@ export function ObjectDropdown({
   ]
 
   return (
-    <DropdownMenu className="text-sm">
+    <DropdownMenu>
       <DropdownButton className={buttonStyle} disabled={disabled}>
         <DiamondPlus size={14} />
         <p>Add</p>

@@ -258,7 +258,14 @@ export default function EditorNav() {
               <p>{session?.user?.name}</p>
               <ChevronDown size={16} />
             </DropdownButton>
-            <DropdownContent className="min-w-44">
+            <DropdownContent className='min-w-38'>
+              <DropdownOption asChild>
+                <Link className="flex items-center gap-2" href="/mystuff">
+                  <Folder size={14} />
+                  <p>My Stuff</p>
+                </Link>
+              </DropdownOption>
+              <DropdownSeparator/>
               <DropdownOption asChild>
                 <Link
                   className="flex items-center gap-2"
@@ -269,15 +276,9 @@ export default function EditorNav() {
                 </Link>
               </DropdownOption>
               <DropdownOption asChild>
-                <Link className="flex items-center gap-2" href="/mystuff">
-                  <Folder size={14} />
-                  <p>My Stuff</p>
-                </Link>
-              </DropdownOption>
-              <DropdownOption asChild>
                 <Link className="flex items-center gap-2" href="/account">
                   <Settings2 size={14} />
-                  <p>Account Settings</p>
+                  <p>Account</p>
                 </Link>
               </DropdownOption>
               <DropdownSeparator />
