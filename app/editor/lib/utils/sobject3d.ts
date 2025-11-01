@@ -141,7 +141,6 @@ function createGeometry(geometry: SGeometry): BufferGeometry {
 
 function createMaterial(material: SMaterial): Material {
   const { type, color } = material
-  console.log(color)
   switch (type) {
     case 'MeshBasicMaterial': {
       return new MeshBasicMaterial({ color })

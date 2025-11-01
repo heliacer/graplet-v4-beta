@@ -4,7 +4,7 @@ import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
 import { ObjectDropdown } from '../ObjectDropdown'
-import { getIconT, IconT, ItemIcon } from '../../lib/utils/icons'
+import { getIconT, ItemIcon } from '../../lib/utils/icons'
 
 function ObjectListItem({ object }: { object: Object3D }) {
   const { currentObject, setCurrentObject } = useEditor()

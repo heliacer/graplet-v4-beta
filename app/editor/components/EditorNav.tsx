@@ -33,7 +33,6 @@ import { Scene } from 'three'
 import { exprGenerator } from '../lib/blockly/engine/generator'
 import { execute } from '../lib/utils/blockly'
 
-/** @todo needs update */
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {
     workspace: serialization.workspaces.save(workspace),
@@ -52,7 +51,7 @@ export default function EditorNav() {
     funcEnv,
     setIsRunning
   } = useEditor()
-  const { clearScene, addObject, loadDefaultScene } = useObjectActions()
+  const { loadProjectData, loadDefaultScene } = useObjectActions()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -109,9 +108,6 @@ export default function EditorNav() {
     fileInputRef.current?.click()
   }
 
-  /**
-   * @todo needs heavy refactoring (same methods used in scene panel)
-   */
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -122,39 +118,10 @@ export default function EditorNav() {
 
     const reader = new FileReader()
     reader.onload = (event) => {
-      try {
-        if (!workspace) throw Error('Missing workspace')
-
-        const projectData = JSON.parse(
-          event.target?.result as string
-        ) as ProjectData
-
-        clearScene()
-
-        // load scene
-        if (projectData.scene) {
-          const { children } = projectData.scene
-          applyProps(scene.current, projectData.scene)
-          if (children) {
-            for (const sobject of children) {
-              addObject(sobject)
-            }
-          }
-          console.info('Loaded scene state: ', projectData.scene)
-        } else {
-          console.info('Starting with an empty scene.')
-        }
-
-        // load workspace
-        serialization.workspaces.load(projectData.workspace, workspace)
-        console.info('Loaded workspace state: ', projectData.workspace)
-      } catch (err) {
-        console.error('Invalid JSON file', err)
-        alert('Could not load JSON file.')
-      }
+      loadProjectData(event.target?.result as string)
+      reader.readAsText(file)
+      e.target.value = ''
     }
-    reader.readAsText(file)
-    e.target.value = ''
   }
 
   function handleStartFresh() {
@@ -258,14 +225,14 @@ export default function EditorNav() {
               <p>{session?.user?.name}</p>
               <ChevronDown size={16} />
             </DropdownButton>
-            <DropdownContent className='min-w-38'>
+            <DropdownContent className="min-w-38">
               <DropdownOption asChild>
                 <Link className="flex items-center gap-2" href="/mystuff">
                   <Folder size={14} />
                   <p>My Stuff</p>
                 </Link>
               </DropdownOption>
-              <DropdownSeparator/>
+              <DropdownSeparator />
               <DropdownOption asChild>
                 <Link
                   className="flex items-center gap-2"

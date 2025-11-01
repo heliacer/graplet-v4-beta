@@ -1,8 +1,9 @@
 import { useEditor } from '../EditorContext'
 import { Object3D, OrthographicCamera, PerspectiveCamera } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
-import { SGroup, SMesh, SObject3D } from '../types'
+import { ProjectData, SGroup, SMesh, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
+import { serialization } from 'blockly'
 
 export function useObjectActions() {
   const {
@@ -170,6 +171,31 @@ export function useObjectActions() {
     })
   }
 
+  function loadProjectData(data: string) {
+    try {
+      const project = JSON.parse(data) as ProjectData
+      clearScene()
+
+      /** @todo should be stricter at some point */
+      if (project.scene) {
+        const { children } = project.scene
+        applyProps(scene.current, project.scene)
+        if (children) {
+          for (const sobject of children) {
+            addObject(sobject)
+          }
+        }
+        console.info('Loaded scene state: ', project.scene)
+
+        if (!workspace) throw Error('Missing workspace.')
+        serialization.workspaces.load(project.workspace, workspace)
+        console.info('Loaded workspace state: ', project.workspace)
+      }
+    } catch (err) {
+      console.error('Could not parse JSON data.', err)
+    }
+  }
+
   function deleteObject(object: Object3D, target: Object3D = scene.current) {
     target.remove(object)
 
@@ -216,6 +242,7 @@ export function useObjectActions() {
     deleteObject,
     duplicateObject,
     clearScene,
+    loadProjectData,
     setCamO,
     setCamP
   }

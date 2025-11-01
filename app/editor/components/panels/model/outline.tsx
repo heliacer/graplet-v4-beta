@@ -1,5 +1,5 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
-import { IconT, ItemIcon } from '@/app/editor/lib/utils/icons'
+import { getIconT, IconT, ItemIcon } from '@/app/editor/lib/utils/icons'
 import {
   dragAndDropFeature,
   hotkeysCoreFeature,
@@ -67,7 +67,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
         return {
           id: object.id,
           name: object.name || 'Unnamed',
-          type: object.type as IconT,
+          type: getIconT(object.type),
           hasChildren: object.children.length > 0
         }
       },

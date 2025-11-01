@@ -26,11 +26,9 @@ interface EditorContextType {
   currentObject: Object3D | null
   isRunning: boolean
   objectVersion: number
-  shouldWorkspaceLoad: boolean
-  shouldSceneLoad: boolean
+  shouldLoad: boolean
   setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | undefined>
-  setShouldWorkspaceLoad: Dispatch<SetStateAction<boolean>>
-  setShouldSceneLoad: Dispatch<SetStateAction<boolean>>
+  setShouldLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
   setCurrentObject: Dispatch<SetStateAction<Object3D | null>>
@@ -63,8 +61,7 @@ export function EditorProvider({
   const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
   const [isRunning, setIsRunning] = useState<boolean>(false)
   const [objectVersion, setObjectVersion] = useState(0)
-  const [shouldWorkspaceLoad, setShouldWorkspaceLoad] = useState(true)
-  const [shouldSceneLoad, setShouldSceneLoad] = useState(true)
+  const [shouldLoad, setShouldLoad] = useState(true)
 
   return (
     <EditorContext.Provider
@@ -81,11 +78,9 @@ export function EditorProvider({
         currentObject,
         isRunning,
         objectVersion,
-        shouldWorkspaceLoad,
-        shouldSceneLoad,
+        shouldLoad,
         setCamera,
-        setShouldWorkspaceLoad,
-        setShouldSceneLoad,
+        setShouldLoad,
         setObjectVersion,
         setWorkspace,
         setCurrentObject,

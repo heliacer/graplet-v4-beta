@@ -51,14 +51,21 @@ export function ItemIcon({
   return <Icon {...props} />
 }
 
-export function getIconT(type: string): IconT{
-  switch (type){
-    case 'Group': return 'Component'
-    case 'Mesh': return 'Box'
-    case 'AmbientLight': return 'Sun'
-    case 'DirectionalLight': return 'Lightbulb'
-    case 'PerspecitveCamera': return 'Camera'
-    case 'OrthographicCamera': return 'SquareSquare'
-    default: return 'FileText'
+export function getIconT(type: string): IconT {
+  switch (type) {
+    case 'Group':
+      return 'Component'
+    case 'Mesh':
+      return 'Box'
+    case 'AmbientLight':
+      return 'Sun'
+    case 'DirectionalLight':
+      return 'Lightbulb'
+    case 'PerspectiveCamera':
+      return 'Camera'
+    case 'OrthographicCamera':
+      return 'SquareSquare'
+    default:
+      return 'FileText'
   }
 }
