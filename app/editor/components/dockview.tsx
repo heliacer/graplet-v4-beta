@@ -8,8 +8,8 @@ import {
 } from 'dockview-react'
 import '../styles/base.css'
 import '../styles/dvtheme.css'
-import { LeftControls, RightControls } from './controls'
-import TabHeader from './tabHeader'
+import { LeftControls, RightControls } from './ui/tabControls'
+import TabHeader from './ui/tabHeader'
 
 // Panels
 import DebugPanel from './panels/DebugPanel'
@@ -122,7 +122,7 @@ const jsonLayout: SerializedDockview = {
   activeGroup: '1'
 }
 
-export default function Dockview() {
+export default function GrapletDockview() {
   function mount(event: DockviewReadyEvent) {
     const { api } = event
     api.fromJSON(jsonLayout)

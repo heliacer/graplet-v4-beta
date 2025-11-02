@@ -31,7 +31,7 @@ function Tree({ currentObject }: { currentObject: Object3D }) {
   const tree = useTree<TreeItem>({
     rootItemId: currentObject.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
-    isItemFolder: (item) => item.getItemData().type === 'Box',
+    isItemFolder: (item) => item.getItemData().type === 'Component', // this is just a workaround
     onRename: (item, value) => {
       console.log(value)
       const id = item.getItemData().id

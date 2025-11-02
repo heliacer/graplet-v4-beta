@@ -3,7 +3,7 @@ import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
-import { ObjectDropdown } from '../ObjectDropdown'
+import { ObjectDropdown } from '../ui/ObjectDropdown'
 import { getIconT, ItemIcon } from '../../lib/utils/icons'
 
 function ObjectListItem({ object }: { object: Object3D }) {

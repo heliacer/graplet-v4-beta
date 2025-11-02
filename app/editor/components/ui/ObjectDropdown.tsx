@@ -13,8 +13,8 @@ import {
   DiamondPlus,
   Lightbulb
 } from 'lucide-react'
-import { useObjectActions } from '../lib/hooks/useObjectActions'
-import { SGeometryT } from '../lib/types'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
+import { SGeometryT } from '../../lib/types'
 import { Object3D } from 'three'
 
 interface ObjectDropdownProps {

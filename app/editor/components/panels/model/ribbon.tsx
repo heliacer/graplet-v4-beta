@@ -2,7 +2,7 @@ import { useEditor } from '@/app/editor/lib/EditorContext'
 import { DropdownButton, DropdownMenu } from '@/app/ui/components/Dropdown'
 import clsx from 'clsx'
 import { ChevronDown, Hammer, ScanEye } from 'lucide-react'
-import { ObjectDropdown } from '../../ObjectDropdown'
+import { ObjectDropdown } from '../../ui/ObjectDropdown'
 
 export default function Ribbon() {
   const { currentObject } = useEditor()
