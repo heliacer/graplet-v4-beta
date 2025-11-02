@@ -1,6 +1,6 @@
 'use client'
 
-import GrapletDockview from './components/Dockview'
+import GrapletDockview from './components/dockview'
 import EditorHeader from './components/Header'
 import { EditorProvider } from './lib/EditorContext'
 
