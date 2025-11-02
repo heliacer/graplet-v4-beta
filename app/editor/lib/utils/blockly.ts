@@ -27,11 +27,11 @@ export async function execute(
   setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   setIsRunning(true)
-  console.log('%cRunning...', 'color: lightseagreen;')
+  console.log('%cRunning...', 'color: aquamarine;')
   console.time('Done in')
   try {
     const result = await evaluateExpression(expr, state)
-    console.log('%coutput:', 'color: cornflowerblue;', result)
+    console.log('%coutput:', 'color: deepskyblue;', result)
   } catch (err) {
     console.error(err)
   } finally {

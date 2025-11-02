@@ -49,7 +49,7 @@ export function useObjectActions() {
     const object = createObject(props)
     applyProps(object, props)
     target.add(object)
-    console.info(`${object.name} was added to ${target.name || target.type}`)
+    console.info(`%c${object.name} was added to ${target.name || target.type}`, 'color: aquamarine;')
 
     /** Add children */
     if (props.children) {
@@ -157,11 +157,11 @@ export function useObjectActions() {
             addObject(sobject)
           }
         }
-        console.info('Loaded scene state: ', project.scene)
+        console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
 
         if (!workspace) throw Error('Missing workspace.')
         serialization.workspaces.load(project.workspace, workspace)
-        console.info('Loaded workspace state: ', project.workspace)
+        console.info('%cLoaded workspace state: ', 'color: salmon;', project.workspace)
       }
     } catch (err) {
       console.error('Could not parse JSON data.', err)
