@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import { Layers2, Orbit, SwitchCamera, Trash } from 'lucide-react'
-import { Camera, OrthographicCamera, PerspectiveCamera } from 'three'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { Layers2, SwitchCamera, Trash } from 'lucide-react'
+import { OrthographicCamera, PerspectiveCamera } from 'three'
 
 /** @todo make this better, this sucks */
 export default function PropertiesPanel() {
@@ -12,7 +11,6 @@ export default function PropertiesPanel() {
     objectVersion,
     setObjectVersion,
     setCamera,
-    orbitControls
   } = useEditor()
   const { deleteObject, duplicateObject } = useObjectActions()
 
@@ -119,27 +117,14 @@ export default function PropertiesPanel() {
         </button>
         {(currentObject instanceof PerspectiveCamera ||
           currentObject instanceof OrthographicCamera) && (
-          <>
             <button
               className="flex wrap gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
-              onClick={() => {
-                setCamera(currentObject)
-              }}
+              onClick={() => setCamera(currentObject)}
             >
               <SwitchCamera size={14} />
               <p className="leading-0">Set</p>
             </button>
-            <button
-              className="flex wrap gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
-              onClick={() =>
-                (orbitControls.current = new OrbitControls(currentObject))
-              }
-            >
-              <Orbit size={14} />
-              <p className="leading-0">Attach</p>
-            </button>
-          </>
-        )}
+          )}
       </div>
     </div>
   )

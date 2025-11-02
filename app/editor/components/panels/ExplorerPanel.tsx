@@ -1,6 +1,4 @@
-import { WandSparkles } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
-import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Object3D } from 'three'
 import clsx from 'clsx'
 import { ObjectDropdown } from '../ui/ObjectDropdown'

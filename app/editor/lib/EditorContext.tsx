@@ -14,9 +14,7 @@ import {
   OrthographicCamera,
   PerspectiveCamera,
   Scene,
-  WebGLRenderer
 } from 'three'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 interface EditorContextType {
   // REFS
@@ -26,7 +24,6 @@ interface EditorContextType {
   scene: RefObject<Scene>
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement>
-  orbitControls: RefObject<OrbitControls | null>
 
   /** @todo should be a ref */
   camera: PerspectiveCamera | OrthographicCamera | null
@@ -58,7 +55,6 @@ export function EditorProvider({
   const funcEnv = useRef<FuncEnv>(new Map())
   const scene = useRef(new Scene())
   const modelScene = useRef(new Scene())
-  const orbitControls = useRef(null)
   const canvas = useRef<HTMLCanvasElement>(null!)
   const runState = useRef<RunState>({
     shouldRun: false,
@@ -86,7 +82,6 @@ export function EditorProvider({
         scene,
         camera,
         canvas,
-        orbitControls,
         modelScene,
         runState,
 
