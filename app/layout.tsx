@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './ui/globals.css'
 import { nunito } from './ui/fonts'
 import { SessionProvider } from 'next-auth/react'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: {
@@ -17,6 +18,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <SpeedInsights/>
       <body
         className={`${nunito.className} dark:bg-zinc-900 bg-zinc-100 text-zinc-800 dark:text-zinc-200`}
       >
