@@ -56,7 +56,7 @@ export default function NavMenu() {
     fileInputRef.current?.click()
   }
 
-  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
@@ -64,12 +64,9 @@ export default function NavMenu() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      loadProjectData(event.target?.result as string)
-      reader.readAsText(file)
-      e.target.value = ''
-    }
+    const text = await file.text()
+    loadProjectData(text)
+    e.target.value = ''
   }
 
   function handleStartFresh() {

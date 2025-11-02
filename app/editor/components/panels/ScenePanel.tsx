@@ -1,36 +1,13 @@
-import { useEffect } from 'react'
 import { useEditor } from '../../lib/EditorContext'
-import { Canvas } from '@react-three/fiber'
-import { useObjectActions } from '../../lib/hooks/useObjectActions'
+import { IDockviewPanelProps } from 'dockview-react'
+import { useProjectLoader } from '../../lib/hooks/useProjectLoader'
+import { useRenderer } from '../../lib/hooks/useRenderer'
 
-export default function ScenePanel() {
-  const { scene, camera, canvas, workspace, shouldLoad, setShouldLoad } =
-    useEditor()
-  const { loadProjectData, loadDefaultScene } = useObjectActions()
+export default function ScenePanel(props: IDockviewPanelProps) {
+  const { canvas } = useEditor()
 
-  /** Project Loader */
-  useEffect(() => {
-    if (workspace && shouldLoad) {
-      setShouldLoad(false)
-      const data = localStorage.getItem('projectData')
-      if (data) {
-        loadProjectData(data)
-      } else {
-        /**
-         * @todo maybe add default blocks
-         * @todo add tutorial floating panel
-         */
-        loadDefaultScene()
-      }
-    }
-  }, [
-    loadDefaultScene,
-    workspace,
-    loadProjectData,
-    scene,
-    setShouldLoad,
-    shouldLoad
-  ])
+  useProjectLoader()
+  useRenderer(props.api)
 
-  return <Canvas ref={canvas} camera={camera} scene={scene.current} />
+  return <canvas ref={canvas} className="w-full h-full" />
 }

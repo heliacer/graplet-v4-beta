@@ -63,7 +63,6 @@ export interface SAmbientLight extends SBase {
 export interface SPerspectiveCamera extends SBase {
   type: 'PerspectiveCamera'
   fov?: number
-  aspect?: number
   near?: number
   far?: number
 }
@@ -71,10 +70,6 @@ export interface SPerspectiveCamera extends SBase {
 /** Serialized PerspectiveCamera */
 export interface SOrthographicCamera extends SBase {
   type: 'OrthographicCamera'
-  left?: number
-  right?: number
-  top?: number
-  bottom?: number
   near?: number
   far?: number
 }

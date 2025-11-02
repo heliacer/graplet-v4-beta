@@ -126,7 +126,8 @@ export function ObjectDropdown({
               addObject(
                 {
                   type: 'PerspectiveCamera',
-                  name: 'Perspective Camera'
+                  name: 'Perspective Camera',
+                  position: [0, 0, 10]
                 },
                 target
               )
@@ -139,7 +140,8 @@ export function ObjectDropdown({
               addObject(
                 {
                   type: 'OrthographicCamera',
-                  name: 'Orthographic Camera'
+                  name: 'Orthographic Camera',
+                  position: [0, 0, 10]
                 },
                 target
               )

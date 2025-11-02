@@ -1,5 +1,5 @@
 import { useEditor } from '../EditorContext'
-import { Object3D, OrthographicCamera, PerspectiveCamera } from 'three'
+import { Camera, Object3D } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
 import { ProjectData, SGroup, SMesh, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
@@ -8,9 +8,9 @@ import { serialization } from 'blockly'
 export function useObjectActions() {
   const {
     scene,
-    canvas,
-    setCamera,
+    currentObject,
     workspace,
+    setCamera,
     setCurrentObject,
     setObjectVersion
   } = useEditor()
@@ -59,8 +59,7 @@ export function useObjectActions() {
     }
 
     /** Apply camera if space is empty */
-    if (object instanceof PerspectiveCamera) setCamP(object)
-    if (object instanceof OrthographicCamera) setCamO(object)
+    if (object instanceof Camera) setCamera(object)
 
     /** If it's a top level sprite, set it as current */
     if (target === scene.current) {
@@ -70,33 +69,6 @@ export function useObjectActions() {
 
     setObjectVersion((prev) => prev + 1)
     return object
-  }
-
-  /**
-   * Sets a PerspectiveCamera as currently active Viewport camera
-   */
-  function setCamP(camera: PerspectiveCamera) {
-    if (!canvas.current) throw Error('No canvas')
-    camera.aspect = canvas.current.width / canvas.current.height
-    camera.updateProjectionMatrix()
-    setCamera(camera)
-  }
-
-  /**
-   * Sets an OrthographpicCamera as currently active viewport camera
-   */
-  function setCamO(camera: OrthographicCamera) {
-    if (!canvas.current) throw Error('No canvas')
-    const aspect = canvas.current.width / canvas.current.height
-    const zoom = camera?.zoom || 1
-    const halfH = 6 / zoom
-    const halfW = aspect * halfH
-    camera.left = -halfW
-    camera.right = halfW
-    camera.top = halfH
-    camera.bottom = -halfH
-    camera.updateProjectionMatrix()
-    setCamera(camera)
   }
 
   /**
@@ -196,22 +168,29 @@ export function useObjectActions() {
     }
   }
 
+  /** @todo should dispose of geometry & material after removing */
   function deleteObject(object: Object3D, target: Object3D = scene.current) {
     target.remove(object)
+    // disposeObject(object)
 
     /** If it's a top level sprite, remove it */
     if (target === scene.current) {
-      const next = scene.current.children.at(-1)
-      console.log(next)
-      setCurrentObject((prev) => (prev?.id === object.id ? next || null : prev))
       removeFromReg(object)
+
+      if (object === currentObject) {
+        if (object instanceof Camera) setCamera(null)
+        const next = scene.current.children.at(-1)
+        setCurrentObject(next || null)
+      }
     }
 
     setObjectVersion((prev) => prev + 1)
   }
 
+  /** @todo should clone geometry & material too, since those are shared by default */
   function duplicateObject(object: Object3D, target: Object3D = scene.current) {
     const clone = object.clone()
+    // clone.traverse(...)
     target.add(clone)
 
     /** Apply changes, so it's visually visible */
@@ -242,8 +221,6 @@ export function useObjectActions() {
     deleteObject,
     duplicateObject,
     clearScene,
-    loadProjectData,
-    setCamO,
-    setCamP
+    loadProjectData
   }
 }

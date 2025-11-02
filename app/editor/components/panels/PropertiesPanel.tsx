@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import { Layers2, SwitchCamera, Trash } from 'lucide-react'
-import { Camera, OrthographicCamera, PerspectiveCamera } from 'three'
+import { Layers2, Trash } from 'lucide-react'
+import { OrthographicCamera, PerspectiveCamera } from 'three'
 
 export default function PropertiesPanel() {
-  const { camera, currentObject, objectVersion, setObjectVersion } = useEditor()
-  const { deleteObject, duplicateObject, setCamO, setCamP } = useObjectActions()
+  const { currentObject, objectVersion, setObjectVersion, setCamera } =
+    useEditor()
+  const { deleteObject, duplicateObject } = useObjectActions()
 
   const [formData, setFormData] = useState({
     name: currentObject?.name || '',
@@ -25,11 +26,6 @@ export default function PropertiesPanel() {
       })
     }
   }, [currentObject, objectVersion])
-
-  function handleSetCamera() {
-    if (currentObject instanceof OrthographicCamera) setCamO(currentObject)
-    if (currentObject instanceof PerspectiveCamera) setCamP(currentObject)
-  }
 
   if (!currentObject) return
 
@@ -117,13 +113,15 @@ export default function PropertiesPanel() {
           <Layers2 size={14} />
           <p className="leading-0">Duplicate</p>
         </button>
-        {currentObject instanceof Camera && currentObject !== camera && (
+        {(currentObject instanceof PerspectiveCamera ||
+          currentObject instanceof OrthographicCamera) && (
           <button
             className="flex gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
-            onClick={handleSetCamera}
+            onClick={() => {
+              setCamera(currentObject)
+            }}
           >
-            <SwitchCamera size={14} />
-            <p className="leading-0">Switch</p>
+            <p className="leading-0">Set Active</p>
           </button>
         )}
       </div>

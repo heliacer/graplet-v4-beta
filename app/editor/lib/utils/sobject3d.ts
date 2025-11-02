@@ -58,18 +58,20 @@ export function createObject(props: SObject3D) {
       )
     }
     case 'DirectionalLight': {
-      return new DirectionalLight(props.color, props.intensity)
+      const { color, intensity } = props
+      return new DirectionalLight(color, intensity)
     }
     case 'AmbientLight': {
-      return new AmbientLight(props.color, props.intensity)
+      const { color, intensity } = props
+      return new AmbientLight(color, intensity)
     }
     case 'PerspectiveCamera': {
-      const { fov, aspect, near, far } = props
-      return new PerspectiveCamera(fov, aspect, near, far)
+      const { fov, near, far } = props
+      return new PerspectiveCamera(fov, 1, near, far)
     }
     case 'OrthographicCamera': {
-      const { left, right, top, bottom, near, far } = props
-      return new OrthographicCamera(left, right, top, bottom, near, far)
+      const { near, far } = props
+      return new OrthographicCamera(-1, 1, 1, -1, near, far)
     }
   }
 }
@@ -216,24 +218,19 @@ export function serializeObject(object: Object3D): SObject3D {
     }
   }
   if (object instanceof PerspectiveCamera) {
-    const { fov, aspect, near, far } = object
+    const { fov, near, far } = object
     return {
       type: 'PerspectiveCamera',
       fov,
-      aspect,
       near,
       far,
       ...base
     }
   }
   if (object instanceof OrthographicCamera) {
-    const { left, right, top, bottom, near, far } = object
+    const { near, far } = object
     return {
       type: 'OrthographicCamera',
-      left,
-      right,
-      top,
-      bottom,
       near,
       far,
       ...base

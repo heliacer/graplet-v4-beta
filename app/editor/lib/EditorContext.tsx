@@ -17,9 +17,11 @@ interface EditorContextType {
   funcEnv: RefObject<FuncEnv>
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
-  camera?: PerspectiveCamera | OrthographicCamera
   modelScene: RefObject<Scene>
-  canvas: RefObject<HTMLCanvasElement | null>
+  canvas: RefObject<HTMLCanvasElement>
+
+  /** @todo should be a ref */
+  camera: PerspectiveCamera | OrthographicCamera | null
 
   // UI STATE
   workspace: WorkspaceSvg | null
@@ -27,7 +29,7 @@ interface EditorContextType {
   isRunning: boolean
   objectVersion: number
   shouldLoad: boolean
-  setCamera: Dispatch<PerspectiveCamera | OrthographicCamera>
+  setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | null>
   setShouldLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
@@ -47,9 +49,11 @@ export function EditorProvider({
   const varEnv = useRef<VarEnv>(new Map())
   const funcEnv = useRef<FuncEnv>(new Map())
   const scene = useRef(new Scene())
-  const [camera, setCamera] = useState<PerspectiveCamera | OrthographicCamera>()
+  const [camera, setCamera] = useState<
+    PerspectiveCamera | OrthographicCamera | null
+  >(null)
   const modelScene = useRef(new Scene())
-  const canvas = useRef<HTMLCanvasElement>(null)
+  const canvas = useRef<HTMLCanvasElement>(null!)
   const runState = useRef<RunState>({
     shouldRun: false,
     shouldPause: false,
