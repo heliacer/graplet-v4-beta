@@ -9,7 +9,14 @@ import React, {
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
-import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
+import {
+  Object3D,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Scene,
+  WebGLRenderer
+} from 'three'
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 interface EditorContextType {
   // REFS
@@ -19,6 +26,7 @@ interface EditorContextType {
   scene: RefObject<Scene>
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement>
+  orbitControls: RefObject<OrbitControls | null>
 
   /** @todo should be a ref */
   camera: PerspectiveCamera | OrthographicCamera | null
@@ -49,10 +57,8 @@ export function EditorProvider({
   const varEnv = useRef<VarEnv>(new Map())
   const funcEnv = useRef<FuncEnv>(new Map())
   const scene = useRef(new Scene())
-  const [camera, setCamera] = useState<
-    PerspectiveCamera | OrthographicCamera | null
-  >(null)
   const modelScene = useRef(new Scene())
+  const orbitControls = useRef(null)
   const canvas = useRef<HTMLCanvasElement>(null!)
   const runState = useRef<RunState>({
     shouldRun: false,
@@ -60,6 +66,11 @@ export function EditorProvider({
     shouldStop: false,
     shouldStep: false
   })
+
+  /** should be a ref */
+  const [camera, setCamera] = useState<
+    PerspectiveCamera | OrthographicCamera | null
+  >(null)
 
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
@@ -75,6 +86,7 @@ export function EditorProvider({
         scene,
         camera,
         canvas,
+        orbitControls,
         modelScene,
         runState,
 

@@ -1,7 +1,7 @@
 import { useEditor } from '../EditorContext'
 import { Camera, Object3D } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
-import { ProjectData, SGroup, SMesh, SObject3D } from '../types'
+import { ProjectData, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
 import { serialization } from 'blockly'
 
@@ -49,7 +49,10 @@ export function useObjectActions() {
     const object = createObject(props)
     applyProps(object, props)
     target.add(object)
-    console.info(`%c${object.name} was added to ${target.name || target.type}`, 'color: aquamarine;')
+    console.info(
+      `%c${object.name} was added to ${target.name || target.type}`,
+      'color: aquamarine;'
+    )
 
     /** Add children */
     if (props.children) {
@@ -72,52 +75,16 @@ export function useObjectActions() {
   }
 
   /**
-   * Adds a new sprite to the scene
-   */
-  function newSprite() {
-    const name = `Sprite ${scene.current.children.length + 1}`
-    const cube: SMesh = {
-      type: 'Mesh',
-      name: 'Block',
-      geometry: {
-        type: 'BoxGeometry',
-        args: [1, 2, 1]
-      },
-      material: {
-        type: 'MeshStandardMaterial',
-        color: '#0000ff'
-      }
-    }
-    const sphere: SMesh = {
-      type: 'Mesh',
-      name: 'Ball',
-      geometry: {
-        type: 'SphereGeometry',
-        args: []
-      },
-      material: {
-        type: 'MeshStandardMaterial',
-        color: '#ff0000'
-      }
-    }
-    const temp: SGroup = {
-      type: 'Group',
-      name: 'Group  ',
-      children: [cube, sphere]
-    }
-    addObject({
-      type: 'Group',
-      name,
-      children: [temp, temp]
-    })
-  }
-
-  /**
    * Adds Ambient light, Directional light and a Camera
    */
   function loadDefaultScene() {
     clearScene()
-    newSprite()
+    addObject({
+      type: 'PerspectiveCamera',
+      name: 'Camera',
+      position: [0, 2, 5],
+      rotation: [-0.4, 0, 0]
+    })
     addObject({
       name: 'Ambient Light',
       type: 'AmbientLight',
@@ -130,16 +97,15 @@ export function useObjectActions() {
       intensity: 2
     })
     addObject({
-      type: 'PerspectiveCamera',
-      name: 'Cam 1',
-      position: [0, 2, 5],
-      rotation: [-0.4, 0, 0]
-    })
-    addObject({
-      type: 'PerspectiveCamera',
-      name: 'Cam 2',
-      position: [0, 2, 8],
-      rotation: [-0.4, 0, 0]
+      type: 'Mesh',
+      name: 'Cube',
+      geometry: {
+        type: 'BoxGeometry',
+        args: [1, 1, 1]
+      },
+      material: {
+        type: 'MeshStandardMaterial'
+      }
     })
   }
 
@@ -161,7 +127,11 @@ export function useObjectActions() {
 
         if (!workspace) throw Error('Missing workspace.')
         serialization.workspaces.load(project.workspace, workspace)
-        console.info('%cLoaded workspace state: ', 'color: salmon;', project.workspace)
+        console.info(
+          '%cLoaded workspace state: ',
+          'color: salmon;',
+          project.workspace
+        )
       }
     } catch (err) {
       console.error('Could not parse JSON data.', err)
@@ -217,7 +187,6 @@ export function useObjectActions() {
   return {
     addObject,
     loadDefaultScene,
-    newSprite,
     deleteObject,
     duplicateObject,
     clearScene,

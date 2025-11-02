@@ -37,7 +37,6 @@ function ObjectListItem({ object }: { object: Object3D }) {
 
 export default function ExplorerPanel() {
   const { scene, objectVersion } = useEditor()
-  const { newSprite } = useObjectActions()
 
   return (
     <>
@@ -61,16 +60,6 @@ export default function ExplorerPanel() {
           }
           side="top"
         />
-        <button
-          onClick={newSprite}
-          className={clsx(
-            'flex items-center gap-1 px-1',
-            'border rounded-md bg-zinc-800 border-zinc-600 cursor-pointer'
-          )}
-        >
-          <WandSparkles size={14} />
-          <p className="text-sm">Add Sprite</p>
-        </button>
       </div>
     </>
   )

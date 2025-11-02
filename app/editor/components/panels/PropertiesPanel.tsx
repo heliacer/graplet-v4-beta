@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import { Layers2, Trash } from 'lucide-react'
-import { OrthographicCamera, PerspectiveCamera } from 'three'
+import { Layers2, Orbit, SwitchCamera, Trash } from 'lucide-react'
+import { Camera, OrthographicCamera, PerspectiveCamera } from 'three'
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
+/** @todo make this better, this sucks */
 export default function PropertiesPanel() {
-  const { currentObject, objectVersion, setObjectVersion, setCamera } =
-    useEditor()
+  const {
+    currentObject,
+    objectVersion,
+    setObjectVersion,
+    setCamera,
+    orbitControls
+  } = useEditor()
   const { deleteObject, duplicateObject } = useObjectActions()
 
   const [formData, setFormData] = useState({
@@ -59,10 +66,9 @@ export default function PropertiesPanel() {
       </div>
       <div className="flex justify-between">
         <p className="text-nowrap">Position</p>
-        <div className="flex gap-1.5">
-          <p className="text-teal-600">X</p>
+        <div className="flex gap-1.5 text-xs">
           <input
-            className="rounded border outline-none px-1 w-10"
+            className="text-teal-500 text-center rounded border outline-none px-1 w-8 overflow-ellipsis"
             type="number"
             name="x"
             value={formData.positionX}
@@ -72,9 +78,8 @@ export default function PropertiesPanel() {
               currentObject.position.x = value
             }}
           />
-          <p className="text-sky-600">Y</p>
           <input
-            className="rounded border outline-none px-1 w-10"
+            className="text-teal-500 text-center rounded border outline-none px-1 w-8"
             type="number"
             name="y"
             value={formData.positionY}
@@ -84,9 +89,8 @@ export default function PropertiesPanel() {
               currentObject.position.y = value
             }}
           />
-          <p className="text-rose-500">Z</p>
           <input
-            className="rounded border outline-none px-1 w-10"
+            className="text-teal-500 text-center rounded border outline-none px-1 w-8"
             type="number"
             name="z"
             value={formData.positionZ}
@@ -98,7 +102,7 @@ export default function PropertiesPanel() {
           />
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <button
           className="flex gap-1 items-center cursor-pointer p-1 rounded bg-zinc-750 hover:bg-zinc-650"
           onClick={() => deleteObject(currentObject)}
@@ -115,14 +119,26 @@ export default function PropertiesPanel() {
         </button>
         {(currentObject instanceof PerspectiveCamera ||
           currentObject instanceof OrthographicCamera) && (
-          <button
-            className="flex gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
-            onClick={() => {
-              setCamera(currentObject)
-            }}
-          >
-            <p className="leading-0">Set Active</p>
-          </button>
+          <>
+            <button
+              className="flex wrap gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
+              onClick={() => {
+                setCamera(currentObject)
+              }}
+            >
+              <SwitchCamera size={14} />
+              <p className="leading-0">Set</p>
+            </button>
+            <button
+              className="flex wrap gap-1 items-center p-1 rounded bg-zinc-750 cursor-pointer hover:bg-zinc-650"
+              onClick={() =>
+                (orbitControls.current = new OrbitControls(currentObject))
+              }
+            >
+              <Orbit size={14} />
+              <p className="leading-0">Attach</p>
+            </button>
+          </>
         )}
       </div>
     </div>
