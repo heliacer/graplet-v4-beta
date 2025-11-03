@@ -9,12 +9,8 @@ import React, {
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
-import {
-  Object3D,
-  OrthographicCamera,
-  PerspectiveCamera,
-  Scene,
-} from 'three'
+import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 interface EditorContextType {
   // REFS
@@ -24,6 +20,7 @@ interface EditorContextType {
   scene: RefObject<Scene>
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement>
+  orbit: RefObject<OrbitControls | null>
 
   /** @todo should be a ref */
   camera: PerspectiveCamera | OrthographicCamera | null
@@ -56,6 +53,7 @@ export function EditorProvider({
   const scene = useRef(new Scene())
   const modelScene = useRef(new Scene())
   const canvas = useRef<HTMLCanvasElement>(null!)
+  const orbit = useRef<OrbitControls | null>(null)
   const runState = useRef<RunState>({
     shouldRun: false,
     shouldPause: false,
@@ -81,6 +79,7 @@ export function EditorProvider({
         varEnv,
         scene,
         camera,
+        orbit,
         canvas,
         modelScene,
         runState,

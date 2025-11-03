@@ -12,7 +12,7 @@ import {
 } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { useClickOutside } from '../hooks/useClickOutside'
-import clsx from 'clsx'
+import clsx, { ClassValue } from 'clsx'
 
 interface DropdownContextType {
   isOpen: boolean
@@ -38,7 +38,7 @@ const useDropdown = () => {
 
 interface DropdownMenuProps {
   children: ReactNode
-  className?: string
+  className?: ClassValue
 }
 
 export function DropdownMenu({ children, className }: DropdownMenuProps) {
@@ -87,7 +87,7 @@ export function DropdownMenu({ children, className }: DropdownMenuProps) {
 
 interface DropdownButtonProps {
   children: ReactNode
-  className?: (isOpen: boolean, disabled?: boolean) => string
+  className?: (isOpen: boolean, disabled?: boolean) => ClassValue
   disabled?: boolean
 }
 
@@ -107,7 +107,7 @@ export function DropdownButton({
 
   return (
     <button
-      className={className(isOpen, disabled)}
+      className={clsx(className(isOpen, disabled))}
       onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
     >
       {children}
@@ -117,7 +117,7 @@ export function DropdownButton({
 
 interface DropdownContentProps {
   children: ReactNode
-  className?: string
+  className?: ClassValue
   align?: 'left' | 'right' | 'center'
   side?: 'top' | 'bottom'
 }
@@ -159,7 +159,7 @@ export function DropdownContent({
 interface DropdownOptionProps {
   children: ReactNode
   onClick?: () => void
-  className?: string
+  className?: ClassValue
   asChild?: boolean
 }
 
@@ -208,8 +208,8 @@ interface DropdownFolderProps {
   label: ReactNode
   icon?: ReactNode
   children: ReactNode
-  className?: string
-  contentClassName?: string
+  className?: ClassValue
+  contentClassName?: ClassValue
   align?: 'right' | 'left'
   side?: 'top' | 'bottom'
 }

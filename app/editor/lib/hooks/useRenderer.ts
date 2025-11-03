@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { scene, camera, canvas } = useEditor()
+  const { scene, camera, canvas, orbit } = useEditor()
   const rendererRef = useRef<WebGLRenderer | null>(null)
   const rafRef = useRef<number | null>(null)
 
@@ -44,6 +44,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
 
     /** @todo renderer.setAnimationLoop !! for later */
     const loop = () => {
+      orbit.current?.update()
       renderer.render(scene.current, camera)
       rafRef.current = requestAnimationFrame(loop)
     }
@@ -56,5 +57,5 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       renderer.dispose()
       resizeListener.dispose()
     }
-  }, [canvas, scene, camera, panelApi])
+  }, [canvas, scene, camera, panelApi, orbit])
 }
