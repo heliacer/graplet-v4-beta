@@ -15,7 +15,6 @@ import TabHeader from './ui/tabHeader'
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
 import ExplorerPanel from './panels/ExplorerPanel'
-import ModelPanel from './panels/model/Panel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
 
@@ -24,7 +23,6 @@ const panelComponents = {
   code: CodePanel,
   scene: ScenePanel,
   explorer: ExplorerPanel,
-  model: ModelPanel,
   properties: PropertiesPanel
 }
 
@@ -36,7 +34,7 @@ const jsonLayout: SerializedDockview = {
         {
           type: 'leaf',
           data: {
-            views: ['code', 'model'],
+            views: ['code'],
             activeView: 'code',
             id: '1'
           },
@@ -89,13 +87,6 @@ const jsonLayout: SerializedDockview = {
       tabComponent: 'props.defaultTabComponent',
       params: { iconType: 'Puzzle' },
       title: 'Code'
-    },
-    model: {
-      id: 'model',
-      contentComponent: 'model',
-      tabComponent: 'props.defaultTabComponent',
-      params: { iconType: 'PenTool' },
-      title: 'Model'
     },
     scene: {
       id: 'scene',

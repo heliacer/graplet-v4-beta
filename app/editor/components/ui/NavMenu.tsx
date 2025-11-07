@@ -80,7 +80,7 @@ export default function NavMenu() {
     }
   }
 
-  /** @todo refactor more as soon as more menus get added */
+  /** @todo @refactor more as soon as more menus get added */
   return (
     <nav className="w-full h-full flex items-center gap-4">
       <Link href="/" className="flex items-center gap-2">

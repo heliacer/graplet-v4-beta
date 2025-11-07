@@ -1,4 +1,4 @@
-import RunControls from './ui/RunControlMenu'
+import RunControls from './ui/RunControls'
 import UserDropdown from '@/app/ui/components/UserDropdown'
 import NavMenu from './ui/NavMenu'
 

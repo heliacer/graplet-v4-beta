@@ -5,6 +5,8 @@ export interface ProjectData {
   scene: SScene
 }
 
+export type ObjectToolType = 'translate' | 'scale' | 'rotate'
+
 /**
  * Serialized Object3D
  */

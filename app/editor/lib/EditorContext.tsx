@@ -11,6 +11,7 @@ import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
 import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { ObjectToolType } from './types'
 
 interface EditorContextType {
   // REFS
@@ -28,6 +29,7 @@ interface EditorContextType {
   // UI STATE
   workspace: WorkspaceSvg | null
   currentObject: Object3D | null
+  currentTool: ObjectToolType
   isRunning: boolean
   objectVersion: number
   shouldLoad: boolean
@@ -36,6 +38,7 @@ interface EditorContextType {
   setObjectVersion: Dispatch<SetStateAction<number>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
   setCurrentObject: Dispatch<SetStateAction<Object3D | null>>
+  setCurrentTool: Dispatch<SetStateAction<ObjectToolType>>
   setIsRunning: Dispatch<SetStateAction<boolean>>
 }
 
@@ -61,13 +64,14 @@ export function EditorProvider({
     shouldStep: false
   })
 
-  /** should be a ref */
+  /** @todo should be a ref */
   const [camera, setCamera] = useState<
     PerspectiveCamera | OrthographicCamera | null
   >(null)
 
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
+  const [currentTool, setCurrentTool] = useState<ObjectToolType>('translate')
   const [isRunning, setIsRunning] = useState<boolean>(false)
   const [objectVersion, setObjectVersion] = useState(0)
   const [shouldLoad, setShouldLoad] = useState(true)
@@ -78,14 +82,16 @@ export function EditorProvider({
         funcEnv,
         varEnv,
         scene,
-        camera,
         orbit,
         canvas,
         modelScene,
         runState,
 
+        camera,
+
         workspace,
         currentObject,
+        currentTool,
         isRunning,
         objectVersion,
         shouldLoad,
@@ -94,6 +100,7 @@ export function EditorProvider({
         setObjectVersion,
         setWorkspace,
         setCurrentObject,
+        setCurrentTool,
         setIsRunning
       }}
     >

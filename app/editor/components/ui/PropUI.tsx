@@ -37,6 +37,11 @@ export function StringPropInput({ value, action, className }: StringPropInput) {
 }
 
 export function NumberPropInput({ value, action, className }: NumberPropInput) {
+  /**
+   * @todo upgrade state model, it hardcore syncs, which isn't ideal
+   *
+   * should: const [value, setValue] = useState() // local
+   */
   const { setObjectVersion } = useEditor()
   return (
     <input
@@ -44,8 +49,10 @@ export function NumberPropInput({ value, action, className }: NumberPropInput) {
       className={clsx('rounded border outline-none px-1', className)}
       value={value}
       onChange={(e) => {
-        action(e.target.valueAsNumber)
-        setObjectVersion((prev) => prev + 1)
+        if (!Number.isNaN(e.target.valueAsNumber)) {
+          action(e.target.valueAsNumber)
+          setObjectVersion((prev) => prev + 1)
+        }
       }}
     />
   )

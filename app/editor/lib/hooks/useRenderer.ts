@@ -2,6 +2,7 @@ import { PerspectiveCamera, WebGLRenderer } from 'three'
 import { useEditor } from '../../lib/EditorContext'
 import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
+import { ViewHelper } from 'three/examples/jsm/Addons.js'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
   const { scene, camera, canvas, orbit } = useEditor()
@@ -17,6 +18,10 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       antialias: true,
       alpha: true
     })
+
+    renderer.autoClear = false
+
+    const helper = new ViewHelper(camera, renderer.domElement)
 
     renderer.setPixelRatio(window.devicePixelRatio)
     rendererRef.current = renderer
@@ -44,8 +49,13 @@ export function useRenderer(panelApi: DockviewPanelApi) {
 
     /** @todo renderer.setAnimationLoop !! for later */
     const loop = () => {
+      /** @todo should change orbit to orbits map, and assign main camera to locked orbit when running */
       orbit.current?.update()
+
+      renderer.clear()
       renderer.render(scene.current, camera)
+      helper.render(renderer)
+
       rafRef.current = requestAnimationFrame(loop)
     }
     loop()

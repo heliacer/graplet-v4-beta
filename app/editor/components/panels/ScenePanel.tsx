@@ -2,6 +2,7 @@ import { useEditor } from '../../lib/EditorContext'
 import { IDockviewPanelProps } from 'dockview-react'
 import { useProjectLoader } from '../../lib/hooks/useProjectLoader'
 import { useRenderer } from '../../lib/hooks/useRenderer'
+import { ObjectControls } from '../ui/ObjectControls'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
   const { canvas } = useEditor()
@@ -9,5 +10,10 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useProjectLoader()
   useRenderer(props.api)
 
-  return <canvas ref={canvas} className="w-full h-full" />
+  return (
+    <>
+      <ObjectControls />
+      <canvas ref={canvas} className="w-full h-full" />
+    </>
+  )
 }

@@ -24,6 +24,8 @@ interface DropdownContextType {
   toggleFolder: (id: string) => void
 }
 
+/** @todo @refactor BIG UI styling update, need to fix gaps, make 0.5 instead of 1 */
+
 const DropdownContext = createContext<DropdownContextType | undefined>(
   undefined
 )
