@@ -1,5 +1,5 @@
-import { ObjectAdd } from './object/add'
-import { ObjectTools } from './object/tools'
+import { ObjectAdd } from '../object/objectAdd'
+import { ObjectTools } from '../object/objectTools'
 
 export function ObjectControls() {
   return (

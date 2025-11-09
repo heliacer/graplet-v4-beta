@@ -1,5 +1,5 @@
+import { useHeaderControls } from '@/app/editor/lib/hooks/useHeaderControls'
 import { IDockviewHeaderActionsProps } from 'dockview-react'
-import { useHeaderControls } from '../../lib/hooks/useHeaderControls'
 import {
   Maximize,
   Minimize,

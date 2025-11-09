@@ -8,7 +8,7 @@ import {
 } from 'dockview-react'
 import '../styles/base.css'
 import '../styles/dvtheme.css'
-import { LeftControls, RightControls } from './ui/tabControls'
+import { LeftControls, RightControls } from './ui/controls/tabControls'
 import TabHeader from './ui/tabHeader'
 
 // Panels

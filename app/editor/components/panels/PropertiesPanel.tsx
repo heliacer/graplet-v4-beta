@@ -2,7 +2,11 @@ import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { Layers2, Orbit, SwitchCamera, Trash } from 'lucide-react'
 import { OrthographicCamera, PerspectiveCamera } from 'three'
-import { NumberPropInput, PropButton, StringPropInput } from '../ui/PropUI'
+import {
+  NumberPropInput,
+  PropButton,
+  StringPropInput
+} from '../ui/PropertyInput'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 /** @todo make this better, this sucks */
@@ -45,6 +49,7 @@ export default function PropertiesPanel() {
         </div>
       </div>
 
+      {/** @todo make separate row for each value, also include mode (euler) + separate <Vec3RowInput label vec3> */}
       <div className="flex justify-between">
         <p className="text-nowrap">Rotation °</p>
         <div className="flex gap-1.5">

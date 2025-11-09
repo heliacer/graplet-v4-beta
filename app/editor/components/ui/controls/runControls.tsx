@@ -1,8 +1,8 @@
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
 import { useState } from 'react'
-import { useEditor } from '../../lib/EditorContext'
-import { exprGenerator } from '../../lib/blockly/engine/generator'
-import { execute } from '../../lib/utils/blockly'
+import { useEditor } from '../../../lib/EditorContext'
+import { exprGenerator } from '../../../lib/blockly/engine/generator'
+import { execute } from '../../../lib/utils/blockly'
 import clsx from 'clsx'
 
 /** @todo @refactor */
@@ -14,7 +14,8 @@ export default function RunControls() {
     scene,
     funcEnv,
     varEnv,
-    setIsRunning
+    setIsRunning,
+    setObjectVersion
   } = useEditor()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
@@ -39,11 +40,13 @@ export default function RunControls() {
       },
       setIsRunning
     )
+    setObjectVersion((prev) => prev + 1)
     console.log('entering edit mode...')
   }
 
   function handleStop() {
     runState.current.shouldStop = true
+    setObjectVersion((prev) => prev + 1)
     setIsPaused(false)
   }
 
