@@ -21,7 +21,7 @@ interface EditorContextType {
   scene: RefObject<Scene>
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement>
-  orbit: RefObject<OrbitControls | null>
+  orbitMap: RefObject<Map<number, OrbitControls | null>>
 
   /** @todo should be a ref */
   camera: PerspectiveCamera | OrthographicCamera | null
@@ -56,7 +56,7 @@ export function EditorProvider({
   const scene = useRef(new Scene())
   const modelScene = useRef(new Scene())
   const canvas = useRef<HTMLCanvasElement>(null!)
-  const orbit = useRef<OrbitControls | null>(null)
+  const orbitMap = useRef(new Map())
   const runState = useRef<RunState>({
     shouldRun: false,
     shouldPause: false,
@@ -82,7 +82,7 @@ export function EditorProvider({
         funcEnv,
         varEnv,
         scene,
-        orbit,
+        orbitMap,
         canvas,
         modelScene,
         runState,

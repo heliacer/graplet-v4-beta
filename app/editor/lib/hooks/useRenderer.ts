@@ -5,7 +5,7 @@ import { DockviewPanelApi } from 'dockview-react'
 import { ViewHelper } from 'three/examples/jsm/Addons.js'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { scene, camera, canvas, orbit } = useEditor()
+  const { scene, camera, canvas, orbitMap } = useEditor()
   const rendererRef = useRef<WebGLRenderer | null>(null)
   const rafRef = useRef<number | null>(null)
 
@@ -49,8 +49,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
 
     /** @todo renderer.setAnimationLoop !! for later */
     const loop = () => {
-      /** @todo should change orbit to orbits map, and assign main camera to locked orbit when running */
-      orbit.current?.update()
+      orbitMap.current.get(camera.id)?.update()
 
       renderer.clear()
       renderer.render(scene.current, camera)
@@ -67,5 +66,5 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       renderer.dispose()
       resizeListener.dispose()
     }
-  }, [canvas, scene, camera, panelApi, orbit])
+  }, [canvas, scene, camera, panelApi, orbitMap])
 }

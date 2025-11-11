@@ -12,7 +12,7 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js'
 /** @todo make this better, this sucks */
 /** @todo update, this got a little better (made components) but got worse (added more shit) */
 export default function PropertiesPanel() {
-  const { currentObject, canvas, setCamera, orbit } = useEditor()
+  const { currentObject, canvas, setCamera, orbitMap } = useEditor()
   const { deleteObject, duplicateObject } = useObjectActions()
 
   if (!currentObject) return
@@ -121,7 +121,8 @@ export default function PropertiesPanel() {
               label="Set Orbit"
               Icon={Orbit}
               action={() => {
-                orbit.current = new OrbitControls(currentObject, canvas.current)
+                // kinda stupid, really need checkbox for this
+                orbitMap.current.set(currentObject.id, new OrbitControls(currentObject, canvas.current))
               }}
             />
           </>
