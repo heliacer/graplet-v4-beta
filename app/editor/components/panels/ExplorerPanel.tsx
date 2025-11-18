@@ -10,12 +10,7 @@ import {
 import { useTree } from '@headless-tree/react'
 import clsx from 'clsx'
 import { ChevronDown, ChevronRight } from 'lucide-react'
-import { Fragment, useEffect } from 'react'
-
-/** @todo include currentObject state sync */
-export default function ExplorerPanel() {
-  return <Tree />
-}
+import { Fragment, useEffect, useState } from 'react'
 
 interface TreeItem {
   id: number
@@ -24,9 +19,14 @@ interface TreeItem {
   hasChildren: boolean
 }
 
-function Tree() {
-  const { scene, objectVersion, setObjectVersion } = useEditor()
+export default function ExplorerPanel() {
+  const { scene, currentObject, objectVersion, setObjectVersion } = useEditor()
+  /** @todo move these up to global editor, and just screw currentObject lol */
+  const [selectedItems, setSelectedItems] = useState<string[]>([])
+
   const tree = useTree<TreeItem>({
+    state: { selectedItems },
+    setSelectedItems,
     rootItemId: scene.current.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
     isItemFolder: (item) => item.getItemData().type === 'Component', // this is just a workaround
@@ -86,6 +86,11 @@ function Tree() {
 
   useEffect(() => {
     tree.rebuildTree()
+    if (currentObject) {
+      setSelectedItems([currentObject?.id.toString()])
+    } else {
+      setSelectedItems([])
+    }
   }, [objectVersion, tree])
 
   return (
@@ -93,6 +98,7 @@ function Tree() {
       {...tree.getContainerProps()}
       className="text-sm ml-1 py-1 flex flex-col gap-1 items-start h-full"
     >
+      <p>current: {currentObject?.name}</p>
       {tree.getItems().map((item) => (
         <Fragment key={item.getId()}>
           {item.isRenaming() ? (
