@@ -20,8 +20,7 @@ interface TreeItem {
 }
 
 export default function ExplorerPanel() {
-  const { scene, currentObject, objectVersion, setObjectVersion } = useEditor()
-  /** @todo move these up to global editor, and just screw currentObject lol */
+  const { scene, setObjectVersion, currentObject, setCurrentObject, objectVersion } = useEditor()
   const [selectedItems, setSelectedItems] = useState<string[]>([])
 
   const tree = useTree<TreeItem>({
@@ -84,14 +83,18 @@ export default function ExplorerPanel() {
     ]
   })
 
+
+  /** @todo this is complete bs, need to come up with a more common way */
   useEffect(() => {
+    // keeps track of object changes
     tree.rebuildTree()
-    if (currentObject) {
-      setSelectedItems([currentObject?.id.toString()])
-    } else {
-      setSelectedItems([])
-    }
+    setSelectedItems(prev => currentObject ? [currentObject.id.toString()] : prev)
   }, [objectVersion, tree])
+
+  useEffect(() => {
+    // keeps track of item changes (only making the first one of selection active)
+    setCurrentObject(prev => selectedItems ? scene.current.getObjectById(Number(selectedItems[0])) || prev : prev)
+  }, [selectedItems])
 
   return (
     <div
