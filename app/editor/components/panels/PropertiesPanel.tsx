@@ -17,6 +17,28 @@ export default function PropertiesPanel() {
 
   if (!currentObject) return
 
+  /** future structure for transform tab */
+  switch (currentObject.type) {
+    case 'Group': {
+      // <BaseTransform/>
+    }
+    case 'Mesh': {
+
+    }
+    case 'DirectionalLight': {
+
+    }
+    case 'AmbientLight': {
+
+    }
+    case 'PerspectiveCamera': {
+
+    }
+    case 'OrthographicCamera': {
+
+    }
+  }
+
   return (
     <div className="p-1.5 flex flex-col gap-2 text-xs">
       <div className="flex gap-2">
@@ -111,22 +133,22 @@ export default function PropertiesPanel() {
         />
         {(currentObject instanceof PerspectiveCamera ||
           currentObject instanceof OrthographicCamera) && (
-          <>
-            <PropButton
-              label="Set Active"
-              Icon={SwitchCamera}
-              action={() => setCamera(currentObject)}
-            />
-            <PropButton
-              label="Set Orbit"
-              Icon={Orbit}
-              action={() => {
-                // kinda stupid, really need checkbox for this
-                orbitMap.current.set(currentObject.id, new OrbitControls(currentObject, canvas.current))
-              }}
-            />
-          </>
-        )}
+            <>
+              <PropButton
+                label="Set Active"
+                Icon={SwitchCamera}
+                action={() => setCamera(currentObject)}
+              />
+              <PropButton
+                label="Set Orbit"
+                Icon={Orbit}
+                action={() => {
+                  // kinda stupid, really need checkbox for this
+                  orbitMap.current.set(currentObject.id, new OrbitControls(currentObject, canvas.current))
+                }}
+              />
+            </>
+          )}
       </div>
     </div>
   )

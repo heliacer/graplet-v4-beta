@@ -25,10 +25,16 @@ export default function ExplorerPanel() {
 
   const tree = useTree<TreeItem>({
     state: { selectedItems },
-    setSelectedItems,
+    setSelectedItems: (value) => {
+      /** @todo workaround, needs one primar source of truth, didn't come up with a good solution yet */
+      const items = value as string[]
+      setCurrentObject(prev => items ? scene.current.getObjectById(Number(items[0])) || prev : prev)
+      setSelectedItems(items)
+      console.log(items)
+    },
     rootItemId: scene.current.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
-    isItemFolder: (item) => item.getItemData().type === 'Component', // this is just a workaround
+    isItemFolder: (item) => item.getItemData().type === 'Component', /** @todo this is just a workaround */
     onRename: (item, value) => {
       console.log(value)
       const id = item.getItemData().id
@@ -90,11 +96,6 @@ export default function ExplorerPanel() {
     tree.rebuildTree()
     setSelectedItems(prev => currentObject ? [currentObject.id.toString()] : prev)
   }, [objectVersion, tree])
-
-  useEffect(() => {
-    // keeps track of item changes (only making the first one of selection active)
-    setCurrentObject(prev => selectedItems ? scene.current.getObjectById(Number(selectedItems[0])) || prev : prev)
-  }, [selectedItems])
 
   return (
     <div
