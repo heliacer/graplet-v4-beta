@@ -89,13 +89,12 @@ export default function ExplorerPanel() {
     ]
   })
 
-
   /** @todo this is complete bs, need to come up with a more common way */
   useEffect(() => {
     // keeps track of object changes
     tree.rebuildTree()
     setSelectedItems(prev => currentObject ? [currentObject.id.toString()] : prev)
-  }, [objectVersion, tree])
+  }, [objectVersion, tree, currentObject])
 
   return (
     <div
