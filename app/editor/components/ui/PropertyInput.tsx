@@ -1,4 +1,3 @@
-import clsx, { ClassValue } from 'clsx'
 import { LucideIcon } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { Object3D } from 'three'
@@ -21,13 +20,6 @@ interface Vec3AnglePropertyProps extends BasePropertyProps {
   property: 'rotation'
 }
 
-/** @deprecated */
-interface NumberPropInput {
-  value: number
-  action: (newValue: number) => void
-  className?: ClassValue
-}
-
 export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
   const { setObjectVersion } = useEditor()
 
@@ -38,7 +30,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
         {(["x", "y", "z"] as const).map((axis) => (
           <div key={axis} className="relative">
             <DragNumberInput
-              className="rounded border outline-none w-12 text-center text-sky-400"
+              className="rounded border outline-none w-10 text-center hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200"
               value={Number((object[property][axis]))}
               onChange={(newVal) => {
                 object[property][axis] = newVal
@@ -63,7 +55,7 @@ export function Vec3AngleProperty({ label, object, property }: Vec3AngleProperty
         {(["x", "y", "z"] as const).map((axis) => (
           <div key={axis} className="relative">
             <DragNumberInput
-              className="rounded border outline-none w-12 text-center pr-1 text-sky-400"
+              className="rounded border outline-none w-10 text-center pr-1 hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200"
               value={Number((object[property][axis] * 180) / Math.PI)}
               step={1}
               decimals={0}
@@ -72,7 +64,7 @@ export function Vec3AngleProperty({ label, object, property }: Vec3AngleProperty
                 setObjectVersion((v) => v + 1)
               }}
             />
-            <span className="absolute right-1.5 top-0.5 text-xs select-none text-sky-400">
+            <span className="absolute right-1.5 top-0.5 text-xs select-none">
               °
             </span>
           </div>
@@ -89,7 +81,7 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
       <p className="text-nowrap">{label}</p>
       <input
         type="text"
-        className='rounded border outline-none px-1 w-full'
+        className='rounded border outline-none px-1 w-full hover:bg-zinc-750 focus:bg-zinc-750'
         key={object[property]}
         defaultValue={object[property]}
         onBlur={(e) => {
@@ -104,24 +96,6 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
         }}
       />
     </div>
-  )
-}
-
-
-export function NumberPropInput({ value, action, className }: NumberPropInput) {
-  const { setObjectVersion } = useEditor()
-  return (
-    <input
-      type="number"
-      className={clsx('rounded border outline-none px-1', className)}
-      value={value}
-      onChange={(e) => {
-        if (!Number.isNaN(e.target.valueAsNumber)) {
-          action(e.target.valueAsNumber)
-          setObjectVersion((prev) => prev + 1)
-        }
-      }}
-    />
   )
 }
 

@@ -1,76 +1,38 @@
 import { useEditor } from '../../lib/EditorContext'
-import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import { Layers2, Orbit, SwitchCamera, Trash } from 'lucide-react'
-import { OrthographicCamera, PerspectiveCamera } from 'three'
-import {
-  PropButton,
-  TextProperty,
-  Vec3AngleProperty,
-  Vec3Property
-} from '../ui/PropertyInput'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { useState } from 'react'
+import ObjectProps from '../ui/properties/objectProperties'
+import { Wrench } from 'lucide-react'
+import clsx from 'clsx'
+
+type PropertiesTab = 'object' | 'geometry' | 'material'
 
 /** @todo update: this is actually starting to get peak, need to have dynamic props for each object tho */
 export default function PropertiesPanel() {
-  const { currentObject, canvas, setCamera, orbitMap } = useEditor()
-  const { deleteObject, duplicateObject } = useObjectActions()
+  const [activeTab, setActiveTab] = useState<PropertiesTab>('object')
+
+  const { currentObject } = useEditor()
 
   if (!currentObject) return
 
   return (
-    <div className="p-1.5 flex flex-col gap-2 text-xs">
-      <TextProperty
-        label='Object Name'
-        object={currentObject}
-        property='name'
-      />
-      <Vec3Property
-        label='Position'
-        object={currentObject}
-        property='position'
-      />
-      <Vec3AngleProperty
-        label='Rotation'
-        object={currentObject}
-        property='rotation'
-      />
-      <Vec3Property
-        label='Scale'
-        object={currentObject}
-        property='scale'
-      />
-
-      {/* this needs some work */}
-      <div className="flex gap-2 flex-wrap">
-        <PropButton
-          label="Delete"
-          Icon={Trash}
-          action={() => deleteObject(currentObject)}
-        />
-        <PropButton
-          label="Duplicate"
-          Icon={Layers2}
-          action={() => duplicateObject(currentObject)}
-        />
-        {(currentObject instanceof PerspectiveCamera ||
-          currentObject instanceof OrthographicCamera) && (
-            <>
-              <PropButton
-                label="Set Active"
-                Icon={SwitchCamera}
-                action={() => setCamera(currentObject)}
-              />
-              <PropButton
-                label="Set Orbit"
-                Icon={Orbit}
-                action={() => {
-                  // kinda stupid, really need checkbox for this
-                  orbitMap.current.set(currentObject.id, new OrbitControls(currentObject, canvas.current))
-                }}
-              />
-            </>
+    <div className='flex h-full'>
+      <nav className='border-r'>
+        <button
+          onClick={() => setActiveTab('geometry')}
+          className={clsx(
+            'border p-1 rounded-md cursor-pointer',
+            activeTab === 'object'
+              ? 'bg-teal-600 border-teal-600'
+              : 'bg-zinc-800 border-zinc-700 hover:bg-zinc-750'
           )}
+        >
+          <Wrench size={14} />
+        </button>
+      </nav>
+      <div className="p-1.5 flex flex-col gap-2 text-xs">
+        {activeTab === 'object' && <ObjectProps object={currentObject} />}
       </div>
     </div>
+
   )
 }
