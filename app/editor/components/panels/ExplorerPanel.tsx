@@ -20,7 +20,13 @@ interface TreeItem {
 }
 
 export default function ExplorerPanel() {
-  const { scene, setObjectVersion, currentObject, setCurrentObject, objectVersion } = useEditor()
+  const {
+    scene,
+    setObjectVersion,
+    currentObject,
+    setCurrentObject,
+    objectVersion
+  } = useEditor()
   const [selectedItems, setSelectedItems] = useState<string[]>([])
 
   const tree = useTree<TreeItem>({
@@ -28,13 +34,17 @@ export default function ExplorerPanel() {
     setSelectedItems: (value) => {
       /** @todo workaround, needs one primar source of truth, didn't come up with a good solution yet */
       const items = value as string[]
-      setCurrentObject(prev => items ? scene.current.getObjectById(Number(items[0])) || prev : prev)
+      setCurrentObject((prev) =>
+        items ? scene.current.getObjectById(Number(items[0])) || prev : prev
+      )
       setSelectedItems(items)
       console.log(items)
     },
     rootItemId: scene.current.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
-    isItemFolder: (item) => item.getItemData().type === 'Component', /** @todo this is just a workaround */
+    isItemFolder: (item) =>
+      item.getItemData().type ===
+      'Component' /** @todo this is just a workaround */,
     onRename: (item, value) => {
       console.log(value)
       const id = item.getItemData().id
@@ -93,7 +103,9 @@ export default function ExplorerPanel() {
   useEffect(() => {
     // keeps track of object changes
     tree.rebuildTree()
-    setSelectedItems(prev => currentObject ? [currentObject.id.toString()] : prev)
+    setSelectedItems((prev) =>
+      currentObject ? [currentObject.id.toString()] : prev
+    )
   }, [objectVersion, tree, currentObject])
 
   return (

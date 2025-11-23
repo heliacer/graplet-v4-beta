@@ -1,35 +1,32 @@
-import { AmbientLight, DirectionalLight, Group, Mesh, Object3D, OrthographicCamera, PerspectiveCamera } from "three"
-import { PropButton, TextProperty, Vec3AngleProperty, Vec3Property } from "../PropertyInput"
-import { Layers2, Orbit, SwitchCamera, Trash } from "lucide-react"
-import { useObjectActions } from "@/app/editor/lib/hooks/useObjectActions"
-import { useEditor } from "@/app/editor/lib/EditorContext"
-import { OrbitControls } from "three/examples/jsm/Addons.js"
+import {
+  AmbientLight,
+  DirectionalLight,
+  Group,
+  Mesh,
+  Object3D,
+  OrthographicCamera,
+  PerspectiveCamera
+} from 'three'
+import {
+  PropButton,
+  TextProperty,
+  Vec3AngleProperty,
+  Vec3Property
+} from '../PropertyInput'
+import { Layers2, Orbit, SwitchCamera, Trash } from 'lucide-react'
+import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
+import { useEditor } from '@/app/editor/lib/EditorContext'
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
   const { deleteObject, duplicateObject } = useObjectActions()
 
   return (
     <>
-      <TextProperty
-        label='Object Name'
-        object={object}
-        property='name'
-      />
-      <Vec3Property
-        label='Position'
-        object={object}
-        property='position'
-      />
-      <Vec3AngleProperty
-        label='Rotation'
-        object={object}
-        property='rotation'
-      />
-      <Vec3Property
-        label='Scale'
-        object={object}
-        property='scale'
-      />
+      <TextProperty label="Object Name" object={object} property="name" />
+      <Vec3Property label="Position" object={object} property="position" />
+      <Vec3AngleProperty label="Rotation" object={object} property="rotation" />
+      <Vec3Property label="Scale" object={object} property="scale" />
       {/* not a fan of this, under airstrike watchlist */}
       <div className="flex gap-2 flex-wrap">
         <PropButton
@@ -44,7 +41,6 @@ function BaseObjectProps({ object }: { object: Object3D }) {
         />
       </div>
     </>
-
   )
 }
 
@@ -79,7 +75,10 @@ export default function ObjectProps({ object }: { object: Object3D }) {
             Icon={Orbit}
             action={() => {
               if (!orbitMap.current.get(object.id)) {
-                orbitMap.current.set(object.id, new OrbitControls(object, canvas.current))
+                orbitMap.current.set(
+                  object.id,
+                  new OrbitControls(object, canvas.current)
+                )
               }
             }}
           />

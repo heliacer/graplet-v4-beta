@@ -1,5 +1,5 @@
-import clsx from "clsx"
-import { useRef, useCallback } from "react"
+import clsx from 'clsx'
+import { useRef, useCallback } from 'react'
 
 interface DragNumberInputProps {
   value: number
@@ -15,12 +15,12 @@ interface DragNumberInputProps {
 export default function DragNumberInput({
   value,
   onChange,
-  step = .1,
+  step = 0.1,
   decimals = 2,
   dragSpeed = 0.5,
   min = -Infinity,
   max = Infinity,
-  className,
+  className
 }: DragNumberInputProps) {
   const startY = useRef(0)
   const startValue = useRef(0)
@@ -36,16 +36,16 @@ export default function DragNumberInput({
   )
 
   const handleMouseUp = useCallback(() => {
-    document.removeEventListener("mousemove", handleMouseMove)
-    document.removeEventListener("mouseup", handleMouseUp)
+    document.removeEventListener('mousemove', handleMouseMove)
+    document.removeEventListener('mouseup', handleMouseUp)
   }, [handleMouseMove])
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {
       startY.current = e.clientY
       startValue.current = value
-      document.addEventListener("mousemove", handleMouseMove)
-      document.addEventListener("mouseup", handleMouseUp)
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
     },
     [value, handleMouseMove, handleMouseUp]
   )

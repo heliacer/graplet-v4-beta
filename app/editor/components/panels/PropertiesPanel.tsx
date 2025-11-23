@@ -1,8 +1,10 @@
 import { useEditor } from '../../lib/EditorContext'
 import { useState } from 'react'
-import ObjectProps from '../ui/properties/objectProperties'
-import { Wrench } from 'lucide-react'
+import ObjectProps from '../ui/properties/object'
+import { Cone, Cuboid, Wrench } from 'lucide-react'
 import clsx from 'clsx'
+import GeometryProps from '../ui/properties/geometry'
+import MaterialProps from '../ui/properties/material'
 
 type PropertiesTab = 'object' | 'geometry' | 'material'
 
@@ -15,24 +17,48 @@ export default function PropertiesPanel() {
   if (!currentObject) return
 
   return (
-    <div className='flex h-full'>
-      <nav className='border-r'>
+    <div className="flex h-full">
+      <nav className="flex flex-col gap-1 border-r border-zinc-700 p-0.5">
+        {/* getting nasty, needs refactor */}
         <button
-          onClick={() => setActiveTab('geometry')}
+          onClick={() => setActiveTab('object')}
           className={clsx(
-            'border p-1 rounded-md cursor-pointer',
+            'border p-0.5 rounded-md cursor-pointer',
             activeTab === 'object'
-              ? 'bg-teal-600 border-teal-600'
+              ? 'bg-zinc-750 border-zinc-700'
               : 'bg-zinc-800 border-zinc-700 hover:bg-zinc-750'
           )}
         >
           <Wrench size={14} />
         </button>
+        <button
+          onClick={() => setActiveTab('geometry')}
+          className={clsx(
+            'border p-0.5 rounded-md cursor-pointer',
+            activeTab === 'geometry'
+              ? 'bg-zinc-750 border-zinc-700'
+              : 'bg-zinc-800 border-zinc-700 hover:bg-zinc-750'
+          )}
+        >
+          <Cone className="text-blue-300" size={14} />
+        </button>
+        <button
+          onClick={() => setActiveTab('material')}
+          className={clsx(
+            'border p-0.5 rounded-md cursor-pointer',
+            activeTab === 'material'
+              ? 'bg-zinc-750 border-zinc-700'
+              : 'bg-zinc-800 border-zinc-700 hover:bg-zinc-750'
+          )}
+        >
+          <Cuboid className="text-teal-300" size={14} />
+        </button>
       </nav>
       <div className="p-1.5 flex flex-col gap-2 text-xs">
         {activeTab === 'object' && <ObjectProps object={currentObject} />}
+        {activeTab === 'geometry' && <GeometryProps object={currentObject} />}
+        {activeTab === 'material' && <MaterialProps object={currentObject} />}
       </div>
     </div>
-
   )
 }
