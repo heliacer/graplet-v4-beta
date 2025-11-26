@@ -2,7 +2,7 @@ import { useEditor } from '../../lib/EditorContext'
 import { useState } from 'react'
 import ObjectProps from '../ui/properties/object'
 import { Cone, Cuboid, LucideIcon, Wrench } from 'lucide-react'
-import clsx, { ClassValue } from 'clsx'
+import clsx from 'clsx'
 import GeometryProps from '../ui/properties/geometry'
 import MaterialProps from '../ui/properties/material'
 

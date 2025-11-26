@@ -63,6 +63,10 @@ export default function ObjectProps({ object }: { object: Object3D }) {
     return (
       <>
         <BaseObjectProps object={object} />
+        <div className='flex gap-2'>
+          <label className='cursor-pointer select-none' htmlFor='orbit'>OrbitControls</label>
+          <input className='cursor-pointer accent-teal-600' type='checkbox' id='orbit' />
+        </div>
         <div className="flex gap-2 flex-wrap">
           <PropButton
             label="Set Active"
