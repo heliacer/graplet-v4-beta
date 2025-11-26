@@ -63,7 +63,7 @@ export default function PropertiesPanel() {
           setActive={() => setActiveTab('material')}
         />
       </nav>
-      <div className="p-1.5 flex flex-col gap-2 text-xs">
+      <div className="p-1.5 flex flex-col gap-2 text-xs w-full">
         {activeTab === 'object' && <ObjectProps object={currentObject} />}
         {activeTab === 'geometry' && <GeometryProps object={currentObject} />}
         {activeTab === 'material' && <MaterialProps object={currentObject} />}
