@@ -25,7 +25,8 @@ export default function ExplorerPanel() {
     setObjectVersion,
     currentObject,
     setCurrentObject,
-    objectVersion
+    objectVersion,
+    setContextMenu
   } = useEditor()
   const [selectedItems, setSelectedItems] = useState<string[]>([])
 
@@ -112,6 +113,12 @@ export default function ExplorerPanel() {
     <div
       {...tree.getContainerProps()}
       className="text-sm ml-1 py-1 flex flex-col gap-1 items-start h-full"
+      /** not a fan of this at all, ima go with it for now */
+      onContextMenu={(e: React.MouseEvent) => {
+        e.preventDefault()
+        setContextMenu({ x: e.clientX, y: e.clientY })
+      }}
+      onClick={() => setContextMenu(null)}
     >
       <p>current: {currentObject?.name}</p>
       {tree.getItems().map((item) => (

@@ -11,7 +11,7 @@ import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
 import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import { ObjectToolType } from './types'
+import { ContextMenuProps, ObjectToolType } from './types'
 
 interface EditorContextType {
   // REFS
@@ -33,6 +33,8 @@ interface EditorContextType {
   isRunning: boolean
   objectVersion: number
   shouldLoad: boolean
+  contextMenu: ContextMenuProps | null
+  setContextMenu: Dispatch<ContextMenuProps | null>
   setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | null>
   setShouldLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
@@ -75,6 +77,7 @@ export function EditorProvider({
   const [isRunning, setIsRunning] = useState<boolean>(false)
   const [objectVersion, setObjectVersion] = useState(0)
   const [shouldLoad, setShouldLoad] = useState(true)
+  const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
 
   return (
     <EditorContext.Provider
@@ -95,6 +98,8 @@ export function EditorProvider({
         isRunning,
         objectVersion,
         shouldLoad,
+        contextMenu,
+        setContextMenu,
         setCamera,
         setShouldLoad,
         setObjectVersion,

@@ -105,3 +105,13 @@ export interface SMaterial {
   type: 'MeshBasicMaterial' | 'MeshStandardMaterial' | 'MeshToonMaterial'
   color?: string
 }
+
+
+/** 
+ * Context Menu Props 
+ * @todo add more, e.g source
+ */
+export interface ContextMenuProps {
+  x: number
+  y: number
+}
