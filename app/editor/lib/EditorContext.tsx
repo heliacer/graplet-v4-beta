@@ -10,8 +10,11 @@ import React, {
 import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
 import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import { ContextMenuProps, ObjectToolType } from './types'
+import {
+  OrbitControls,
+  TransformControlsMode
+} from 'three/examples/jsm/Addons.js'
+import { ContextMenuProps } from './types'
 
 interface EditorContextType {
   // REFS
@@ -29,7 +32,7 @@ interface EditorContextType {
   // UI STATE
   workspace: WorkspaceSvg | null
   currentObject: Object3D | null
-  currentTool: ObjectToolType
+  currentTool: TransformControlsMode
   isRunning: boolean
   objectVersion: number
   shouldLoad: boolean
@@ -40,7 +43,7 @@ interface EditorContextType {
   setObjectVersion: Dispatch<SetStateAction<number>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
   setCurrentObject: Dispatch<SetStateAction<Object3D | null>>
-  setCurrentTool: Dispatch<SetStateAction<ObjectToolType>>
+  setCurrentTool: Dispatch<SetStateAction<TransformControlsMode>>
   setIsRunning: Dispatch<SetStateAction<boolean>>
 }
 
@@ -73,7 +76,8 @@ export function EditorProvider({
 
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
-  const [currentTool, setCurrentTool] = useState<ObjectToolType>('translate')
+  const [currentTool, setCurrentTool] =
+    useState<TransformControlsMode>('translate')
   const [isRunning, setIsRunning] = useState<boolean>(false)
   const [objectVersion, setObjectVersion] = useState(0)
   const [shouldLoad, setShouldLoad] = useState(true)

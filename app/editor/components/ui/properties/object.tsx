@@ -13,7 +13,7 @@ import {
   Vec3AngleProperty,
   Vec3Property
 } from '../PropertyInput'
-import { Layers2, Orbit, SwitchCamera, Trash } from 'lucide-react'
+import { Layers2, SwitchCamera, Trash } from 'lucide-react'
 import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
@@ -70,35 +70,38 @@ export default function ObjectProps({ object }: { object: Object3D }) {
             action={() => setCamera(object)}
           />
         </div>
-        <div className='flex gap-2'>
-          <label
-            className='cursor-pointer select-none'
-            htmlFor='orbit'
-          >
+        <div className="flex gap-2">
+          <label className="cursor-pointer select-none" htmlFor="orbit">
             Enable OrbitControls
           </label>
           <input
             /** need to make a custom checkbox, this won't cut it */
-            className='cursor-pointer accent-teal-600'
-            type='checkbox'
-            id='orbit'
+            className="cursor-pointer accent-teal-600"
+            type="checkbox"
+            id="orbit"
             checked={!!orbitMap.current.get(object.id)}
             onChange={(e) => {
               if (e.target.checked) {
                 const orbit = orbitMap.current.get(object.id)
-                if (orbit) throw Error(`There already exists an OrbitControls for ${object.id}`)
+                if (orbit)
+                  throw Error(
+                    `There already exists an OrbitControls for ${object.id}`
+                  )
                 orbitMap.current.set(
                   object.id,
                   new OrbitControls(object, canvas.current)
                 )
               } else {
                 const orbit = orbitMap.current.get(object.id)
-                if (!orbit) throw Error(`There's no OrbitControls for object ${object.id}`)
+                if (!orbit)
+                  throw Error(
+                    `There's no OrbitControls for object ${object.id}`
+                  )
                 orbit.disconnect()
                 orbit.dispose()
                 orbitMap.current.delete(object.id)
               }
-              setObjectVersion(prev => prev + 1)
+              setObjectVersion((prev) => prev + 1)
             }}
           />
         </div>

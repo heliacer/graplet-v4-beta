@@ -14,7 +14,7 @@ export default function Editor() {
         <footer className="h-6 flex items-center">
           <p>Footer</p>
         </footer>
-        <ContextMenu/>
+        <ContextMenu />
       </EditorProvider>
     </div>
   )

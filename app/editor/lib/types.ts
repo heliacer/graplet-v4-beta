@@ -5,8 +5,6 @@ export interface ProjectData {
   scene: SScene
 }
 
-export type ObjectToolType = 'translate' | 'scale' | 'rotate'
-
 /**
  * Serialized Object3D
  */
@@ -106,9 +104,8 @@ export interface SMaterial {
   color?: string
 }
 
-
-/** 
- * Context Menu Props 
+/**
+ * Context Menu Props
  * @todo add more, e.g source
  */
 export interface ContextMenuProps {

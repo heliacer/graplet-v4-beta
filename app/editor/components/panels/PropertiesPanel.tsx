@@ -15,7 +15,12 @@ interface PropertyTabButtonProps {
   setActive: () => void
 }
 
-function PropertyTabButton({ Icon, className, active, setActive }: PropertyTabButtonProps) {
+function PropertyTabButton({
+  Icon,
+  className,
+  active,
+  setActive
+}: PropertyTabButtonProps) {
   return (
     <button
       onClick={setActive}
@@ -27,10 +32,14 @@ function PropertyTabButton({ Icon, className, active, setActive }: PropertyTabBu
         className
       )}
     >
-      <div className={clsx(
-        'border border-l-0 p-0.5 rounded-md',
-        active ? 'border-zinc-700' : 'border-transparent hover:border-zinc-700'
-      )}>
+      <div
+        className={clsx(
+          'border border-l-0 p-0.5 rounded-md',
+          active
+            ? 'border-zinc-700'
+            : 'border-transparent hover:border-zinc-700'
+        )}
+      >
         <Icon size={14} />
       </div>
     </button>
@@ -52,13 +61,13 @@ export default function PropertiesPanel() {
         />
         <PropertyTabButton
           Icon={Cone}
-          className='text-blue-300'
+          className="text-blue-300"
           active={activeTab === 'geometry'}
           setActive={() => setActiveTab('geometry')}
         />
         <PropertyTabButton
           Icon={Cuboid}
-          className='text-teal-300'
+          className="text-teal-300"
           active={activeTab === 'material'}
           setActive={() => setActiveTab('material')}
         />
