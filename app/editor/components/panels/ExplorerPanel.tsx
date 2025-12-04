@@ -39,7 +39,6 @@ export default function ExplorerPanel() {
         items ? scene.current.getObjectById(Number(items[0])) || prev : prev
       )
       setSelectedItems(items)
-      console.log(items)
     },
     rootItemId: scene.current.id.toString(),
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
@@ -47,7 +46,6 @@ export default function ExplorerPanel() {
       item.getItemData().type ===
       'Component' /** @todo this is just a workaround */,
     onRename: (item, value) => {
-      console.log(value)
       const id = item.getItemData().id
       const object = scene.current.getObjectById(id)
       if (object) object.name = value
@@ -68,7 +66,6 @@ export default function ExplorerPanel() {
         )
         if (!targetObject) throw Error('Object from target item does not exist')
         targetObject.add(object)
-        console.log(items, target)
         setObjectVersion((prev) => prev + 1)
       }
     },
