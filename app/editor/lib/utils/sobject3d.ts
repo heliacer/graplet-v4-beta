@@ -1,3 +1,8 @@
+import {
+  TransformControls,
+  TransformControlsGizmo,
+  TransformControlsPlane
+} from 'three/examples/jsm/Addons.js'
 import { SGeometry, SObject3D, SMaterial, SBase } from '../types'
 import {
   AmbientLight,
@@ -28,6 +33,16 @@ import {
   TorusGeometry,
   TorusKnotGeometry
 } from 'three'
+
+declare class TransformControlsRoot extends Object3D {
+  readonly isTransformControlsRoot: true
+
+  controls: TransformControls
+
+  constructor(controls: TransformControls)
+
+  dispose(): void
+}
 
 /**
  * creates a Object3D from serialization
@@ -162,17 +177,21 @@ function createMaterial(material: SMaterial): Material {
 export function serializeObject(object: Object3D): SObject3D {
   /** Common Props */
   const { name, position, rotation, scale } = object
-  const children =
-    object.children.length > 0
-      ? (object.children.map(serializeObject) as readonly SObject3D[])
-      : undefined
+  const children = object.children
+    .filter(
+      (child) =>
+        !(child instanceof TransformControlsGizmo) &&
+        !(child instanceof TransformControlsPlane) &&
+        !(child as TransformControlsRoot).isTransformControlsRoot
+    )
+    .map(serializeObject) as readonly SObject3D[]
 
   const base: SBase = {
-    name: name,
+    name,
     position: [position.x, position.y, position.z],
     rotation: [rotation.x, rotation.y, rotation.z],
     scale: [scale.x, scale.y, scale.z],
-    ...(children && { children })
+    ...(children.length > 0 && { children })
   }
 
   /** Specific Props */
@@ -236,5 +255,7 @@ export function serializeObject(object: Object3D): SObject3D {
       ...base
     }
   }
-  throw new Error(`Unsupported Object3D: ${object.constructor.name}`)
+  throw new Error(
+    `Unsupported Object3D: ${object.constructor.name} ${object.type}`
+  )
 }

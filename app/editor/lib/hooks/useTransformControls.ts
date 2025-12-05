@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useEditor } from '../EditorContext'
 import { TransformControls } from 'three/examples/jsm/Addons.js'
 
@@ -10,9 +10,9 @@ export function useTransformControls() {
     camera,
     orbitMap,
     currentTool,
+    controls,
     setObjectVersion
   } = useEditor()
-  const controls = useRef<TransformControls | null>(null)
 
   /** @todo this is absolute peak, but also absolute shit so need to make it better */
   useEffect(() => {
@@ -56,6 +56,7 @@ export function useTransformControls() {
   }, [
     currentObject,
     camera,
+    controls,
     canvas,
     currentTool,
     orbitMap,

@@ -12,6 +12,7 @@ import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
 import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
 import {
   OrbitControls,
+  TransformControls,
   TransformControlsMode
 } from 'three/examples/jsm/Addons.js'
 import { ContextMenuProps } from './types'
@@ -24,6 +25,7 @@ interface EditorContextType {
   scene: RefObject<Scene>
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement>
+  controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
 
   /** @todo should be a ref */
@@ -61,6 +63,7 @@ export function EditorProvider({
   const scene = useRef(new Scene())
   const modelScene = useRef(new Scene())
   const canvas = useRef<HTMLCanvasElement>(null!)
+  const controls = useRef<TransformControls | null>(null)
   const orbitMap = useRef(new Map())
   const runState = useRef<RunState>({
     shouldRun: false,
@@ -93,7 +96,7 @@ export function EditorProvider({
         canvas,
         modelScene,
         runState,
-
+        controls,
         camera,
 
         workspace,

@@ -4,6 +4,7 @@ import { blocklyObjectRegistry } from '../blockly/blocks'
 import { ProjectData, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
 import { serialization } from 'blockly'
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 export function useObjectActions() {
   const {
@@ -12,7 +13,9 @@ export function useObjectActions() {
     workspace,
     setCamera,
     setCurrentObject,
-    setObjectVersion
+    setObjectVersion,
+    orbitMap,
+    canvas
   } = useEditor()
 
   /**
@@ -62,7 +65,16 @@ export function useObjectActions() {
     }
 
     /** Apply camera if space is empty */
-    if (object instanceof Camera) setCamera(object)
+    if (object instanceof Camera) {
+      /** @todo only set camera once */
+      setCamera(object)
+      if (orbitMap.current.size === 0) {
+        orbitMap.current.set(
+          object.id,
+          new OrbitControls(object, canvas.current)
+        )
+      }
+    }
 
     /** If it's a top level sprite, set it as current */
     if (target === scene.current) {
