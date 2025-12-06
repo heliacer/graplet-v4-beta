@@ -176,8 +176,6 @@ export function useObjectActions() {
     target.add(clone)
 
     /** Apply changes, so it's visually visible */
-    const name = `${object.name} Copy`
-    clone.name = name
     clone.position.x += 2
 
     /** If it's a top level sprite, set it as current */

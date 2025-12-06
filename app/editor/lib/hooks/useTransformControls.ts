@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useEditor } from '../EditorContext'
 import { TransformControls } from 'three/examples/jsm/Addons.js'
+import { isInternalObject } from '../utils/sobject3d'
 
 export function useTransformControls() {
   const {
@@ -25,6 +26,7 @@ export function useTransformControls() {
 
     if (!camera) return
     if (!currentObject) return
+    if (isInternalObject(currentObject)) return
 
     if (controls.current) {
       scene.current.remove(controls.current.getHelper())
@@ -33,7 +35,7 @@ export function useTransformControls() {
 
     controls.current = new TransformControls(camera, canvas.current)
     const helper = controls.current.getHelper()
-    helper.name = 'TransformHelperTemp'
+    helper.name = 'TransformHelper'
     scene.current.add(helper)
     controls.current.setMode(currentTool)
     controls.current.attach(currentObject)
@@ -45,7 +47,7 @@ export function useTransformControls() {
       }
     })
 
-    controls.current.addEventListener('change', () =>
+    controls.current.addEventListener('change', () => 
       setObjectVersion((prev) => prev + 1)
     )
 

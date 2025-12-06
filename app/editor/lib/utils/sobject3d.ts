@@ -44,6 +44,14 @@ declare class TransformControlsRoot extends Object3D {
   dispose(): void
 }
 
+export function isInternalObject(object: Object3D): boolean {
+  return (
+    object instanceof TransformControlsGizmo ||
+    object instanceof TransformControlsPlane ||
+    (object as TransformControlsRoot).isTransformControlsRoot
+  )
+}
+
 /**
  * creates a Object3D from serialization
  * @example
@@ -178,12 +186,7 @@ export function serializeObject(object: Object3D): SObject3D {
   /** Common Props */
   const { name, position, rotation, scale } = object
   const children = object.children
-    .filter(
-      (child) =>
-        !(child instanceof TransformControlsGizmo) &&
-        !(child instanceof TransformControlsPlane) &&
-        !(child as TransformControlsRoot).isTransformControlsRoot
-    )
+    .filter((child) => !isInternalObject(child))
     .map(serializeObject) as readonly SObject3D[]
 
   const base: SBase = {

@@ -11,6 +11,7 @@ import { useTree } from '@headless-tree/react'
 import clsx from 'clsx'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Fragment, useEffect, useState } from 'react'
+import { isInternalObject } from '../../lib/utils/sobject3d'
 
 interface TreeItem {
   id: number
@@ -19,6 +20,7 @@ interface TreeItem {
   hasChildren: boolean
 }
 
+/** @todo need to fix expanding folders (custom state) use double click to expand instead of one click */
 export default function ExplorerPanel() {
   const {
     scene,
@@ -45,10 +47,16 @@ export default function ExplorerPanel() {
     isItemFolder: (item) =>
       item.getItemData().type ===
       'Component' /** @todo this is just a workaround */,
+    canRename: (item) => {
+      const object = scene.current.getObjectById(item.getItemData().id)
+      if (!object) return false
+      return !isInternalObject(object)
+    },
     onRename: (item, value) => {
       const id = item.getItemData().id
       const object = scene.current.getObjectById(id)
       if (object) object.name = value
+      setObjectVersion((prev) => prev + 1)
     },
     onDrop: (items, target) => {
       for (const item of items) {
@@ -109,7 +117,7 @@ export default function ExplorerPanel() {
   return (
     <div
       {...tree.getContainerProps()}
-      className="text-sm ml-1 py-1 flex flex-col gap-1 items-start h-full"
+      className="text-sm ml-1 py-1 flex flex-col gap-1 items-start h-full overflow-auto"
       /** not a fan of this at all, ima go with it for now */
       onContextMenu={(e: React.MouseEvent) => {
         e.preventDefault()
@@ -117,7 +125,6 @@ export default function ExplorerPanel() {
       }}
       onClick={() => setContextMenu(null)}
     >
-      <p>current: {currentObject?.name}</p>
       {tree.getItems().map((item) => (
         <Fragment key={item.getId()}>
           {item.isRenaming() ? (
@@ -144,7 +151,6 @@ export default function ExplorerPanel() {
                 )}
                 {...item.getProps()}
                 key={item.getId()}
-                onDoubleClick={() => item.startRenaming()}
               >
                 <div
                   className={clsx(
@@ -174,6 +180,8 @@ export default function ExplorerPanel() {
         style={tree.getDragLineStyle()}
         className="border border-teal-600 rounded"
       />
+      <em>Current: {currentObject?.name}</em>
+      <em>Object version: {objectVersion}</em>
     </div>
   )
 }
