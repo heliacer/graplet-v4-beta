@@ -89,28 +89,24 @@ export function DropdownMenu({ children, className }: DropdownMenuProps) {
 
 interface DropdownButtonProps {
   children: ReactNode
-  className?: (isOpen: boolean, disabled?: boolean) => ClassValue
   disabled?: boolean
 }
 
 export function DropdownButton({
   children,
-  className = (isOpen, disabled) =>
-    clsx(
-      'flex items-center gap-1 border border-transparent rounded-md text-sm px-1',
-      disabled
-        ? 'text-zinc-400'
-        : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
-      isOpen && 'bg-zinc-800 border-zinc-700'
-    ),
   disabled
 }: DropdownButtonProps) {
   const { isOpen, setIsOpen } = useDropdown()
 
   return (
     <button
-      className={clsx(className(isOpen, disabled))}
-      onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
+      className={clsx(
+        'flex items-center gap-1 px-1',
+        disabled ? 'text-zinc-400' : 'cursor-pointer',
+        isOpen ? 'bg-zinc-750' : 'hover:bg-zinc-750 bg-zinc-800',
+        'border rounded-md text-sm border-zinc-700 '
+      )}
+      onClick={disabled ? () => { } : () => setIsOpen(!isOpen)}
     >
       {children}
     </button>
@@ -146,7 +142,7 @@ export function DropdownContent({
   return (
     <div
       className={clsx(
-        'absolute rounded-lg text-sm py-1 border border-zinc-700 bg-zinc-800 z-[999]',
+        'absolute rounded-lg text-sm py-1 border border-zinc-700 bg-zinc-800 z-999',
         alignmentStyles[align],
         sideStyles[side],
         !isOpen && 'hidden',
@@ -245,7 +241,7 @@ export function DropdownFolder({
 
   return (
     <div
-      className={clsx('relative', className)}
+      className={clsx('relative h-[22px]', className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -264,7 +260,7 @@ export function DropdownFolder({
       </button>
       <div
         className={clsx(
-          `absolute min-w-[160px] rounded-lg border py-1 border-zinc-700 bg-zinc-800`,
+          `absolute min-w-40 rounded-lg border py-1 border-zinc-700 bg-zinc-800`,
           'shadow-lg',
           contentAlignment,
           sideAlignment,

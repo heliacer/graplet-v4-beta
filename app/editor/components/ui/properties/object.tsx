@@ -13,11 +13,10 @@ import {
   Vec3AngleProperty,
   Vec3Property
 } from '../PropertyInput'
-import { Layers2, SwitchCamera, Trash } from 'lucide-react'
+import { Crosshair, Layers2, SwitchCamera, Trash } from 'lucide-react'
 import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import DragNumberInput from '@/app/ui/components/DragNumberInput'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
   const { deleteObject, duplicateObject } = useObjectActions()
@@ -72,8 +71,15 @@ export default function ObjectProps({ object }: { object: Object3D }) {
             Icon={SwitchCamera}
             action={() => setCamera(object)}
           />
+          {orbit && (
+            <PropButton
+              label="Reset origin"
+              Icon={Crosshair}
+              action={() => orbit.target.set(0, 0, 0)}
+            />
+          )}
         </div>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <label className="cursor-pointer select-none" htmlFor="orbit">
             Enable OrbitControls
           </label>
@@ -106,29 +112,6 @@ export default function ObjectProps({ object }: { object: Object3D }) {
             }}
           />
         </div>
-        {orbit && (
-          <>
-            <div className="flex justify-between w-full">
-              <p className="text-nowrap">Orbit Origin</p>
-              <div className="flex gap-1.5">
-                {(['x', 'y', 'z'] as const).map((axis) => (
-                  <div key={axis} className="relative">
-                    <DragNumberInput
-                      className="rounded border outline-none w-10 text-center hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200"
-                      value={Number(orbit.target[axis])}
-                      onChange={(newVal) => {
-                        orbit.target[axis] = newVal
-                        setObjectVersion((v) => v + 1)
-                      }}
-                      step={0.1}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* ... more orbit props */}
-          </>
-        )}
       </>
     )
   }

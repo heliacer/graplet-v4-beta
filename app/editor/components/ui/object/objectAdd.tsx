@@ -38,15 +38,7 @@ export function ObjectAdd() {
 
   return (
     <DropdownMenu>
-      <DropdownButton
-        className={(isOpen) =>
-          clsx(
-            'flex items-center gap-1 px-1',
-            isOpen ? 'bg-zinc-750' : 'hover:bg-zinc-750 bg-zinc-800',
-            'border rounded-md text-sm border-zinc-700 cursor-pointer'
-          )
-        }
-      >
+      <DropdownButton>
         <DiamondPlus size={14} />
         <p>Add</p>
         <ChevronDown size={14} />
