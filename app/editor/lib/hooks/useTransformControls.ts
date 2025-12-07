@@ -47,7 +47,7 @@ export function useTransformControls() {
       }
     })
 
-    controls.current.addEventListener('change', () => 
+    controls.current.addEventListener('change', () =>
       setObjectVersion((prev) => prev + 1)
     )
 

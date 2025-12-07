@@ -23,7 +23,14 @@ function BaseObjectProps({ object }: { object: Object3D }) {
 
   return (
     <>
-      <TextProperty label="Object Name" object={object} property="name" />
+      <div className="flex justify-between">
+        <p>Type</p>
+        <div className="w-32 flex justify-between">
+          <em>{object.type}</em>
+          <p className="text-zinc-400">{object.id}</p>
+        </div>
+      </div>
+      <TextProperty label="Name" object={object} property="name" />
       <Vec3Property label="Position" object={object} property="position" />
       <Vec3AngleProperty label="Rotation" object={object} property="rotation" />
       <Vec3Property label="Scale" object={object} property="scale" />
@@ -79,7 +86,7 @@ export default function ObjectProps({ object }: { object: Object3D }) {
             />
           )}
         </div>
-        <div className='flex gap-2'>
+        <div className="flex gap-2">
           <label className="cursor-pointer select-none" htmlFor="orbit">
             Enable OrbitControls
           </label>
@@ -118,4 +125,5 @@ export default function ObjectProps({ object }: { object: Object3D }) {
   if (object instanceof OrthographicCamera) {
     return <BaseObjectProps object={object} />
   }
+  return <p>ObjectProps for {object.name}</p>
 }

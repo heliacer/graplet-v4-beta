@@ -1,12 +1,13 @@
 import { useEditor } from '../../lib/EditorContext'
 import { useState } from 'react'
 import ObjectProps from '../ui/properties/object'
-import { Cone, Cuboid, LucideIcon, Wrench } from 'lucide-react'
+import { Cone, Cuboid, LucideIcon, Settings2, Wrench } from 'lucide-react'
 import clsx from 'clsx'
 import GeometryProps from '../ui/properties/geometry'
 import MaterialProps from '../ui/properties/material'
+import EditorProps from '../ui/properties/editor'
 
-type PropertiesTab = 'object' | 'geometry' | 'material'
+type PropertiesTab = 'editor' | 'object' | 'geometry' | 'material'
 
 interface PropertyTabButtonProps {
   Icon: LucideIcon
@@ -55,24 +56,31 @@ export default function PropertiesPanel() {
     <div className="flex h-full">
       <nav className="flex flex-col gap-1 p-0.5">
         <PropertyTabButton
+          Icon={Settings2}
+          active={activeTab === 'editor'}
+          setActive={() => setActiveTab('editor')}
+        />
+        <PropertyTabButton
           Icon={Wrench}
+          className="text-blue-300"
           active={activeTab === 'object'}
           setActive={() => setActiveTab('object')}
         />
         <PropertyTabButton
           Icon={Cone}
-          className="text-blue-300"
+          className="text-teal-300"
           active={activeTab === 'geometry'}
           setActive={() => setActiveTab('geometry')}
         />
         <PropertyTabButton
           Icon={Cuboid}
-          className="text-teal-300"
+          className="text-orange-300"
           active={activeTab === 'material'}
           setActive={() => setActiveTab('material')}
         />
       </nav>
       <div className="p-1.5 flex flex-col gap-2 text-xs w-full">
+        {activeTab === 'editor' && <EditorProps />}
         {activeTab === 'object' && <ObjectProps object={currentObject} />}
         {activeTab === 'geometry' && <GeometryProps object={currentObject} />}
         {activeTab === 'material' && <MaterialProps object={currentObject} />}

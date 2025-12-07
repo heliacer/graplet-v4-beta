@@ -38,7 +38,7 @@ const jsonLayout: SerializedDockview = {
             activeView: 'code',
             id: '1'
           },
-          size: 4
+          size: 3
         },
         {
           type: 'leaf',

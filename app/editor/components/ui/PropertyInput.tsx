@@ -26,7 +26,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
   return (
     <div className="flex justify-between w-full">
       <p className="text-nowrap">{label}</p>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1">
         {(['x', 'y', 'z'] as const).map((axis) => (
           <div key={axis} className="relative">
             <DragNumberInput
@@ -55,7 +55,7 @@ export function Vec3AngleProperty({
   return (
     <div className="flex justify-between w-full">
       <p className="text-nowrap">{label}</p>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1">
         {(['x', 'y', 'z'] as const).map((axis) => (
           <div key={axis} className="relative">
             <DragNumberInput
@@ -81,11 +81,11 @@ export function Vec3AngleProperty({
 export function TextProperty({ label, object, property }: TextPropertyProps) {
   const { setObjectVersion } = useEditor()
   return (
-    <div className="flex gap-2">
+    <div className="flex justify-between">
       <p className="text-nowrap">{label}</p>
       <input
         type="text"
-        className="rounded border outline-none px-1 w-full hover:bg-zinc-750 focus:bg-zinc-750"
+        className="rounded border outline-none px-1 w-32 hover:bg-zinc-750 focus:bg-zinc-750"
         key={object[property]}
         defaultValue={object[property]}
         onBlur={(e) => {

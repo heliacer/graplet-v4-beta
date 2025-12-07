@@ -92,10 +92,7 @@ interface DropdownButtonProps {
   disabled?: boolean
 }
 
-export function DropdownButton({
-  children,
-  disabled
-}: DropdownButtonProps) {
+export function DropdownButton({ children, disabled }: DropdownButtonProps) {
   const { isOpen, setIsOpen } = useDropdown()
 
   return (
@@ -106,7 +103,7 @@ export function DropdownButton({
         isOpen ? 'bg-zinc-750' : 'hover:bg-zinc-750 bg-zinc-800',
         'border rounded-md text-sm border-zinc-700 '
       )}
-      onClick={disabled ? () => { } : () => setIsOpen(!isOpen)}
+      onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
     >
       {children}
     </button>
