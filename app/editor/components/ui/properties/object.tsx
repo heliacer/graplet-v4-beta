@@ -13,13 +13,11 @@ import {
   Vec3AngleProperty,
   Vec3Property
 } from '../PropertyInput'
-import { Crosshair, Layers2, SwitchCamera, Trash } from 'lucide-react'
-import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
+import { Crosshair, SwitchCamera } from 'lucide-react'
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
-  const { deleteObject, duplicateObject } = useObjectActions()
 
   return (
     <>
@@ -34,19 +32,6 @@ function BaseObjectProps({ object }: { object: Object3D }) {
       <Vec3Property label="Position" object={object} property="position" />
       <Vec3AngleProperty label="Rotation" object={object} property="rotation" />
       <Vec3Property label="Scale" object={object} property="scale" />
-      {/* not a fan of this, under airstrike watchlist */}
-      <div className="flex gap-2 flex-wrap">
-        <PropButton
-          label="Delete this"
-          Icon={Trash}
-          action={() => deleteObject(object)}
-        />
-        <PropButton
-          label="Duplicate this"
-          Icon={Layers2}
-          action={() => duplicateObject(object)}
-        />
-      </div>
     </>
   )
 }

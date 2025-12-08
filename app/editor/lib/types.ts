@@ -1,3 +1,6 @@
+import { ItemInstance } from "@headless-tree/core"
+import { TreeItem } from "../components/panels/ExplorerPanel"
+
 type Vec3 = readonly [number, number, number]
 
 export interface ProjectData {
@@ -109,6 +112,7 @@ export interface SMaterial {
  * @todo add more, e.g source
  */
 export interface ContextMenuProps {
+  item: ItemInstance<TreeItem>
   x: number
   y: number
 }

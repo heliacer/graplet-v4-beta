@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 import { useObjectActions } from '../../../lib/hooks/useObjectActions'
 import { SGeometryT } from '../../../lib/types'
-import clsx from 'clsx'
 
 export function ObjectAdd() {
   const { addObject } = useObjectActions()
@@ -47,10 +46,10 @@ export function ObjectAdd() {
         <DropdownOption
           onClick={() => addObject({ type: 'Group', name: 'Group' })}
         >
-          <Component size={14} />
+          <Component size={12} />
           <p>Group</p>
         </DropdownOption>
-        <DropdownFolder label="Mesh" side="top" icon={<Box size={14} />}>
+        <DropdownFolder label="Mesh" side="top" icon={<Box size={12} />}>
           {geometries.map((geometryType) => (
             <DropdownOption
               key={geometryType}
@@ -67,7 +66,7 @@ export function ObjectAdd() {
             </DropdownOption>
           ))}
         </DropdownFolder>
-        <DropdownFolder label="Light" side="top" icon={<Lightbulb size={14} />}>
+        <DropdownFolder label="Light" side="top" icon={<Lightbulb size={12} />}>
           <DropdownOption
             onClick={() => {
               addObject({
@@ -89,7 +88,7 @@ export function ObjectAdd() {
             <p>Directional Light</p>
           </DropdownOption>
         </DropdownFolder>
-        <DropdownFolder label="Camera" side="top" icon={<Camera size={14} />}>
+        <DropdownFolder label="Camera" side="top" icon={<Camera size={12} />}>
           <DropdownOption
             onClick={() => {
               addObject({

@@ -24,7 +24,11 @@ interface DropdownContextType {
   toggleFolder: (id: string) => void
 }
 
-/** @todo @refactor BIG UI styling update, need to fix gaps, make 0.5 instead of 1 */
+/** 
+ * @todo @refactor BIG UI styling update, need to fix gaps, make 0.5 instead of 1 
+ * 
+ * -> update done 0.5, need both sizes though, also need refactor
+*/
 
 const DropdownContext = createContext<DropdownContextType | undefined>(
   undefined
@@ -103,7 +107,7 @@ export function DropdownButton({ children, disabled }: DropdownButtonProps) {
         isOpen ? 'bg-zinc-750' : 'hover:bg-zinc-750 bg-zinc-800',
         'border rounded-md text-sm border-zinc-700 '
       )}
-      onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
+      onClick={disabled ? () => { } : () => setIsOpen(!isOpen)}
     >
       {children}
     </button>
@@ -139,7 +143,7 @@ export function DropdownContent({
   return (
     <div
       className={clsx(
-        'absolute rounded-lg text-sm py-1 border border-zinc-700 bg-zinc-800 z-999',
+        'absolute rounded-md text-xs py-0.5 border border-zinc-700 bg-zinc-800 z-999',
         alignmentStyles[align],
         sideStyles[side],
         !isOpen && 'hidden',
@@ -171,31 +175,25 @@ export function DropdownOption({
     close()
   }
 
-  const baseStyles =
-    'border border-transparent rounded mx-1 px-1 hover:border-zinc-600 hover:bg-zinc-700'
-
-  if (asChild) {
-    return (
-      <div className={clsx(baseStyles, className)} onClick={handleClick}>
-        {children}
-      </div>
-    )
-  }
-
   return (
-    <div className={clsx(baseStyles, className)}>
-      <button
-        className="w-full text-left cursor-pointer flex items-center gap-2"
-        onClick={handleClick}
-      >
-        {children}
-      </button>
+    <div className={clsx(
+      'border border-transparent rounded mx-0.5 px-0.5 hover:border-zinc-600 hover:bg-zinc-700',
+      className
+    )}>
+      {asChild ? children :
+        <button
+          className="w-full text-left cursor-pointer flex items-center gap-1"
+          onClick={handleClick}
+        >
+          {children}
+        </button>
+      }
     </div>
   )
 }
 
 export function DropdownSeparator({ className }: { className?: string }) {
-  return <hr className={clsx('my-1 border-zinc-600', className)} />
+  return <hr className={clsx('my-0.5 border-zinc-600', className)} />
 }
 
 interface DropdownFolderProps {
@@ -238,14 +236,14 @@ export function DropdownFolder({
 
   return (
     <div
-      className={clsx('relative h-[22px]', className)}
+      className={clsx('relative h-[18px]', className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <button type="button" className="w-full" onClick={handleClick}>
         <div
           className={clsx(
-            'flex cursor-pointer items-center gap-2 rounded px-1 mx-1 text-left',
+            'flex cursor-pointer items-center gap-1 rounded px-0.5 mx-0.5 text-left',
             'border border-transparent',
             isOpen && 'border-zinc-600 bg-zinc-700'
           )}
@@ -257,7 +255,7 @@ export function DropdownFolder({
       </button>
       <div
         className={clsx(
-          `absolute min-w-40 rounded-lg border py-1 border-zinc-700 bg-zinc-800`,
+          `absolute min-w-40 rounded-lg border py-0.5 border-zinc-700 bg-zinc-800`,
           'shadow-lg',
           contentAlignment,
           sideAlignment,

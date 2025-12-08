@@ -13,7 +13,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Fragment, useEffect, useState } from 'react'
 import { isInternalObject } from '../../lib/utils/sobject3d'
 
-interface TreeItem {
+export interface TreeItem {
   id: number
   name: string
   type: IconT
@@ -119,11 +119,8 @@ export default function ExplorerPanel() {
       {...tree.getContainerProps()}
       className="text-sm ml-1 py-1 flex flex-col gap-1 items-start h-full overflow-auto"
       /** not a fan of this at all, ima go with it for now */
-      onContextMenu={(e: React.MouseEvent) => {
-        e.preventDefault()
-        setContextMenu({ x: e.clientX, y: e.clientY })
-      }}
       onClick={() => setContextMenu(null)}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {tree.getItems().map((item) => (
         <Fragment key={item.getId()}>
@@ -138,7 +135,17 @@ export default function ExplorerPanel() {
               </div>
             </div>
           ) : (
-            <div className="flex w-full">
+            <div
+              className="flex w-full"
+              onContextMenu={(e: React.MouseEvent) => {
+                e.preventDefault()
+                const objectId = item.getItemData().id
+                const object = scene.current.getObjectById(objectId)
+                if (!object) throw Error(`Object with id ${objectId} does not exist`)
+                if (isInternalObject(object)) return
+                setContextMenu({ item, x: e.clientX, y: e.clientY })
+              }}
+            >
               <div
                 style={{ marginLeft: `${item.getItemMeta().level * 8}px` }}
               />
