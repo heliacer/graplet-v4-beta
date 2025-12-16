@@ -114,6 +114,7 @@ export default function ExplorerPanel() {
     )
   }, [objectVersion, tree, currentObject])
 
+  /** @todo add visibility toggle + lock item + better group dropdown */
   return (
     <div
       {...tree.getContainerProps()}

@@ -67,6 +67,7 @@ export function ContextMenu() {
           setContextMenu(null)
         }}
       />
+      {/** @todo add group/ungroup */}
     </div>
   )
 }
