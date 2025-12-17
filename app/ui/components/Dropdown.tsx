@@ -24,11 +24,11 @@ interface DropdownContextType {
   toggleFolder: (id: string) => void
 }
 
-/** 
- * @todo @refactor BIG UI styling update, need to fix gaps, make 0.5 instead of 1 
- * 
+/**
+ * @todo @refactor BIG UI styling update, need to fix gaps, make 0.5 instead of 1
+ *
  * -> update done 0.5, need both sizes though, also need refactor
-*/
+ */
 
 const DropdownContext = createContext<DropdownContextType | undefined>(
   undefined
@@ -107,7 +107,7 @@ export function DropdownButton({ children, disabled }: DropdownButtonProps) {
         isOpen ? 'bg-zinc-750' : 'hover:bg-zinc-750 bg-zinc-800',
         'border rounded-md text-sm border-zinc-700 '
       )}
-      onClick={disabled ? () => { } : () => setIsOpen(!isOpen)}
+      onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
     >
       {children}
     </button>
@@ -176,18 +176,22 @@ export function DropdownOption({
   }
 
   return (
-    <div className={clsx(
-      'border border-transparent rounded mx-0.5 px-0.5 hover:border-zinc-600 hover:bg-zinc-700',
-      className
-    )}>
-      {asChild ? children :
+    <div
+      className={clsx(
+        'border border-transparent rounded mx-0.5 px-0.5 hover:border-zinc-600 hover:bg-zinc-700',
+        className
+      )}
+    >
+      {asChild ? (
+        children
+      ) : (
         <button
           className="w-full text-left cursor-pointer flex items-center gap-1"
           onClick={handleClick}
         >
           {children}
         </button>
-      }
+      )}
     </div>
   )
 }

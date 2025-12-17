@@ -188,7 +188,7 @@ export function useObjectActions() {
   function clearScene() {
     for (let i = scene.current.children.length - 1; i >= 0; i--) {
       const child = scene.current.children[i]
-      scene.current.remove(child)
+      deleteObject(child)
     }
     setCurrentObject(null)
     blocklyObjectRegistry.options = []

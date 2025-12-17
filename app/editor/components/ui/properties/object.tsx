@@ -18,7 +18,6 @@ import { useEditor } from '@/app/editor/lib/EditorContext'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
-
   return (
     <>
       <div className="flex justify-between">

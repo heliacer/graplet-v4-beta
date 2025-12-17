@@ -10,7 +10,7 @@ import {
 import { useTree } from '@headless-tree/react'
 import { useEffect, useState } from 'react'
 import { isInternalObject } from '../../lib/utils/sobject3d'
-import { TreeItem } from '../ui/TreeItem'
+import { TreeItem, TreeItemView } from '../ui/TreeItemView'
 
 /** @todo need to fix expanding folders (custom state) use double click to expand instead of one click */
 export default function ExplorerPanel() {
@@ -20,7 +20,8 @@ export default function ExplorerPanel() {
     currentObject,
     setCurrentObject,
     objectVersion,
-    setContextMenu
+    setContextMenu,
+    currentTool
   } = useEditor()
   const [selectedItems, setSelectedItems] = useState<string[]>([])
 
@@ -104,19 +105,19 @@ export default function ExplorerPanel() {
     setSelectedItems((prev) =>
       currentObject ? [currentObject.id.toString()] : prev
     )
-  }, [objectVersion, tree, currentObject])
+  }, [objectVersion, tree, currentObject, currentTool])
 
   /** @todo add visibility toggle + lock item + better group dropdown */
   return (
     <div
       {...tree.getContainerProps()}
-      className="text-sm ml-1 py-1 flex flex-col gap-1 items-start h-full overflow-auto"
+      className="text-sm py-1 flex flex-col gap-1 items-start h-full overflow-auto"
       /** not a fan of this at all, ima go with it for now */
       onClick={() => setContextMenu(null)}
       onContextMenu={(e) => e.preventDefault()}
     >
       {tree.getItems().map((item) => (
-        <TreeItem key={item.getId()} item={item} />
+        <TreeItemView key={item.getId()} tree={tree} item={item} />
       ))}
       <div
         style={tree.getDragLineStyle()}

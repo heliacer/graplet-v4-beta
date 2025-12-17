@@ -25,7 +25,6 @@ function ContexMenuItem({ label, Icon, onClick }: ContextMenuItemProps) {
   )
 }
 
-
 export function ContextMenu() {
   const { scene, contextMenu, setContextMenu } = useEditor()
   const { deleteObject, duplicateObject } = useObjectActions()
@@ -38,7 +37,7 @@ export function ContextMenu() {
       className="absolute shadow-md min-w-20 bg-zinc-800 border border-zinc-700 p-0.5 text-xs rounded-md"
     >
       <ContexMenuItem
-        label='Rename'
+        label="Rename"
         Icon={Pen}
         onClick={() => {
           contextMenu.item.startRenaming()
@@ -46,7 +45,7 @@ export function ContextMenu() {
         }}
       />
       <ContexMenuItem
-        label='Duplicate'
+        label="Duplicate"
         Icon={Layers2}
         onClick={() => {
           const objectId = contextMenu.item.getItemData().id
@@ -57,7 +56,7 @@ export function ContextMenu() {
         }}
       />
       <ContexMenuItem
-        label='Delete'
+        label="Delete"
         Icon={Trash}
         onClick={() => {
           const objectId = contextMenu.item.getItemData().id
