@@ -1,5 +1,5 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
-import { getIconT, IconT, ItemIcon } from '@/app/editor/lib/utils/icons'
+import { getIconT } from '@/app/editor/lib/utils/icons'
 import {
   dragAndDropFeature,
   hotkeysCoreFeature,
@@ -8,17 +8,9 @@ import {
   syncDataLoaderFeature
 } from '@headless-tree/core'
 import { useTree } from '@headless-tree/react'
-import clsx from 'clsx'
-import { ChevronDown, ChevronRight } from 'lucide-react'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isInternalObject } from '../../lib/utils/sobject3d'
-
-export interface TreeItem {
-  id: number
-  name: string
-  type: IconT
-  hasChildren: boolean
-}
+import { TreeItem } from '../ui/TreeItem'
 
 /** @todo need to fix expanding folders (custom state) use double click to expand instead of one click */
 export default function ExplorerPanel() {
@@ -124,65 +116,7 @@ export default function ExplorerPanel() {
       onContextMenu={(e) => e.preventDefault()}
     >
       {tree.getItems().map((item) => (
-        <Fragment key={item.getId()}>
-          {item.isRenaming() ? (
-            <div className="flex w-full">
-              <div
-                style={{ marginLeft: `${item.getItemMeta().level * 8}px` }}
-              />
-              <div className="flex items-center w-full px-1 gap-1 rounded-l border border-teal-600 bg-zinc-800">
-                <ItemIcon size={14} iconType={item.getItemData().type} />
-                <input className="outline-0" {...item.getRenameInputProps()} />
-              </div>
-            </div>
-          ) : (
-            <div
-              className="flex w-full"
-              onContextMenu={(e: React.MouseEvent) => {
-                e.preventDefault()
-                const objectId = item.getItemData().id
-                const object = scene.current.getObjectById(objectId)
-                if (!object) throw Error(`Object with id ${objectId} does not exist`)
-                if (isInternalObject(object)) return
-                setContextMenu({ item, x: e.clientX, y: e.clientY })
-              }}
-            >
-              <div
-                style={{ marginLeft: `${item.getItemMeta().level * 8}px` }}
-              />
-              <button
-                className={clsx(
-                  'cursor-pointer w-full border-l rounded-l',
-                  item.isSelected()
-                    ? 'border-teal-600 bg-zinc-800'
-                    : 'hover:border-zinc-700 hover:bg-zinc-800 border-transparent'
-                )}
-                {...item.getProps()}
-                key={item.getId()}
-              >
-                <div
-                  className={clsx(
-                    'flex flex-start pl-1 items-center gap-1',
-                    'border-l-0 border rounded-l',
-                    item.isSelected()
-                      ? 'border-zinc-700'
-                      : 'hover:border-zinc-700 border-transparent'
-                  )}
-                >
-                  <ItemIcon size={14} iconType={item.getItemData().type} />
-                  {item.getItemName()}
-                  {item.isFolder() ? (
-                    item.isExpanded() ? (
-                      <ChevronDown size={12} />
-                    ) : (
-                      <ChevronRight size={12} />
-                    )
-                  ) : null}
-                </div>
-              </button>
-            </div>
-          )}
-        </Fragment>
+        <TreeItem key={item.getId()} item={item} />
       ))}
       <div
         style={tree.getDragLineStyle()}
