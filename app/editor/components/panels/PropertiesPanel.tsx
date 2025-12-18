@@ -53,8 +53,8 @@ export default function PropertiesPanel() {
   if (!currentObject) return
 
   return (
-    <div className="flex h-full">
-      <nav className="flex flex-col gap-1 p-0.5">
+    <div className='flex h-full'>
+      <nav className='flex flex-col gap-1 p-0.5'>
         <PropertyTabButton
           Icon={Settings2}
           active={activeTab === 'editor'}
@@ -62,24 +62,24 @@ export default function PropertiesPanel() {
         />
         <PropertyTabButton
           Icon={Wrench}
-          className="text-blue-300"
+          className='text-blue-300'
           active={activeTab === 'object'}
           setActive={() => setActiveTab('object')}
         />
         <PropertyTabButton
           Icon={Cone}
-          className="text-teal-300"
+          className='text-teal-300'
           active={activeTab === 'geometry'}
           setActive={() => setActiveTab('geometry')}
         />
         <PropertyTabButton
           Icon={Cuboid}
-          className="text-orange-300"
+          className='text-orange-300'
           active={activeTab === 'material'}
           setActive={() => setActiveTab('material')}
         />
       </nav>
-      <div className="p-1.5 flex flex-col gap-2 text-xs w-full">
+      <div className='p-1.5 flex flex-col gap-2 text-xs w-full'>
         {activeTab === 'editor' && <EditorProps />}
         {activeTab === 'object' && <ObjectProps object={currentObject} />}
         {activeTab === 'geometry' && <GeometryProps object={currentObject} />}

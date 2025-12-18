@@ -12,11 +12,11 @@ export default function InputSkeleton() {
           'dark:border-zinc-700  dark:bg-zinc-800'
         )}
       />
-      <div className="flex gap-2.5 items-center">
+      <div className='flex gap-2.5 items-center'>
         <Mail size={14} />
         <p>Invitation only.</p>
       </div>
-      <span className="h-7"></span>
+      <span className='h-7'></span>
     </>
   )
 }

@@ -23,11 +23,11 @@ interface ItemViewProps {
 
 function RenamingItemView({ item }: ItemViewProps) {
   return (
-    <div className="flex w-full">
+    <div className='flex w-full'>
       <div style={{ marginLeft: `${item.getItemMeta().level * 8 + 12}px` }} />
-      <div className="flex items-center w-full px-1 gap-1 rounded-l-md border border-teal-600 bg-zinc-800">
+      <div className='flex items-center w-full px-1 gap-1 rounded-l-md border border-teal-600 bg-zinc-800'>
         <ItemIcon size={14} iconType={item.getItemData().type} />
-        <input className="outline-0" {...item.getRenameInputProps()} />
+        <input className='outline-0' {...item.getRenameInputProps()} />
       </div>
     </div>
   )
@@ -43,18 +43,18 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
   if (item.isRenaming()) return <RenamingItemView tree={tree} item={item} />
 
   return (
-    <div className="flex w-full items-center">
+    <div className='flex w-full items-center'>
       {item.isFolder() ? (
         <>
           {item.isExpanded() ? (
             <ChevronDown
-              className="cursor-pointer text-zinc-400"
+              className='cursor-pointer text-zinc-400'
               onClick={item.collapse}
               size={12}
             />
           ) : (
             <ChevronRight
-              className="cursor-pointer text-zinc-400"
+              className='cursor-pointer text-zinc-400'
               onClick={item.expand}
               size={12}
             />
@@ -101,7 +101,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
             'flex w-full justify-between'
           )}
         >
-          <div className="flex items-center gap-1">
+          <div className='flex items-center gap-1'>
             <ItemIcon size={14} iconType={item.getItemData().type} />
             {item.getItemName()}
           </div>

@@ -186,7 +186,7 @@ export function DropdownOption({
         children
       ) : (
         <button
-          className="w-full text-left cursor-pointer flex items-center gap-1"
+          className='w-full text-left cursor-pointer flex items-center gap-1'
           onClick={handleClick}
         >
           {children}
@@ -244,7 +244,7 @@ export function DropdownFolder({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button type="button" className="w-full" onClick={handleClick}>
+      <button type='button' className='w-full' onClick={handleClick}>
         <div
           className={clsx(
             'flex cursor-pointer items-center gap-1 rounded px-0.5 mx-0.5 text-left',
@@ -253,8 +253,8 @@ export function DropdownFolder({
           )}
         >
           {icon}
-          <span className="flex-1">{label}</span>
-          <ChevronRight size={14} className="text-zinc-200" />
+          <span className='flex-1'>{label}</span>
+          <ChevronRight size={14} className='text-zinc-200' />
         </div>
       </button>
       <div

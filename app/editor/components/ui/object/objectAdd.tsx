@@ -42,14 +42,14 @@ export function ObjectAdd() {
         <p>Add</p>
         <ChevronDown size={14} />
       </DropdownButton>
-      <DropdownContent align="left" side="bottom">
+      <DropdownContent align='left' side='bottom'>
         <DropdownOption
           onClick={() => addObject({ type: 'Group', name: 'Group' })}
         >
           <Component size={12} />
           <p>Group</p>
         </DropdownOption>
-        <DropdownFolder label="Mesh" side="top" icon={<Box size={12} />}>
+        <DropdownFolder label='Mesh' side='top' icon={<Box size={12} />}>
           {geometries.map((geometryType) => (
             <DropdownOption
               key={geometryType}
@@ -66,7 +66,7 @@ export function ObjectAdd() {
             </DropdownOption>
           ))}
         </DropdownFolder>
-        <DropdownFolder label="Light" side="top" icon={<Lightbulb size={12} />}>
+        <DropdownFolder label='Light' side='top' icon={<Lightbulb size={12} />}>
           <DropdownOption
             onClick={() => {
               addObject({
@@ -88,7 +88,7 @@ export function ObjectAdd() {
             <p>Directional Light</p>
           </DropdownOption>
         </DropdownFolder>
-        <DropdownFolder label="Camera" side="top" icon={<Camera size={12} />}>
+        <DropdownFolder label='Camera' side='top' icon={<Camera size={12} />}>
           <DropdownOption
             onClick={() => {
               addObject({

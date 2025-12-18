@@ -125,7 +125,7 @@ export default function GrapletDockview() {
         name: 'graplet',
         className: 'theme-graplet'
       }}
-      className="w-full h-full overflow-hidden"
+      className='w-full h-full overflow-hidden'
       onReady={mount}
       components={panelComponents}
       defaultTabComponent={TabHeader}

@@ -52,7 +52,7 @@ export default function DragNumberInput({
 
   return (
     <input
-      type="number"
+      type='number'
       className={clsx('cursor-n-resize', className)}
       value={value.toFixed(decimals)}
       onChange={(e) => onChange(Number(e.target.value))}

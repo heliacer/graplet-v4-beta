@@ -51,11 +51,11 @@ export default function RunControls() {
   }
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="flex gap-1">
+    <div className='w-full h-full flex items-center justify-center'>
+      <div className='flex gap-1'>
         <button
           onClick={handleRun}
-          title="run"
+          title='run'
           className={clsx(
             'p-1 rounded',
             isRunning ? 'bg-zinc-700' : 'cursor-pointer bg-teal-600'
@@ -81,7 +81,7 @@ export default function RunControls() {
         </button>
         <button
           onClick={handleStop}
-          title="stop"
+          title='stop'
           className={clsx(
             'p-1 rounded',
             isRunning ? 'cursor-pointer bg-rose-500' : 'bg-zinc-700'
@@ -95,7 +95,7 @@ export default function RunControls() {
             'p-1 rounded',
             isRunning && isPaused ? 'cursor-pointer bg-sky-600' : 'bg-zinc-700'
           )}
-          title="step"
+          title='step'
         >
           <StepForward size={16} />
         </button>

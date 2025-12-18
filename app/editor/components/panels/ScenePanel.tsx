@@ -15,7 +15,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   return (
     <>
       <ObjectControls />
-      <canvas ref={canvas} className="w-full h-full" />
+      <canvas ref={canvas} className='w-full h-full' />
     </>
   )
 }

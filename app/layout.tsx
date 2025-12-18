@@ -16,7 +16,7 @@ export default function RootLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body
         className={`${nunito.className} dark:bg-zinc-900 bg-zinc-100 text-zinc-800 dark:text-zinc-200`}
       >

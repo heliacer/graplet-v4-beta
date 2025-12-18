@@ -111,7 +111,7 @@ export default function ExplorerPanel() {
   return (
     <div
       {...tree.getContainerProps()}
-      className="text-sm py-1 flex flex-col gap-1 items-start h-full overflow-auto"
+      className='text-sm py-1 flex flex-col gap-1 items-start h-full overflow-auto'
       /** not a fan of this at all, ima go with it for now */
       onClick={() => setContextMenu(null)}
       onContextMenu={(e) => e.preventDefault()}
@@ -121,7 +121,7 @@ export default function ExplorerPanel() {
       ))}
       <div
         style={tree.getDragLineStyle()}
-        className="border border-teal-600 rounded"
+        className='border border-teal-600 rounded'
       />
       <em>Current: {currentObject?.name}</em>
       <em>Object version: {objectVersion}</em>

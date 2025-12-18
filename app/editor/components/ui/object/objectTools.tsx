@@ -29,10 +29,10 @@ function ToolButton({ tool, Icon }: ToolButtonProps) {
 
 export function ObjectTools() {
   return (
-    <div className="flex flex-col gap-2">
-      <ToolButton tool="translate" Icon={Move3D} />
-      <ToolButton tool="rotate" Icon={Rotate3D} />
-      <ToolButton tool="scale" Icon={Scale3D} />
+    <div className='flex flex-col gap-2'>
+      <ToolButton tool='translate' Icon={Move3D} />
+      <ToolButton tool='rotate' Icon={Rotate3D} />
+      <ToolButton tool='scale' Icon={Scale3D} />
     </div>
   )
 }

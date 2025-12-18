@@ -20,17 +20,17 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js'
 function BaseObjectProps({ object }: { object: Object3D }) {
   return (
     <>
-      <div className="flex justify-between">
+      <div className='flex justify-between'>
         <p>Type</p>
-        <div className="w-32 flex justify-between">
+        <div className='w-32 flex justify-between'>
           <em>{object.type}</em>
-          <p className="text-zinc-400">{object.id}</p>
+          <p className='text-zinc-400'>{object.id}</p>
         </div>
       </div>
-      <TextProperty label="Name" object={object} property="name" />
-      <Vec3Property label="Position" object={object} property="position" />
-      <Vec3AngleProperty label="Rotation" object={object} property="rotation" />
-      <Vec3Property label="Scale" object={object} property="scale" />
+      <TextProperty label='Name' object={object} property='name' />
+      <Vec3Property label='Position' object={object} property='position' />
+      <Vec3AngleProperty label='Rotation' object={object} property='rotation' />
+      <Vec3Property label='Scale' object={object} property='scale' />
     </>
   )
 }
@@ -56,29 +56,29 @@ export default function ObjectProps({ object }: { object: Object3D }) {
     return (
       <>
         <BaseObjectProps object={object} />
-        <div className="flex gap-2 flex-wrap">
+        <div className='flex gap-2 flex-wrap'>
           <PropButton
-            label="Set Active"
+            label='Set Active'
             Icon={SwitchCamera}
             action={() => setCamera(object)}
           />
           {orbit && (
             <PropButton
-              label="Reset origin"
+              label='Reset origin'
               Icon={Crosshair}
               action={() => orbit.target.set(0, 0, 0)}
             />
           )}
         </div>
-        <div className="flex gap-2">
-          <label className="cursor-pointer select-none" htmlFor="orbit">
+        <div className='flex gap-2'>
+          <label className='cursor-pointer select-none' htmlFor='orbit'>
             Enable OrbitControls
           </label>
           <input
             /** need to make a custom checkbox, this won't cut it */
-            className="cursor-pointer accent-teal-600"
-            type="checkbox"
-            id="orbit"
+            className='cursor-pointer accent-teal-600'
+            type='checkbox'
+            id='orbit'
             checked={!!orbitMap.current.get(object.id)}
             onChange={(e) => {
               if (e.target.checked) {

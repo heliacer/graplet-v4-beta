@@ -24,13 +24,13 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
   const { setObjectVersion } = useEditor()
 
   return (
-    <div className="flex justify-between w-full">
-      <p className="text-nowrap">{label}</p>
-      <div className="flex gap-1">
+    <div className='flex justify-between w-full'>
+      <p className='text-nowrap'>{label}</p>
+      <div className='flex gap-1'>
         {(['x', 'y', 'z'] as const).map((axis) => (
-          <div key={axis} className="relative">
+          <div key={axis} className='relative'>
             <DragNumberInput
-              className="rounded border outline-none w-10 text-center hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200"
+              className='rounded border outline-none w-10 text-center hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200'
               value={Number(object[property][axis])}
               onChange={(newVal) => {
                 object[property][axis] = newVal
@@ -53,13 +53,13 @@ export function Vec3AngleProperty({
   const { setObjectVersion } = useEditor()
 
   return (
-    <div className="flex justify-between w-full">
-      <p className="text-nowrap">{label}</p>
-      <div className="flex gap-1">
+    <div className='flex justify-between w-full'>
+      <p className='text-nowrap'>{label}</p>
+      <div className='flex gap-1'>
         {(['x', 'y', 'z'] as const).map((axis) => (
-          <div key={axis} className="relative">
+          <div key={axis} className='relative'>
             <DragNumberInput
-              className="rounded border outline-none w-10 text-center pr-1 hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200"
+              className='rounded border outline-none w-10 text-center pr-1 hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200'
               value={Number((object[property][axis] * 180) / Math.PI)}
               step={1}
               decimals={0}
@@ -68,7 +68,7 @@ export function Vec3AngleProperty({
                 setObjectVersion((v) => v + 1)
               }}
             />
-            <span className="absolute right-1.5 top-0.5 text-xs select-none">
+            <span className='absolute right-1.5 top-0.5 text-xs select-none'>
               °
             </span>
           </div>
@@ -81,11 +81,11 @@ export function Vec3AngleProperty({
 export function TextProperty({ label, object, property }: TextPropertyProps) {
   const { setObjectVersion } = useEditor()
   return (
-    <div className="flex justify-between">
-      <p className="text-nowrap">{label}</p>
+    <div className='flex justify-between'>
+      <p className='text-nowrap'>{label}</p>
       <input
-        type="text"
-        className="rounded border outline-none px-1 w-32 hover:bg-zinc-750 focus:bg-zinc-750"
+        type='text'
+        className='rounded border outline-none px-1 w-32 hover:bg-zinc-750 focus:bg-zinc-750'
         key={object[property]}
         defaultValue={object[property]}
         onBlur={(e) => {
@@ -112,11 +112,11 @@ interface PropButtonProps {
 export function PropButton({ label, Icon, action }: PropButtonProps) {
   return (
     <button
-      className="flex gap-1 items-center cursor-pointer p-1 rounded bg-zinc-750 hover:bg-zinc-650"
+      className='flex gap-1 items-center cursor-pointer p-1 rounded bg-zinc-750 hover:bg-zinc-650'
       onClick={action}
     >
       <Icon size={12} />
-      <p className="leading-0">{label}</p>
+      <p className='leading-0'>{label}</p>
     </button>
   )
 }

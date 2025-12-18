@@ -19,9 +19,9 @@ export default function UserDropdown() {
         <p>{session?.user?.name}</p>
         <ChevronDown size={16} />
       </DropdownButton>
-      <DropdownContent className="min-w-38">
+      <DropdownContent className='min-w-38'>
         <DropdownOption asChild>
-          <Link className="flex items-center gap-2" href="/mystuff">
+          <Link className='flex items-center gap-2' href='/mystuff'>
             <Folder size={14} />
             <p>My Stuff</p>
           </Link>
@@ -29,7 +29,7 @@ export default function UserDropdown() {
         <DropdownSeparator />
         <DropdownOption asChild>
           <Link
-            className="flex items-center gap-2"
+            className='flex items-center gap-2'
             href={`/users/${session?.user?.id}`}
           >
             <User size={14} />
@@ -37,7 +37,7 @@ export default function UserDropdown() {
           </Link>
         </DropdownOption>
         <DropdownOption asChild>
-          <Link className="flex items-center gap-2" href="/account">
+          <Link className='flex items-center gap-2' href='/account'>
             <Settings2 size={14} />
             <p>Account</p>
           </Link>
