@@ -1,31 +1,42 @@
 import clsx from 'clsx'
 import { ChevronDown, LucideIcon } from 'lucide-react'
 
-interface DropdownItem {
+export interface DropdownItemProps {
   label: string
   Icon?: LucideIcon
   onClick?: React.MouseEventHandler<HTMLButtonElement>
-  children?: DropdownItem[]
+  children?: DropdownItemProps[]
 }
 
-interface DropdownProps {
+export interface DropdownProps {
   label: string
-  items?: DropdownItem[]
+  items?: DropdownItemProps[]
   Icon?: LucideIcon
   size?: number
 }
+
+function DropdownItem({ label, Icon, onClick, children }: DropdownItemProps) {
+  return (
+    <li className='flex gap-1'>
+      {Icon && <Icon size={14} />}
+      {label}
+    </li>
+  )
+}
+
 /**
  * New Dropdown - REVAMP UI
  *
  * @todo clsx (order revamp soon) [spacing, looks, color [border, bg]]
+ * @todo mechanics, open/close + folders, maybe make them merged into one activeItems, setActiveItems
  */
 export function Dropdown({ label, items, Icon, size }: DropdownProps) {
   return (
-    <div className='relative'>
+    <div className='text-sm relative'>
       <button
         className={clsx(
           'flex items-center gap-1 px-1',
-          'text-sm border rounded-md',
+          'border rounded-md',
           'border-zinc-700',
           'hover:bg-zinc-750 bg-zinc-800'
         )}
@@ -37,7 +48,7 @@ export function Dropdown({ label, items, Icon, size }: DropdownProps) {
       {items && (
         <ul>
           {items.map((child, i) => (
-            <li key={i}>{child.label}</li>
+            <DropdownItem key={i} {...child} />
           ))}
         </ul>
       )}
