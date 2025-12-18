@@ -1,28 +1,15 @@
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Newdropdown'
-import { ObjectAdd } from '../object/objectAdd'
+import { ObjectAdd } from '../object/objectAdd.test'
+import { ObjectAdd as ObjectAddOld } from '../object/objectAdd'
 import { ObjectTools } from '../object/objectTools'
-import { Component, DiamondPlus, Star } from 'lucide-react'
 
 export function ObjectControls() {
-  const items: DropdownItemProps[] = [
-    {
-      label: 'Group',
-      Icon: Component
-    },
-    {
-      label: 'Action',
-      Icon: Star
-    }
-  ]
-
-
   return (
     <div className='flex gap-2 absolute m-1.5'>
       <ObjectTools />
       <nav>
-        <ObjectAdd />
+        <ObjectAddOld />
       </nav>
-      <Dropdown label='Add' Icon={DiamondPlus} items={items} />
+      <ObjectAdd />
     </div>
   )
 }

@@ -9,7 +9,6 @@ interface ContextMenuItemProps {
   onClick: React.MouseEventHandler
 }
 
-/** @todo now this is peak, Dropdown code which is complete bullshit also needs this sorta code */
 function ContexMenuItem({ label, Icon, onClick }: ContextMenuItemProps) {
   return (
     <button
@@ -30,7 +29,6 @@ export function ContextMenu() {
   const { deleteObject, duplicateObject } = useObjectActions()
   if (!contextMenu) return
 
-  /** @todo add rename, duplicate, delete */
   return (
     <div
       style={{ top: contextMenu.y, left: contextMenu.x }}

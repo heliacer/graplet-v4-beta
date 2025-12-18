@@ -8,6 +8,7 @@ import clsx from 'clsx'
 import { isInternalObject } from '../../lib/utils/sobject3d'
 import { useEditor } from '../../lib/EditorContext'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
 
 export interface TreeItem {
   id: number
@@ -20,6 +21,8 @@ interface ItemViewProps {
   tree: TreeInstance<TreeItem>
   item: ItemInstance<TreeItem>
 }
+
+/** @todo needs some refactoring, it's bs again */
 
 function RenamingItemView({ item }: ItemViewProps) {
   return (
@@ -66,6 +69,10 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
       )}
       <div
         {...item.getProps()}
+        /**
+         *  @todo needs some rework, this is shit, and probably not same as source code (renaming F2 doesn't catch up for some reason)
+         * -> reason for this: we want to exclude folder toggle
+         */
         onClick={(e) => {
           if (tree.getSelectedItems().includes(item)) {
             tree.setSelectedItems([])
@@ -76,6 +83,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
           } else {
             tree.setSelectedItems([item.getId()])
           }
+          console.log(tree.getFocusedItem(), tree.getSelectedItems())
 
           if (!e.shiftKey) {
             tree.getDataRef<SelectionDataRef>().current.selectUpToAnchorId =
@@ -120,6 +128,6 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
           </button>
         </div>
       </div>
-    </div>
+    </div >
   )
 }

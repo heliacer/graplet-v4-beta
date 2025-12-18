@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react'
 import { isInternalObject } from '../../lib/utils/sobject3d'
 import { TreeItem, TreeItemView } from '../ui/TreeItemView'
 
-/** @todo need to fix expanding folders (custom state) use double click to expand instead of one click */
+/** @todo needs some refactoring */
 export default function ExplorerPanel() {
   const {
     scene,
