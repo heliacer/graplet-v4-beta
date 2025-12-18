@@ -240,7 +240,7 @@ export function DropdownFolder({
 
   return (
     <div
-      className={clsx('relative h-[18px]', className)}
+      className={clsx('relative h-4.5', className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

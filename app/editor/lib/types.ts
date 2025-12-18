@@ -1,5 +1,5 @@
 import { ItemInstance } from '@headless-tree/core'
-import { TreeItem } from '../components/panels/ExplorerPanel'
+import { TreeItem } from '../components/ui/TreeItemView'
 
 type Vec3 = readonly [number, number, number]
 
