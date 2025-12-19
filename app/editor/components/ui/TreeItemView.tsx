@@ -128,6 +128,6 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
           </button>
         </div>
       </div>
-    </div >
+    </div>
   )
 }

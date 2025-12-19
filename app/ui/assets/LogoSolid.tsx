@@ -1,7 +1,6 @@
 interface LogoSolidProps {
   size: number
   className?: string
-  id?: string
 }
 
 export default function LogoSolid({ size, className }: LogoSolidProps) {

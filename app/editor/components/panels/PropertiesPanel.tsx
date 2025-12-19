@@ -50,7 +50,6 @@ function PropertyTabButton({
   )
 }
 
-
 /** @todo might consider making context for activeTab, setActiveTab */
 export default function PropertiesPanel() {
   const [activeTab, setActiveTab] = useState<PropertiesTab>('object')

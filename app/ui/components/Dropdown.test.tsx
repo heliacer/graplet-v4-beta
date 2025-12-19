@@ -49,7 +49,7 @@ function DropdownItem({ label, Icon, onClick, children }: DropdownItemProps) {
           className={clsx(
             'flex gap-1 px-0.5 items-center w-full',
             'rounded border border-transparent',
-            'hover:bg-zinc-700 hover:border-zinc-600',
+            'hover:bg-zinc-700 hover:border-zinc-600'
           )}
           onClick={(e) => {
             onClick?.(e)
@@ -87,7 +87,7 @@ export function Dropdown({ label, items, Icon }: DropdownProps) {
     <DropdownContext.Provider value={{ isOpen, setIsOpen }}>
       <div ref={refClick}>
         <button
-          onClick={() => setIsOpen(prev => !prev)}
+          onClick={() => setIsOpen((prev) => !prev)}
           className={clsx(
             'text-sm flex items-center gap-1 px-1 mb-0.5',
             'border rounded-md',
