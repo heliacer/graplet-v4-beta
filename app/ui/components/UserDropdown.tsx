@@ -1,54 +1,34 @@
-import { ChevronDown, Folder, LogOut, Settings2, User } from 'lucide-react'
-import {
-  DropdownButton,
-  DropdownContent,
-  DropdownMenu,
-  DropdownOption,
-  DropdownSeparator
-} from './Dropdown'
-import Link from 'next/link'
+import { Folder, LogOut, Settings2, User } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
+import { Dropdown, DropdownItemProps } from './Dropdown'
+import { useRouter } from 'next/navigation'
 
-/** @todo use new dropdown */
 export default function UserDropdown() {
   const { data: session } = useSession()
+  const router = useRouter()
 
-  return (
-    <DropdownMenu>
-      <DropdownButton>
-        <User size={16} />
-        <p>{session?.user?.name}</p>
-        <ChevronDown size={16} />
-      </DropdownButton>
-      <DropdownContent className='min-w-38'>
-        <DropdownOption asChild>
-          <Link className='flex items-center gap-2' href='/mystuff'>
-            <Folder size={14} />
-            <p>My Stuff</p>
-          </Link>
-        </DropdownOption>
-        <DropdownSeparator />
-        <DropdownOption asChild>
-          <Link
-            className='flex items-center gap-2'
-            href={`/users/${session?.user?.id}`}
-          >
-            <User size={14} />
-            <p>Profile</p>
-          </Link>
-        </DropdownOption>
-        <DropdownOption asChild>
-          <Link className='flex items-center gap-2' href='/account'>
-            <Settings2 size={14} />
-            <p>Account</p>
-          </Link>
-        </DropdownOption>
-        <DropdownSeparator />
-        <DropdownOption onClick={() => signOut({ callbackUrl: '/' })}>
-          <LogOut size={14} />
-          <p>Sign Out</p>
-        </DropdownOption>
-      </DropdownContent>
-    </DropdownMenu>
-  )
+  const items: DropdownItemProps[] = [
+    {
+      label: 'My Stuff',
+      Icon: Folder,
+      onClick: () => router.push('/mystuff')
+    },
+    {
+      label: 'Profile',
+      Icon: User,
+      onClick: () => router.push(`/users/${session?.user?.id}`)
+    },
+    {
+      label: 'Account',
+      Icon: Settings2,
+      onClick: () => router.push('/mystuff')
+    },
+    {
+      label: 'Sign out',
+      Icon: LogOut,
+      onClick: () => signOut({ callbackUrl: '/' })
+    }
+  ]
+
+  return <Dropdown label={session?.user?.name || ''} Icon={User} items={items} />
 }

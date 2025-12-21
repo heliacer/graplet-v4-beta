@@ -6,7 +6,7 @@ import { File } from 'lucide-react'
 import { useRef } from 'react'
 import { serialization, WorkspaceSvg } from 'blockly'
 import { Scene } from 'three'
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown.test'
+import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {

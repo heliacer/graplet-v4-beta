@@ -1,6 +1,6 @@
 import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
 import { SGeometryT } from '@/app/editor/lib/types'
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown.test'
+import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { Box, Camera, Component, DiamondPlus, Lightbulb } from 'lucide-react'
 
 const geometries: SGeometryT[] = [
