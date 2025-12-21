@@ -15,7 +15,7 @@ export function RightControls(props: IDockviewHeaderActionsProps) {
   return (
     <nav className='flex items-center gap-1 px-1 h-full'>
       <button
-        className='p-0.5 border border-transparent hover:border-zinc-700 hover:bg-zinc-800 rounded cursor-pointer'
+        className='p-0.5 border border-transparent hover:border-ui-700 hover:bg-ui-800 rounded cursor-pointer'
         onClick={toggleFloating}
       >
         {isFloating ? (
@@ -25,7 +25,7 @@ export function RightControls(props: IDockviewHeaderActionsProps) {
         )}
       </button>
       <button
-        className='p-0.5 border border-transparent hover:border-zinc-700 hover:bg-zinc-800 rounded cursor-pointer'
+        className='p-0.5 border border-transparent hover:border-ui-700 hover:bg-ui-800 rounded cursor-pointer'
         onClick={toggleMaximized}
       >
         {isMaximised ? <Minimize size={16} /> : <Maximize size={16} />}
@@ -52,7 +52,7 @@ export function LeftControls(props: IDockviewHeaderActionsProps) {
   return (
     <nav className='flex items-center gap-1 px-1 h-full'>
       <button
-        className='p-0.5 border border-transparent hover:border-zinc-700 hover:bg-zinc-800 rounded cursor-pointer'
+        className='p-0.5 border border-transparent hover:border-ui-700 hover:bg-ui-800 rounded cursor-pointer'
         onClick={addNew}
       >
         <Plus size={16} />

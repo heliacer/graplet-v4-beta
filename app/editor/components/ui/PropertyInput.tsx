@@ -30,7 +30,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
         {(['x', 'y', 'z'] as const).map((axis) => (
           <div key={axis} className='relative'>
             <DragNumberInput
-              className='rounded border outline-none w-10 text-center hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200'
+              className='rounded border outline-none w-10 text-center hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number(object[property][axis])}
               onChange={(newVal) => {
                 object[property][axis] = newVal
@@ -59,7 +59,7 @@ export function Vec3AngleProperty({
         {(['x', 'y', 'z'] as const).map((axis) => (
           <div key={axis} className='relative'>
             <DragNumberInput
-              className='rounded border outline-none w-10 text-center pr-1 hover:bg-zinc-750 focus:bg-zinc-750 text-blue-200'
+              className='rounded border outline-none w-10 text-center pr-1 hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number((object[property][axis] * 180) / Math.PI)}
               step={1}
               decimals={0}
@@ -85,7 +85,7 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
       <p className='text-nowrap'>{label}</p>
       <input
         type='text'
-        className='rounded border outline-none px-1 w-32 hover:bg-zinc-750 focus:bg-zinc-750'
+        className='rounded border outline-none px-1 w-32 hover:bg-ui-750 focus:bg-ui-750'
         key={object[property]}
         defaultValue={object[property]}
         onBlur={(e) => {
@@ -112,7 +112,7 @@ interface PropButtonProps {
 export function PropButton({ label, Icon, action }: PropButtonProps) {
   return (
     <button
-      className='flex gap-1 items-center cursor-pointer p-1 rounded bg-zinc-750 hover:bg-zinc-650'
+      className='flex gap-1 items-center cursor-pointer p-1 rounded bg-ui-750 hover:bg-ui-650'
       onClick={action}
     >
       <Icon size={12} />

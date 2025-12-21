@@ -88,8 +88,8 @@ export default function Password() {
           type='reset'
           onClick={() => router.push('/login')}
           className={clsx(
-            'absolute right-2 top-[7px] border px-2 py-0.5 rounded-full',
-            'dark:bg-zinc-800 dark:border-zinc-600 border-zinc-400',
+            'absolute right-2 top-1.75 border px-2 py-0.5 rounded-full',
+            'bg-ui-800 border-ui-600',
             !isLoading && 'cursor-pointer'
           )}
         >
@@ -105,8 +105,8 @@ export default function Password() {
         <button
           type='button'
           className={clsx(
-            'absolute right-[50px] bottom-[7px] border px-2 py-0.5 rounded-full',
-            'dark:bg-zinc-800 dark:border-zinc-600 border-zinc-400',
+            'absolute right-12.5 bottom-1.75 border px-2 py-0.5 rounded-full',
+            'bg-ui-800 border-ui-600',
             !isLoading && 'cursor-pointer'
           )}
           onClick={() => setShowPassword((prev) => !prev)}
@@ -117,8 +117,8 @@ export default function Password() {
       </form>
       {message ? (
         <div className='flex gap-2.5 items-center'>
-          <AlertTriangle size={14} className='text-red-400' />
-          <p className='text-red-400'>{message}</p>
+          <AlertTriangle size={14} className='text-red' />
+          <p className='text-red'>{message}</p>
         </div>
       ) : (
         <div className='flex gap-2.5 items-center'>

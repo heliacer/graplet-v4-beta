@@ -24,7 +24,7 @@ function BaseObjectProps({ object }: { object: Object3D }) {
         <p>Type</p>
         <div className='w-32 flex justify-between'>
           <em>{object.type}</em>
-          <p className='text-zinc-400'>{object.id}</p>
+          <p className='text-ui-400'>{object.id}</p>
         </div>
       </div>
       <TextProperty label='Name' object={object} property='name' />
@@ -76,7 +76,7 @@ export default function ObjectProps({ object }: { object: Object3D }) {
           </label>
           <input
             /** need to make a custom checkbox, this won't cut it */
-            className='cursor-pointer accent-teal-600'
+            className='cursor-pointer accent-teal'
             type='checkbox'
             id='orbit'
             checked={!!orbitMap.current.get(object.id)}

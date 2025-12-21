@@ -58,7 +58,7 @@ export default function RunControls() {
           title='run'
           className={clsx(
             'p-1 rounded',
-            isRunning ? 'bg-zinc-700' : 'cursor-pointer bg-teal-600'
+            isRunning ? 'bg-ui-700' : 'cursor-pointer bg-teal'
           )}
           disabled={isRunning}
         >
@@ -71,9 +71,9 @@ export default function RunControls() {
             'p-1 rounded',
             isRunning
               ? isPaused
-                ? 'cursor-pointer bg-teal-600'
-                : 'cursor-pointer bg-orange-400'
-              : 'bg-zinc-700'
+                ? 'cursor-pointer bg-teal'
+                : 'cursor-pointer bg-orange'
+              : 'bg-ui-700'
           )}
           disabled={!isRunning}
         >
@@ -84,7 +84,7 @@ export default function RunControls() {
           title='stop'
           className={clsx(
             'p-1 rounded',
-            isRunning ? 'cursor-pointer bg-rose-500' : 'bg-zinc-700'
+            isRunning ? 'cursor-pointer bg-red' : 'bg-ui-700'
           )}
         >
           <Octagon size={16} />
@@ -93,7 +93,7 @@ export default function RunControls() {
           onClick={() => (runState.current.shouldStep = true)}
           className={clsx(
             'p-1 rounded',
-            isRunning && isPaused ? 'cursor-pointer bg-sky-600' : 'bg-zinc-700'
+            isRunning && isPaused ? 'cursor-pointer bg-blue' : 'bg-ui-700'
           )}
           title='step'
         >

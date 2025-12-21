@@ -14,7 +14,7 @@ function ContexMenuItem({ label, Icon, onClick }: ContextMenuItemProps) {
     <button
       className={clsx(
         'flex items-center gap-1 w-full border border-transparent px-0.5 rounded',
-        'hover:border-zinc-600 hover:bg-zinc-700'
+        'hover:border-ui-600 hover:bg-ui-700'
       )}
       onClick={onClick}
     >
@@ -32,7 +32,7 @@ export function ContextMenu() {
   return (
     <div
       style={{ top: contextMenu.y, left: contextMenu.x }}
-      className='absolute shadow-md min-w-20 bg-zinc-800 border border-zinc-700 p-0.5 text-xs rounded-md'
+      className='absolute shadow-md min-w-20 bg-ui-800 border border-ui-700 p-0.5 text-xs rounded-md'
     >
       <ContexMenuItem
         label='Rename'

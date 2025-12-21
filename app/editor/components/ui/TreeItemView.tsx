@@ -8,7 +8,6 @@ import clsx from 'clsx'
 import { isInternalObject } from '../../lib/utils/sobject3d'
 import { useEditor } from '../../lib/EditorContext'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
-import { useObjectActions } from '../../lib/hooks/useObjectActions'
 
 export interface TreeItem {
   id: number
@@ -28,7 +27,7 @@ function RenamingItemView({ item }: ItemViewProps) {
   return (
     <div className='flex w-full'>
       <div style={{ marginLeft: `${item.getItemMeta().level * 8 + 12}px` }} />
-      <div className='flex items-center w-full px-1 gap-1 rounded-l-md border border-teal-600 bg-zinc-800'>
+      <div className='flex items-center w-full px-1 gap-1 rounded-l-md border border-teal bg-ui-800'>
         <ItemIcon size={14} iconType={item.getItemData().type} />
         <input className='outline-0' {...item.getRenameInputProps()} />
       </div>
@@ -51,13 +50,13 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         <>
           {item.isExpanded() ? (
             <ChevronDown
-              className='cursor-pointer text-zinc-400'
+              className='cursor-pointer text-ui-400'
               onClick={item.collapse}
               size={12}
             />
           ) : (
             <ChevronRight
-              className='cursor-pointer text-zinc-400'
+              className='cursor-pointer text-ui-400'
               onClick={item.expand}
               size={12}
             />
@@ -97,8 +96,8 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         }}
         className={clsx(
           item.isSelected()
-            ? 'border-teal-300/50 bg-teal-300/10'
-            : 'border-transparent hover:bg-zinc-800 hover:border-zinc-650',
+            ? 'border-teal/70 bg-teal/20'
+            : 'border-transparent hover:bg-ui-800 hover:border-ui-650',
           'border w-full rounded-l-md px-1 focus:outline-none'
         )}
       >

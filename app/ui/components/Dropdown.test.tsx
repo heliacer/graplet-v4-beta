@@ -10,6 +10,9 @@ interface DropdownContextType {
 
 const DropdownContext = createContext<DropdownContextType>(null!)
 
+/**
+ * Props that go into each dropdown item (including nested)
+ */
 export interface DropdownItemProps {
   label: string
   Icon?: LucideIcon
@@ -17,6 +20,9 @@ export interface DropdownItemProps {
   children?: DropdownItemProps[]
 }
 
+/**
+ * Props that go in the topmost dropdown
+ */
 export interface DropdownProps {
   label: string
   items?: DropdownItemProps[]
@@ -26,7 +32,7 @@ export interface DropdownProps {
 
 function DropdownItemList({ items }: { items: DropdownItemProps[] }) {
   return (
-    <ul className='text-xs bg-zinc-800 border border-zinc-700 rounded py-0.5'>
+    <ul className='absolute z-999 text-xs bg-ui-800 border border-ui-700 rounded py-0.5'>
       {items.map((item, i) => (
         <DropdownItem key={i} {...item} />
       ))}
@@ -49,7 +55,7 @@ function DropdownItem({ label, Icon, onClick, children }: DropdownItemProps) {
           className={clsx(
             'flex gap-1 px-0.5 items-center w-full',
             'rounded border border-transparent',
-            'hover:bg-zinc-700 hover:border-zinc-600'
+            'hover:bg-ui-700 hover:border-ui-600'
           )}
           onClick={(e) => {
             onClick?.(e)
@@ -60,7 +66,7 @@ function DropdownItem({ label, Icon, onClick, children }: DropdownItemProps) {
         >
           {Icon && <Icon size={14} />}
           {label}
-          {children && <ChevronRight size={14} />}
+          {children && <ChevronRight className='ml-auto' size={14} />}
         </button>
       </div>
       <div className='absolute left-full top-0'>
@@ -70,12 +76,6 @@ function DropdownItem({ label, Icon, onClick, children }: DropdownItemProps) {
   )
 }
 
-/**
- * New Dropdown - REVAMP UI
- *
- * @todo clsx (order revamp soon) [spacing, looks, color [border, bg]]
- * @todo mechanics, open/close + folders, maybe make them merged into one activeItems, setActiveItems
- */
 export function Dropdown({ label, items, Icon }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -90,9 +90,9 @@ export function Dropdown({ label, items, Icon }: DropdownProps) {
           onClick={() => setIsOpen((prev) => !prev)}
           className={clsx(
             'text-sm flex items-center gap-1 px-1 mb-0.5',
-            'border rounded-md',
-            'border-zinc-700',
-            'hover:bg-zinc-750 bg-zinc-800'
+            'border rounded-md relative',
+            'border-ui-700',
+            'hover:bg-ui-750 bg-ui-800'
           )}
         >
           {Icon && <Icon size={14} />}

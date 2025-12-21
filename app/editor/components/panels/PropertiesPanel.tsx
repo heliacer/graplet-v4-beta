@@ -31,8 +31,8 @@ function PropertyTabButton({
       className={clsx(
         'border-l rounded-md cursor-pointer',
         activeTab === tab
-          ? 'border-teal-600 bg-zinc-800'
-          : 'border-transparent hover:bg-zinc-800 hover:border-zinc-700',
+          ? 'border-teal bg-ui-800'
+          : 'border-transparent hover:bg-ui-800 hover:border-ui-700',
         className
       )}
     >
@@ -40,8 +40,8 @@ function PropertyTabButton({
         className={clsx(
           'border border-l-0 p-0.5 rounded-md',
           activeTab === tab
-            ? 'border-zinc-700'
-            : 'border-transparent hover:border-zinc-700'
+            ? 'border-ui-700'
+            : 'border-transparent hover:border-ui-700'
         )}
       >
         <Icon size={14} />
@@ -60,21 +60,21 @@ export default function PropertiesPanel() {
     <div className='flex h-full'>
       <nav className='flex flex-col gap-1 p-0.5'>
         <PropertyTabButton
-          className='text-blue-300'
+          className='text-cyan'
           Icon={Wrench}
           tab='object'
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
         <PropertyTabButton
-          className='text-teal-300'
+          className='text-teal'
           Icon={Cone}
           tab='geometry'
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
         <PropertyTabButton
-          className='text-orange-300'
+          className='text-orange'
           Icon={Cuboid}
           tab='material'
           activeTab={activeTab}

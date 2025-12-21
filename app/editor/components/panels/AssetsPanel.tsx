@@ -14,7 +14,7 @@ export default function AssetsPanel() {
     <>
       <div className='p-1.5'>
         {manifestData && (
-          <pre className='text-xs bg-zinc-900 p-2 rounded'>
+          <pre className='text-xs bg-ui-900 p-2 rounded'>
             {JSON.stringify(manifestData, null, 2)}
           </pre>
         )}

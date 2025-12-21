@@ -74,8 +74,8 @@ export default function Login() {
       </form>
       {message ? (
         <div className='flex gap-2.5 items-center'>
-          <AlertTriangle size={14} className='text-red-400' />
-          <p className='text-red-400'>{message}</p>
+          <AlertTriangle size={14} className='text-red' />
+          <p className='text-red'>{message}</p>
         </div>
       ) : (
         <div className='flex gap-2.5 items-center'>

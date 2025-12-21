@@ -123,7 +123,7 @@ export default function GrapletDockview() {
     <DockviewReact
       theme={{
         name: 'graplet',
-        className: 'theme-graplet'
+        className: 'dv-theme'
       }}
       className='w-full h-full overflow-hidden'
       onReady={mount}

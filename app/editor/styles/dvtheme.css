@@ -1,23 +1,4 @@
-.theme-graplet {
-  /* Color palette */
-  --color-zinc-200: oklch(92% 0.004 286.32);
-  --color-zinc-400: oklch(70.5% 0.015 286.067);
-  --color-zinc-700: oklch(37% 0.013 285.805);
-  --color-zinc-800: oklch(27.4% 0.006 286.033);
-  --color-zinc-850: oklch(24.2% 0.006 285.959);
-  --color-zinc-900: oklch(21% 0.006 285.885);
-  --color-accent: oklch(60% 0.118 184.704);
-
-  /* Semantic Color assignments */
-  --text-primary: var(--color-zinc-200);
-  --text-secondary: var(--color-zinc-400);
-  --border-color: var(--color-zinc-700);
-  --surface-primary: var(--color-zinc-850);
-  --surface-secondary: var(--color-zinc-900);
-  --surface-hover: var(--color-zinc-800);
-
-  /* Dockview Core Variables - Simplified */
-  
+.dv-theme {
   /* Layout & Typography */
   --dv-tabs-and-actions-container-font-size: 15px;
   --dv-tabs-and-actions-container-height: 30px;
@@ -26,28 +7,28 @@
   /* Scrollbar */
   --dv-scrollbar-height: 2px;
   --dv-scrollbar-border-radius: 2px;
-  --dv-scrollbar-background-color: var(--color-accent);
+  --dv-scrollbar-background-color: var(--color-teal);
 
   /* Backgrounds */
-  --dv-group-view-background-color: var(--surface-primary);
-  --dv-tabs-and-actions-container-background-color: var(--surface-secondary);
+  --dv-group-view-background-color: var(--color-ui-850);
+  --dv-tabs-and-actions-container-background-color: var(--color-ui-900);
 
   /* Tab styling - simplified to just two states */
-  --dv-active-tab-background-color: var(--surface-primary);
+  --dv-active-tab-background-color: var(--color-ui-850);
   --dv-inactive-tab-background-color: transparent;
-  --dv-active-tab-color: var(--text-primary);
-  --dv-inactive-tab-color: var(--text-secondary);
+  --dv-active-tab-color: var(--color-ui-200);
+  --dv-inactive-tab-color: var(--color-ui-400);
 
   /* Borders & Dividers */
-  --dv-border-color: var(--border-color);
-  --dv-accent-border-color: var(--color-accent);
+  --dv-border-color: var(--color-ui-700);
+  --dv-accent-border-color: var(--color-teal);
 
   /* Interactive states */
-  --dv-hover-background-color: var(--surface-hover);
-  --dv-focus-outline-color: var(--color-accent);
+  --dv-hover-background-color: var(--color-ui-800);
+  --dv-focus-outline-color: var(--color-teal);
 
   /* Drag & Drop */
-  --dv-drag-over-border: 1px solid var(--color-accent);
+  --dv-drag-over-border: 1px solid var(--color-teal);
   --dv-drag-over-background-color: transparent;
 
   /* Effects */
