@@ -30,5 +30,7 @@ export default function UserDropdown() {
     }
   ]
 
-  return <Dropdown label={session?.user?.name || ''} Icon={User} items={items} />
+  return (
+    <Dropdown label={session?.user?.name || ''} Icon={User} items={items} />
+  )
 }

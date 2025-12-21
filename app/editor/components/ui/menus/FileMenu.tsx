@@ -2,7 +2,7 @@ import { useEditor } from '@/app/editor/lib/EditorContext'
 import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
 import { serializeObject } from '@/app/editor/lib/utils/sobject3d'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
-import { File } from 'lucide-react'
+import { File, FolderDown, FolderSync, FolderUp, Save } from 'lucide-react'
 import { useRef } from 'react'
 import { serialization, WorkspaceSvg } from 'blockly'
 import { Scene } from 'three'
@@ -73,18 +73,22 @@ export function FileMenu() {
   const items: DropdownItemProps[] = [
     {
       label: 'Save Now',
+      Icon: Save,
       onClick: handleSave
     },
     {
       label: 'Export',
+      Icon: FolderDown,
       onClick: handleSaveFile
     },
     {
       label: 'Load from ...',
+      Icon: FolderUp,
       onClick: handleUploadFile
     },
     {
       label: 'Load New',
+      Icon: FolderSync,
       onClick: handleStartFresh
     }
   ]
