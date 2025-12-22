@@ -16,6 +16,7 @@ import {
   TransformControlsMode
 } from 'three/examples/jsm/Addons.js'
 import { ContextMenuProps } from './types'
+import { DockviewApi } from 'dockview-react'
 
 interface EditorContextType {
   // REFS
@@ -28,7 +29,7 @@ interface EditorContextType {
   controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
 
-  /** @todo should be a ref */
+  /** @todo should be a ref (maybe) */
   camera: PerspectiveCamera | OrthographicCamera | null
 
   // UI STATE
@@ -39,6 +40,8 @@ interface EditorContextType {
   objectVersion: number
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
+  dvApi: DockviewApi | null
+  setDvApi: Dispatch<DockviewApi | null>
   setContextMenu: Dispatch<ContextMenuProps | null>
   setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | null>
   setShouldLoad: Dispatch<SetStateAction<boolean>>
@@ -85,6 +88,7 @@ export function EditorProvider({
   const [objectVersion, setObjectVersion] = useState(0)
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
+  const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
 
   return (
     <EditorContext.Provider
@@ -106,6 +110,8 @@ export function EditorProvider({
         objectVersion,
         shouldLoad,
         contextMenu,
+        dvApi,
+        setDvApi,
         setContextMenu,
         setCamera,
         setShouldLoad,

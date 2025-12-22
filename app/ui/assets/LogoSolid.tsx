@@ -1,9 +1,4 @@
-interface LogoSolidProps {
-  size: number
-  className?: string
-}
-
-export default function LogoSolid({ size, className }: LogoSolidProps) {
+export default function LogoSolid({ size }: { size: number }) {
   return (
     <svg
       width={size}
@@ -11,7 +6,6 @@ export default function LogoSolid({ size, className }: LogoSolidProps) {
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
       viewBox='0 0 97 95'
-      className={className}
       role='img'
       aria-label='Early Access Logo'
     >

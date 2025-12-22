@@ -1,13 +1,6 @@
-interface LogoProps {
-  size: number
-  className?: string
-  id?: string
-}
-
-export default function Logo({ size, className }: LogoProps) {
+export default function Logo({ size }: { size: number }) {
   return (
     <svg
-      className={className}
       fill='none'
       width={size}
       height={size}

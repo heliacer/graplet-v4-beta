@@ -1,5 +1,3 @@
-'use client'
-
 import { IDockviewPanelProps } from 'dockview-react'
 
 export default function DebugPanel(props: IDockviewPanelProps) {

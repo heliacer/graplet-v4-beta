@@ -17,13 +17,16 @@ import ScenePanel from './panels/ScenePanel'
 import ExplorerPanel from './panels/ExplorerPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
+import { useEditor } from '../lib/EditorContext'
+import SettingsPanel from './panels/SettingsPanel'
 
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
   scene: ScenePanel,
   explorer: ExplorerPanel,
-  properties: PropertiesPanel
+  properties: PropertiesPanel,
+  settings: SettingsPanel
 }
 
 const jsonLayout: SerializedDockview = {
@@ -114,9 +117,12 @@ const jsonLayout: SerializedDockview = {
 }
 
 export default function GrapletDockview() {
+  const { setDvApi } = useEditor()
+
   function mount(event: DockviewReadyEvent) {
     const { api } = event
     api.fromJSON(jsonLayout)
+    setDvApi(api)
   }
 
   return (

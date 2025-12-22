@@ -9,6 +9,7 @@ import {
   LucideIcon,
   PenTool,
   Puzzle,
+  Settings2,
   SquareSquare,
   Sun,
   Wrench
@@ -26,6 +27,7 @@ export type IconT =
   | 'Lightbulb'
   | 'Camera'
   | 'SquareSquare'
+  | 'Settings2'
   | 'FileText'
 
 const ItemIcons: Record<IconT, LucideIcon> = {
@@ -40,6 +42,7 @@ const ItemIcons: Record<IconT, LucideIcon> = {
   Lightbulb,
   Camera,
   SquareSquare,
+  Settings2,
   FileText
 }
 

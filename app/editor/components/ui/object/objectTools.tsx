@@ -18,7 +18,7 @@ function ToolButton({ tool, Icon }: ToolButtonProps) {
       className={clsx(
         'border p-1 rounded-md cursor-pointer',
         currentTool === tool
-          ? 'bg-teal border-teal'
+          ? 'border-teal/70 bg-teal/20'
           : 'bg-ui-800 border-ui-700 hover:bg-ui-750'
       )}
     >
