@@ -72,7 +72,7 @@ function DropdownItem({
       <div className='mx-0.5'>
         <button
           className={clsx(
-            'flex gap-1 px-0.5 items-center w-full',
+            'flex gap-1 px-0.5 items-center w-full text-nowrap',
             'rounded border',
             isActive ? 'bg-ui-700 border-ui-600' : 'border-transparent',
             'hover:bg-ui-700 hover:border-ui-600'

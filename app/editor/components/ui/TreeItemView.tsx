@@ -21,7 +21,7 @@ interface ItemViewProps {
   item: ItemInstance<TreeItem>
 }
 
-/** @todo needs some refactoring, it's bs again */
+/** @todo needs some refactoring */
 
 function RenamingItemView({ item }: ItemViewProps) {
   return (
@@ -82,7 +82,6 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
           } else {
             tree.setSelectedItems([item.getId()])
           }
-          console.log(tree.getFocusedItem(), tree.getSelectedItems())
 
           if (!e.shiftKey) {
             tree.getDataRef<SelectionDataRef>().current.selectUpToAnchorId =

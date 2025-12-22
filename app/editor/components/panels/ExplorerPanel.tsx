@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react'
 import { isInternalObject } from '../../lib/utils/sobject3d'
 import { TreeItem, TreeItemView } from '../ui/TreeItemView'
 
-/** @todo needs some refactoring */
 export default function ExplorerPanel() {
   const {
     scene,
@@ -29,10 +28,10 @@ export default function ExplorerPanel() {
     state: { selectedItems },
     setSelectedItems: (value) => {
       /** @todo workaround, needs one primar source of truth, didn't come up with a good solution yet */
+      console.log(value)
       const items = value as string[]
-      setCurrentObject((prev) =>
-        items ? scene.current.getObjectById(Number(items[0])) || prev : prev
-      )
+      const object = scene.current.getObjectById(Number(items[0]))
+      setCurrentObject(object || null)
       setSelectedItems(items)
     },
     rootItemId: scene.current.id.toString(),
@@ -107,12 +106,10 @@ export default function ExplorerPanel() {
     )
   }, [objectVersion, tree, currentObject, currentTool])
 
-  /** @todo add visibility toggle + lock item + better group dropdown */
   return (
     <div
       {...tree.getContainerProps()}
       className='text-sm py-1 flex flex-col gap-1 items-start h-full overflow-auto'
-      /** not a fan of this at all, ima go with it for now */
       onClick={() => setContextMenu(null)}
       onContextMenu={(e) => e.preventDefault()}
     >

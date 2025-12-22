@@ -20,12 +20,12 @@ const geometries: SGeometryT[] = [
 ]
 
 /** might wanna expose this, idk */
-type Light = 'AmbientLight' | 'DirectionalLight'
-type Camera = 'PerspectiveCamera' | 'OrthographicCamera'
+type LightT = 'AmbientLight' | 'DirectionalLight'
+type CameraT = 'PerspectiveCamera' | 'OrthographicCamera'
 
-const lights: Light[] = ['AmbientLight', 'DirectionalLight']
+const lights: LightT[] = ['AmbientLight', 'DirectionalLight']
 
-const cameras: Camera[] = ['PerspectiveCamera', 'OrthographicCamera']
+const cameras: CameraT[] = ['PerspectiveCamera', 'OrthographicCamera']
 
 export function ObjectAdd() {
   const { addObject } = useObjectActions()
