@@ -1,5 +1,5 @@
 import { useEditor } from '../EditorContext'
-import { Camera, Object3D } from 'three'
+import { Camera, GridHelper, Object3D } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
 import { ProjectData, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
@@ -187,6 +187,10 @@ export function useObjectActions() {
     }
     setCurrentObject(null)
     blocklyObjectRegistry.options = []
+
+    /** @test initialize scene (I have my doubts if this is a good init place) */
+    const gridHelper = new GridHelper()
+    scene.current.add(gridHelper)
   }
 
   return {

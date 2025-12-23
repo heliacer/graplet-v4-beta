@@ -54,7 +54,6 @@ export function isInternalObject(object: Object3D): boolean {
     object instanceof TransformControlsPlane ||
     object instanceof CameraHelper ||
     object instanceof GridHelper ||
-    /** Light Helpers */
     object instanceof DirectionalLightHelper ||
     (object as TransformControlsRoot).isTransformControlsRoot
   )

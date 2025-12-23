@@ -85,7 +85,9 @@ export default function ExplorerPanel() {
       getChildren: (itemId) => {
         const object = scene.current.getObjectById(Number(itemId))
         if (!object) return []
-        return object.children.filter(obj => !isInternalObject(obj)).map(obj => String(obj.id))
+        return object.children
+          .filter((obj) => !isInternalObject(obj))
+          .map((obj) => String(obj.id))
       }
     },
     features: [
