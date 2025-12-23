@@ -120,3 +120,31 @@ export function PropButton({ label, Icon, action }: PropButtonProps) {
     </button>
   )
 }
+
+interface CheckBoxPropertyProps {
+  label: string
+  checked: boolean
+  action: (checked: boolean) => void
+}
+
+export function CheckBoxProperty({
+  label,
+  checked,
+  action
+}: CheckBoxPropertyProps) {
+  const uuid = crypto.randomUUID()
+  return (
+    <div className='flex gap-2'>
+      <label className='cursor-pointer select-none' htmlFor={uuid}>
+        {label}
+      </label>
+      <input
+        className='cursor-pointer accent-teal'
+        type='checkbox'
+        id={uuid}
+        checked={checked}
+        onChange={(e) => action(e.target.checked)}
+      />
+    </div>
+  )
+}

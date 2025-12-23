@@ -29,6 +29,7 @@ export default function DragNumberInput({
     (e: MouseEvent) => {
       const dy = (startY.current - e.clientY) * dragSpeed
       let newValue = startValue.current + dy * step
+      newValue = Math.round(newValue / step) * step
       newValue = Math.max(min, Math.min(max, newValue))
       onChange(newValue)
     },

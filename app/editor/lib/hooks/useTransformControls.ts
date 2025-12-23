@@ -34,6 +34,12 @@ export function useTransformControls() {
     }
 
     controls.current = new TransformControls(camera, canvas.current)
+
+    /** @todo either reuse transformcontrols or globalise, since this is just lost */
+    controls.current.setTranslationSnap(0.5)
+    controls.current.setRotationSnap((45 * Math.PI) / 180)
+    controls.current.setScaleSnap(0.5)
+
     const helper = controls.current.getHelper()
     helper.name = 'TransformHelper'
     scene.current.add(helper)

@@ -8,6 +8,7 @@ import {
   PerspectiveCamera
 } from 'three'
 import {
+  CheckBoxProperty,
   PropButton,
   TextProperty,
   Vec3AngleProperty,
@@ -70,39 +71,29 @@ export default function ObjectProps({ object }: { object: Object3D }) {
             />
           )}
         </div>
-        <div className='flex gap-2'>
-          <label className='cursor-pointer select-none' htmlFor='orbit'>
-            Enable OrbitControls
-          </label>
-          <input
-            /** need to make a custom checkbox, this won't cut it */
-            className='cursor-pointer accent-teal'
-            type='checkbox'
-            id='orbit'
-            checked={!!orbitMap.current.get(object.id)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                if (orbit)
-                  throw Error(
-                    `There already exists an OrbitControls for ${object.id}`
-                  )
-                orbitMap.current.set(
-                  object.id,
-                  new OrbitControls(object, canvas.current)
+        <CheckBoxProperty
+          label='Enable OrbitControls'
+          checked={!!orbitMap.current.get(object.id)}
+          action={(checked) => {
+            if (checked) {
+              if (orbit)
+                throw Error(
+                  `There already exists an OrbitControls for ${object.id}`
                 )
-              } else {
-                if (!orbit)
-                  throw Error(
-                    `There's no OrbitControls for object ${object.id}`
-                  )
-                orbit.disconnect()
-                orbit.dispose()
-                orbitMap.current.delete(object.id)
-              }
-              setObjectVersion((prev) => prev + 1)
-            }}
-          />
-        </div>
+              orbitMap.current.set(
+                object.id,
+                new OrbitControls(object, canvas.current)
+              )
+            } else {
+              if (!orbit)
+                throw Error(`There's no OrbitControls for object ${object.id}`)
+              orbit.disconnect()
+              orbit.dispose()
+              orbitMap.current.delete(object.id)
+            }
+            setObjectVersion((prev) => prev + 1)
+          }}
+        />
       </>
     )
   }
