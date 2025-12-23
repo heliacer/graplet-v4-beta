@@ -38,6 +38,10 @@
   color: var(--dv-inactive-tab-color);
 }
 
+.dv-groupview>.dv-tabs-and-actions-container .dv-tabs-container>.dv-tab.dv-inactive-tab:hover {
+  background-color: var(--dv-active-tab-background-color);
+}
+
 .dv-tab.dv-tab-dragging {
   background-color: var(--dv-active-tab-background-color);
   color: var(--dv-active-tab-color);

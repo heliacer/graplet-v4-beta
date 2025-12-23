@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react'
+import { Check, ChevronDown, ChevronRight, LucideIcon } from 'lucide-react'
 import React, { createContext, useContext, useState } from 'react'
 import { useClickOutside } from '../hooks/useClickOutside'
 
@@ -23,6 +23,7 @@ const DropdownContext = createContext<DropdownContextType>(null!)
 export interface DropdownItemProps {
   label: string
   Icon?: LucideIcon
+  checked?: boolean
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   children?: DropdownItemProps[]
 }
@@ -57,6 +58,7 @@ function DropdownItem({
   path,
   label,
   Icon,
+  checked,
   onClick,
   children
 }: DropdownItemProps & { path: number[] }) {
@@ -77,16 +79,26 @@ function DropdownItem({
             isActive ? 'bg-ui-700 border-ui-600' : 'border-transparent',
             'hover:bg-ui-700 hover:border-ui-600'
           )}
-          onClick={(e) => {
+          onMouseDown={(e) => {
             onClick?.(e)
-            if (!children) {
+            if (!children && checked === undefined) {
               setIsOpen(false)
             }
           }}
         >
-          {Icon && <Icon size={14} />}
+          {Icon ? (
+            <Icon size={14} />
+          ) : checked ? (
+            <Check size={14} />
+          ) : (
+            <div className='w-3.5' />
+          )}
           {label}
-          {children && <ChevronRight className='ml-auto' size={14} />}
+          {children ? (
+            <ChevronRight className='ml-auto' size={14} />
+          ) : (
+            <div className='w-3.5' />
+          )}
         </button>
       </div>
       <div className='absolute left-full -top-1'>
@@ -112,7 +124,7 @@ export function Dropdown({ label, items, Icon }: DropdownProps) {
     >
       <div ref={refClick}>
         <button
-          onClick={() => setIsOpen((prev) => !prev)}
+          onMouseDown={() => setIsOpen((prev) => !prev)}
           className={clsx(
             'text-sm flex items-center gap-1 px-1',
             'border rounded-md relative',
