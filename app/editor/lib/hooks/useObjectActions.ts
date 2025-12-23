@@ -65,15 +65,10 @@ export function useObjectActions() {
     }
 
     /** Apply camera if space is empty */
-    if (object instanceof Camera) {
-      /** @todo only set camera once */
+    if (object instanceof Camera && orbitMap.current.size === 0) {
       setCamera(object)
-      if (orbitMap.current.size === 0) {
-        orbitMap.current.set(
-          object.id,
-          new OrbitControls(object, canvas.current)
-        )
-      }
+      const controls = new OrbitControls(object, canvas.current)
+      orbitMap.current.set(object.id, controls)
     }
 
     /** If it's a top level sprite, set it as current */

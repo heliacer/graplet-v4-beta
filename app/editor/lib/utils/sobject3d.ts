@@ -8,12 +8,15 @@ import {
   AmbientLight,
   BoxGeometry,
   BufferGeometry,
+  CameraHelper,
   CircleGeometry,
   Color,
   ConeGeometry,
   CylinderGeometry,
   DirectionalLight,
+  DirectionalLightHelper,
   DodecahedronGeometry,
+  GridHelper,
   Group,
   IcosahedronGeometry,
   Material,
@@ -44,10 +47,15 @@ declare class TransformControlsRoot extends Object3D {
   dispose(): void
 }
 
+/** @todo add all helpers */
 export function isInternalObject(object: Object3D): boolean {
   return (
     object instanceof TransformControlsGizmo ||
     object instanceof TransformControlsPlane ||
+    object instanceof CameraHelper ||
+    object instanceof GridHelper ||
+    /** Light Helpers */
+    object instanceof DirectionalLightHelper ||
     (object as TransformControlsRoot).isTransformControlsRoot
   )
 }

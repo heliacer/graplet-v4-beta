@@ -2,12 +2,14 @@ import { useEditor } from '@/app/editor/lib/EditorContext'
 import { getObjectsByTypes } from '@/app/editor/lib/utils/three'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { Rows2 } from 'lucide-react'
-import { useReducer } from 'react'
+import { useReducer, useState } from 'react'
 import {
   Camera,
   CameraHelper,
-  OrthographicCamera,
-  PerspectiveCamera,
+  DirectionalLightHelper,
+  GridHelper,
+  Light,
+  Object3D,
   Scene
 } from 'three'
 
@@ -16,7 +18,7 @@ type HelperActionT = 'gridHelper' | 'cameraHelpers' | 'lightHelpers'
 interface HelperAction {
   type: HelperActionT
   scene: Scene
-  camera: PerspectiveCamera | OrthographicCamera | null
+  currentCamera: Camera | null
 }
 interface HelperState {
   gridHelper: boolean
@@ -24,60 +26,73 @@ interface HelperState {
   lightHelpers: boolean
 }
 
+function toggleCameraHelpers(value: boolean, currentCamera: Camera | null, scene: Scene) {
+  const helpers = scene.getObjectsByProperty(
+    'type',
+    'CameraHelper'
+  ) as CameraHelper[]
+  const cameras = getObjectsByTypes(scene, [
+    'PerspectiveCamera',
+    'OrthographicCamera'
+  ]) as Camera[]
+
+  for (const helper of helpers) {
+    if (helper.camera === currentCamera) {
+      helper.visible = false
+    } else {
+      helper.visible = !value
+    }
+    /** ignore those who have a helper */
+    const index = cameras.indexOf(helper.camera)
+    if (index !== -1) cameras.splice(index, 1)
+  }
+
+  for (const camera of cameras) {
+    /** add new helpers */
+    const helper = new CameraHelper(camera)
+    helper.name = 'CameraHelper'
+    scene.add(helper)
+    if (helper.camera === currentCamera) {
+      helper.visible = false
+    } else {
+      helper.visible = !value
+    }
+  }
+}
+
+
+
 /** @todo this will look horrible once done, needs some good rearrangement */
 function viewReducer(state: HelperState, action: HelperAction) {
-  const { type, scene, camera } = action
+  const { type, scene, currentCamera } = action
   const newState = { ...state, [type]: !state[type] }
 
-  if (!state[type]) {
-    /** Enable Helper */
-    switch (type) {
-      case 'cameraHelpers': {
-        const helpers = scene.getObjectsByProperty(
-          'type',
-          'CameraHelper'
-        ) as CameraHelper[]
-        const cameras = getObjectsByTypes(scene, [
-          'PerspectiveCamera',
-          'OrthographicCamera'
-        ]) as Camera[]
-
-        /** ignore cameras that already have a helper */
-        for (const helper of helpers) {
-          if (helper.camera !== camera) {
-            helper.visible = true
-          }
-          const index = cameras.indexOf(helper.camera)
-          if (index !== -1) cameras.splice(index, 1)
-        }
-
-        console.log('cameras returned:', cameras)
-
-        /** add new helpers if needed */
-        for (const camera of cameras) {
-          const helper = new CameraHelper(camera)
-          scene.add(helper)
-          if (camera) {
-            helper.visible = false
-          }
-        }
-      }
-      case 'gridHelper': {
-      }
-      case 'lightHelpers': {
+  switch (type) {
+    case 'cameraHelpers': toggleCameraHelpers(state[type], currentCamera, scene)
+    case 'gridHelper': {
+      const helper = scene.getObjectByProperty('type', 'GridHelper')
+      if (helper) {
+        helper.visible = !state[type]
+      } else {
+        const newHelper = new GridHelper()
+        newHelper.name = 'GridHelper'
+        newHelper.visible = !state[type]
+        scene.add(newHelper)
       }
     }
-    console.log(`${action.type} has been enabled`)
-  } else {
-    /** Disable Helper */
+    case 'lightHelpers': {
 
-    console.log(`${action.type} has been disabled`)
+    }
   }
   return newState
 }
 
+/** @todo REVAMP: only make view for selected object -> narrow it down */
 export function ObjectView() {
-  const { scene, camera } = useEditor()
+  const { scene, camera, currentObject } = useEditor()
+  const [helperMap, setHelperMap] = useState<Map<number, boolean>>(new Map())
+
+
 
   const [helpers, toggleHelper] = useReducer(viewReducer, {
     gridHelper: false,
@@ -89,22 +104,74 @@ export function ObjectView() {
     {
       label: 'Grid Helper',
       checked: helpers.gridHelper,
-      onClick: () =>
-        toggleHelper({ type: 'gridHelper', scene: scene.current, camera })
+      onClick: () => toggleHelper({
+        type: 'gridHelper',
+        scene: scene.current,
+        currentCamera: camera
+      })
     },
     {
-      label: 'Light Helper',
+      label: 'Light Helpers',
       checked: helpers.lightHelpers,
-      onClick: () =>
-        toggleHelper({ type: 'lightHelpers', scene: scene.current, camera })
+      onClick: () => toggleHelper({
+        type: 'lightHelpers',
+        scene: scene.current,
+        currentCamera: camera
+      })
     },
     {
       label: 'Camera Helpers',
       checked: helpers.cameraHelpers,
-      onClick: () =>
-        toggleHelper({ type: 'cameraHelpers', scene: scene.current, camera })
+      onClick: () => toggleHelper({
+        type: 'cameraHelpers',
+        scene: scene.current,
+        currentCamera: camera
+      })
     }
   ]
+
+  /** individualisation progress */
+  if (currentObject instanceof Camera) {
+    console.log('im a cam')
+    items.push({
+      label: 'Camera Helper',
+      checked: helperMap.get(currentObject.id) ?? false,
+      onClick: () => {
+        const helpers = scene.current.getObjectsByProperty(
+          'type',
+          'CameraHelper'
+        ) as CameraHelper[]
+        for (const helper of helpers) {
+          if (helper.camera === currentObject) {
+            helper.visible = !helper.visible
+            return
+          }
+        }
+        const helper = new CameraHelper(currentObject)
+        scene.current.add(helper)
+        setHelperMap(prev => {
+          const newMap = new Map(prev)
+          newMap.set(currentObject.id, true)
+          return newMap
+        })
+      }
+    })
+
+
+  }
+  if (currentObject instanceof Light) {
+    console.log('im a light')
+    items.push({
+      label: 'Light Helper',
+      /** might wanna add */
+      checked: (scene.current.getObjectsByProperty('type', 'DirectionalLightHelper') as DirectionalLightHelper[]).some(helper => helper.light === currentObject),
+      onClick: () => {
+
+
+
+      }
+    })
+  }
 
   return <Dropdown Icon={Rows2} label='View' items={items} />
 }
