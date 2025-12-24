@@ -18,6 +18,7 @@ export default function EditorProps() {
           }
         }}
       />
+      {/** @deprecated will move to objectSnap objectControls */}
       <div className='flex gap-2'>
         <p>Translation Snap</p>
         <DragNumberInput

@@ -1,5 +1,6 @@
 import { ObjectActions } from '../object/objectActions'
 import { ObjectAdd } from '../object/objectAdd'
+import { ObjectSnap } from '../object/objectSnap'
 import { ObjectTools } from '../object/objectTools'
 import { ObjectView } from '../object/objectView'
 
@@ -10,6 +11,7 @@ export function ObjectControls() {
       <ObjectAdd />
       <ObjectView />
       <ObjectActions />
+      <ObjectSnap/>
     </div>
   )
 }

@@ -1,30 +1,57 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { Rows2 } from 'lucide-react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
   Camera,
   CameraHelper,
   DirectionalLight,
-  DirectionalLightHelper
+  DirectionalLightHelper,
+  Object3D,
+  Scene
 } from 'three'
 
-export function ObjectView() {
-  const { scene, currentObject } = useEditor()
+function toggleHelper(
+  type: 'CameraHelper' | 'DirectionalLightHelper',
+  object: Object3D,
+  scene: Scene,
+  factory: (object: Object3D) => Object3D,
+  compare: (helper: Object3D, object: Object3D) => boolean,
+  setHelpers: React.Dispatch<React.SetStateAction<Map<number, boolean>>>
+) {
+  const helpers = scene.getObjectsByProperty('type', type) as CameraHelper[]
+  const existing = helpers.find((h) => compare(h, object))
 
-  const [helperMap, setHelperMap] = useState<Map<number, boolean>>(new Map())
-  const [grid, setGrid] = useState<boolean>(true)
+  if (existing) {
+    const toggled = !existing.visible
+    existing.visible = toggled
+    setHelpers((prev) => new Map(prev).set(object.id, toggled))
+  } else {
+    const helper = factory(object)
+    helper.name = type
+    scene.add(helper)
+    setHelpers((prev) => new Map(prev).set(object.id, true))
+  }
+}
+
+export function ObjectView() {
+  const { scene, currentObject, objectVersion, setObjectVersion } = useEditor()
+
+  /** Helpers, some of them maps for helper n - object 1 */
+  const [gridHelper, setGridHelper] = useState<boolean>(true)
+  const [cameraHelpers, setCameraHelpers] = useState(new Map<number, boolean>())
+  const [lightHelpers, setLightHelpers] = useState(new Map<number, boolean>())
 
   const items: DropdownItemProps[] = [
     {
       label: 'Grid Helper',
-      checked: grid,
+      checked: gridHelper,
       onClick: () => {
         const helper = scene.current.getObjectByProperty('type', 'GridHelper')
         console.log(helper)
         if (!helper) throw Error('Grid Helper does not exist')
-        helper.visible = !grid
-        setGrid((prev) => !prev)
+        helper.visible = !gridHelper
+        setGridHelper((prev) => !prev)
       }
     }
   ]
@@ -32,65 +59,35 @@ export function ObjectView() {
   if (currentObject instanceof Camera) {
     items.push({
       label: 'Camera Helper',
-      checked: helperMap.get(-10) ?? false,
-      onClick: () => {
-        const helpers = scene.current.getObjectsByProperty(
-          'type',
-          'CameraHelper'
-        ) as CameraHelper[]
-        for (const helper of helpers) {
-          if (helper.camera === currentObject) {
-            const toggled = !helper.visible
-            helper.visible = toggled
-            setHelperMap((prev) => {
-              const newMap = new Map(prev)
-              newMap.set(currentObject.id, toggled)
-              return newMap
-            })
-            return
-          }
-        }
-        const helper = new CameraHelper(currentObject)
-        helper.name = 'Camera Helper'
-        scene.current.add(helper)
-        setHelperMap((prev) => {
-          const newMap = new Map(prev)
-          newMap.set(currentObject.id, true)
-          return newMap
-        })
-      }
+      checked:
+        cameraHelpers.get(currentObject.id) ??
+        scene.current
+          .getObjectsByProperty('type', 'CameraHelper')
+          .some((helper) => (helper as CameraHelper).camera === currentObject),
+      onClick: () =>
+        toggleHelper(
+          'CameraHelper',
+          currentObject,
+          scene.current,
+          (camera) => new CameraHelper(camera as Camera),
+          (helper, camera) => (helper as CameraHelper).camera === camera,
+          setCameraHelpers
+        )
     })
   }
   if (currentObject instanceof DirectionalLight) {
     items.push({
       label: 'Light Helper',
-      checked: helperMap.get(currentObject.id) ?? false,
-      onClick: () => {
-        const helpers = scene.current.getObjectsByProperty(
-          'type',
-          'DirectionalLightHelper'
-        ) as DirectionalLightHelper[]
-        for (const helper of helpers) {
-          if (helper.light === currentObject) {
-            const toggled = !helper.visible
-            helper.visible = toggled
-            setHelperMap((prev) => {
-              const newMap = new Map(prev)
-              newMap.set(currentObject.id, toggled)
-              return newMap
-            })
-            return
-          }
-        }
-        const helper = new DirectionalLightHelper(currentObject)
-        helper.name = 'Light Helper'
-        scene.current.add(helper)
-        setHelperMap((prev) => {
-          const newMap = new Map(prev)
-          newMap.set(currentObject.id, true)
-          return newMap
-        })
-      }
+      checked: lightHelpers.get(currentObject.id) ?? true,
+      onClick: () =>
+        toggleHelper(
+          'DirectionalLightHelper',
+          currentObject,
+          scene.current,
+          (light) => new DirectionalLightHelper(light as DirectionalLight),
+          (helper, light) => (helper as DirectionalLightHelper).light === light,
+          setCameraHelpers
+        )
     })
   }
 

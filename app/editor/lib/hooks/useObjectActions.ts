@@ -1,5 +1,13 @@
 import { useEditor } from '../EditorContext'
-import { Camera, GridHelper, Object3D } from 'three'
+import {
+  Camera,
+  CameraHelper,
+  DirectionalLight,
+  DirectionalLightHelper,
+  GridHelper,
+  Object3D,
+  PerspectiveCamera
+} from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
 import { ProjectData, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject3d'
@@ -64,12 +72,7 @@ export function useObjectActions() {
       }
     }
 
-    /** Apply camera if space is empty */
-    if (object instanceof Camera && orbitMap.current.size === 0) {
-      setCamera(object)
-      const controls = new OrbitControls(object, canvas.current)
-      orbitMap.current.set(object.id, controls)
-    }
+    applyHelpers(object)
 
     /** If it's a top level sprite, set it as current */
     if (target === scene.current) {
@@ -82,15 +85,36 @@ export function useObjectActions() {
   }
 
   /**
+   * Adds Helpers for specific objects
+   */
+  function applyHelpers(object: Object3D) {
+    if (object instanceof Camera) {
+      const helper = new CameraHelper(object)
+      if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
+        setCamera(object)
+        const controls = new OrbitControls(object, canvas.current)
+        orbitMap.current.set(object.id, controls)
+        helper.visible = false
+      }
+      scene.current.add(helper)
+    }
+    if (object instanceof DirectionalLight) {
+      const helper = new DirectionalLightHelper(object)
+      scene.current.add(helper)
+    }
+  }
+
+  /**
    * Adds Ambient light, Directional light and a Camera
    */
   function loadDefaultScene() {
     clearScene()
     addObject({
       type: 'PerspectiveCamera',
-      name: 'Camera',
-      position: [0, 2, 5],
-      rotation: [-0.4, 0, 0]
+      name: 'Main Camera',
+      position: [0, 8, 14],
+      rotation: [0, 0, 0],
+      far: 5000
     })
     addObject({
       name: 'Ambient Light',
@@ -100,7 +124,7 @@ export function useObjectActions() {
     addObject({
       name: 'Directional Light',
       type: 'DirectionalLight',
-      position: [3, 5, 2],
+      position: [0, 5, 0],
       intensity: 2
     })
     addObject({
@@ -187,6 +211,7 @@ export function useObjectActions() {
     }
     setCurrentObject(null)
     blocklyObjectRegistry.options = []
+    orbitMap.current.clear()
 
     /** @test initialize scene (I have my doubts if this is a good init place) */
     const gridHelper = new GridHelper()
