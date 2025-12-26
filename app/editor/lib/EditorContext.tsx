@@ -18,6 +18,11 @@ import {
 import { ContextMenuProps } from './types'
 import { DockviewApi } from 'dockview-react'
 
+/** 
+ * @majortodo
+ * CLEANUP: try to use less context values and access more directly
+ */
+
 interface EditorContextType {
   // REFS
   runState: RefObject<RunState>
@@ -35,9 +40,6 @@ interface EditorContextType {
   // UI STATE
   workspace: WorkspaceSvg | null
 
-  translationSnap: number
-  rotationSnap: number
-  scaleSnap: number
   currentObject: Object3D | null
   currentTool: TransformControlsMode
   isRunning: boolean
@@ -45,9 +47,6 @@ interface EditorContextType {
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
-  setTranslationSnap: Dispatch<number>
-  setRotationSnap: Dispatch<number>
-  setScaleSnap: Dispatch<number>
   setDvApi: Dispatch<DockviewApi | null>
   setContextMenu: Dispatch<ContextMenuProps | null>
   setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | null>
@@ -96,9 +95,6 @@ export function EditorProvider({
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
-  const [translationSnap, setTranslationSnap] = useState(0.5)
-  const [rotationSnap, setRotationSnap] = useState(45) // degrees
-  const [scaleSnap, setScaleSnap] = useState(0.5)
 
   return (
     <EditorContext.Provider
@@ -121,12 +117,6 @@ export function EditorProvider({
         shouldLoad,
         contextMenu,
         dvApi,
-        translationSnap,
-        rotationSnap,
-        scaleSnap,
-        setTranslationSnap,
-        setRotationSnap,
-        setScaleSnap,
         setDvApi,
         setContextMenu,
         setCamera,

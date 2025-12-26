@@ -4,14 +4,12 @@ import { Color, Mesh, MeshStandardMaterial, Object3D } from 'three'
 /**
  * @todo
  *
- * this approach includes a go-for-all-approach, what I mean with that is,
- * that every single Material, in every single possibility is covered. That is good,
- * but there's not really a dynamic. some props will be repeated, e.g color obviously exists
- * both on standardmaterial and meshtoonmaterial for example. we need to find a solution to "wildcard"
- * add all props that one instance has, like "interpret" all props and handle each prop, not each instance
- * */
+ * chosen approach: wildcard, include all materials, just like in three.js editor 
+ * (they have separate files for each mat/geometry props)
+ * 
+ */
 
-function MeshStandardMaterialProps({
+function MeshStandardMaterialPane({
   material
 }: {
   material: MeshStandardMaterial
@@ -37,22 +35,22 @@ function MeshStandardMaterialProps({
   )
 }
 
-function MeshMaterialProps({ mesh }: { mesh: Mesh }) {
+function MeshMaterialPane({ mesh }: { mesh: Mesh }) {
   if (Array.isArray(mesh.material)) {
-    return <p>Multiple materials not yet supported</p>
+    return <p>Mesh Material[] not yet supported</p>
   }
 
   if (mesh.material instanceof MeshStandardMaterial) {
-    return <MeshStandardMaterialProps material={mesh.material} />
+    return <MeshStandardMaterialPane material={mesh.material} />
   }
 
-  return <p>Unsupported material type: {mesh.material.type}</p>
+  return <p>Unsupported Mesh Material type: {mesh.material.type}</p>
 }
 
-export default function MaterialProps({ object }: { object: Object3D }) {
+export function MaterialPane({ object }: { object: Object3D }) {
   if (object instanceof Mesh) {
-    return <MeshMaterialProps mesh={object} />
+    return <MeshMaterialPane mesh={object} />
   }
 
-  return <p>MaterialProps for {object.name}</p>
+  return <p>MaterialPane for {object.name}</p>
 }

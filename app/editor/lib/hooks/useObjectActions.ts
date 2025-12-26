@@ -10,7 +10,7 @@ import {
 } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
 import { ProjectData, SObject3D } from '../types'
-import { applyProps, createObject } from '../utils/sobject3d'
+import { applyProps, createObject } from '../utils/sobject'
 import { serialization } from 'blockly'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
@@ -29,7 +29,8 @@ export function useObjectActions() {
     setCurrentObject,
     setObjectVersion,
     orbitMap,
-    canvas
+    canvas,
+    controls
   } = useEditor()
 
   /**
@@ -223,6 +224,8 @@ export function useObjectActions() {
     setCurrentObject(null)
     blocklyObjectRegistry.options = []
     orbitMap.current.clear()
+    controls.current?.dispose()
+    controls.current = null
 
     /** @test initialize scene (I have my doubts if this is a good init place) */
     const gridHelper = new GridHelper()

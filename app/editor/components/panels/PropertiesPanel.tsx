@@ -1,36 +1,40 @@
 import { useEditor } from '../../lib/EditorContext'
 import { useState } from 'react'
-import ObjectProps from '../ui/properties/object'
 import { Cone, Cuboid, LucideIcon, Settings2, Wrench } from 'lucide-react'
 import clsx from 'clsx'
-import GeometryProps from '../ui/properties/geometry'
-import MaterialProps from '../ui/properties/material'
-import EditorProps from '../ui/properties/editor'
+import { EditorPane } from '../ui/properties/editor'
+import { GeometryPane } from '../ui/properties/geometry'
+import { MaterialPane } from '../ui/properties/material'
+import { ObjectPane } from '../ui/properties/object'
 
-type PropertiesTab = 'editor' | 'object' | 'geometry' | 'material'
+/** Each Pane holds their respective props of the currentObject */
+type Pane = 'editor' | 'object' | 'geometry' | 'material'
 
-interface PropertyTabButtonProps {
+interface PaneButtonProps {
   className?: string
   Icon: LucideIcon
-  tab: PropertiesTab
-  activeTab: PropertiesTab
-  setActiveTab: React.Dispatch<React.SetStateAction<PropertiesTab>>
+  pane: Pane
+  activePane: Pane
+  setActivePane: React.Dispatch<React.SetStateAction<Pane>>
 }
 
-function PropertyTabButton({
+/**
+ * Sets the current activePane in the PropertiesPanel
+ */
+function PaneButton({
   className,
   Icon,
-  tab,
-  activeTab,
-  setActiveTab: setActive
-}: PropertyTabButtonProps) {
+  pane,
+  activePane,
+  setActivePane
+}: PaneButtonProps) {
   return (
     <button
-      title={tab}
-      onClick={() => setActive(tab)}
+      title={pane}
+      onClick={() => setActivePane(pane)}
       className={clsx(
         'border-l rounded-md cursor-pointer',
-        activeTab === tab
+        activePane === pane
           ? 'border-teal bg-ui-800'
           : 'border-transparent hover:bg-ui-800 hover:border-ui-700',
         className
@@ -39,7 +43,7 @@ function PropertyTabButton({
       <div
         className={clsx(
           'border border-l-0 p-0.5 rounded-md',
-          activeTab === tab
+          activePane === pane
             ? 'border-ui-700'
             : 'border-transparent hover:border-ui-700'
         )}
@@ -50,48 +54,47 @@ function PropertyTabButton({
   )
 }
 
-/** @todo might consider making context for activeTab, setActiveTab */
 export default function PropertiesPanel() {
-  const [activeTab, setActiveTab] = useState<PropertiesTab>('object')
+  const [activePane, setActivePane] = useState<Pane>('object')
   const { currentObject } = useEditor()
   if (!currentObject) return
 
   return (
     <div className='flex h-full'>
       <nav className='flex flex-col gap-1 p-0.5'>
-        <PropertyTabButton
+        <PaneButton
           className='text-cyan'
           Icon={Wrench}
-          tab='object'
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          pane='object'
+          activePane={activePane}
+          setActivePane={setActivePane}
         />
-        <PropertyTabButton
+        <PaneButton
           className='text-teal'
           Icon={Cone}
-          tab='geometry'
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          pane='geometry'
+          activePane={activePane}
+          setActivePane={setActivePane}
         />
-        <PropertyTabButton
+        <PaneButton
           className='text-orange'
           Icon={Cuboid}
-          tab='material'
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          pane='material'
+          activePane={activePane}
+          setActivePane={setActivePane}
         />
-        <PropertyTabButton
+        <PaneButton
           Icon={Settings2}
-          tab='editor'
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          pane='editor'
+          activePane={activePane}
+          setActivePane={setActivePane}
         />
       </nav>
       <div className='p-1.5 flex flex-col gap-2 text-xs w-full'>
-        {activeTab === 'object' && <ObjectProps object={currentObject} />}
-        {activeTab === 'geometry' && <GeometryProps object={currentObject} />}
-        {activeTab === 'material' && <MaterialProps object={currentObject} />}
-        {activeTab === 'editor' && <EditorProps />}
+        {activePane === 'object' && <ObjectPane object={currentObject} />}
+        {activePane === 'geometry' && <GeometryPane object={currentObject} />}
+        {activePane === 'material' && <MaterialPane object={currentObject} />}
+        {activePane === 'editor' && <EditorPane />}
       </div>
     </div>
   )

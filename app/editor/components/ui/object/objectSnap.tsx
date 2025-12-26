@@ -2,29 +2,19 @@ import { useEditor } from '@/app/editor/lib/EditorContext'
 import DragNumberInput from '@/app/ui/components/DragNumberInput'
 import { RulerDimensionLine } from 'lucide-react'
 
+/** @todo @bug fix bug with object snapping, that it defaults to 0.5, for some reason in the grid */
 export function ObjectSnap() {
-  const {
-    currentTool,
-    translationSnap,
-    rotationSnap,
-    scaleSnap,
-    setTranslationSnap,
-    setRotationSnap,
-    setScaleSnap
-  } = useEditor()
+  const { controls, currentTool } = useEditor()
 
-  /**
-   * @todo remove it from editor props panel
-   * + redo states, make transformcontrols better so that we can access directly, no separate state needed
-   */
   return (
     <div className='relative text-sm h-5.5'>
       <RulerDimensionLine
         size={14}
-        className='absolute left-1.5 top-1 text-xs select-none'
+        className='absolute left-1.25 top-1 text-xs select-none'
       />
       <DragNumberInput
-        className='rounded border outline-none w-14 pl-4 select-none text-center bg-ui-800 hover:bg-ui-750 focus:bg-ui-750'
+        className='rounded border select-none outline-none w-14 pl-4 text-center bg-ui-800 hover:bg-ui-750 focus:bg-ui-750'
+        title={`${currentTool} snap`}
         min={0}
         max={currentTool === 'rotate' ? 360 : Infinity}
         dragSpeed={currentTool === 'rotate' ? 5 : 0.1}
@@ -32,24 +22,24 @@ export function ObjectSnap() {
         step={currentTool === 'rotate' ? 0.1 : 0.5}
         value={
           currentTool === 'rotate'
-            ? rotationSnap
+            ? controls.current?.rotationSnap !== undefined && controls.current.rotationSnap !== null ? controls.current.rotationSnap * 180 / Math.PI : 45
             : currentTool === 'scale'
-              ? scaleSnap
-              : translationSnap
+              ? controls.current?.scaleSnap !== undefined && controls.current.scaleSnap !== null ? controls.current.scaleSnap : 1
+              : controls.current?.translationSnap !== undefined && controls.current.translationSnap !== null ? controls.current.translationSnap : 0.5
         }
         onChange={(newVal) => {
           if (currentTool === 'rotate') {
-            setRotationSnap(newVal)
+            controls.current?.setRotationSnap(newVal / 180 * Math.PI)
           } else if (currentTool === 'scale') {
-            setScaleSnap(newVal)
+            controls.current?.setScaleSnap(newVal)
           } else {
-            setTranslationSnap(newVal)
+            controls.current?.setTranslationSnap(newVal)
           }
         }}
       />
-      {currentTool === 'rotate' && (
+      {currentTool === 'rotate' &&
         <span className='absolute right-1 top-0.5 text-xs select-none'>°</span>
-      )}
+      }
     </div>
   )
 }

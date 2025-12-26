@@ -10,8 +10,14 @@ interface DragNumberInputProps {
   min?: number
   max?: number
   className?: string
+  title?: string
 }
 
+/**
+ * Draggable "Slider" number input (similar to three.js editor)
+ * 
+ * @todo support horizontal sliding
+ */
 export default function DragNumberInput({
   value,
   onChange,
@@ -20,7 +26,8 @@ export default function DragNumberInput({
   dragSpeed = 0.5,
   min = -Infinity,
   max = Infinity,
-  className
+  className,
+  title
 }: DragNumberInputProps) {
   const startY = useRef(0)
   const startValue = useRef(0)
@@ -54,6 +61,7 @@ export default function DragNumberInput({
   return (
     <input
       type='number'
+      title={title}
       className={clsx('cursor-n-resize', className)}
       value={value.toFixed(decimals)}
       onChange={(e) => onChange(Number(e.target.value))}

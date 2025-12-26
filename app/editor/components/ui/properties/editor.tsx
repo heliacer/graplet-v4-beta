@@ -2,7 +2,7 @@ import { useEditor } from '@/app/editor/lib/EditorContext'
 import { CheckBoxProperty } from '../PropertyInput'
 import DragNumberInput from '@/app/ui/components/DragNumberInput'
 
-export default function EditorProps() {
+export function EditorPane() {
   const { controls, setObjectVersion } = useEditor()
 
   return (

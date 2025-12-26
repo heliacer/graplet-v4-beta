@@ -1,22 +1,14 @@
-import {
-  TransformControls,
-  TransformControlsGizmo,
-  TransformControlsPlane
-} from 'three/examples/jsm/Addons.js'
 import { SGeometry, SObject3D, SMaterial, SBase } from '../types'
 import {
   AmbientLight,
   BoxGeometry,
   BufferGeometry,
-  CameraHelper,
   CircleGeometry,
   Color,
   ConeGeometry,
   CylinderGeometry,
   DirectionalLight,
-  DirectionalLightHelper,
   DodecahedronGeometry,
-  GridHelper,
   Group,
   IcosahedronGeometry,
   Material,
@@ -36,28 +28,7 @@ import {
   TorusGeometry,
   TorusKnotGeometry
 } from 'three'
-
-declare class TransformControlsRoot extends Object3D {
-  readonly isTransformControlsRoot: true
-
-  controls: TransformControls
-
-  constructor(controls: TransformControls)
-
-  dispose(): void
-}
-
-/** @todo add all helpers */
-export function isInternalObject(object: Object3D): boolean {
-  return (
-    object instanceof TransformControlsGizmo ||
-    object instanceof TransformControlsPlane ||
-    object instanceof CameraHelper ||
-    object instanceof GridHelper ||
-    object instanceof DirectionalLightHelper ||
-    (object as TransformControlsRoot).isTransformControlsRoot
-  )
-}
+import { isInternalObject } from './three'
 
 /**
  * creates a Object3D from serialization

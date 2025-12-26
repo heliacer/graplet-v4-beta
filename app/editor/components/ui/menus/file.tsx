@@ -1,6 +1,6 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
-import { serializeObject } from '@/app/editor/lib/utils/sobject3d'
+import { serializeObject } from '@/app/editor/lib/utils/sobject'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
 import { File, FolderDown, FolderSync, FolderUp, Save } from 'lucide-react'
 import { useRef } from 'react'

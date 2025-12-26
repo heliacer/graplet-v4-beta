@@ -36,7 +36,7 @@ function BaseObjectProps({ object }: { object: Object3D }) {
   )
 }
 
-export default function ObjectProps({ object }: { object: Object3D }) {
+export function ObjectPane({ object }: { object: Object3D }) {
   const { canvas, setCamera, orbitMap, setObjectVersion } = useEditor()
 
   if (object instanceof Group) {
@@ -100,5 +100,5 @@ export default function ObjectProps({ object }: { object: Object3D }) {
   if (object instanceof OrthographicCamera) {
     return <BaseObjectProps object={object} />
   }
-  return <p>ObjectProps for {object.name}</p>
+  return <p>ObjectPane for {object.name}</p>
 }
