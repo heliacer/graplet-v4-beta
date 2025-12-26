@@ -122,8 +122,6 @@ export default function ExplorerPanel() {
         style={tree.getDragLineStyle()}
         className='border border-teal rounded'
       />
-      <em>Current: {currentObject?.name}</em>
-      <em>Object version: {objectVersion}</em>
     </div>
   )
 }

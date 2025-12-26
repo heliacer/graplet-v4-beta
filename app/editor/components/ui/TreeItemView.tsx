@@ -1,8 +1,4 @@
-import {
-  ItemInstance,
-  SelectionDataRef,
-  TreeInstance
-} from '@headless-tree/core'
+import { ItemInstance, TreeInstance } from '@headless-tree/core'
 import { IconT, ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
 import { isInternalObject } from '../../lib/utils/sobject3d'
@@ -21,7 +17,12 @@ interface ItemViewProps {
   item: ItemInstance<TreeItem>
 }
 
-/** @todo needs some refactoring */
+/**
+ * @majortodo
+ * REFACTOR into separate files, clean up, find smarter ways
+ * DOCUMENT every function, and make clear what it does
+ * TYPES annotate every function
+ */
 
 function RenamingItemView({ item }: ItemViewProps) {
   return (
@@ -84,8 +85,9 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
           }
 
           if (!e.shiftKey) {
-            tree.getDataRef<SelectionDataRef>().current.selectUpToAnchorId =
-              item.getId()
+            tree.getDataRef<{
+              selectUpToAnchorId?: string | null
+            }>().current.selectUpToAnchorId = item.getId()
           }
         }}
         onContextMenu={(e) => {

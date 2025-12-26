@@ -11,7 +11,7 @@ export function ObjectControls() {
       <ObjectAdd />
       <ObjectView />
       <ObjectActions />
-      <ObjectSnap/>
+      <ObjectSnap />
     </div>
   )
 }

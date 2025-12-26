@@ -35,10 +35,12 @@ function toggleHelper(
 }
 
 export function ObjectView() {
-  const { scene, currentObject, objectVersion, setObjectVersion } = useEditor()
+  const { scene, currentObject } = useEditor()
 
   /** Helpers, some of them maps for helper n - object 1 */
   const [gridHelper, setGridHelper] = useState<boolean>(true)
+
+  /** @todo could probably merge to one helpers, setHelpers */
   const [cameraHelpers, setCameraHelpers] = useState(new Map<number, boolean>())
   const [lightHelpers, setLightHelpers] = useState(new Map<number, boolean>())
 
@@ -78,7 +80,14 @@ export function ObjectView() {
   if (currentObject instanceof DirectionalLight) {
     items.push({
       label: 'Light Helper',
-      checked: lightHelpers.get(currentObject.id) ?? true,
+      checked:
+        lightHelpers.get(currentObject.id) ??
+        scene.current
+          .getObjectsByProperty('type', 'DirectionalLightHelper')
+          .some(
+            (helper) =>
+              (helper as DirectionalLightHelper).light === currentObject
+          ),
       onClick: () =>
         toggleHelper(
           'DirectionalLightHelper',
@@ -86,7 +95,7 @@ export function ObjectView() {
           scene.current,
           (light) => new DirectionalLightHelper(light as DirectionalLight),
           (helper, light) => (helper as DirectionalLightHelper).light === light,
-          setCameraHelpers
+          setLightHelpers
         )
     })
   }

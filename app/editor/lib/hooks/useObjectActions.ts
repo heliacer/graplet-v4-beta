@@ -14,6 +14,12 @@ import { applyProps, createObject } from '../utils/sobject3d'
 import { serialization } from 'blockly'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
+/**
+ * @majortodo
+ * REFACTOR into separate files, clean up, find smarter ways
+ * DOCUMENT every function, and make clear what it does
+ * TYPES annotate every function
+ */
 export function useObjectActions() {
   const {
     scene,
@@ -86,10 +92,14 @@ export function useObjectActions() {
 
   /**
    * Adds Helpers for specific objects
+   *
+   * @todo if those objects are visible on the ExplorerPanel, modifying their visibility
+   * does not update the local map for objectView. might need to globalise the booleans
    */
   function applyHelpers(object: Object3D) {
     if (object instanceof Camera) {
       const helper = new CameraHelper(object)
+      helper.name = 'CameraHelper'
       if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
         setCamera(object)
         const controls = new OrbitControls(object, canvas.current)
@@ -100,6 +110,7 @@ export function useObjectActions() {
     }
     if (object instanceof DirectionalLight) {
       const helper = new DirectionalLightHelper(object)
+      helper.name = 'DirectionalLightHelper'
       scene.current.add(helper)
     }
   }
