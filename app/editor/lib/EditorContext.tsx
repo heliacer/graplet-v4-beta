@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
-import { Camera, Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
+import { Camera, Object3D, Scene } from 'three'
 import {
   OrbitControls,
   TransformControls,

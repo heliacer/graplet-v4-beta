@@ -13,6 +13,7 @@ import { ParentError, ProjectData, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject'
 import { serialization } from 'blockly'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { isInternalObject } from '../utils/three'
 
 /**
  * @majortodo
@@ -188,8 +189,21 @@ export function useObjectActions() {
    */
   function deleteObject(object: Object3D) {
     const parent = object.parent
-    object.parent?.remove(object)
+    if (!parent) throw new ParentError(object)
+    parent.remove(object)
     removeFromReg(object)
+
+    /** If it's the current object, set another one as current */
+    if (object === currentObject) {
+      if (parent.children.length > 0) {
+        const child = [...parent.children]
+          .reverse()
+          .find((c) => !isInternalObject(c))
+        setCurrentObject(child || null)
+      } else {
+        setCurrentObject(parent)
+      }
+    }
 
     /** If it's the active camera, set another one active instead */
     if (object === camera) {
@@ -198,19 +212,6 @@ export function useObjectActions() {
         true
       ) as Camera
       setCamera(nextCamera || null)
-    }
-
-    /** If it's the current object, set another one as current */
-    if (object === currentObject) {
-      console.log(parent)
-      if (!parent) throw new ParentError(object)
-      if (parent.children) {
-        const child = parent.children.at(-1)
-        console.log(child)
-        setCurrentObject(parent.children.at(-1) || null)
-      } else {
-        setCurrentObject(parent)
-      }
     }
 
     /**
@@ -228,20 +229,21 @@ export function useObjectActions() {
     setObjectVersion((prev) => prev + 1)
   }
 
-  /** @todo should clone geometry & material too, since those are shared by default */
-  function duplicateObject(object: Object3D, target: Object3D = scene.current) {
-    const clone = object.clone()
-    // clone.traverse(...)
-    target.add(clone)
+  /** 
+   * @todo should clone geometry & material too, since those are shared by default
+   * @todo Also add helpers if needed
+   */
+  function duplicateObject(object: Object3D) {
+    const parent = object.parent
+    if (!parent) throw new ParentError(object)
 
-    /** Apply changes, so it's visually visible */
+    const clone = object.clone()
     clone.position.x += 2
 
-    /** If it's a top level sprite, set it as current */
-    if (target === scene.current) {
-      setCurrentObject(clone)
-      addToReg(clone)
-    }
+    parent.add(clone)
+
+    setCurrentObject(clone)
+    addToReg(clone)
   }
 
   function clearScene() {
