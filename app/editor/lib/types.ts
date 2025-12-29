@@ -122,9 +122,9 @@ export interface ContextMenuProps {
  * @todo Refine this to include all Object3D Errors / + undefined ones 
  * (use if-case of what is available, e.g only id, only name, etc.) 
  */
-export class Object3DError extends Error {
-  constructor(object: Object3D, message: string) {
-    super(`${object.name || 'Unnamed'} (${object.type}) ${message}`)
-    this.name = 'Object3DError'
+export class ParentError extends Error {
+  constructor(object: Object3D) {
+    super(`${object.name || 'Unnamed'} (${object.type}) does not have a parent`)
+    this.name = 'ParentError'
   }
 }

@@ -50,7 +50,6 @@ export function ObjectView() {
       checked: gridHelper,
       onClick: () => {
         const helper = scene.current.getObjectByProperty('type', 'GridHelper')
-        console.log(helper)
         if (!helper) throw Error('Grid Helper does not exist')
         helper.visible = !gridHelper
         setGridHelper((prev) => !prev)
@@ -99,6 +98,15 @@ export function ObjectView() {
         )
     })
   }
+
+  /** 
+   * @todo Add new categories:
+   * 
+   * Cameras > Enable all helpers | Disable all helpers
+   * Lights > Enable all helpers | Disable all helpers
+   * 
+   * Local Helper (Camera | DirectionalLight)
+   */
 
   return <Dropdown Icon={Rows2} label='View' items={items} />
 }

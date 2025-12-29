@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
-import { Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
+import { Camera, Object3D, OrthographicCamera, PerspectiveCamera, Scene } from 'three'
 import {
   OrbitControls,
   TransformControls,
@@ -33,13 +33,10 @@ interface EditorContextType {
   canvas: RefObject<HTMLCanvasElement>
   controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
-
-  /** @todo should be a ref (maybe) */
-  camera: PerspectiveCamera | OrthographicCamera | null
-
+  
   // UI STATE
+  camera: Camera | null
   workspace: WorkspaceSvg | null
-
   currentObject: Object3D | null
   currentTool: TransformControlsMode
   isRunning: boolean
@@ -49,7 +46,7 @@ interface EditorContextType {
   dvApi: DockviewApi | null
   setDvApi: Dispatch<DockviewApi | null>
   setContextMenu: Dispatch<ContextMenuProps | null>
-  setCamera: Dispatch<PerspectiveCamera | OrthographicCamera | null>
+  setCamera: Dispatch<Camera | null>
   setShouldLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
@@ -81,11 +78,7 @@ export function EditorProvider({
     shouldStep: false
   })
 
-  /** @todo should be a ref */
-  const [camera, setCamera] = useState<
-    PerspectiveCamera | OrthographicCamera | null
-  >(null)
-
+  const [camera, setCamera] = useState<Camera | null>(null)
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
   const [currentTool, setCurrentTool] =

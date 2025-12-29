@@ -9,7 +9,7 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
-import { ProjectData, SObject3D } from '../types'
+import { ParentError, ProjectData, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject'
 import { serialization } from 'blockly'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
@@ -25,6 +25,7 @@ export function useObjectActions() {
     scene,
     currentObject,
     workspace,
+    camera,
     setCamera,
     setCurrentObject,
     setObjectVersion,
@@ -181,26 +182,47 @@ export function useObjectActions() {
     }
   }
 
-  /** @todo Dispose of geometry & material after removing (disposeObject) */
+  /**
+   * @todo Dispose of geometry & material after removing (disposeObject)
+   * @todo Delete helpers
+   */
   function deleteObject(object: Object3D) {
+    const parent = object.parent
     object.parent?.remove(object)
+    removeFromReg(object)
 
-    /**
-     * @deprecated @todo
-     * every level should be registered, that's why blockly reg should be revamped
-     * If it's a top level sprite, remove it
-     */
-    if (object.parent === scene.current) {
-      removeFromReg(object)
+    /** If it's the active camera, set another one active instead */
+    if (object === camera) {
+      const nextCamera = scene.current.getObjectByProperty(
+        'isCamera',
+        true
+      ) as Camera
+      setCamera(nextCamera || null)
     }
 
+    /** If it's the current object, set another one as current */
     if (object === currentObject) {
-      if (object instanceof Camera) setCamera(null)
-      /** @todo clear orbit if it has one, fix some bug that happens when it's the only camera (maybe disallow deleting last camera) */
+      console.log(parent)
+      if (!parent) throw new ParentError(object)
+      if (parent.children) {
+        const child = parent.children.at(-1)
+        console.log(child)
+        setCurrentObject(parent.children.at(-1) || null)
+      } else {
+        setCurrentObject(parent)
+      }
+    }
 
-      /** @todo find parent's parent children recursive until it finds one to set active */
-      const next = object.parent?.children.at(-1)
-      setCurrentObject(next || null)
+    /**
+     * If the object is a Camera with OrbitControls attached, dispose of it
+     */
+    if (object instanceof Camera) {
+      const orbit = orbitMap.current.get(object.id)
+      if (orbit) {
+        orbit.disconnect()
+        orbit.dispose()
+        orbitMap.current.delete(object.id)
+      }
     }
 
     setObjectVersion((prev) => prev + 1)
