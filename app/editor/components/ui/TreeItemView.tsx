@@ -93,7 +93,7 @@ interface ItemViewProps {
 }
 
 export function TreeItemView({ tree, item }: ItemViewProps) {
-  const { scene, setContextMenu, setObjectVersion } = useEditor()
+  const { scene, setContextMenu } = useEditor()
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
   const objectId = item.getItemData().id

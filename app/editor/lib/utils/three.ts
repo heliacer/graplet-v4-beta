@@ -9,6 +9,7 @@ import {
   TransformControlsGizmo,
   TransformControlsPlane
 } from 'three/examples/jsm/Addons.js'
+import { Object3DError } from '../types'
 
 declare class TransformControlsRoot extends Object3D {
   readonly isTransformControlsRoot: true
@@ -44,7 +45,7 @@ export function isInternalObject(object: Object3D): boolean {
  */
 export function moveObject(object: Object3D, target: Object3D) {
   const parent = object.parent
-  if (!parent) throw Error(`${object.name || 'Unnamed'} (${object.type}) does not have a parent`)
+  if (!parent) throw new Object3DError(object, 'does not have a parent')
   parent.remove(object)
   target.add(object)
 }

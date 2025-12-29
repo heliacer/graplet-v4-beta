@@ -1,5 +1,6 @@
 import { ItemInstance } from '@headless-tree/core'
 import { TreeItem } from '../components/ui/TreeItemView'
+import { Object3D } from 'three'
 
 type Vec3 = readonly [number, number, number]
 
@@ -115,4 +116,15 @@ export interface ContextMenuProps {
   item: ItemInstance<TreeItem>
   x: number
   y: number
+}
+
+/** 
+ * @todo Refine this to include all Object3D Errors / + undefined ones 
+ * (use if-case of what is available, e.g only id, only name, etc.) 
+ */
+export class Object3DError extends Error {
+  constructor(object: Object3D, message: string) {
+    super(`${object.name || 'Unnamed'} (${object.type}) ${message}`)
+    this.name = 'Object3DError'
+  }
 }

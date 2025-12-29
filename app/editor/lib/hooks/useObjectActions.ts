@@ -181,20 +181,26 @@ export function useObjectActions() {
     }
   }
 
-  /** @todo should dispose of geometry & material after removing */
-  function deleteObject(object: Object3D, target: Object3D = scene.current) {
-    target.remove(object)
-    // disposeObject(object)
+  /** @todo Dispose of geometry & material after removing (disposeObject) */
+  function deleteObject(object: Object3D) {
+    object.parent?.remove(object)
 
-    /** If it's a top level sprite, remove it */
-    if (target === scene.current) {
+    /**
+     * @deprecated @todo
+     * every level should be registered, that's why blockly reg should be revamped
+     * If it's a top level sprite, remove it
+     */
+    if (object.parent === scene.current) {
       removeFromReg(object)
+    }
 
-      if (object === currentObject) {
-        if (object instanceof Camera) setCamera(null)
-        const next = scene.current.children.at(-1)
-        setCurrentObject(next || null)
-      }
+    if (object === currentObject) {
+      if (object instanceof Camera) setCamera(null)
+      /** @todo clear orbit if it has one, fix some bug that happens when it's the only camera (maybe disallow deleting last camera) */
+
+      /** @todo find parent's parent children recursive until it finds one to set active */
+      const next = object.parent?.children.at(-1)
+      setCurrentObject(next || null)
     }
 
     setObjectVersion((prev) => prev + 1)

@@ -3,6 +3,7 @@ import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import clsx from 'clsx'
 import { moveObject } from '../../lib/utils/three'
+import { Object3DError } from '../../lib/types'
 
 interface ContextMenuItemProps {
   label: string
@@ -62,20 +63,20 @@ export function ContextMenu() {
           const object = scene.current.getObjectById(objectId)
           if (!object) throw Error(`Object with id ${objectId} does not exist`)
           const parent = object.parent
-          if (!parent) throw Error(`${object.name || 'Unnamed'} (${object.type}) does not have a parent`)
+          if (!parent) throw new Object3DError(object, 'does not have a parent')
           const target = addObject({ type: 'Group', name: 'Group' }, parent)
           moveObject(object, target)
           setContextMenu(null)
         }}
       />
       {/** @todo add Ungroup */}
-      {/** @todo deleting doesn't work with sub-objects */}
       <ContexMenuItem
         label='Delete'
         Icon={Trash}
         onClick={() => {
           const objectId = contextMenu.item.getItemData().id
           const object = scene.current.getObjectById(objectId)
+          console.log(object)
           if (!object) throw Error(`Object with id ${objectId} does not exist`)
           deleteObject(object)
           setContextMenu(null)

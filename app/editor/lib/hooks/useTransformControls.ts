@@ -61,7 +61,9 @@ export function useTransformControls() {
     setObjectVersion
   ])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  /** 
+  @todo Figure out if this is really needed, since linter does not like it 
+
   useEffect(() => {
     return () => {
       if (controls.current) {
@@ -71,4 +73,5 @@ export function useTransformControls() {
       }
     }
   }, [])
+  */
 }

@@ -28,7 +28,7 @@ export default function ExplorerPanel() {
     state: { selectedItems },
     setSelectedItems: (value) => {
       /** 
-       * @summary sets multiselect items state, while in the current context state only one object can be selected.
+       * @summary Sets multiselect items state, while in the current context state only one object can be selected.
        * @todo This is good for now, but once multiple 3D Objects can be selected (maybe temporary group) then it should share the same state.
       */
       const items = value as string[]
@@ -105,7 +105,7 @@ export default function ExplorerPanel() {
   return (
     <div
       {...tree.getContainerProps()}
-      className='text-sm py-1 flex flex-col gap-1 items-start h-full overflow-auto'
+      className='text-sm py-1 flex flex-col items-start h-full overflow-auto'
       onClick={() => setContextMenu(null)}
       onContextMenu={(e) => e.preventDefault()}
     >

@@ -2,7 +2,14 @@ import { useEditor } from '@/app/editor/lib/EditorContext'
 import DragNumberInput from '@/app/ui/components/DragNumberInput'
 import { RulerDimensionLine } from 'lucide-react'
 
-/** @todo @bug fix bug with object snapping, that it defaults to 0.5, for some reason in the grid */
+/** 
+ * @todo Modify Snapping 
+ * 
+ * previous "bug" found: this is the normal three.js snapping behaviour,
+ * it instead of snapping to delta x, it uses the global positioning and rounds it to a number which is the snap value.
+ * 
+ * x: 0.25 -> snapping of 1 -> goes to 1 instead of 1.25
+ */
 export function ObjectSnap() {
   const { controls, currentTool } = useEditor()
 
@@ -17,9 +24,10 @@ export function ObjectSnap() {
         title={`${currentTool} snap`}
         min={0}
         max={currentTool === 'rotate' ? 360 : Infinity}
+        /** @todo Make smarter step/speed/decimal values */
         dragSpeed={currentTool === 'rotate' ? 5 : 0.1}
         decimals={currentTool === 'rotate' ? 0 : 2}
-        step={currentTool === 'rotate' ? 0.1 : 0.5}
+        step={currentTool === 'rotate' ? 0.1 : 0.25}
         value={
           currentTool === 'rotate'
             ? controls.current?.rotationSnap !== undefined && controls.current.rotationSnap !== null ? controls.current.rotationSnap * 180 / Math.PI : 45

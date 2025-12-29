@@ -19,6 +19,12 @@ export function SettingsMenu() {
             params: {
               iconType: 'Settings2',
               closable: true
+            },
+            floating: {
+              x: document.body.clientWidth / 2 -400,
+              y: document.body.clientHeight / 2 - 350,
+              width: 800,
+              height: 600
             }
           })
         }
