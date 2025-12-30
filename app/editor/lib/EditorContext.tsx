@@ -44,9 +44,11 @@ interface EditorContextType {
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
-  setDvApi: Dispatch<DockviewApi | null>
-  setContextMenu: Dispatch<ContextMenuProps | null>
-  setCamera: Dispatch<Camera | null>
+  currentTheme: string
+  setCurrentTheme: Dispatch<SetStateAction<string>>
+  setDvApi: Dispatch<SetStateAction<DockviewApi | null>>
+  setContextMenu: Dispatch<SetStateAction<ContextMenuProps | null>>
+  setCamera: Dispatch<SetStateAction<Camera | null>>
   setShouldLoad: Dispatch<SetStateAction<boolean>>
   setObjectVersion: Dispatch<SetStateAction<number>>
   setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
@@ -88,6 +90,7 @@ export function EditorProvider({
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
+  const [currentTheme, setCurrentTheme] = useState<string>('')
 
   return (
     <EditorContext.Provider
@@ -110,6 +113,8 @@ export function EditorProvider({
         shouldLoad,
         contextMenu,
         dvApi,
+        currentTheme,
+        setCurrentTheme,
         setDvApi,
         setContextMenu,
         setCamera,
