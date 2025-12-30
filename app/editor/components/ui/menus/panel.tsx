@@ -1,23 +1,29 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
+import { IconT, ItemIcon } from '@/app/editor/lib/utils/icons'
 import clsx from 'clsx'
-import { Settings2 } from 'lucide-react'
 
-export function SettingsMenu() {
+interface PanelMenuProps {
+  component: string
+  title: string
+  iconType: IconT
+}
+
+export function PanelMenu({ component, title, iconType }: PanelMenuProps) {
   const { dvApi } = useEditor()
 
   return (
     <button
       onClick={() => {
-        const panel = dvApi?.getPanel('settings')
+        const panel = dvApi?.getPanel(component)
         if (panel) {
           panel.api.setActive()
         } else {
           dvApi?.addPanel({
-            id: 'settings',
-            component: 'settings',
-            title: 'Settings',
+            id: component,
+            component,
+            title,
             params: {
-              iconType: 'Settings2',
+              iconType,
               closable: true
             },
             floating: {
@@ -36,8 +42,8 @@ export function SettingsMenu() {
         'hover:bg-ui-750 bg-ui-800'
       )}
     >
-      <Settings2 size={14} />
-      <p>Settings</p>
+      <ItemIcon iconType={iconType} size={14} />
+      <p>{title}</p>
     </button>
   )
 }

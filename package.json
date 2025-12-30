@@ -20,6 +20,7 @@
     "bcrypt": "^6.0.0",
     "blockly": "^12.2.0",
     "clsx": "^2.1.1",
+    "culori": "^4.0.2",
     "dockview-react": "^4.5.0",
     "lucide-react": "^0.544.0",
     "next": "^15.5.2",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
+    "@types/culori": "^4.0.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -7,6 +7,7 @@ import {
   Folder,
   Lightbulb,
   LucideIcon,
+  PaintBucket,
   PenTool,
   Puzzle,
   Settings2,
@@ -28,6 +29,7 @@ export type IconT =
   | 'Camera'
   | 'SquareSquare'
   | 'Settings2'
+  | 'PaintBucket'
   | 'FileText'
 
 const ItemIcons: Record<IconT, LucideIcon> = {
@@ -43,6 +45,7 @@ const ItemIcons: Record<IconT, LucideIcon> = {
   Camera,
   SquareSquare,
   Settings2,
+  PaintBucket,
   FileText
 }
 
