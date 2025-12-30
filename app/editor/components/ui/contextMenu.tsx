@@ -44,6 +44,7 @@ export function ContextMenu() {
           setContextMenu(null)
         }}
       />
+      {/** @todo Add separate 'Clone' -> keeps materials */}
       <ContexMenuItem
         label='Duplicate'
         Icon={Layers2}
@@ -69,7 +70,7 @@ export function ContextMenu() {
           setContextMenu(null)
         }}
       />
-      {/** @todo add Ungroup */}
+      {/** @todo Add Ungroup */}
       <ContexMenuItem
         label='Delete'
         Icon={Trash}

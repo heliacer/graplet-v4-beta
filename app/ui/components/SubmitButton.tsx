@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { ArrowRight, LoaderCircle } from 'lucide-react'
 
-export default function SubmitButton({ isLoading }: { isLoading: boolean }) {
+export function SubmitButton({ isLoading }: { isLoading: boolean }) {
   return (
     <button
       type='submit'

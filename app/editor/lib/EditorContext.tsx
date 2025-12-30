@@ -18,7 +18,7 @@ import {
 import { ContextMenuProps } from './types'
 import { DockviewApi } from 'dockview-react'
 
-/** 
+/**
  * @majortodo
  * CLEANUP: try to use less context values and access more directly
  */
@@ -33,7 +33,7 @@ interface EditorContextType {
   canvas: RefObject<HTMLCanvasElement>
   controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
-  
+
   // UI STATE
   camera: Camera | null
   workspace: WorkspaceSvg | null

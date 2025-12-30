@@ -15,10 +15,10 @@ interface DragNumberInputProps {
 
 /**
  * Draggable "Slider" number input (similar to three.js editor)
- * 
- * @todo support horizontal sliding
+ *
+ * @todo Support horizontal sliding
  */
-export default function DragNumberInput({
+export function DragNumberInput({
   value,
   onChange,
   step = 0.1,

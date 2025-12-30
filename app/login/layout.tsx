@@ -1,6 +1,6 @@
-import { Suspense } from 'react'
-import InputSkeleton from '../ui/components/InputSkeleton'
 import LogoSolid from '../ui/assets/LogoSolid'
+import { Suspense } from 'react'
+import { InputSkeleton } from '../ui/components/InputSkeleton'
 
 export default function LoginLayout({
   children

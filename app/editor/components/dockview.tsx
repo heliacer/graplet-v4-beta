@@ -9,15 +9,14 @@ import {
 import '../styles/base.css'
 import '../styles/dvtheme.css'
 import { LeftControls, RightControls } from './ui/controls/tabControls'
-import TabHeader from './ui/tabHeader'
+import { TabHeader } from './ui/tabHeader'
+import { useEditor } from '../lib/EditorContext'
 
-// Panels
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
 import ExplorerPanel from './panels/ExplorerPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
-import { useEditor } from '../lib/EditorContext'
 import SettingsPanel from './panels/SettingsPanel'
 
 const panelComponents = {
@@ -116,7 +115,7 @@ const jsonLayout: SerializedDockview = {
   activeGroup: '1'
 }
 
-export default function GrapletDockview() {
+export function GrapletDockview() {
   const { setDvApi } = useEditor()
 
   function mount(event: DockviewReadyEvent) {

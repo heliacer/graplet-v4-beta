@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { Mail } from 'lucide-react'
 
-export default function InputSkeleton() {
+export function InputSkeleton() {
   return (
     <>
       <input

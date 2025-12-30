@@ -1,3 +1,4 @@
+import MiniGraplet from '@/app/ui/assets/MiniGraplet'
 import clsx from 'clsx'
 
 function ThemeButton({ theme }: { theme: string }) {
@@ -25,12 +26,15 @@ function ThemeButton({ theme }: { theme: string }) {
 
 export default function SettingsPanel() {
   return (
-    <div className='m-4'>
+    <div className='flex flex-col gap-2 m-4'>
       <p>Settings</p>
       <div className='flex gap-1'>
         <p>Theme</p>
         <ThemeButton theme='light' />
         <ThemeButton theme='dark' />
+      </div>
+      <div className='dark'>
+        <MiniGraplet />
       </div>
     </div>
   )

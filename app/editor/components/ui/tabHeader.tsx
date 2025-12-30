@@ -4,7 +4,7 @@ import { Star } from 'lucide-react'
 
 type TabParams = { iconType?: IconT; closable: boolean }
 
-export default function TabHeader(props: IDockviewPanelHeaderProps<TabParams>) {
+export function TabHeader(props: IDockviewPanelHeaderProps<TabParams>) {
   const { iconType } = props.params
 
   return (

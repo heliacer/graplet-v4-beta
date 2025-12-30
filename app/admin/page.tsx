@@ -1,9 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { Folder, LogOut, Plus } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import Link from 'next/link'
-import CredentialsInput from '../ui/components/CredentialsInput'
+import { CredentialsInput } from '../ui/components/CredentialsInput'
 import { FormEvent, useEffect, useState } from 'react'
 import { signUp } from '../lib/actions'
 

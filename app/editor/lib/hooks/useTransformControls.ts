@@ -60,18 +60,4 @@ export function useTransformControls() {
     scene,
     setObjectVersion
   ])
-
-  /** 
-  @todo Figure out if this is really needed, since linter does not like it 
-
-  useEffect(() => {
-    return () => {
-      if (controls.current) {
-        scene.current?.remove(controls.current.getHelper())
-        controls.current.dispose()
-        controls.current = null
-      }
-    }
-  }, [])
-  */
 }

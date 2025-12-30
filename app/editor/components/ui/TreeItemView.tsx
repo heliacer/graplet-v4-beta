@@ -32,15 +32,20 @@ interface ItemViewSpacerProps {
 }
 
 function ItemViewSpacer({ item, handleItemClick }: ItemViewSpacerProps) {
-  if (item.isFolder() && item.getChildren().length > 0) return (
-    <div
-      className='flex cursor-pointer text-ui-400'
-      onClick={() => item.isExpanded() ? item.collapse() : item.expand()}
-    >
-      <div style={{ width: `${item.getItemMeta().level * 8}px` }} />
-      {item.isExpanded() ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-    </div>
-  )
+  if (item.isFolder() && item.getChildren().length > 0)
+    return (
+      <div
+        className='flex cursor-pointer text-ui-400'
+        onClick={() => (item.isExpanded() ? item.collapse() : item.expand())}
+      >
+        <div style={{ width: `${item.getItemMeta().level * 8}px` }} />
+        {item.isExpanded() ? (
+          <ChevronDown size={12} />
+        ) : (
+          <ChevronRight size={12} />
+        )}
+      </div>
+    )
 
   return (
     <div
@@ -103,8 +108,9 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
   if (item.isRenaming()) return <RenamingItemView item={item} />
 
   /**
-   * @summary custom implementation of the TreeItem onClick, since we want to exclude folder toggles (done separately by the Spacers)
-   * @todo need to rework this, since F12 toggle doesn't work (just selects top-most item)
+   * @summary Custom implementation of the TreeItem onClick, since we want to exclude folder toggles (done separately by the Spacers)
+   * @todo F12 toggle doesn't work (just selects top-most item)
+   * @todo Shift selecting upwards does not work
    */
   function handleItemClick(e: React.MouseEvent) {
     if (tree.getSelectedItems().includes(item)) {
@@ -142,7 +148,9 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         className={clsx(
           item.isSelected()
             ? 'border-teal/70 bg-teal/20'
-            : isHovered ? 'bg-ui-800 border-ui-650' : 'border-transparent',
+            : isHovered
+              ? 'bg-ui-800 border-ui-650'
+              : 'border-transparent',
           'border w-full rounded-l-md px-1 focus:outline-none'
         )}
       >

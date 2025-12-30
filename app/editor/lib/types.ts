@@ -110,7 +110,7 @@ export interface SMaterial {
 
 /**
  * Context Menu Props
- * @todo add more, e.g source
+ * @todo Allow multiple items to be manipulated
  */
 export interface ContextMenuProps {
   item: ItemInstance<TreeItem>
@@ -118,9 +118,8 @@ export interface ContextMenuProps {
   y: number
 }
 
-/** 
- * @todo Refine this to include all Object3D Errors / + undefined ones 
- * (use if-case of what is available, e.g only id, only name, etc.) 
+/**
+ * The given Object3D does not have a parent Object3D
  */
 export class ParentError extends Error {
   constructor(object: Object3D) {

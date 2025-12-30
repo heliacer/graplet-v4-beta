@@ -1,10 +1,10 @@
-import RunControls from './ui/controls/runControls'
-import UserDropdown from '@/app/ui/components/UserDropdown'
-import NavMenu from './ui/NavMenu'
 import Logo from '@/app/ui/assets/Logo'
 import Link from 'next/link'
+import { UserDropdown } from '@/app/ui/components/UserDropdown'
+import { NavMenu } from './ui/NavMenu'
+import { RunControls } from './ui/controls/runControls'
 
-export default function EditorHeader() {
+export function EditorHeader() {
   return (
     <nav className='h-11 flex items-center justify-between px-2'>
       <div className='w-full h-full flex items-center gap-3'>

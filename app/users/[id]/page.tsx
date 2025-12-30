@@ -6,7 +6,7 @@ import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { use } from 'react'
 
-export default function BlogPostPage({
+export default function UserProfile({
   params
 }: {
   params: Promise<{ id: string }>

@@ -3,7 +3,7 @@ import { signOut, useSession } from 'next-auth/react'
 import { Dropdown, DropdownItemProps } from './Dropdown'
 import { useRouter } from 'next/navigation'
 
-export default function UserDropdown() {
+export function UserDropdown() {
   const { data: session } = useSession()
   const router = useRouter()
 

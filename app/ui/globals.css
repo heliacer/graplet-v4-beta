@@ -1,9 +1,10 @@
 @import 'tailwindcss';
 
-@custom-variant light (&:where(html.light, .dark *));
+@custom-variant light (&:where(html.light));
 
-/** Dark Theme #1f1f23*/
+/** Dark Theme (default) */
 @theme {
+  /** UI */
   --color-ui-50: oklch(98.5% 0 0);
   --color-ui-100: oklch(96.7% 0.001 286.375);
   --color-ui-150: oklch(94.5% 0.004 286.3);
@@ -42,7 +43,7 @@
 @layer theme {
   :root,
   :host {
-    /** Light Theme (ew) */
+    /** Light Theme */
     @variant light {
       /** UI */
       --color-ui-50: oklch(14.1% 0.005 285.823);
@@ -64,6 +65,7 @@
       --color-ui-850: oklch(94.5% 0.004 286.3);
       --color-ui-900: oklch(96.7% 0.001 286.375);
       --color-ui-950: oklch(98.5% 0 0);
+      
       /** Accent Colors */
       --color-blue: #4565b7;
       --color-orange: #956215;

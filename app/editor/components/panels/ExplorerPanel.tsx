@@ -27,10 +27,10 @@ export default function ExplorerPanel() {
   const tree = useTree<TreeItem>({
     state: { selectedItems },
     setSelectedItems: (value) => {
-      /** 
+      /**
        * @summary Sets multiselect items state, while in the current context state only one object can be selected.
        * @todo This is good for now, but once multiple 3D Objects can be selected (maybe temporary group) then it should share the same state.
-      */
+       */
       const items = value as string[]
       const object = scene.current.getObjectById(Number(items[0]))
       setCurrentObject(object || null)
@@ -50,15 +50,18 @@ export default function ExplorerPanel() {
       if (object) object.name = value
       setObjectVersion((prev) => prev + 1)
     },
-    /** 
+    /**
      * @todo Add reordering for improved UX, and save the item state to serialisation
      * -> right now it just mimicks the Scene Object3D children array
      */
     onDrop: (items, target) => {
+      console.log(items, target)
       for (const item of items) {
         const object = scene.current.getObjectById(item.getItemData().id)
         if (!object) throw Error('Object from item does not exist')
-        const targetObj = scene.current.getObjectById(target.item.getItemData().id)
+        const targetObj = scene.current.getObjectById(
+          target.item.getItemData().id
+        )
         if (!targetObj) throw Error('Object from target item does not exist')
         moveObject(object, targetObj)
         setObjectVersion((prev) => prev + 1)

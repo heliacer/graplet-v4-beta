@@ -40,7 +40,10 @@ export function ObjectView() {
   /** Helpers, some of them maps for helper n - object 1 */
   const [gridHelper, setGridHelper] = useState<boolean>(true)
 
-  /** @todo could probably merge to one helpers, setHelpers */
+  /**
+   * @todo Revamp how objects are bound to its helpers, register them in one Map<Object, Helper>
+   * and set them global in context -> only gets the helper for the object needed, only one item handling it (Local Helper)
+   */
   const [cameraHelpers, setCameraHelpers] = useState(new Map<number, boolean>())
   const [lightHelpers, setLightHelpers] = useState(new Map<number, boolean>())
 
@@ -99,12 +102,12 @@ export function ObjectView() {
     })
   }
 
-  /** 
+  /**
    * @todo Add new categories:
-   * 
+   *
    * Cameras > Enable all helpers | Disable all helpers
    * Lights > Enable all helpers | Disable all helpers
-   * 
+   *
    * Local Helper (Camera | DirectionalLight)
    */
 

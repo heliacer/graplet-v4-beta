@@ -31,7 +31,6 @@ export const theme: ITheme = {
     size: 18
   },
   startHats: true,
-  /** @todo find a way to apply accent colors from globals */
   categoryStyles: {
     motion_category: {
       colour: colors.MOTION

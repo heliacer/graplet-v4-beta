@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { Object3D } from 'three'
-import DragNumberInput from '@/app/ui/components/DragNumberInput'
+import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 
 interface BasePropertyProps {
   label: string

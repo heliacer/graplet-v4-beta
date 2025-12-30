@@ -2,11 +2,8 @@ import { useState } from 'react'
 import { Color, Mesh, MeshStandardMaterial, Object3D } from 'three'
 
 /**
- * @todo
- *
- * chosen approach: wildcard, include all materials, just like in three.js editor 
+ * @todo Chosen approach: wildcard, include all materials, just like in three.js editor
  * (they have separate files for each mat/geometry props)
- * 
  */
 
 function MeshStandardMaterialPane({

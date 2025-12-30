@@ -40,7 +40,6 @@ export function useObjectActions() {
    *
    * E.g Use cases: Move [object v] (0.5) units [forwards v]
    *
-   * @todo maybe accept child objects, to allow dependant block dropdowns
    */
   function addToReg(object: Object3D) {
     blocklyObjectRegistry.options.push([object.name, object.id.toString()])
@@ -95,9 +94,6 @@ export function useObjectActions() {
 
   /**
    * Adds Helpers for specific objects
-   *
-   * @todo if those objects are visible on the ExplorerPanel, modifying their visibility
-   * does not update the local map for objectView. might need to globalise the booleans
    */
   function applyHelpers(object: Object3D) {
     if (object instanceof Camera) {
@@ -159,7 +155,6 @@ export function useObjectActions() {
       const project = JSON.parse(data) as ProjectData
       clearScene()
 
-      /** @todo should be stricter at some point */
       if (project.scene) {
         const { children } = project.scene
         applyProps(scene.current, project.scene)
@@ -205,19 +200,16 @@ export function useObjectActions() {
       }
     }
 
-    /** If it's the active camera, set another one active instead */
-    if (object === camera) {
-      const nextCamera = scene.current.getObjectByProperty(
-        'isCamera',
-        true
-      ) as Camera
-      setCamera(nextCamera || null)
-    }
-
-    /**
-     * If the object is a Camera with OrbitControls attached, dispose of it
-     */
     if (object instanceof Camera) {
+      /** If it's the active camera, set another one active instead */
+      if (object === camera) {
+        const nextCamera = scene.current.getObjectByProperty(
+          'isCamera',
+          true
+        ) as Camera
+        setCamera(nextCamera || null)
+      }
+      /** If the camera has orbit controls, dispose of them */
       const orbit = orbitMap.current.get(object.id)
       if (orbit) {
         orbit.disconnect()
@@ -229,8 +221,8 @@ export function useObjectActions() {
     setObjectVersion((prev) => prev + 1)
   }
 
-  /** 
-   * @todo should clone geometry & material too, since those are shared by default
+  /**
+   * @todo Should separate geometry & material, since those are shared by default -> option to keep them / make new
    * @todo Also add helpers if needed
    */
   function duplicateObject(object: Object3D) {
