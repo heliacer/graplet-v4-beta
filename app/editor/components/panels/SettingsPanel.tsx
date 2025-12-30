@@ -46,6 +46,10 @@ export default function SettingsPanel() {
   /** @todo Make available themes more flexible, maybe save them in a state */
   const themes = ['dark', 'light']
 
+  /**
+   * @todo Add a Theme Editor
+   */
+
   return (
     <div className='flex flex-col gap-2 m-4'>
       <p>Theme</p>
