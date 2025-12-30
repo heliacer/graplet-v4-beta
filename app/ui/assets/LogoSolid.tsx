@@ -1,4 +1,4 @@
-export default function LogoSolid({ size }: { size: number }) {
+export function LogoSolid({ size }: { size: number }) {
   return (
     <svg
       width={size}

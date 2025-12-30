@@ -1,5 +1,5 @@
-import LogoSolid from '../ui/assets/LogoSolid'
 import { Suspense } from 'react'
+import { LogoSolid } from '../ui/assets/LogoSolid'
 import { InputSkeleton } from '../ui/components/InputSkeleton'
 
 export default function LoginLayout({

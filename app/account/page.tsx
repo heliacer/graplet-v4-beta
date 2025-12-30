@@ -1,9 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { Folder, LogOut } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import Link from 'next/link'
-import LogoSolid from '../ui/assets/LogoSolid'
+import { LogoSolid } from '../ui/assets/LogoSolid'
 
 export default function Account() {
   return (

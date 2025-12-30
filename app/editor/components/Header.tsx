@@ -1,5 +1,5 @@
-import Logo from '@/app/ui/assets/Logo'
 import Link from 'next/link'
+import { Logo } from '@/app/ui/assets/Logo'
 import { UserDropdown } from '@/app/ui/components/UserDropdown'
 import { NavMenu } from './ui/NavMenu'
 import { RunControls } from './ui/controls/runControls'

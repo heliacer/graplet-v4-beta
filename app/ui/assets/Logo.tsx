@@ -1,4 +1,4 @@
-export default function Logo({ size }: { size: number }) {
+export function Logo({ size }: { size: number }) {
   return (
     <svg
       fill='none'

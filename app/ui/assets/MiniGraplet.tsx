@@ -1,37 +1,29 @@
-interface LogoSolidProps {
+interface MiniGrapletProps {
   size?: number
+  className?: string
 }
 
-/**
- * @todo Extend theme variables to always hold a reference to each theme,
- * e.g var(--color-dark-ui-900) and the global (current) is var(--color-ui-900)
- *
- * this allows for multi-assignment with the same svg, e.g `var(--color-${theme}-ui-900)`
- *
- * -> themes/ dark.css | ...
- */
+export function MiniGraplet({ size = 160, className }: MiniGrapletProps) {
+  const bgColor1 = 'var(--ui-900)'
+  const bgColor2 = 'var(--ui-850)'
+  const bgColor3 = 'var(--ui-800)'
+  const bgColor4 = 'var(--ui-700)'
 
-export default function MiniGraplet({ size = 160 }: LogoSolidProps) {
-  const bgColor1 = 'var(--color-ui-900)'
-  const bgColor2 = 'var(--color-ui-850)'
-  const bgColor3 = 'var(--color-ui-800)'
-  const bgColor4 = 'var(--color-ui-700)'
-
-  const blue = 'var(--color-blue)'
-  const orange = 'var(--color-orange)'
-  const teal = 'var(--color-teal)'
-  const cyan = 'var(--color-cyan)'
-  const purple = 'var(--color-purple)'
-  const red = 'var(--color-red)'
-  const rose = 'var(--color-rose)'
-  const amber = 'var(--color-amber)'
-  const green = 'var(--color-green)'
-  const indigo = 'var(--color-indigo)'
-  const mint = 'var(--color-mint)'
-  const copper = 'var(--color-copper)'
+  const blue = 'var(--blue)'
+  const orange = 'var(--orange)'
+  const teal = 'var(--teal)'
+  const cyan = 'var(--cyan)'
+  const purple = 'var(--purple)'
+  const red = 'var(--red)'
+  const rose = 'var(--rose)'
+  const amber = 'var(--amber)'
+  const green = 'var(--green)'
+  const indigo = 'var(--indigo)'
+  const mint = 'var(--mint)'
+  const copper = 'var(--copper)'
 
   return (
-    <svg width={size} viewBox='0 0 160 104'>
+    <svg className={className} width={size} viewBox='0 0 160 104'>
       <rect width='160' height='104' rx='4' fill={bgColor1} />
       <g clipPath='url(#clip0_1488_1717)'>
         <circle cx='6' cy='6' r='2' fill={teal} />
