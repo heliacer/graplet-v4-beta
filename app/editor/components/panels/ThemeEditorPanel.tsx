@@ -11,8 +11,8 @@ function ColorPicker({
   resetVersion: number
 }) {
   const { currentTheme } = useEditor()
-
   const variable = `--${colorName}`
+  const [isChanged, setIsChanged] = useState(false)
   const [colorValue, setColorValue] = useState(() => {
     const c = getComputedStyle(document.documentElement)
       .getPropertyValue(variable)
@@ -25,17 +25,23 @@ function ColorPicker({
       .getPropertyValue(variable)
       .trim()
     setColorValue(formatHex(cssColor))
+    setIsChanged(false)
   }, [currentTheme, resetVersion, variable])
 
   return (
-    /** @todo Will improve UX, with actual color inputs who can be clicked not just like this */
-    <div className='flex'>
+    <div
+      className={clsx(
+        'flex border px-0.5 rounded',
+        isChanged ? 'border-teal' : 'border-ui-700'
+      )}
+    >
       <input
         id={colorName}
         className='w-6 h-6 cursor-pointer'
         type='color'
         value={colorValue}
         onChange={(e) => {
+          setIsChanged(true)
           const newColor = e.target.value
           setColorValue(newColor)
           document.documentElement.style.setProperty(variable, newColor)
