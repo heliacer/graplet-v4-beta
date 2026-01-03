@@ -3,9 +3,9 @@
 }
 
 .categoryBubble {
-  margin: 0 auto 0.125rem;
+  margin: 0;
   border-radius: 100%;
-  border: 1px solid rgba(0, 0, 0, .1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   width: 1.25rem;
   height: 1.25rem;
 }
@@ -29,28 +29,42 @@
   z-index: 50;
 }
 
-.blocklyToolboxCategory {
-  background-color: transparent !important;
-  cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid transparent;
+.blocklyToolboxCategoryContainer {
+  border-radius: 6px;
+  border-left: 1px solid transparent;
+  margin-bottom: 4px;
 }
 
-.blocklyToolboxSelected .blocklyToolboxCategoryLabel {
-  color: var(--color-ui-200);
+.blocklyToolboxCategoryContainer:hover {
+  border-left-color: var(--color-ui-700);
+}
+
+.blocklyToolboxCategoryContainer:has(> .blocklyToolboxSelected) {
+  border-left-color: var(--color-teal);
+}
+
+.blocklyToolboxCategory {
+  padding: 0;
+  margin: 0;
+  height: initial;
+  cursor: pointer;
+  border: solid transparent;
+  border-radius: 6px;
+  border-width: 1px 1px 1px 0px;
+}
+
+.blocklyToolboxCategory:hover {
+  background-color: var(--color-ui-800) !important;
+  border-color: var(--color-ui-700);
 }
 
 .blocklyToolboxCategory.blocklyToolboxSelected {
   background-color: var(--color-ui-800) !important;
-  border: 1px solid var(--color-ui-700);
-}
-
-.blocklyToolboxCategory {
-  height: initial;
-  padding: 3px 0;
+  border-color: var(--color-ui-700);
 }
 
 .blocklyTreeRowContentContainer {
+  padding: 3px;
   outline: none;
   display: flex;
   flex-direction: column;
@@ -61,9 +75,7 @@
 }
 
 .blocklyToolboxCategoryLabel {
-  text-align: center;
-  font: inherit;
-  font-size: 12px;
+  display: none;
 }
 
 .injectionDiv {
