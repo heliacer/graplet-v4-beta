@@ -21,8 +21,12 @@ export function useBlocklyWorkspace(
     ws.getVariableMap().createVariable('my variable')
     ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
     ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
-    ws.registerButtonCallback('CREATE_VARIABLE', function (button) {
+    ws.registerButtonCallback('CREATE_VARIABLE', (button) => {
       Variables.createVariableButtonHandler(button.getTargetWorkspace())
+    })
+    ws.registerButtonCallback('TOGGLE_FLYOUT', (button) => {
+      const flyout = button.getTargetWorkspace().getFlyout()
+      flyout?.hide()
     })
 
     const variableListener = (event: Events.Abstract) => {

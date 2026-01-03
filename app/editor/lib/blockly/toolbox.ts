@@ -1,6 +1,4 @@
-import { utils } from 'blockly'
-
-export const toolbox: utils.toolbox.ToolboxDefinition = {
+export const toolbox = {
   kind: 'categoryToolbox',
   contents: [
     {
@@ -8,6 +6,11 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       name: 'Motion',
       categorystyle: 'motion_category',
       contents: [
+        {
+          kind: 'button',
+          text: 'Hide Toolbox',
+          callbackKey: 'TOGGLE_FLYOUT'
+        },
         {
           kind: 'block',
           type: 'moveunitsxyz',
