@@ -24,10 +24,6 @@ export function useBlocklyWorkspace(
     ws.registerButtonCallback('CREATE_VARIABLE', (button) => {
       Variables.createVariableButtonHandler(button.getTargetWorkspace())
     })
-    ws.registerButtonCallback('TOGGLE_FLYOUT', (button) => {
-      const flyout = button.getTargetWorkspace().getFlyout()
-      flyout?.hide()
-    })
 
     const variableListener = (event: Events.Abstract) => {
       if (

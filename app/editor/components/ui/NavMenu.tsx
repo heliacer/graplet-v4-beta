@@ -8,11 +8,6 @@ export function NavMenu() {
       <PanelMenu component='settings' title='Settings' iconType='Settings2' />
       <FileMenu />
       <EditMenu />
-      <PanelMenu
-        component='themeEditor'
-        title='Theme Editor'
-        iconType='PaintBucket'
-      />
     </nav>
   )
 }

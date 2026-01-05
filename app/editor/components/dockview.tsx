@@ -18,7 +18,6 @@ import ExplorerPanel from './panels/ExplorerPanel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
 import SettingsPanel from './panels/SettingsPanel'
-import ThemeEditorPanel from './panels/ThemeEditorPanel'
 
 const panelComponents = {
   debug: DebugPanel,
@@ -26,8 +25,7 @@ const panelComponents = {
   scene: ScenePanel,
   explorer: ExplorerPanel,
   properties: PropertiesPanel,
-  settings: SettingsPanel,
-  themeEditor: ThemeEditorPanel
+  settings: SettingsPanel
 }
 
 const jsonLayout: SerializedDockview = {

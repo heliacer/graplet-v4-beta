@@ -8,7 +8,6 @@ interface ThemeButtonProps {
 
 function ThemeButton({ theme }: ThemeButtonProps) {
   const { currentTheme, setCurrentTheme } = useEditor()
-
   function handleClick() {
     document.documentElement.className = theme
     setCurrentTheme(theme)
@@ -22,7 +21,7 @@ function ThemeButton({ theme }: ThemeButtonProps) {
   return (
     <button
       className={clsx(
-        'border rounded-md cursor-pointer transition-colors',
+        'border rounded-md cursor-pointer',
         theme === currentTheme
           ? 'border-teal'
           : 'border-ui-700 hover:border-teal'
@@ -30,19 +29,20 @@ function ThemeButton({ theme }: ThemeButtonProps) {
       onClick={handleClick}
     >
       <MiniGraplet className={`${theme} m-0.5`} />
+      <p>{theme}</p>
     </button>
   )
 }
 
 export default function SettingsPanel() {
   /** @todo Make available themes more flexible, maybe save them in a state */
-  const themes = ['dark', 'light']
+  const themeNames = ['dark', 'light', 'arctic', 'lime', 'red']
 
   return (
     <div className='flex flex-col gap-2 m-4'>
       <p>Theme</p>
       <div className='flex gap-2'>
-        {themes.map((theme, key) => (
+        {themeNames.map((theme, key) => (
           <ThemeButton key={key} theme={theme} />
         ))}
       </div>

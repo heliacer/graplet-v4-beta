@@ -7,11 +7,6 @@ export const toolbox = {
       categorystyle: 'motion_category',
       contents: [
         {
-          kind: 'button',
-          text: 'Hide Toolbox',
-          callbackKey: 'TOGGLE_FLYOUT'
-        },
-        {
           kind: 'block',
           type: 'moveunitsxyz',
           inputs: {

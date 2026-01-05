@@ -27,10 +27,10 @@ export function PanelMenu({ component, title, iconType }: PanelMenuProps) {
               closable: true
             },
             floating: {
-              x: document.body.clientWidth / 2 - 400,
-              y: document.body.clientHeight / 2 - 350,
-              width: 800,
-              height: 600
+              x: document.body.clientWidth / 2 - 450,
+              y: document.body.clientHeight / 2 - 320,
+              width: 900,
+              height: 550
             }
           })
         }

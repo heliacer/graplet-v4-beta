@@ -93,3 +93,22 @@
 .blocklyScrollbarHandle {
   display: none;
 }
+
+.blocklyFlyoutButtonShadow {
+  fill: none;
+}
+
+.blocklyFlyoutButtonBackground {
+  stroke: var(--color-ui-600);
+  rx: 12;
+  ry: 12;
+}
+
+.blocklyFlyoutButton {
+  cursor: pointer;
+  fill: var(--color-ui-750);
+}
+
+.blocklyFlyoutButton:hover {
+  fill: var(--color-ui-700);
+}

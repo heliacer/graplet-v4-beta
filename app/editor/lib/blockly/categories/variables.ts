@@ -12,7 +12,7 @@ export function variableCategory(
 
   blockList.push({
     kind: 'button',
-    text: '%{BKY_NEW_VARIABLE}',
+    text: 'Create variable',
     callbackKey: 'CREATE_VARIABLE'
   })
 
