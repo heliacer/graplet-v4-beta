@@ -1,278 +1,143 @@
-'use client'
-
-import {
-  useState,
-  createContext,
-  useContext,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useId,
-  MouseEvent
-} from 'react'
-import { ChevronRight } from 'lucide-react'
+import clsx from 'clsx'
+import { Check, ChevronDown, ChevronRight, LucideIcon } from 'lucide-react'
+import React, { createContext, useContext, useState } from 'react'
 import { useClickOutside } from '../hooks/useClickOutside'
-import clsx, { ClassValue } from 'clsx'
+
+/** Helper func to check whether a folder path is in the active path or not */
+function isActiveFolder(fp: number[], ap: number[]) {
+  return fp.length <= ap.length && fp.every((v, i) => v === ap[i])
+}
 
 interface DropdownContextType {
   isOpen: boolean
-  setIsOpen: (open: boolean) => void
-  close: () => void
-  activeFolderId: string | null
-  openFolder: (id: string) => void
-  closeFolder: (id: string) => void
-  toggleFolder: (id: string) => void
+  activePath: number[]
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setActivePath: React.Dispatch<React.SetStateAction<number[]>>
 }
 
-const DropdownContext = createContext<DropdownContextType | undefined>(
-  undefined
-)
+const DropdownContext = createContext<DropdownContextType>(null!)
 
-const useDropdown = () => {
-  const context = useContext(DropdownContext)
-  if (!context) {
-    throw new Error('Dropdown components must be used within a DropdownMenu')
-  }
-  return context
+/**
+ * Props that go into each dropdown item (including nested)
+ */
+export interface DropdownItemProps {
+  label: string
+  Icon?: LucideIcon
+  checked?: boolean
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+  children?: DropdownItemProps[]
 }
 
-interface DropdownMenuProps {
-  children: ReactNode
-  className?: ClassValue
+/**
+ * Props that go in the topmost dropdown
+ */
+export interface DropdownProps {
+  label: string
+  items?: DropdownItemProps[]
+  Icon?: LucideIcon
+  size?: number
 }
 
-export function DropdownMenu({ children, className }: DropdownMenuProps) {
+function DropdownItemList({
+  items,
+  path = []
+}: {
+  items: DropdownItemProps[]
+  path?: number[]
+}) {
+  return (
+    <ul className='absolute z-999 mt-0.5 text-xs bg-ui-800 border border-ui-700 rounded py-0.5'>
+      {items.map((item, i) => (
+        <DropdownItem key={i} path={[...path, i]} {...item} />
+      ))}
+    </ul>
+  )
+}
+
+function DropdownItem({
+  path,
+  label,
+  Icon,
+  checked,
+  onClick,
+  children
+}: DropdownItemProps & { path: number[] }) {
+  const { activePath, setIsOpen, setActivePath } = useContext(DropdownContext)
+  const isActive = isActiveFolder(path, activePath)
+
+  return (
+    <li
+      title={`${path}`}
+      className='relative'
+      onMouseEnter={() => setActivePath(path)}
+    >
+      <div className='mx-0.5'>
+        <button
+          className={clsx(
+            'flex gap-1 px-0.5 items-center w-full text-nowrap',
+            'rounded border',
+            isActive ? 'bg-ui-700 border-ui-600' : 'border-transparent',
+            'hover:bg-ui-700 hover:border-ui-600'
+          )}
+          onMouseDown={(e) => {
+            onClick?.(e)
+            if (!children && checked === undefined) {
+              setIsOpen(false)
+            }
+          }}
+        >
+          {Icon ? (
+            <Icon size={14} />
+          ) : checked ? (
+            <Check size={14} />
+          ) : (
+            <div className='w-3.5' />
+          )}
+          {label}
+          {children ? (
+            <ChevronRight className='ml-auto' size={14} />
+          ) : (
+            <div className='w-3.5' />
+          )}
+        </button>
+      </div>
+      <div className='absolute left-full -top-1'>
+        {children && isActive && (
+          <DropdownItemList items={children} path={path} />
+        )}
+      </div>
+    </li>
+  )
+}
+
+export function Dropdown({ label, items, Icon }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [activeFolderId, setActiveFolderId] = useState<string | null>(null)
+  const [activePath, setActivePath] = useState<number[]>([])
 
-  const dropdownRef = useClickOutside<HTMLDivElement>(() => {
+  const refClick = useClickOutside<HTMLDivElement>(() => {
     setIsOpen(false)
-    setActiveFolderId(null)
   })
 
-  const close = () => {
-    setIsOpen(false)
-    setActiveFolderId(null)
-  }
-
-  useEffect(() => {
-    if (!isOpen) {
-      setActiveFolderId(null)
-    }
-  }, [isOpen])
-
-  const contextValue = useMemo(
-    () => ({
-      isOpen,
-      setIsOpen,
-      close,
-      activeFolderId,
-      openFolder: (id: string) => setActiveFolderId(id),
-      closeFolder: (id: string) =>
-        setActiveFolderId((current) => (current === id ? null : current)),
-      toggleFolder: (id: string) =>
-        setActiveFolderId((current) => (current === id ? null : id))
-    }),
-    [isOpen, activeFolderId]
-  )
-
   return (
-    <DropdownContext.Provider value={contextValue}>
-      <div ref={dropdownRef} className={clsx('relative', className)}>
-        {children}
-      </div>
-    </DropdownContext.Provider>
-  )
-}
-
-interface DropdownButtonProps {
-  children: ReactNode
-  className?: (isOpen: boolean, disabled?: boolean) => ClassValue
-  disabled?: boolean
-}
-
-export function DropdownButton({
-  children,
-  className = (isOpen, disabled) =>
-    clsx(
-      'flex items-center gap-1 border border-transparent rounded-md text-sm px-1',
-      disabled
-        ? 'text-zinc-400'
-        : 'cursor-pointer hover:bg-zinc-800 hover:border-zinc-700',
-      isOpen && 'bg-zinc-800 border-zinc-700'
-    ),
-  disabled
-}: DropdownButtonProps) {
-  const { isOpen, setIsOpen } = useDropdown()
-
-  return (
-    <button
-      className={clsx(className(isOpen, disabled))}
-      onClick={disabled ? () => {} : () => setIsOpen(!isOpen)}
+    <DropdownContext.Provider
+      value={{ isOpen, activePath, setIsOpen, setActivePath }}
     >
-      {children}
-    </button>
-  )
-}
-
-interface DropdownContentProps {
-  children: ReactNode
-  className?: ClassValue
-  align?: 'left' | 'right' | 'center'
-  side?: 'top' | 'bottom'
-}
-
-export function DropdownContent({
-  children,
-  className,
-  align = 'right',
-  side = 'bottom'
-}: DropdownContentProps) {
-  const { isOpen } = useDropdown()
-
-  const alignmentStyles = {
-    left: 'left-0',
-    right: 'right-0',
-    center: 'left-1/2 -translate-x-1/2'
-  }
-
-  const sideStyles = {
-    top: 'bottom-full -translate-y-0.5',
-    bottom: 'top-full translate-y-0.5'
-  }
-
-  return (
-    <div
-      className={clsx(
-        'absolute rounded-lg text-sm py-1 border border-zinc-700 bg-zinc-800 z-[999]',
-        alignmentStyles[align],
-        sideStyles[side],
-        !isOpen && 'hidden',
-        className
-      )}
-    >
-      {children}
-    </div>
-  )
-}
-
-interface DropdownOptionProps {
-  children: ReactNode
-  onClick?: () => void
-  className?: ClassValue
-  asChild?: boolean
-}
-
-export function DropdownOption({
-  children,
-  onClick,
-  className,
-  asChild = false
-}: DropdownOptionProps) {
-  const { close } = useDropdown()
-
-  const handleClick = () => {
-    onClick?.()
-    close()
-  }
-
-  const baseStyles =
-    'border border-transparent rounded mx-1 px-1 hover:border-zinc-600 hover:bg-zinc-700'
-
-  if (asChild) {
-    return (
-      <div className={clsx(baseStyles, className)} onClick={handleClick}>
-        {children}
-      </div>
-    )
-  }
-
-  return (
-    <div className={clsx(baseStyles, className)}>
-      <button
-        className="w-full text-left cursor-pointer flex items-center gap-2"
-        onClick={handleClick}
-      >
-        {children}
-      </button>
-    </div>
-  )
-}
-
-export function DropdownSeparator({ className }: { className?: string }) {
-  return <hr className={clsx('my-1 border-zinc-600', className)} />
-}
-
-interface DropdownFolderProps {
-  id?: string
-  label: ReactNode
-  icon?: ReactNode
-  children: ReactNode
-  className?: ClassValue
-  contentClassName?: ClassValue
-  align?: 'right' | 'left'
-  side?: 'top' | 'bottom'
-}
-
-export function DropdownFolder({
-  id,
-  label,
-  icon,
-  children,
-  className,
-  contentClassName,
-  align = 'right',
-  side = 'bottom'
-}: DropdownFolderProps) {
-  const { activeFolderId, openFolder, closeFolder, toggleFolder } =
-    useDropdown()
-  const generatedId = useId()
-  const folderId = id ?? generatedId
-  const isOpen = activeFolderId === folderId
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation()
-    toggleFolder(folderId)
-  }
-
-  const handleMouseEnter = () => openFolder(folderId)
-  const handleMouseLeave = () => closeFolder(folderId)
-
-  const contentAlignment = align === 'right' ? 'left-full' : 'right-full'
-  const sideAlignment = side === 'top' ? 'top-0' : 'bottom-0'
-
-  return (
-    <div
-      className={clsx('relative', className)}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <button type="button" className="w-full" onClick={handleClick}>
-        <div
+      <div ref={refClick}>
+        <button
+          onMouseDown={() => setIsOpen((prev) => !prev)}
           className={clsx(
-            'flex cursor-pointer items-center gap-2 rounded px-1 mx-1 text-left',
-            'border border-transparent',
-            isOpen && 'border-zinc-600 bg-zinc-700'
+            'text-sm flex items-center gap-1 px-1',
+            'border rounded-md relative',
+            'border-ui-700',
+            'hover:bg-ui-750 bg-ui-800'
           )}
         >
-          {icon}
-          <span className="flex-1">{label}</span>
-          <ChevronRight size={14} className="text-zinc-200" />
-        </div>
-      </button>
-      <div
-        className={clsx(
-          `absolute min-w-[160px] rounded-lg border py-1 border-zinc-700 bg-zinc-800`,
-          'shadow-lg',
-          contentAlignment,
-          sideAlignment,
-          !isOpen && 'hidden',
-          contentClassName
-        )}
-        onClick={(event) => event.stopPropagation()}
-      >
-        {children}
+          {Icon && <Icon size={14} />}
+          {label}
+          <ChevronDown size={14} />
+        </button>
+        {items && isOpen && <DropdownItemList items={items} />}
       </div>
-    </div>
+    </DropdownContext.Provider>
   )
 }

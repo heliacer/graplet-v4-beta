@@ -19,12 +19,11 @@ export const theme: ITheme = {
   name: 'graplet',
   componentStyles: {
     workspaceBackgroundColour: 'transparent',
-    toolboxBackgroundColour: '#1f1f23',
-    flyoutBackgroundColour: '#1f1f23',
-    toolboxForegroundColour: '#e4e4e7',
-    flyoutForegroundColour: '#e4e4e7',
-    flyoutOpacity: 1,
-    scrollbarColour: '#343437'
+    toolboxBackgroundColour: 'var(--color-ui-850)',
+    flyoutBackgroundColour: 'var(--color-ui-850)',
+    toolboxForegroundColour: 'var(--color-ui-200)',
+    flyoutForegroundColour: 'var(--color-ui-200)',
+    flyoutOpacity: 1
   },
   fontStyle: {
     family: 'Nunito, Nunito Fallback',

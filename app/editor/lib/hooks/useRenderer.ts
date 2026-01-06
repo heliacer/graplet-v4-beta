@@ -1,15 +1,14 @@
-import { PerspectiveCamera, WebGLRenderer } from 'three'
+import { OrthographicCamera, PerspectiveCamera, WebGLRenderer } from 'three'
 import { useEditor } from '../../lib/EditorContext'
 import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
+import { ViewHelper } from 'three/examples/jsm/Addons.js'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { scene, camera, canvas, orbit } = useEditor()
+  const { scene, camera, canvas, orbitMap } = useEditor()
   const rendererRef = useRef<WebGLRenderer | null>(null)
-  const rafRef = useRef<number | null>(null)
 
   useEffect(() => {
-    /** @todo find better solution for camera management -> ref */
     if (!camera) return
 
     const renderer = new WebGLRenderer({
@@ -17,45 +16,52 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       antialias: true,
       alpha: true
     })
-
+    renderer.autoClear = false
+    renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(window.devicePixelRatio)
     rendererRef.current = renderer
 
+    const helper = new ViewHelper(camera, renderer.domElement)
+
     const resize = () => {
-      const { clientWidth, clientHeight } = canvas.current
-      renderer.setSize(clientWidth, clientHeight, false)
-      renderer.setPixelRatio(window.devicePixelRatio)
+      const { clientWidth: w, clientHeight: h } = canvas.current
+      renderer.setSize(w, h, false)
+      const aspect = w / h
 
       if (camera instanceof PerspectiveCamera) {
-        camera.aspect = clientWidth / clientHeight
-      } else {
-        const aspect = clientWidth / clientHeight
+        camera.aspect = aspect
+        camera.updateProjectionMatrix()
+      }
+      if (camera instanceof OrthographicCamera) {
         const zoom = camera.zoom
         const halfH = 6 / zoom
         const halfW = aspect * halfH
-        camera.left = -halfW
-        camera.right = halfW
-        camera.top = halfH
-        camera.bottom = -halfH
+        Object.assign(camera, {
+          left: -halfW,
+          right: halfW,
+          top: halfH,
+          bottom: -halfH
+        })
+        camera.updateProjectionMatrix()
       }
-      camera.updateProjectionMatrix()
     }
+
     resize()
 
-    /** @todo renderer.setAnimationLoop !! for later */
-    const loop = () => {
-      orbit.current?.update()
+    renderer.setAnimationLoop(() => {
+      orbitMap.current.get(camera.id)?.update()
+      renderer.clear()
       renderer.render(scene.current, camera)
-      rafRef.current = requestAnimationFrame(loop)
-    }
-    loop()
+      helper.render(renderer)
+    })
 
     const resizeListener = panelApi.onDidDimensionsChange(resize)
+
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      rendererRef.current = null
+      renderer.setAnimationLoop(null)
       renderer.dispose()
       resizeListener.dispose()
+      rendererRef.current = null
     }
-  }, [canvas, scene, camera, panelApi, orbit])
+  }, [canvas, scene, camera, panelApi, orbitMap])
 }

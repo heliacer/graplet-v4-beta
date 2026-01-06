@@ -9,5 +9,5 @@ export default function CodePanel() {
   const containerRef = useRef<HTMLDivElement>(null!)
   useBlocklyWorkspace(containerRef)
 
-  return <div ref={containerRef} className="w-full h-full" />
+  return <div ref={containerRef} className='w-full h-full' />
 }

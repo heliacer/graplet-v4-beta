@@ -8,24 +8,24 @@ import {
 } from 'dockview-react'
 import '../styles/base.css'
 import '../styles/dvtheme.css'
-import { LeftControls, RightControls } from './ui/tabControls'
-import TabHeader from './ui/tabHeader'
+import { LeftControls, RightControls } from './ui/controls/tabControls'
+import { TabHeader } from './ui/tabHeader'
+import { useEditor } from '../lib/EditorContext'
 
-// Panels
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
 import ExplorerPanel from './panels/ExplorerPanel'
-import ModelPanel from './panels/model/Panel'
 import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
+import SettingsPanel from './panels/SettingsPanel'
 
 const panelComponents = {
   debug: DebugPanel,
   code: CodePanel,
   scene: ScenePanel,
   explorer: ExplorerPanel,
-  model: ModelPanel,
-  properties: PropertiesPanel
+  properties: PropertiesPanel,
+  settings: SettingsPanel
 }
 
 const jsonLayout: SerializedDockview = {
@@ -36,11 +36,11 @@ const jsonLayout: SerializedDockview = {
         {
           type: 'leaf',
           data: {
-            views: ['code', 'model'],
+            views: ['code'],
             activeView: 'code',
             id: '1'
           },
-          size: 4
+          size: 3
         },
         {
           type: 'leaf',
@@ -90,13 +90,6 @@ const jsonLayout: SerializedDockview = {
       params: { iconType: 'Puzzle' },
       title: 'Code'
     },
-    model: {
-      id: 'model',
-      contentComponent: 'model',
-      tabComponent: 'props.defaultTabComponent',
-      params: { iconType: 'PenTool' },
-      title: 'Model'
-    },
     scene: {
       id: 'scene',
       contentComponent: 'scene',
@@ -122,19 +115,22 @@ const jsonLayout: SerializedDockview = {
   activeGroup: '1'
 }
 
-export default function GrapletDockview() {
+export function GrapletDockview() {
+  const { setDvApi } = useEditor()
+
   function mount(event: DockviewReadyEvent) {
     const { api } = event
     api.fromJSON(jsonLayout)
+    setDvApi(api)
   }
 
   return (
     <DockviewReact
       theme={{
         name: 'graplet',
-        className: 'theme-graplet'
+        className: 'dv-theme'
       }}
-      className="w-full h-full overflow-hidden"
+      className='w-full h-full overflow-hidden'
       onReady={mount}
       components={panelComponents}
       defaultTabComponent={TabHeader}

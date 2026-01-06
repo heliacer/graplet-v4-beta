@@ -1,126 +1,100 @@
 import { useEditor } from '../../lib/EditorContext'
-import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import { Layers2, Orbit, SwitchCamera, Trash } from 'lucide-react'
-import { OrthographicCamera, PerspectiveCamera } from 'three'
-import { NumberPropInput, PropButton, StringPropInput } from '../ui/PropUI'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { useState } from 'react'
+import { Cone, Cuboid, LucideIcon, Settings2, Wrench } from 'lucide-react'
+import clsx from 'clsx'
+import { EditorPane } from '../ui/properties/editor'
+import { GeometryPane } from '../ui/properties/geometry'
+import { MaterialPane } from '../ui/properties/material'
+import { ObjectPane } from '../ui/properties/object'
 
-/** @todo make this better, this sucks */
-/** @todo update, this got a little better (made components) but got worse (added more shit) */
+/** Each Pane holds their respective props of the currentObject */
+type Pane = 'editor' | 'object' | 'geometry' | 'material'
+
+interface PaneButtonProps {
+  className?: string
+  Icon: LucideIcon
+  pane: Pane
+  activePane: Pane
+  setActivePane: React.Dispatch<React.SetStateAction<Pane>>
+}
+
+/**
+ * Sets the current activePane in the PropertiesPanel
+ */
+function PaneButton({
+  className,
+  Icon,
+  pane,
+  activePane,
+  setActivePane
+}: PaneButtonProps) {
+  return (
+    <button
+      title={pane}
+      onClick={() => setActivePane(pane)}
+      className={clsx(
+        'border-l rounded-md cursor-pointer',
+        activePane === pane
+          ? 'border-teal bg-ui-800'
+          : 'border-transparent hover:bg-ui-800 hover:border-ui-700',
+        className
+      )}
+    >
+      <div
+        className={clsx(
+          'border border-l-0 p-0.5 rounded-md',
+          activePane === pane
+            ? 'border-ui-700'
+            : 'border-transparent hover:border-ui-700'
+        )}
+      >
+        <Icon size={14} />
+      </div>
+    </button>
+  )
+}
+
 export default function PropertiesPanel() {
-  const { currentObject, canvas, setCamera, orbit } = useEditor()
-  const { deleteObject, duplicateObject } = useObjectActions()
-
+  const [activePane, setActivePane] = useState<Pane>('object')
+  const { currentObject } = useEditor()
   if (!currentObject) return
 
   return (
-    <div className="p-1.5 flex flex-col gap-2 text-xs">
-      <div className="flex gap-2">
-        <p className="text-nowrap">Object Name</p>
-        <StringPropInput
-          value={currentObject.name}
-          action={(newValue) => (currentObject.name = newValue)}
-          className="w-full"
+    <div className='flex h-full'>
+      <nav className='flex flex-col gap-1 p-0.5'>
+        <PaneButton
+          className='text-cyan'
+          Icon={Wrench}
+          pane='object'
+          activePane={activePane}
+          setActivePane={setActivePane}
         />
-      </div>
-
-      <div className="flex justify-between">
-        <p className="text-nowrap">Position</p>
-        <div className="flex gap-1.5">
-          <NumberPropInput
-            value={currentObject.position.x}
-            action={(newValue) => (currentObject.position.x = newValue)}
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-          <NumberPropInput
-            value={currentObject.position.y}
-            action={(newValue) => (currentObject.position.y = newValue)}
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-          <NumberPropInput
-            value={currentObject.position.z}
-            action={(newValue) => (currentObject.position.z = newValue)}
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-between">
-        <p className="text-nowrap">Rotation °</p>
-        <div className="flex gap-1.5">
-          <NumberPropInput
-            value={(currentObject.rotation.x * 180) / Math.PI}
-            action={(newValue) =>
-              (currentObject.rotation.x = (newValue * Math.PI) / 180)
-            }
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-          <NumberPropInput
-            value={(currentObject.rotation.y * 180) / Math.PI}
-            action={(newValue) =>
-              (currentObject.rotation.y = (newValue * Math.PI) / 180)
-            }
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-          <NumberPropInput
-            value={(currentObject.rotation.z * 180) / Math.PI}
-            action={(newValue) =>
-              (currentObject.rotation.z = (newValue * Math.PI) / 180)
-            }
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-between">
-        <p className="text-nowrap">Scale</p>
-        <div className="flex gap-1.5">
-          <NumberPropInput
-            value={currentObject.scale.x}
-            action={(newValue) => (currentObject.scale.x = newValue)}
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-          <NumberPropInput
-            value={currentObject.scale.y}
-            action={(newValue) => (currentObject.scale.y = newValue)}
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-          <NumberPropInput
-            value={currentObject.scale.z}
-            action={(newValue) => (currentObject.scale.z = newValue)}
-            className="text-teal-500 text-center w-8 overflow-ellipsis"
-          />
-        </div>
-      </div>
-
-      <div className="flex gap-2 flex-wrap">
-        <PropButton
-          label="Delete"
-          Icon={Trash}
-          action={() => deleteObject(currentObject)}
+        <PaneButton
+          className='text-teal'
+          Icon={Cone}
+          pane='geometry'
+          activePane={activePane}
+          setActivePane={setActivePane}
         />
-        <PropButton
-          label="Duplicate"
-          Icon={Layers2}
-          action={() => duplicateObject(currentObject)}
+        <PaneButton
+          className='text-orange'
+          Icon={Cuboid}
+          pane='material'
+          activePane={activePane}
+          setActivePane={setActivePane}
         />
-        {(currentObject instanceof PerspectiveCamera ||
-          currentObject instanceof OrthographicCamera) && (
-          <>
-            <PropButton
-              label="Set Active"
-              Icon={SwitchCamera}
-              action={() => setCamera(currentObject)}
-            />
-            <PropButton
-              label="Set Orbit"
-              Icon={Orbit}
-              action={() => {
-                orbit.current = new OrbitControls(currentObject, canvas.current)
-              }}
-            />
-          </>
-        )}
+        <PaneButton
+          Icon={Settings2}
+          pane='editor'
+          activePane={activePane}
+          setActivePane={setActivePane}
+        />
+      </nav>
+      <div className='p-1.5 flex flex-col gap-2 text-xs w-full'>
+        {activePane === 'object' && <ObjectPane object={currentObject} />}
+        {activePane === 'geometry' && <GeometryPane object={currentObject} />}
+        {activePane === 'material' && <MaterialPane object={currentObject} />}
+        {activePane === 'editor' && <EditorPane />}
       </div>
     </div>
   )

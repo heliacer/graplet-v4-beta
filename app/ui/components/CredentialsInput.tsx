@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 
-export default function CredentialsInput({
+export function CredentialsInput({
   value,
   name,
   type = 'text',

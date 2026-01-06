@@ -1,12 +1,12 @@
 'use client'
 
+import clsx from 'clsx'
 import { signIn } from 'next-auth/react'
-import CredentialsInput from '@/app/ui/components/CredentialsInput'
-import SubmitButton from '@/app/ui/components/SubmitButton'
+import { CredentialsInput } from '@/app/ui/components/CredentialsInput'
+import { SubmitButton } from '@/app/ui/components/SubmitButton'
 import { AlertTriangle, Award, Eye, EyeClosed, Pen } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
-import clsx from 'clsx'
 
 export default function Password() {
   const searchParams = useSearchParams()
@@ -78,35 +78,35 @@ export default function Password() {
   return (
     <>
       <form
-        className="relative flex flex-col gap-2.5 w-80"
-        id="login-form"
+        className='relative flex flex-col gap-2.5 w-80'
+        id='login-form'
         onSubmit={handleSubmit}
         noValidate
       >
-        <CredentialsInput type="email" value={email} disabled />
+        <CredentialsInput type='email' value={email} disabled />
         <button
-          type="reset"
+          type='reset'
           onClick={() => router.push('/login')}
           className={clsx(
-            'absolute right-2 top-[7px] border px-2 py-0.5 rounded-full',
-            'dark:bg-zinc-800 dark:border-zinc-600 border-zinc-400',
+            'absolute right-2 top-1.75 border px-2 py-0.5 rounded-full',
+            'bg-ui-800 border-ui-600',
             !isLoading && 'cursor-pointer'
           )}
         >
           <Pen size={18} />
         </button>
         <CredentialsInput
-          placeholder="Enter Password"
+          placeholder='Enter Password'
           value={password}
-          name="password"
+          name='password'
           type={showPassword ? 'text' : 'password'}
           setValue={setPassword}
         />
         <button
-          type="button"
+          type='button'
           className={clsx(
-            'absolute right-[50px] bottom-[7px] border px-2 py-0.5 rounded-full',
-            'dark:bg-zinc-800 dark:border-zinc-600 border-zinc-400',
+            'absolute right-12.5 bottom-1.75 border px-2 py-0.5 rounded-full',
+            'bg-ui-800 border-ui-600',
             !isLoading && 'cursor-pointer'
           )}
           onClick={() => setShowPassword((prev) => !prev)}
@@ -116,12 +116,12 @@ export default function Password() {
         <SubmitButton isLoading={isLoading} />
       </form>
       {message ? (
-        <div className="flex gap-2.5 items-center">
-          <AlertTriangle size={14} className="text-red-400" />
-          <p className="text-red-400">{message}</p>
+        <div className='flex gap-2.5 items-center'>
+          <AlertTriangle size={14} className='text-red' />
+          <p className='text-red'>{message}</p>
         </div>
       ) : (
-        <div className="flex gap-2.5 items-center">
+        <div className='flex gap-2.5 items-center'>
           <Award size={14} />
           <p>Welcome back.</p>
         </div>

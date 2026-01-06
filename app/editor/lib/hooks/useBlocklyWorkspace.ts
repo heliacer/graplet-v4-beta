@@ -21,7 +21,7 @@ export function useBlocklyWorkspace(
     ws.getVariableMap().createVariable('my variable')
     ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
     ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
-    ws.registerButtonCallback('CREATE_VARIABLE', function (button) {
+    ws.registerButtonCallback('CREATE_VARIABLE', (button) => {
       Variables.createVariableButtonHandler(button.getTargetWorkspace())
     })
 

@@ -1,11 +1,11 @@
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
 import { useState } from 'react'
-import { useEditor } from '../../lib/EditorContext'
-import { exprGenerator } from '../../lib/blockly/engine/generator'
-import { execute } from '../../lib/utils/blockly'
+import { useEditor } from '../../../lib/EditorContext'
+import { exprGenerator } from '../../../lib/blockly/engine/generator'
+import { execute } from '../../../lib/utils/blockly'
 import clsx from 'clsx'
 
-export default function RunControls() {
+export function RunControls() {
   const {
     runState,
     workspace,
@@ -13,7 +13,8 @@ export default function RunControls() {
     scene,
     funcEnv,
     varEnv,
-    setIsRunning
+    setIsRunning,
+    setObjectVersion
   } = useEditor()
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
@@ -38,23 +39,25 @@ export default function RunControls() {
       },
       setIsRunning
     )
+    setObjectVersion((prev) => prev + 1)
     console.log('entering edit mode...')
   }
 
   function handleStop() {
     runState.current.shouldStop = true
+    setObjectVersion((prev) => prev + 1)
     setIsPaused(false)
   }
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="flex gap-1">
+    <div className='w-full h-full flex items-center justify-center'>
+      <div className='flex gap-1'>
         <button
           onClick={handleRun}
-          title="run"
+          title='run'
           className={clsx(
             'p-1 rounded',
-            isRunning ? 'bg-zinc-700' : 'cursor-pointer bg-teal-600'
+            isRunning ? 'bg-ui-700' : 'cursor-pointer bg-teal'
           )}
           disabled={isRunning}
         >
@@ -67,9 +70,9 @@ export default function RunControls() {
             'p-1 rounded',
             isRunning
               ? isPaused
-                ? 'cursor-pointer bg-teal-600'
-                : 'cursor-pointer bg-orange-400'
-              : 'bg-zinc-700'
+                ? 'cursor-pointer bg-teal'
+                : 'cursor-pointer bg-orange'
+              : 'bg-ui-700'
           )}
           disabled={!isRunning}
         >
@@ -77,10 +80,10 @@ export default function RunControls() {
         </button>
         <button
           onClick={handleStop}
-          title="stop"
+          title='stop'
           className={clsx(
             'p-1 rounded',
-            isRunning ? 'cursor-pointer bg-rose-500' : 'bg-zinc-700'
+            isRunning ? 'cursor-pointer bg-red' : 'bg-ui-700'
           )}
         >
           <Octagon size={16} />
@@ -89,9 +92,9 @@ export default function RunControls() {
           onClick={() => (runState.current.shouldStep = true)}
           className={clsx(
             'p-1 rounded',
-            isRunning && isPaused ? 'cursor-pointer bg-sky-600' : 'bg-zinc-700'
+            isRunning && isPaused ? 'cursor-pointer bg-blue' : 'bg-ui-700'
           )}
-          title="step"
+          title='step'
         >
           <StepForward size={16} />
         </button>

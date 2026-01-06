@@ -1,6 +1,4 @@
-import { utils } from 'blockly'
-
-export const toolbox: utils.toolbox.ToolboxDefinition = {
+export const toolbox = {
   kind: 'categoryToolbox',
   contents: [
     {

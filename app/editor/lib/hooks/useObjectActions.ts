@@ -1,18 +1,38 @@
 import { useEditor } from '../EditorContext'
-import { Camera, Object3D } from 'three'
+import {
+  Camera,
+  CameraHelper,
+  DirectionalLight,
+  DirectionalLightHelper,
+  GridHelper,
+  Object3D,
+  PerspectiveCamera
+} from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
-import { ProjectData, SObject3D } from '../types'
-import { applyProps, createObject } from '../utils/sobject3d'
+import { ParentError, ProjectData, SObject3D } from '../types'
+import { applyProps, createObject } from '../utils/sobject'
 import { serialization } from 'blockly'
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { isInternalObject } from '../utils/three'
 
+/**
+ * @majortodo
+ * REFACTOR into separate files, clean up, find smarter ways
+ * DOCUMENT every function, and make clear what it does
+ * TYPES annotate every function
+ */
 export function useObjectActions() {
   const {
     scene,
     currentObject,
     workspace,
+    camera,
     setCamera,
     setCurrentObject,
-    setObjectVersion
+    setObjectVersion,
+    orbitMap,
+    canvas,
+    controls
   } = useEditor()
 
   /**
@@ -20,7 +40,6 @@ export function useObjectActions() {
    *
    * E.g Use cases: Move [object v] (0.5) units [forwards v]
    *
-   * @todo maybe accept child objects, to allow dependant block dropdowns
    */
   function addToReg(object: Object3D) {
     blocklyObjectRegistry.options.push([object.name, object.id.toString()])
@@ -61,8 +80,7 @@ export function useObjectActions() {
       }
     }
 
-    /** Apply camera if space is empty */
-    if (object instanceof Camera) setCamera(object)
+    applyHelpers(object)
 
     /** If it's a top level sprite, set it as current */
     if (target === scene.current) {
@@ -75,15 +93,38 @@ export function useObjectActions() {
   }
 
   /**
+   * Adds Helpers for specific objects
+   */
+  function applyHelpers(object: Object3D) {
+    if (object instanceof Camera) {
+      const helper = new CameraHelper(object)
+      helper.name = 'CameraHelper'
+      if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
+        setCamera(object)
+        const controls = new OrbitControls(object, canvas.current)
+        orbitMap.current.set(object.id, controls)
+        helper.visible = false
+      }
+      scene.current.add(helper)
+    }
+    if (object instanceof DirectionalLight) {
+      const helper = new DirectionalLightHelper(object)
+      helper.name = 'DirectionalLightHelper'
+      scene.current.add(helper)
+    }
+  }
+
+  /**
    * Adds Ambient light, Directional light and a Camera
    */
   function loadDefaultScene() {
     clearScene()
     addObject({
       type: 'PerspectiveCamera',
-      name: 'Camera',
-      position: [0, 2, 5],
-      rotation: [-0.4, 0, 0]
+      name: 'Main Camera',
+      position: [0, 8, 14],
+      rotation: [0, 0, 0],
+      far: 5000
     })
     addObject({
       name: 'Ambient Light',
@@ -93,7 +134,7 @@ export function useObjectActions() {
     addObject({
       name: 'Directional Light',
       type: 'DirectionalLight',
-      position: [3, 5, 2],
+      position: [0, 5, 0],
       intensity: 2
     })
     addObject({
@@ -114,7 +155,6 @@ export function useObjectActions() {
       const project = JSON.parse(data) as ProjectData
       clearScene()
 
-      /** @todo should be stricter at some point */
       if (project.scene) {
         const { children } = project.scene
         applyProps(scene.current, project.scene)
@@ -138,50 +178,80 @@ export function useObjectActions() {
     }
   }
 
-  /** @todo should dispose of geometry & material after removing */
-  function deleteObject(object: Object3D, target: Object3D = scene.current) {
-    target.remove(object)
-    // disposeObject(object)
+  /**
+   * @todo Dispose of geometry & material after removing (disposeObject)
+   * @todo Delete helpers
+   */
+  function deleteObject(object: Object3D) {
+    const parent = object.parent
+    if (!parent) throw new ParentError(object)
+    parent.remove(object)
+    removeFromReg(object)
 
-    /** If it's a top level sprite, remove it */
-    if (target === scene.current) {
-      removeFromReg(object)
+    /** If it's the current object, set another one as current */
+    if (object === currentObject) {
+      if (parent.children.length > 0) {
+        const child = [...parent.children]
+          .reverse()
+          .find((c) => !isInternalObject(c))
+        setCurrentObject(child || null)
+      } else {
+        setCurrentObject(parent)
+      }
+    }
 
-      if (object === currentObject) {
-        if (object instanceof Camera) setCamera(null)
-        const next = scene.current.children.at(-1)
-        setCurrentObject(next || null)
+    if (object instanceof Camera) {
+      /** If it's the active camera, set another one active instead */
+      if (object === camera) {
+        const nextCamera = scene.current.getObjectByProperty(
+          'isCamera',
+          true
+        ) as Camera
+        setCamera(nextCamera || null)
+      }
+      /** If the camera has orbit controls, dispose of them */
+      const orbit = orbitMap.current.get(object.id)
+      if (orbit) {
+        orbit.disconnect()
+        orbit.dispose()
+        orbitMap.current.delete(object.id)
       }
     }
 
     setObjectVersion((prev) => prev + 1)
   }
 
-  /** @todo should clone geometry & material too, since those are shared by default */
-  function duplicateObject(object: Object3D, target: Object3D = scene.current) {
-    const clone = object.clone()
-    // clone.traverse(...)
-    target.add(clone)
+  /**
+   * @todo Should separate geometry & material, since those are shared by default -> option to keep them / make new
+   * @todo Also add helpers if needed
+   */
+  function duplicateObject(object: Object3D) {
+    const parent = object.parent
+    if (!parent) throw new ParentError(object)
 
-    /** Apply changes, so it's visually visible */
-    const name = `${object.name} Copy`
-    clone.name = name
+    const clone = object.clone()
     clone.position.x += 2
 
-    /** If it's a top level sprite, set it as current */
-    if (target === scene.current) {
-      setCurrentObject(clone)
-      addToReg(clone)
-    }
+    parent.add(clone)
+
+    setCurrentObject(clone)
+    addToReg(clone)
   }
 
   function clearScene() {
     for (let i = scene.current.children.length - 1; i >= 0; i--) {
       const child = scene.current.children[i]
-      scene.current.remove(child)
+      deleteObject(child)
     }
     setCurrentObject(null)
     blocklyObjectRegistry.options = []
+    orbitMap.current.clear()
+    controls.current?.dispose()
+    controls.current = null
+
+    /** @test initialize scene (I have my doubts if this is a good init place) */
+    const gridHelper = new GridHelper()
+    scene.current.add(gridHelper)
   }
 
   return {

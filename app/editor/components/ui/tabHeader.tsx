@@ -4,11 +4,11 @@ import { Star } from 'lucide-react'
 
 type TabParams = { iconType?: IconT; closable: boolean }
 
-export default function TabHeader(props: IDockviewPanelHeaderProps<TabParams>) {
+export function TabHeader(props: IDockviewPanelHeaderProps<TabParams>) {
   const { iconType } = props.params
 
   return (
-    <div className="flex items-center py-0.5 px-2 gap-1">
+    <div className='flex items-center py-0.5 px-2 gap-1'>
       {iconType ? (
         <ItemIcon size={14} iconType={iconType} />
       ) : (

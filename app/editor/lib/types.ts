@@ -1,3 +1,7 @@
+import { ItemInstance } from '@headless-tree/core'
+import { TreeItem } from '../components/ui/TreeItemView'
+import { Object3D } from 'three'
+
 type Vec3 = readonly [number, number, number]
 
 export interface ProjectData {
@@ -102,4 +106,24 @@ export interface SGeometry {
 export interface SMaterial {
   type: 'MeshBasicMaterial' | 'MeshStandardMaterial' | 'MeshToonMaterial'
   color?: string
+}
+
+/**
+ * Context Menu Props
+ * @todo Allow multiple items to be manipulated
+ */
+export interface ContextMenuProps {
+  item: ItemInstance<TreeItem>
+  x: number
+  y: number
+}
+
+/**
+ * The given Object3D does not have a parent Object3D
+ */
+export class ParentError extends Error {
+  constructor(object: Object3D) {
+    super(`${object.name || 'Unnamed'} (${object.type}) does not have a parent`)
+    this.name = 'ParentError'
+  }
 }
