@@ -117,10 +117,10 @@
 .categoryBubble::after {
   content: '';
   position: absolute;
-  top: 2;
-  left: 2;
-  bottom: 2;
-  right: 2;
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  right: 2px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
