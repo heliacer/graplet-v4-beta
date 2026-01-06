@@ -22,6 +22,16 @@ import {
 import { procedureBlocks } from './overrides/procedures'
 import { GrapletRenderer } from './renderer'
 
+class ContinuousIconCategory extends ContinuousCategory {
+  override createIconDom_(): Element {
+    const icon = document.createElement('div')
+    icon.classList.add('categoryBubble')
+    icon.classList.add(this.name_)
+    icon.style.backgroundColor = this.colour_
+    return icon
+  }
+}
+
 export function initializeBlockly() {
   Extensions.unregister('math_is_divisibleby_mutator')
   Extensions.registerMutator(
@@ -45,7 +55,7 @@ export function initializeBlockly() {
   registry.register(
     registry.Type.TOOLBOX_ITEM,
     ToolboxCategory.registrationName,
-    ContinuousCategory,
+    ContinuousIconCategory,
     true
   )
 
