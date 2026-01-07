@@ -5,6 +5,7 @@ import {
   Component,
   FileText,
   Folder,
+  Keyboard,
   Lightbulb,
   LucideIcon,
   PenTool,
@@ -28,6 +29,7 @@ export type IconT =
   | 'Camera'
   | 'SquareSquare'
   | 'Settings2'
+  | 'Keyboard'
   | 'FileText'
 
 const ItemIcons: Record<IconT, LucideIcon> = {
@@ -43,6 +45,7 @@ const ItemIcons: Record<IconT, LucideIcon> = {
   Camera,
   SquareSquare,
   Settings2,
+  Keyboard,
   FileText
 }
 
