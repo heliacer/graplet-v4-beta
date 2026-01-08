@@ -1,6 +1,18 @@
-import { Dropdown } from '@/app/ui/components/Dropdown'
-import { Hammer } from 'lucide-react'
+import { useEditor } from '@/app/editor/lib/EditorContext'
+import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { ArrowDownToDot, Hammer } from 'lucide-react'
+import { Object3D } from 'three'
 
-export function ObjectActions() {
-  return <Dropdown Icon={Hammer} label='Actions' />
+export function ObjectActions({ object }: { object: Object3D }) {
+  const items: DropdownItemProps[] = [
+    {
+      label: 'Center Object',
+      Icon: ArrowDownToDot,
+      onClick: () => {
+        object.position.set(0, 0, 0)
+      }
+    }
+  ]
+
+return <Dropdown Icon={Hammer} label='Actions' items={items} />
 }
