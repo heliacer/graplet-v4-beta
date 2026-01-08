@@ -12,7 +12,7 @@ export function ObjectControls() {
       <ObjectTools />
       <ObjectAdd />
       <ObjectView />
-      {currentObject && < ObjectActions object={currentObject} />}
+      {currentObject && <ObjectActions object={currentObject} />}
       <ObjectSnap />
     </div>
   )

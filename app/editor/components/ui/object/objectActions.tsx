@@ -1,4 +1,3 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { ArrowDownToDot, Hammer } from 'lucide-react'
 import { Object3D } from 'three'
@@ -14,5 +13,5 @@ export function ObjectActions({ object }: { object: Object3D }) {
     }
   ]
 
-return <Dropdown Icon={Hammer} label='Actions' items={items} />
+  return <Dropdown Icon={Hammer} label='Actions' items={items} />
 }

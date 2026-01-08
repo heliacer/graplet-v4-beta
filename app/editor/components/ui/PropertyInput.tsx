@@ -90,12 +90,12 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
         defaultValue={object[property]}
         onBlur={(e) => {
           object[property] = e.target.value
-          setObjectVersion((prev) => prev + 1)
+          setObjectVersion((v) => v + 1)
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             object[property] = e.currentTarget.value
-            setObjectVersion((prev) => prev + 1)
+            setObjectVersion((v) => v + 1)
           }
         }}
       />

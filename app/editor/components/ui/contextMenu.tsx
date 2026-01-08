@@ -1,24 +1,34 @@
-import { Group, Layers2, LucideIcon, Pen, Trash } from 'lucide-react'
+import { Group, Layers2, LucideIcon, Pen, Trash, Ungroup } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import clsx from 'clsx'
-import { moveObject } from '../../lib/utils/three'
-import { ParentError } from '../../lib/types'
 
 interface ContextMenuItemProps {
   label: string
   Icon: LucideIcon
   onClick: React.MouseEventHandler
+  disabled?: boolean
 }
 
-function ContexMenuItem({ label, Icon, onClick }: ContextMenuItemProps) {
+function ContexMenuItem({
+  label,
+  Icon,
+  onClick,
+  disabled
+}: ContextMenuItemProps) {
+  const { setContextMenu } = useEditor()
+
   return (
     <button
       className={clsx(
         'flex items-center gap-1 w-full border border-transparent px-0.5 rounded',
-        'hover:border-ui-600 hover:bg-ui-700'
+        disabled ? 'text-ui-400' : 'hover:border-ui-600 hover:bg-ui-700'
       )}
-      onClick={onClick}
+      onClick={(e) => {
+        onClick(e)
+        setContextMenu(null)
+      }}
+      disabled={disabled}
     >
       <Icon size={12} />
       <p>{label}</p>
@@ -27,9 +37,18 @@ function ContexMenuItem({ label, Icon, onClick }: ContextMenuItemProps) {
 }
 
 export function ContextMenu() {
-  const { scene, contextMenu, setContextMenu } = useEditor()
-  const { deleteObject, duplicateObject, addObject } = useObjectActions()
+  const { scene, contextMenu } = useEditor()
+  const { removeObject, duplicateObject, groupObject, unGroupObject } =
+    useObjectActions()
   if (!contextMenu) return
+
+  /**
+   * @todo object specific, should have context menu for object (ObjectContextMenu),
+   * and for empty tree rightclick (add object, ameer suggestion)
+   */
+  const objectId = contextMenu.item.getItemData().id
+  const object = scene.current.getObjectById(objectId)
+  if (!object) throw Error(`Object with id ${objectId} does not exist`)
 
   return (
     <div
@@ -39,48 +58,28 @@ export function ContextMenu() {
       <ContexMenuItem
         label='Rename'
         Icon={Pen}
-        onClick={() => {
-          contextMenu.item.startRenaming()
-          setContextMenu(null)
-        }}
+        onClick={() => contextMenu.item.startRenaming()}
       />
-      {/** @todo Add separate 'Clone' -> keeps materials */}
       <ContexMenuItem
         label='Duplicate'
         Icon={Layers2}
-        onClick={() => {
-          const objectId = contextMenu.item.getItemData().id
-          const object = scene.current.getObjectById(objectId)
-          if (!object) throw Error(`Object with id ${objectId} does not exist`)
-          duplicateObject(object)
-          setContextMenu(null)
-        }}
+        onClick={() => duplicateObject(object)}
       />
       <ContexMenuItem
         label='Group'
         Icon={Group}
-        onClick={() => {
-          const objectId = contextMenu.item.getItemData().id
-          const object = scene.current.getObjectById(objectId)
-          if (!object) throw Error(`Object with id ${objectId} does not exist`)
-          const parent = object.parent
-          if (!parent) throw new ParentError(object)
-          const target = addObject({ type: 'Group', name: 'Group' }, parent)
-          moveObject(object, target)
-          setContextMenu(null)
-        }}
+        onClick={() => groupObject(object)}
       />
-      {/** @todo Add Ungroup */}
+      <ContexMenuItem
+        label='Ungroup'
+        disabled={object.children.length === 0}
+        Icon={Ungroup}
+        onClick={() => unGroupObject(object)}
+      />
       <ContexMenuItem
         label='Delete'
         Icon={Trash}
-        onClick={() => {
-          const objectId = contextMenu.item.getItemData().id
-          const object = scene.current.getObjectById(objectId)
-          if (!object) throw Error(`Object with id ${objectId} does not exist`)
-          deleteObject(object)
-          setContextMenu(null)
-        }}
+        onClick={() => removeObject(object)}
       />
     </div>
   )

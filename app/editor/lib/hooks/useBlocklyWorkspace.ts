@@ -70,6 +70,6 @@ export function useBlocklyWorkspace(
       workspaceRef.current = null
       setWorkspace(null)
     }
-  }, [containerRef, setWorkspace])
+  }, [containerRef, setWorkspace, funcEnv, runState, scene, varEnv])
   return workspaceRef.current
 }

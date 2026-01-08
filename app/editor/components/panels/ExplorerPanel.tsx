@@ -9,8 +9,9 @@ import {
 } from '@headless-tree/core'
 import { useTree } from '@headless-tree/react'
 import { useEffect, useState } from 'react'
-import { TreeItem, TreeItemView } from '../ui/TreeItemView'
+import { TreeItemView } from '../ui/TreeItemView'
 import { moveObject, isInternalObject } from '../../lib/utils/three'
+import { TreeItem } from '../../lib/types'
 
 export default function ExplorerPanel() {
   const {
@@ -48,7 +49,7 @@ export default function ExplorerPanel() {
       const id = item.getItemData().id
       const object = scene.current.getObjectById(id)
       if (object) object.name = value
-      setObjectVersion((prev) => prev + 1)
+      setObjectVersion((v) => v + 1)
     },
     /**
      * @todo Add reordering for improved UX, and save the item state to serialisation
@@ -64,7 +65,7 @@ export default function ExplorerPanel() {
         )
         if (!targetObj) throw Error('Object from target item does not exist')
         moveObject(object, targetObj)
-        setObjectVersion((prev) => prev + 1)
+        setObjectVersion((v) => v + 1)
       }
     },
     canReorder: true,

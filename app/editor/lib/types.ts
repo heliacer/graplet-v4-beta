@@ -1,6 +1,6 @@
 import { ItemInstance } from '@headless-tree/core'
-import { TreeItem } from '../components/ui/TreeItemView'
 import { Object3D } from 'three'
+import { IconT } from './utils/icons'
 
 type Vec3 = readonly [number, number, number]
 
@@ -116,6 +116,16 @@ export interface ContextMenuProps {
   item: ItemInstance<TreeItem>
   x: number
   y: number
+}
+
+/**
+ * TreeItem: Representation of an Object in the Explorer Panel
+ */
+export interface TreeItem {
+  id: number
+  name: string
+  type: IconT
+  hasChildren: boolean
 }
 
 /**

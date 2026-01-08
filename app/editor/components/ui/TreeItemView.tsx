@@ -1,20 +1,18 @@
 import { ItemInstance, TreeInstance } from '@headless-tree/core'
-import { IconT, ItemIcon } from '../../lib/utils/icons'
+import { ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
 import { useEditor } from '../../lib/EditorContext'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
 import { useState } from 'react'
 import { Object3D } from 'three'
 import { isInternalObject } from '../../lib/utils/three'
+import { TreeItem } from '../../lib/types'
 
-export interface TreeItem {
-  id: number
-  name: string
-  type: IconT
-  hasChildren: boolean
+interface RenamingItemViewProps {
+  item: ItemInstance<TreeItem>
 }
 
-function RenamingItemView({ item }: { item: ItemInstance<TreeItem> }) {
+function RenamingItemView({ item }: RenamingItemViewProps) {
   return (
     <div className='flex w-full'>
       <div style={{ marginLeft: `${item.getItemMeta().level * 8 + 12}px` }} />
@@ -83,7 +81,7 @@ function ItemViewContent({ item, object }: ItemViewContentProps) {
         onClick={(e) => {
           e.stopPropagation()
           object.visible = !object.visible
-          setObjectVersion((prev) => prev + 1)
+          setObjectVersion((v) => v + 1)
         }}
       >
         {object.visible ? <Eye size={12} /> : <EyeClosed size={12} />}

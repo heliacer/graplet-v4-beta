@@ -4,23 +4,15 @@ import {
   CameraHelper,
   DirectionalLight,
   DirectionalLightHelper,
-  GridHelper,
   Object3D,
   PerspectiveCamera
 } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
-import { ParentError, ProjectData, SObject3D } from '../types'
+import { ParentError, SObject3D } from '../types'
 import { applyProps, createObject } from '../utils/sobject'
-import { serialization } from 'blockly'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import { isInternalObject } from '../utils/three'
+import { isInternalObject, moveObject } from '../utils/three'
 
-/**
- * @majortodo
- * REFACTOR into separate files, clean up, find smarter ways
- * DOCUMENT every function, and make clear what it does
- * TYPES annotate every function
- */
 export function useObjectActions() {
   const {
     scene,
@@ -31,11 +23,11 @@ export function useObjectActions() {
     setCurrentObject,
     setObjectVersion,
     orbitMap,
-    canvas,
-    controls
+    canvas
   } = useEditor()
 
   /**
+   * @private
    * Adds an object to the blockly object registry
    *
    * E.g Use cases: Move [object v] (0.5) units [forwards v]
@@ -47,6 +39,7 @@ export function useObjectActions() {
   }
 
   /**
+   * @private
    * Removes an object from the blockly object registry
    */
   function removeFromReg(object: Object3D) {
@@ -54,6 +47,29 @@ export function useObjectActions() {
       ([, id]) => object.id.toString() !== id
     )
     workspace?.refreshToolboxSelection()
+  }
+
+  /**
+   * @private
+   * Adds Helpers for specific objects
+   */
+  function applyHelpers(object: Object3D) {
+    if (object instanceof Camera) {
+      const helper = new CameraHelper(object)
+      helper.name = 'CameraHelper'
+      if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
+        setCamera(object)
+        const controls = new OrbitControls(object, canvas.current)
+        orbitMap.current.set(object.id, controls)
+        helper.visible = false
+      }
+      scene.current.add(helper)
+    }
+    if (object instanceof DirectionalLight) {
+      const helper = new DirectionalLightHelper(object)
+      helper.name = 'DirectionalLightHelper'
+      scene.current.add(helper)
+    }
   }
 
   /**
@@ -88,101 +104,17 @@ export function useObjectActions() {
       addToReg(object)
     }
 
-    setObjectVersion((prev) => prev + 1)
+    setObjectVersion((v) => v + 1)
     return object
   }
 
   /**
-   * Adds Helpers for specific objects
-   */
-  function applyHelpers(object: Object3D) {
-    if (object instanceof Camera) {
-      const helper = new CameraHelper(object)
-      helper.name = 'CameraHelper'
-      if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
-        setCamera(object)
-        const controls = new OrbitControls(object, canvas.current)
-        orbitMap.current.set(object.id, controls)
-        helper.visible = false
-      }
-      scene.current.add(helper)
-    }
-    if (object instanceof DirectionalLight) {
-      const helper = new DirectionalLightHelper(object)
-      helper.name = 'DirectionalLightHelper'
-      scene.current.add(helper)
-    }
-  }
-
-  /**
-   * Adds Ambient light, Directional light and a Camera
-   */
-  function loadDefaultScene() {
-    clearScene()
-    addObject({
-      type: 'PerspectiveCamera',
-      name: 'Main Camera',
-      position: [0, 8, 14],
-      rotation: [0, 0, 0],
-      far: 5000
-    })
-    addObject({
-      name: 'Ambient Light',
-      type: 'AmbientLight',
-      intensity: 1
-    })
-    addObject({
-      name: 'Directional Light',
-      type: 'DirectionalLight',
-      position: [0, 5, 0],
-      intensity: 2
-    })
-    addObject({
-      type: 'Mesh',
-      name: 'Cube',
-      geometry: {
-        type: 'BoxGeometry',
-        args: [1, 1, 1]
-      },
-      material: {
-        type: 'MeshStandardMaterial'
-      }
-    })
-  }
-
-  function loadProjectData(data: string) {
-    try {
-      const project = JSON.parse(data) as ProjectData
-      clearScene()
-
-      if (project.scene) {
-        const { children } = project.scene
-        applyProps(scene.current, project.scene)
-        if (children) {
-          for (const sobject of children) {
-            addObject(sobject)
-          }
-        }
-        console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
-
-        if (!workspace) throw Error('Missing workspace.')
-        serialization.workspaces.load(project.workspace, workspace)
-        console.info(
-          '%cLoaded workspace state: ',
-          'color: salmon;',
-          project.workspace
-        )
-      }
-    } catch (err) {
-      console.error('Could not parse JSON data.', err)
-    }
-  }
-
-  /**
+   * Removes an object from its parent and disposes of everything associated with it
+   *
    * @todo Dispose of geometry & material after removing (disposeObject)
-   * @todo Delete helpers
+   * @todo Delete helpers if they have them
    */
-  function deleteObject(object: Object3D) {
+  function removeObject(object: Object3D) {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
     parent.remove(object)
@@ -218,7 +150,7 @@ export function useObjectActions() {
       }
     }
 
-    setObjectVersion((prev) => prev + 1)
+    setObjectVersion((v) => v + 1)
   }
 
   /**
@@ -238,28 +170,33 @@ export function useObjectActions() {
     addToReg(clone)
   }
 
-  function clearScene() {
-    for (let i = scene.current.children.length - 1; i >= 0; i--) {
-      const child = scene.current.children[i]
-      deleteObject(child)
-    }
-    setCurrentObject(null)
-    blocklyObjectRegistry.options = []
-    orbitMap.current.clear()
-    controls.current?.dispose()
-    controls.current = null
+  function groupObject(object: Object3D) {
+    const parent = object.parent
+    if (!parent) throw new ParentError(object)
+    const target = addObject({ type: 'Group', name: 'Group' }, parent)
+    moveObject(object, target)
+  }
 
-    /** @test initialize scene (I have my doubts if this is a good init place) */
-    const gridHelper = new GridHelper()
-    scene.current.add(gridHelper)
+  function unGroupObject(object: Object3D) {
+    const parent = object.parent
+    if (!parent) throw new ParentError(object)
+    const children = object.children
+    for (const child of children) {
+      parent.add(child)
+    }
+    parent.remove(object)
+
+    /**
+     * @todo multiselect all children which were previously in the group
+     */
+    setCurrentObject(null) // for now
   }
 
   return {
     addObject,
-    loadDefaultScene,
-    deleteObject,
+    removeObject,
     duplicateObject,
-    clearScene,
-    loadProjectData
+    groupObject,
+    unGroupObject
   }
 }

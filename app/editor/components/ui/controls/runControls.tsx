@@ -39,13 +39,13 @@ export function RunControls() {
       },
       setIsRunning
     )
-    setObjectVersion((prev) => prev + 1)
+    setObjectVersion((v) => v + 1)
     console.log('entering edit mode...')
   }
 
   function handleStop() {
     runState.current.shouldStop = true
-    setObjectVersion((prev) => prev + 1)
+    setObjectVersion((v) => v + 1)
     setIsPaused(false)
   }
 

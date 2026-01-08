@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
-import { useObjectActions } from './useObjectActions'
 import { useEditor } from '../EditorContext'
+import { useSceneActions } from './useSceneActions'
 
 /** @todo Add session project loading, this is only local for now */
 export function useProjectLoader() {
-  const { loadProjectData, loadDefaultScene } = useObjectActions()
+  const { loadProjectData, loadDefaultScene } = useSceneActions()
   const { scene, workspace, shouldLoad, setShouldLoad } = useEditor()
 
   useEffect(() => {

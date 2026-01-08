@@ -91,7 +91,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
               orbit.dispose()
               orbitMap.current.delete(object.id)
             }
-            setObjectVersion((prev) => prev + 1)
+            setObjectVersion((v) => v + 1)
           }}
         />
       </>

@@ -1,5 +1,4 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
-import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
 import { serializeObject } from '@/app/editor/lib/utils/sobject'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
 import { File, FolderDown, FolderSync, FolderUp, Save } from 'lucide-react'
@@ -7,6 +6,7 @@ import { useRef } from 'react'
 import { serialization, WorkspaceSvg } from 'blockly'
 import { Scene } from 'three'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { useSceneActions } from '@/app/editor/lib/hooks/useSceneActions'
 
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {
@@ -17,7 +17,7 @@ function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
 
 export function FileMenu() {
   const { workspace, scene } = useEditor()
-  const { loadProjectData, loadDefaultScene } = useObjectActions()
+  const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
