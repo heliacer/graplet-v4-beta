@@ -3,6 +3,7 @@ import './ui/globals.css'
 import { nunito } from './ui/fonts'
 import { SessionProvider } from 'next-auth/react'
 import { cookies } from 'next/headers'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   title: {
@@ -21,6 +22,7 @@ export default async function RootLayout({
     <html lang='en' className={store.get('theme')?.value}>
       <body className={`${nunito.className} bg-ui-900 text-ui-200`}>
         <SessionProvider>{children}</SessionProvider>
+        <Analytics />
       </body>
     </html>
   )
