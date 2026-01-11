@@ -113,7 +113,7 @@ export interface SMaterial {
  * @todo Allow multiple items to be manipulated
  */
 export interface ContextMenuProps {
-  item: ItemInstance<TreeItem>
+  item?: ItemInstance<TreeItem>
   x: number
   y: number
 }

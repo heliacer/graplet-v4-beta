@@ -1,6 +1,12 @@
 import clsx from 'clsx'
 import { Check, ChevronDown, ChevronRight, LucideIcon } from 'lucide-react'
-import React, { createContext, useContext, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import { useClickOutside } from '../hooks/useClickOutside'
 
 /** Helper func to check whether a folder path is in the active path or not */
@@ -15,7 +21,7 @@ interface DropdownContextType {
   setActivePath: React.Dispatch<React.SetStateAction<number[]>>
 }
 
-const DropdownContext = createContext<DropdownContextType>(null!)
+export const DropdownContext = createContext<DropdownContextType>(null!)
 
 /**
  * Props that go into each dropdown item (including nested)
@@ -24,6 +30,7 @@ export interface DropdownItemProps {
   label: string
   Icon?: LucideIcon
   checked?: boolean
+  disabled?: boolean
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   children?: DropdownItemProps[]
 }
@@ -38,15 +45,31 @@ export interface DropdownProps {
   size?: number
 }
 
-function DropdownItemList({
-  items,
-  path = []
-}: {
+interface DropdownItemListProps {
   items: DropdownItemProps[]
   path?: number[]
-}) {
+}
+
+export function DropdownItemList({ items, path = [] }: DropdownItemListProps) {
+  const [flip, setFlip] = useState(false)
+  const listRef = useRef<HTMLUListElement>(null)
+
+  useLayoutEffect(() => {
+    const ul = listRef.current
+    if (!ul) return
+    const rect = ul.getBoundingClientRect()
+    if (rect.right > window.innerWidth) setFlip(true)
+    else if (rect.left < 0) setFlip(false)
+  }, [items])
+
   return (
-    <ul className='absolute z-999 mt-0.5 text-xs bg-ui-800 border border-ui-700 rounded py-0.5'>
+    <ul
+      ref={listRef}
+      className={clsx(
+        path.length > 0 && (flip ? 'right-full -top-1' : 'left-full -top-1'),
+        'absolute z-999 mt-0.5 text-xs bg-ui-800 border border-ui-700 rounded py-0.5'
+      )}
+    >
       {items.map((item, i) => (
         <DropdownItem key={i} path={[...path, i]} {...item} />
       ))}
@@ -59,6 +82,7 @@ function DropdownItem({
   label,
   Icon,
   checked,
+  disabled,
   onClick,
   children
 }: DropdownItemProps & { path: number[] }) {
@@ -77,7 +101,7 @@ function DropdownItem({
             'flex gap-1 px-0.5 items-center w-full text-nowrap',
             'rounded border',
             isActive ? 'bg-ui-700 border-ui-600' : 'border-transparent',
-            'hover:bg-ui-700 hover:border-ui-600'
+            disabled ? 'text-ui-400' : 'hover:border-ui-600 hover:bg-ui-700'
           )}
           onMouseDown={(e) => {
             onClick?.(e)
@@ -101,11 +125,9 @@ function DropdownItem({
           )}
         </button>
       </div>
-      <div className='absolute left-full -top-1'>
-        {children && isActive && (
-          <DropdownItemList items={children} path={path} />
-        )}
-      </div>
+      {children && isActive && (
+        <DropdownItemList items={children} path={path} />
+      )}
     </li>
   )
 }
@@ -122,7 +144,7 @@ export function Dropdown({ label, items, Icon }: DropdownProps) {
     <DropdownContext.Provider
       value={{ isOpen, activePath, setIsOpen, setActivePath }}
     >
-      <div ref={refClick}>
+      <div className='relative' ref={refClick}>
         <button
           onMouseDown={() => setIsOpen((prev) => !prev)}
           className={clsx(

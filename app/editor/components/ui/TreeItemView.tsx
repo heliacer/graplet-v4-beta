@@ -140,6 +140,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         onClick={handleItemClick}
         onContextMenu={(e) => {
           e.preventDefault()
+          e.stopPropagation()
           if (isInternalObject(object)) return
           setContextMenu({ item, x: e.clientX, y: e.clientY })
         }}

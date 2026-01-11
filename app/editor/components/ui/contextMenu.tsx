@@ -1,86 +1,99 @@
-import { Group, Layers2, LucideIcon, Pen, Trash, Ungroup } from 'lucide-react'
+import { DiamondPlus, Group, Pen, Trash, Ungroup } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import clsx from 'clsx'
+import { createAddItemsMenu } from '../../lib/utils/addItems'
+import {
+  DropdownContext,
+  DropdownItemList,
+  DropdownItemProps
+} from '@/app/ui/components/Dropdown'
+import { useState } from 'react'
+import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
 
-interface ContextMenuItemProps {
-  label: string
-  Icon: LucideIcon
-  onClick: React.MouseEventHandler
-  disabled?: boolean
-}
-
-function ContexMenuItem({
-  label,
-  Icon,
-  onClick,
-  disabled
-}: ContextMenuItemProps) {
-  const { setContextMenu } = useEditor()
-
-  return (
-    <button
-      className={clsx(
-        'flex items-center gap-1 w-full border border-transparent px-0.5 rounded',
-        disabled ? 'text-ui-400' : 'hover:border-ui-600 hover:bg-ui-700'
-      )}
-      onClick={(e) => {
-        onClick(e)
-        setContextMenu(null)
-      }}
-      disabled={disabled}
-    >
-      <Icon size={12} />
-      <p>{label}</p>
-    </button>
-  )
-}
-
+/**
+ * @todo This shit is unstable, renaming doesn't work,
+ * need to find a solution to put it together
+ */
 export function ContextMenu() {
-  const { scene, contextMenu } = useEditor()
-  const { removeObject, duplicateObject, groupObject, unGroupObject } =
+  const { contextMenu, setContextMenu, scene } = useEditor()
+  const [activePath, setActivePath] = useState<number[]>([])
+  const { removeObject, groupObject, unGroupObject, addObject } =
     useObjectActions()
+  const refClick = useClickOutside<HTMLDivElement>(() => {
+    setContextMenu(null)
+  })
+
   if (!contextMenu) return
 
-  /**
-   * @todo object specific, should have context menu for object (ObjectContextMenu),
-   * and for empty tree rightclick (add object, ameer suggestion)
-   */
-  const objectId = contextMenu.item.getItemData().id
-  const object = scene.current.getObjectById(objectId)
-  if (!object) throw Error(`Object with id ${objectId} does not exist`)
+  const treeItem = contextMenu.item
+  const menuItems: DropdownItemProps[] = []
+
+  if (treeItem) {
+    const objectId = treeItem.getItemData().id
+    const object = scene.current.getObjectById(objectId)
+    if (!object) throw Error(`Object with id ${objectId} does not exist`)
+
+    /**
+     * @todo create a hook for these object editing items,
+     * streamline them together with scene/treeitem (currently not in sync!)
+     */
+    menuItems.push(
+      {
+        label: 'Rename',
+        Icon: Pen,
+        onClick: () => treeItem.startRenaming()
+      },
+      {
+        label: 'Group',
+        Icon: Group,
+        onClick: () => groupObject(object)
+      },
+      {
+        label: 'Ungroup',
+        Icon: Ungroup,
+        disabled: object.children.length === 0,
+        onClick: () => unGroupObject(object)
+      },
+      {
+        label: 'Delete',
+        Icon: Trash,
+        onClick: () => removeObject(object)
+      }
+    )
+
+    if (object.type === 'Group') {
+      const objectAddItems = createAddItemsMenu(addObject, object)
+      menuItems.push({
+        label: 'Add Object',
+        Icon: DiamondPlus,
+        children: objectAddItems
+      })
+    }
+  } else {
+    const objectAddItems = createAddItemsMenu(addObject)
+    menuItems.push({
+      label: 'Add Object',
+      Icon: DiamondPlus,
+      children: objectAddItems
+    })
+  }
 
   return (
     <div
       style={{ top: contextMenu.y, left: contextMenu.x }}
-      className='absolute shadow-md min-w-20 bg-ui-800 border border-ui-700 p-0.5 text-xs rounded-md'
+      className='absolute'
+      ref={refClick}
     >
-      <ContexMenuItem
-        label='Rename'
-        Icon={Pen}
-        onClick={() => contextMenu.item.startRenaming()}
-      />
-      <ContexMenuItem
-        label='Duplicate'
-        Icon={Layers2}
-        onClick={() => duplicateObject(object)}
-      />
-      <ContexMenuItem
-        label='Group'
-        Icon={Group}
-        onClick={() => groupObject(object)}
-      />
-      <ContexMenuItem
-        label='Ungroup'
-        disabled={object.children.length === 0}
-        Icon={Ungroup}
-        onClick={() => unGroupObject(object)}
-      />
-      <ContexMenuItem
-        label='Delete'
-        Icon={Trash}
-        onClick={() => removeObject(object)}
-      />
+      <DropdownContext.Provider
+        value={{
+          isOpen: true,
+          activePath,
+          setIsOpen: () => setContextMenu(null),
+          setActivePath
+        }}
+      >
+        <DropdownItemList items={menuItems} />
+      </DropdownContext.Provider>
     </div>
   )
 }

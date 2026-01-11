@@ -111,7 +111,10 @@ export default function ExplorerPanel() {
       {...tree.getContainerProps()}
       className='text-sm py-1 flex flex-col items-start h-full overflow-auto'
       onClick={() => setContextMenu(null)}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={(e) => {
+        e.preventDefault()
+        setContextMenu({ x: e.clientX, y: e.clientY })
+      }}
     >
       {tree.getItems().map((item) => (
         <TreeItemView key={item.getId()} tree={tree} item={item} />
