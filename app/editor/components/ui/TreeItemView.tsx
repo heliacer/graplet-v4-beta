@@ -33,7 +33,7 @@ function ItemViewSpacer({ item, handleItemClick }: ItemViewSpacerProps) {
   if (item.isFolder() && item.getChildren().length > 0)
     return (
       <div
-        className='flex cursor-pointer text-ui-400'
+        className='flex text-ui-400 hover:text-ui-300'
         onClick={() => (item.isExpanded() ? item.collapse() : item.expand())}
       >
         <div style={{ width: `${item.getItemMeta().level * 8}px` }} />
@@ -138,7 +138,9 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
       <div
         {...item.getProps()}
         onClick={handleItemClick}
-        onDoubleClick={() => (item.isExpanded() ? item.collapse() : item.expand())}
+        onDoubleClick={() =>
+          item.isExpanded() ? item.collapse() : item.expand()
+        }
         onContextMenu={(e) => {
           e.preventDefault()
           e.stopPropagation()

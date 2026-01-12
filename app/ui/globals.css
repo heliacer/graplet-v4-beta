@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 
 @layer base {
+  :root, div {
+    scrollbar-color: var(--ui-650) var(--ui-900);
+  }
+
   /* Dark Theme (default) */
   :root,
   .dark {

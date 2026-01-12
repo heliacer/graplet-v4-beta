@@ -1,4 +1,4 @@
-import { DiamondPlus, Group, Pen, Trash, Ungroup } from 'lucide-react'
+import { DiamondPlus, Group, Trash, Ungroup } from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { createAddItemsMenu } from '../../lib/utils/addItems'
@@ -64,7 +64,6 @@ export function ContextMenu() {
         onClick: () => removeObject(object)
       }
     )
-
   } else {
     const objectAddItems = createAddItemsMenu(addObject)
     menuItems.push({

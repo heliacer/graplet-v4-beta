@@ -53,6 +53,7 @@ export default function ExplorerPanel() {
     },
     /**
      * @todo Add reordering for improved UX, and save the item state to serialisation
+     * Update: need to get the index of the drop location, then re-order the object children array
      * -> right now it just mimicks the Scene Object3D children array
      */
     onDrop: (items, target) => {
@@ -109,16 +110,19 @@ export default function ExplorerPanel() {
   return (
     <div
       {...tree.getContainerProps()}
-      className='text-sm py-1 flex flex-col items-start h-full overflow-auto'
+      style={{ scrollbarWidth: 'thin' }}
+      className='text-sm h-full overflow-y-scroll'
       onClick={() => setContextMenu(null)}
       onContextMenu={(e) => {
         e.preventDefault()
         setContextMenu({ x: e.clientX, y: e.clientY })
       }}
     >
-      {tree.getItems().map((item) => (
-        <TreeItemView key={item.getId()} tree={tree} item={item} />
-      ))}
+      <div className='py-1 flex flex-col gap-0.5 items-start border-r border-ui-700 min-h-full'>
+        {tree.getItems().map((item) => (
+          <TreeItemView key={item.getId()} tree={tree} item={item} />
+        ))}
+      </div>
       <div
         /** @todo Upgrade looks */
         style={tree.getDragLineStyle()}
