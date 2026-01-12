@@ -31,18 +31,22 @@ export function ContextMenu() {
   if (treeItem) {
     const objectId = treeItem.getItemData().id
     const object = scene.current.getObjectById(objectId)
-    if (!object) throw Error(`Object with id ${objectId} does not exist`)
+    if (!object) return
 
     /**
      * @todo create a hook for these object editing items,
      * streamline them together with scene/treeitem (currently not in sync!)
      */
+    if (object.type === 'Group') {
+      const objectAddItems = createAddItemsMenu(addObject, object)
+      menuItems.push({
+        label: `Add Object to ${object.name}`,
+        Icon: DiamondPlus,
+        children: objectAddItems
+      })
+    }
+
     menuItems.push(
-      {
-        label: 'Rename',
-        Icon: Pen,
-        onClick: () => treeItem.startRenaming()
-      },
       {
         label: 'Group',
         Icon: Group,
@@ -61,14 +65,6 @@ export function ContextMenu() {
       }
     )
 
-    if (object.type === 'Group') {
-      const objectAddItems = createAddItemsMenu(addObject, object)
-      menuItems.push({
-        label: 'Add Object',
-        Icon: DiamondPlus,
-        children: objectAddItems
-      })
-    }
   } else {
     const objectAddItems = createAddItemsMenu(addObject)
     menuItems.push({

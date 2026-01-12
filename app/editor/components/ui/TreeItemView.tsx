@@ -138,6 +138,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
       <div
         {...item.getProps()}
         onClick={handleItemClick}
+        onDoubleClick={() => (item.isExpanded() ? item.collapse() : item.expand())}
         onContextMenu={(e) => {
           e.preventDefault()
           e.stopPropagation()
