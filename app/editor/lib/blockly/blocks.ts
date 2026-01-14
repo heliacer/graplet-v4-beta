@@ -345,48 +345,5 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     output: 'Number',
     style: 'math_blocks',
     inputsInline: true
-  },
-  {
-    type: 'math_deriviative',
-    message0: 'deriviative of %1 at %2',
-    args0: [
-      {
-        type: 'input_value',
-        name: 'PROCEDURE',
-        check: 'Function'
-      },
-      {
-        type: 'input_value',
-        name: 'NUM',
-        check: 'Number'
-      }
-    ],
-    output: 'Number',
-    style: 'math_blocks',
-    inputsInline: true
-  },
-  {
-    type: 'math_integral',
-    message0: 'integral of %1 from %2 to %3',
-    args0: [
-      {
-        type: 'input_value',
-        name: 'PROCEDURE',
-        check: 'Function'
-      },
-      {
-        type: 'input_value',
-        name: 'FROM',
-        check: 'Number'
-      },
-      {
-        type: 'input_value',
-        name: 'TO',
-        check: 'Number'
-      }
-    ],
-    output: 'Number',
-    style: 'math_blocks',
-    inputsInline: true
   }
 ])
