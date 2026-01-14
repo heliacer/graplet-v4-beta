@@ -15,16 +15,19 @@ import {
   DropdownItemList,
   DropdownItemProps
 } from '@/app/ui/components/Dropdown'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
 
 /**
  * @todo This shit is unstable, renaming doesn't work,
  * need to find a solution to put it together
+ * 
+ * relocating on edge also not working yet, wip
  */
 export function ContextMenu() {
   const { contextMenu, setContextMenu, scene } = useEditor()
   const [activePath, setActivePath] = useState<number[]>([])
+  const [offset, setOffset] = useState(0)
   const {
     removeObject,
     groupObject,
@@ -35,9 +38,20 @@ export function ContextMenu() {
     addObject
   } = useObjectActions()
 
-  const refClick = useClickOutside<HTMLDivElement>(() => {
+  const ref = useClickOutside<HTMLDivElement>(() => {
     setContextMenu(null)
   })
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const childRect = el.children[0].getBoundingClientRect()
+    const calc = Math.max(0, rect.left + childRect.width - window.innerWidth)
+    console.log(calc)
+    setOffset(calc)
+  }, [contextMenu])
+
 
   if (!contextMenu) return
 
@@ -114,9 +128,9 @@ export function ContextMenu() {
 
   return (
     <div
-      style={{ top: contextMenu.y, left: contextMenu.x }}
+      style={{ top: contextMenu.y, left: contextMenu.x - offset }}
       className='absolute'
-      ref={refClick}
+      ref={ref}
     >
       <DropdownContext.Provider
         value={{
