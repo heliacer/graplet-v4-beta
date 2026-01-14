@@ -8,6 +8,7 @@ import {
 } from 'blockly'
 import { Expression, ProgramState } from '../blockly/engine/ast'
 import { evaluateExpression } from '../blockly/engine/interpreter'
+import { StateFunc } from '../types'
 
 export function resize(workspace: WorkspaceSvg) {
   Tooltip.hide()
@@ -24,7 +25,7 @@ export function resize(workspace: WorkspaceSvg) {
 export async function execute(
   expr: Expression,
   state: ProgramState,
-  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setIsRunning: StateFunc<boolean>
 ) {
   setIsRunning(true)
   console.log('%cRunning...', 'color: aquamarine;')

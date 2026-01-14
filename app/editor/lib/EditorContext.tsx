@@ -1,9 +1,7 @@
 import React, {
   createContext,
   RefObject,
-  Dispatch,
   useContext,
-  SetStateAction,
   useRef,
   useState
 } from 'react'
@@ -15,13 +13,8 @@ import {
   TransformControls,
   TransformControlsMode
 } from 'three/examples/jsm/Addons.js'
-import { ContextMenuProps } from './types'
+import { ContextMenuProps, NotificationItemProps, StateFunc } from './types'
 import { DockviewApi } from 'dockview-react'
-
-/**
- * @majortodo
- * CLEANUP: try to use less context values and access more directly
- */
 
 interface EditorContextType {
   // REFS
@@ -35,6 +28,7 @@ interface EditorContextType {
   orbitMap: RefObject<Map<number, OrbitControls | null>>
 
   // UI STATE
+  notifications: NotificationItemProps[]
   camera: Camera | null
   workspace: WorkspaceSvg | null
   currentObject: Object3D | null
@@ -45,16 +39,17 @@ interface EditorContextType {
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
   currentTheme: string
-  setCurrentTheme: Dispatch<SetStateAction<string>>
-  setDvApi: Dispatch<SetStateAction<DockviewApi | null>>
-  setContextMenu: Dispatch<SetStateAction<ContextMenuProps | null>>
-  setCamera: Dispatch<SetStateAction<Camera | null>>
-  setShouldLoad: Dispatch<SetStateAction<boolean>>
-  setObjectVersion: Dispatch<SetStateAction<number>>
-  setWorkspace: Dispatch<SetStateAction<WorkspaceSvg | null>>
-  setCurrentObject: Dispatch<SetStateAction<Object3D | null>>
-  setCurrentTool: Dispatch<SetStateAction<TransformControlsMode>>
-  setIsRunning: Dispatch<SetStateAction<boolean>>
+  setNotifications: StateFunc<NotificationItemProps[]>
+  setCurrentTheme: StateFunc<string>
+  setDvApi: StateFunc<DockviewApi | null>
+  setContextMenu: StateFunc<ContextMenuProps | null>
+  setCamera: StateFunc<Camera | null>
+  setShouldLoad: StateFunc<boolean>
+  setObjectVersion: StateFunc<number>
+  setWorkspace: StateFunc<WorkspaceSvg | null>
+  setCurrentObject: StateFunc<Object3D | null>
+  setCurrentTool: StateFunc<TransformControlsMode>
+  setIsRunning: StateFunc<boolean>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -91,6 +86,9 @@ export function EditorProvider({
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
   const [currentTheme, setCurrentTheme] = useState<string>('')
+  const [notifications, setNotifications] = useState<NotificationItemProps[]>(
+    []
+  )
 
   return (
     <EditorContext.Provider
@@ -103,8 +101,9 @@ export function EditorProvider({
         modelScene,
         runState,
         controls,
-        camera,
 
+        notifications,
+        camera,
         workspace,
         currentObject,
         currentTool,
@@ -114,6 +113,7 @@ export function EditorProvider({
         contextMenu,
         dvApi,
         currentTheme,
+        setNotifications,
         setCurrentTheme,
         setDvApi,
         setContextMenu,

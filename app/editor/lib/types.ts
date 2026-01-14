@@ -137,3 +137,12 @@ export class ParentError extends Error {
     this.name = 'ParentError'
   }
 }
+
+/** @todo might add more stuff */
+export interface NotificationItemProps {
+  title: string
+  content?: string
+  iconType?: IconT
+}
+
+export type StateFunc<T> = React.Dispatch<React.SetStateAction<T>>

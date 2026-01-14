@@ -8,6 +8,7 @@ import React, {
   useState
 } from 'react'
 import { useClickOutside } from '../hooks/useClickOutside'
+import { StateFunc } from '@/app/editor/lib/types'
 
 /** Helper func to check whether a folder path is in the active path or not */
 function isActiveFolder(fp: number[], ap: number[]) {
@@ -17,8 +18,8 @@ function isActiveFolder(fp: number[], ap: number[]) {
 interface DropdownContextType {
   isOpen: boolean
   activePath: number[]
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  setActivePath: React.Dispatch<React.SetStateAction<number[]>>
+  setIsOpen: StateFunc<boolean>
+  setActivePath: StateFunc<number[]>
 }
 
 export const DropdownContext = createContext<DropdownContextType>(null!)

@@ -1,4 +1,5 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
+import { StateFunc } from '@/app/editor/lib/types'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { Rows2 } from 'lucide-react'
 import React, { useState } from 'react'
@@ -17,7 +18,7 @@ function toggleHelper(
   scene: Scene,
   factory: (object: Object3D) => Object3D,
   compare: (helper: Object3D, object: Object3D) => boolean,
-  setHelpers: React.Dispatch<React.SetStateAction<Map<number, boolean>>>
+  setHelpers: StateFunc<Map<number, boolean>>
 ) {
   const helpers = scene.getObjectsByProperty('type', type) as CameraHelper[]
   const existing = helpers.find((h) => compare(h, object))

@@ -6,6 +6,7 @@ import { EditorPane } from '../ui/properties/editor'
 import { GeometryPane } from '../ui/properties/geometry'
 import { MaterialPane } from '../ui/properties/material'
 import { ObjectPane } from '../ui/properties/object'
+import { StateFunc } from '../../lib/types'
 
 /** Each Pane holds their respective props of the currentObject */
 type Pane = 'editor' | 'object' | 'geometry' | 'material'
@@ -15,7 +16,7 @@ interface PaneButtonProps {
   Icon: LucideIcon
   pane: Pane
   activePane: Pane
-  setActivePane: React.Dispatch<React.SetStateAction<Pane>>
+  setActivePane: StateFunc<Pane>
 }
 
 /**
