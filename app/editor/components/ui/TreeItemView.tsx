@@ -13,12 +13,17 @@ interface RenamingItemViewProps {
 }
 
 function RenamingItemView({ item }: RenamingItemViewProps) {
+  const uuid = crypto.randomUUID()
   return (
     <div className='flex w-full'>
       <div style={{ marginLeft: `${item.getItemMeta().level * 8 + 12}px` }} />
       <div className='flex items-center w-full px-1 gap-1 rounded-l-md border border-teal bg-ui-800'>
         <ItemIcon size={14} iconType={item.getItemData().type} />
-        <input className='outline-0' {...item.getRenameInputProps()} />
+        <input
+          id={uuid}
+          className='outline-0'
+          {...item.getRenameInputProps()}
+        />
       </div>
     </div>
   )

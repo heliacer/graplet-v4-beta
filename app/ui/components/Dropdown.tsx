@@ -97,11 +97,15 @@ function DropdownItem({
     >
       <div className='mx-0.5'>
         <button
+          disabled={disabled}
           className={clsx(
             'flex gap-1 px-0.5 items-center w-full text-nowrap',
             'rounded border',
-            isActive ? 'bg-ui-700 border-ui-600' : 'border-transparent',
-            disabled ? 'text-ui-400' : 'hover:border-ui-600 hover:bg-ui-700'
+            disabled
+              ? 'text-ui-400 border-transparent'
+              : isActive
+                ? 'bg-ui-700 border-ui-600'
+                : 'border-transparent hover:border-ui-600 hover:bg-ui-700'
           )}
           onMouseDown={(e) => {
             onClick?.(e)

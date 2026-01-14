@@ -84,6 +84,7 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
     <div className='flex justify-between'>
       <p className='text-nowrap'>{label}</p>
       <input
+        id={`${label}-${object.uuid}`}
         type='text'
         className='rounded border outline-none px-1 w-32 hover:bg-ui-750 focus:bg-ui-750'
         key={object[property]}
@@ -139,9 +140,9 @@ export function CheckBoxProperty({
         {label}
       </label>
       <input
+        id={uuid}
         className='cursor-pointer accent-teal'
         type='checkbox'
-        id={uuid}
         checked={checked}
         onChange={(e) => action(e.target.checked)}
       />

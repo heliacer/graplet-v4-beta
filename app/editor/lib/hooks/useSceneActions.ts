@@ -54,11 +54,7 @@ export function useSceneActions() {
       if (project.scene) {
         const { children } = project.scene
         applyProps(scene.current, project.scene)
-        if (children) {
-          for (const sobject of children) {
-            addObject(sobject)
-          }
-        }
+        children?.forEach((child) => addObject(child))
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
 
         if (!workspace) throw Error('Missing workspace.')

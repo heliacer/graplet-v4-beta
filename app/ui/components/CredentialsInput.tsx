@@ -37,5 +37,5 @@ export function CredentialsInput({
     inputProps.onChange = (e) => setValue(e.target.value)
   }
 
-  return <input {...inputProps} />
+  return <input id='credentialsInput' {...inputProps} />
 }

@@ -9,7 +9,7 @@ import {
 } from 'three'
 import { blocklyObjectRegistry } from '../blockly/blocks'
 import { ParentError, SObject3D } from '../types'
-import { applyProps, createObject } from '../utils/sobject'
+import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { isInternalObject, moveObject } from '../utils/three'
 
@@ -157,7 +157,7 @@ export function useObjectActions() {
    * @todo Should separate geometry & material, since those are shared by default -> option to keep them / make new
    * @todo Also add helpers if needed
    */
-  function duplicateObject(object: Object3D) {
+  function cloneObject(object: Object3D) {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
 
@@ -180,7 +180,7 @@ export function useObjectActions() {
   function unGroupObject(object: Object3D) {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
-    const children = object.children
+    const children = [...object.children]
     for (const child of children) {
       parent.add(child)
     }
@@ -189,14 +189,40 @@ export function useObjectActions() {
     /**
      * @todo multiselect all children which were previously in the group
      */
-    setCurrentObject(null) // for now
+    setCurrentObject(null)
+  }
+
+  function copyObjects(objects: Object3D[]) {
+    const sobjects = objects.map(serializeObject)
+    const data = JSON.stringify(sobjects)
+    const blob = new Blob([data], { type: 'text/plain' })
+    const item = new ClipboardItem({ [blob.type]: blob })
+    navigator.clipboard.write([item])
+  }
+
+  function pasteObjects(target: Object3D) {
+    /** @todo this is too primitive, needs to be a bit safer and check the clipboard values */
+
+    navigator.clipboard.read().then((items) =>
+      items.forEach((item) =>
+        item
+          .getType('text/plain')
+          .then((blob) => blob.text())
+          .then((text) => {
+            const objects: SObject3D[] = JSON.parse(text)
+            objects.forEach((object) => addObject(object, target))
+          })
+      )
+    )
   }
 
   return {
     addObject,
     removeObject,
-    duplicateObject,
+    cloneObject,
     groupObject,
-    unGroupObject
+    unGroupObject,
+    copyObjects,
+    pasteObjects
   }
 }

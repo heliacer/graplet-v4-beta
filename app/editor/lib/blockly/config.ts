@@ -19,7 +19,6 @@ import {
   isDivisibleMutatorMixin,
   isDivisibleMutatorExtension
 } from './overrides/divisibleby'
-import { procedureBlocks } from './overrides/procedures'
 import { GrapletRenderer } from './renderer'
 
 class ContinuousIconCategory extends ContinuousCategory {
@@ -40,7 +39,6 @@ export function initializeBlockly() {
     isDivisibleMutatorExtension
   )
 
-  common.defineBlocks(procedureBlocks)
   common.defineBlocks(definitions)
 
   blockRendering.register('graplet', GrapletRenderer)

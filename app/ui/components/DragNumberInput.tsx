@@ -58,8 +58,11 @@ export function DragNumberInput({
     [value, handleMouseMove, handleMouseUp]
   )
 
+  const uuid = crypto.randomUUID()
+
   return (
     <input
+      id={uuid}
       type='number'
       title={title}
       className={clsx('cursor-n-resize', className)}

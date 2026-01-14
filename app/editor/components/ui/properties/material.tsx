@@ -19,6 +19,7 @@ function MeshStandardMaterialPane({
     <div className='flex justify-between'>
       <p>Color</p>
       <input
+        id={`color-${material.uuid}`}
         value={color}
         className='w-32 h-6'
         type='color'

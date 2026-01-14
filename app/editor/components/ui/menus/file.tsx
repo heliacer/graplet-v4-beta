@@ -97,6 +97,7 @@ export function FileMenu() {
     <>
       <Dropdown label='File' Icon={File} items={items} />
       <input
+        id='fileInput'
         type='file'
         accept='.json,application/json'
         ref={fileInputRef}

@@ -1,4 +1,12 @@
-import { DiamondPlus, Group, Trash, Ungroup } from 'lucide-react'
+import {
+  ClipboardCopy,
+  ClipboardPaste,
+  Copy,
+  DiamondPlus,
+  Group,
+  Trash,
+  Ungroup
+} from 'lucide-react'
 import { useEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { createAddItemsMenu } from '../../lib/utils/addItems'
@@ -17,8 +25,16 @@ import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
 export function ContextMenu() {
   const { contextMenu, setContextMenu, scene } = useEditor()
   const [activePath, setActivePath] = useState<number[]>([])
-  const { removeObject, groupObject, unGroupObject, addObject } =
-    useObjectActions()
+  const {
+    removeObject,
+    groupObject,
+    unGroupObject,
+    cloneObject,
+    copyObjects,
+    pasteObjects,
+    addObject
+  } = useObjectActions()
+
   const refClick = useClickOutside<HTMLDivElement>(() => {
     setContextMenu(null)
   })
@@ -32,26 +48,42 @@ export function ContextMenu() {
     const objectId = treeItem.getItemData().id
     const object = scene.current.getObjectById(objectId)
     if (!object) return
+    const isGroup = object.type === 'Group'
 
-    /**
-     * @todo create a hook for these object editing items,
-     * streamline them together with scene/treeitem (currently not in sync!)
-     */
-    if (object.type === 'Group') {
+    menuItems.push(
+      {
+        label: 'Copy',
+        Icon: ClipboardCopy,
+        onClick: () => copyObjects([object])
+      },
+      {
+        label: 'Paste',
+        disabled: !isGroup,
+        Icon: ClipboardPaste,
+        onClick: () => pasteObjects(object)
+      },
+      {
+        label: 'Clone',
+        Icon: Copy,
+        onClick: () => cloneObject(object)
+      },
+      {
+        label: 'Group',
+        Icon: Group,
+        onClick: () => groupObject(object)
+      }
+    )
+
+    if (isGroup) {
       const objectAddItems = createAddItemsMenu(addObject, object)
       menuItems.push({
-        label: `Add Object to ${object.name}`,
+        label: `Add to ${object.name}`,
         Icon: DiamondPlus,
         children: objectAddItems
       })
     }
 
     menuItems.push(
-      {
-        label: 'Group',
-        Icon: Group,
-        onClick: () => groupObject(object)
-      },
       {
         label: 'Ungroup',
         Icon: Ungroup,
@@ -66,11 +98,18 @@ export function ContextMenu() {
     )
   } else {
     const objectAddItems = createAddItemsMenu(addObject)
-    menuItems.push({
-      label: 'Add Object',
-      Icon: DiamondPlus,
-      children: objectAddItems
-    })
+    menuItems.push(
+      {
+        label: 'Add to Scene',
+        Icon: DiamondPlus,
+        children: objectAddItems
+      },
+      {
+        label: 'Paste',
+        Icon: ClipboardPaste,
+        onClick: () => pasteObjects(scene.current)
+      }
+    )
   }
 
   return (

@@ -1,10 +1,11 @@
 import clsx from 'clsx'
 import { Mail } from 'lucide-react'
 
-export function InputSkeleton() {
+export function LoginInputSkeleton() {
   return (
     <>
       <input
+        id='loginInputSkeleton'
         disabled
         className={clsx(
           'w-80 pr-12 py-1.5 pl-3 border rounded-full',

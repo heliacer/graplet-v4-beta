@@ -4,15 +4,15 @@ import { useEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
 import { variableCategory } from '../blockly/categories/variables'
 import { procedureCategory } from '../blockly/categories/procedures'
-import { resize } from '../utils/blockly'
+import { execute, resize } from '../utils/blockly'
 import { exprGenerator } from '../blockly/engine/generator'
-import { evaluateExpression } from '../blockly/engine/interpreter'
 
 export function useBlocklyWorkspace(
   containerRef: React.RefObject<HTMLDivElement>
 ) {
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
-  const { setWorkspace, scene, varEnv, funcEnv, runState } = useEditor()
+  const { setWorkspace, scene, varEnv, funcEnv, runState, setIsRunning } =
+    useEditor()
   useEffect(() => {
     if (!containerRef.current || workspaceRef.current) return
 
@@ -38,18 +38,22 @@ export function useBlocklyWorkspace(
     }
 
     /** listen to instant block clicks and run them */
-    const blockListener = (event: Events.Abstract) => {
+    const blockListener = async (event: Events.Abstract) => {
       if (event instanceof Events.Click && event.targetType === 'block') {
         if (event.blockId) {
           const block = event.getEventWorkspace_().getBlockById(event.blockId)
           if (block) {
             const expression = exprGenerator.blockToExpression(block)
-            evaluateExpression(expression, {
-              scene: scene.current,
-              variables: varEnv.current,
-              functions: funcEnv.current,
-              runState: runState
-            })
+            await execute(
+              expression,
+              {
+                scene: scene.current,
+                variables: varEnv.current,
+                functions: funcEnv.current,
+                runState: runState
+              },
+              setIsRunning
+            )
           }
         }
       }
@@ -70,6 +74,14 @@ export function useBlocklyWorkspace(
       workspaceRef.current = null
       setWorkspace(null)
     }
-  }, [containerRef, setWorkspace, funcEnv, runState, scene, varEnv])
+  }, [
+    containerRef,
+    setWorkspace,
+    setIsRunning,
+    funcEnv,
+    runState,
+    scene,
+    varEnv
+  ])
   return workspaceRef.current
 }

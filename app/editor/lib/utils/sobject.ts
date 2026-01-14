@@ -175,6 +175,11 @@ export function serializeObject(object: Object3D): SObject3D {
     ...(children.length > 0 && { children })
   }
 
+  /**
+   * @todo Consider make specific args (e.g geometry args), not an args array.
+   * this will be a pain in the ass but it needs to be specific to every argument
+   */
+
   /** Specific Props */
   if (object instanceof Scene) {
     return {
@@ -189,6 +194,9 @@ export function serializeObject(object: Object3D): SObject3D {
     }
   }
   if (object instanceof Mesh) {
+    /**
+     * @todo This is fragile, works right now, but not for multiple materials, textures etc.
+     */
     const color = object.material.color as Color
     return {
       type: 'Mesh',
@@ -207,6 +215,7 @@ export function serializeObject(object: Object3D): SObject3D {
     return {
       type: 'AmbientLight',
       intensity: object.intensity,
+      color: `#${object.color.getHexString()}`,
       ...base
     }
   }
