@@ -20,6 +20,11 @@ import {
   isDivisibleMutatorExtension
 } from './overrides/divisibleby'
 import { GrapletRenderer } from './renderer'
+import {
+  blocks,
+  unregisterProcedureBlocks,
+  registerProcedureSerializer
+} from '@blockly/block-shareable-procedures'
 
 class ContinuousIconCategory extends ContinuousCategory {
   override createIconDom_(): Element {
@@ -32,6 +37,8 @@ class ContinuousIconCategory extends ContinuousCategory {
 }
 
 export function initializeBlockly() {
+  registerProcedureSerializer()
+
   Extensions.unregister('math_is_divisibleby_mutator')
   Extensions.registerMutator(
     'math_is_divisibleby_mutator',
@@ -39,6 +46,17 @@ export function initializeBlockly() {
     isDivisibleMutatorExtension
   )
 
+  unregisterProcedureBlocks()
+  /**
+   * @todo For now built in, but later use custom function blocks.
+   * 
+   * Includes:
+   * -> custom mutator: block editor mechanism, with custom model, etc.
+   * -> draggable param blocks, similar to MIT's Scratch 3.
+   * 
+   * (part of local param migration)
+   */
+  common.defineBlocks(blocks)
   common.defineBlocks(definitions)
 
   blockRendering.register('graplet', GrapletRenderer)

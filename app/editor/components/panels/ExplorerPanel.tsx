@@ -52,7 +52,7 @@ export default function ExplorerPanel() {
       setObjectVersion((v) => v + 1)
     },
     /**
-     * @todo Add reordering for improved UX, and save the item state to serialisation
+     * @todo Add reordering for improved UX, and save the item state to serialization
      * Update: need to get the index of the drop location, then re-order the object children array
      * -> right now it just mimicks the Scene Object3D children array
      */

@@ -25,7 +25,7 @@ declare class TransformControlsRoot extends Object3D {
  * @todo Add all helpers to be ignored
  *
  * TransformControls get generated internally,
- * and Helpers are kind of a pain to implement with the current serialisation system.
+ * and Helpers are kind of a pain to implement with the current serialization system.
  *
  * (1) Adding helpers to the respective object userData seems like a better idea
  *
