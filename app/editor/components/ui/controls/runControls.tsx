@@ -26,7 +26,6 @@ export function RunControls() {
   }
 
   async function handleRun() {
-    console.log('exiting edit mode...')
     if (!workspace) return
     const expr = exprGenerator.workspaceToExpression(workspace)
     await execute(
@@ -40,7 +39,6 @@ export function RunControls() {
       setIsRunning
     )
     setObjectVersion((v) => v + 1)
-    console.log('entering edit mode...')
   }
 
   function handleStop() {
