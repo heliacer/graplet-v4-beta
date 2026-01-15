@@ -77,7 +77,7 @@ export default function ExplorerPanel() {
           return { id: 0, name: '', type: 'Component', hasChildren: false }
         return {
           id: object.id,
-          name: object.name || 'Unnamed',
+          name: object.name || 'unnamed',
           type: getIconT(object.type),
           hasChildren: object.children.length > 0
         }

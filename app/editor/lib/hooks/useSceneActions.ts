@@ -3,7 +3,7 @@ import { useEditor } from '../EditorContext'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
-import { blocklyObjectRegistry } from '../blockly/blocks'
+import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
 
 export function useSceneActions() {
@@ -76,7 +76,7 @@ export function useSceneActions() {
       removeObject(child)
     }
     setCurrentObject(null)
-    blocklyObjectRegistry.options = []
+    blocklyUI.objectMenu = []
     orbitMap.current.clear()
     controls.current?.dispose()
     controls.current = null

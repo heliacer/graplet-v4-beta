@@ -7,15 +7,18 @@ import {
   Object3D,
   PerspectiveCamera
 } from 'three'
-import { blocklyObjectRegistry } from '../blockly/blocks'
+import { blocklyUI } from '../blockly/blocks'
 import { ParentError, SObject3D } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { isInternalObject, moveObject } from '../utils/three'
 
+let nextId = 0
+
 export function useObjectActions() {
   const {
     scene,
+    objects,
     currentObject,
     workspace,
     camera,
@@ -28,24 +31,10 @@ export function useObjectActions() {
 
   /**
    * @private
-   * Adds an object to the blockly object registry
-   *
-   * E.g Use cases: Move [object v] (0.5) units [forwards v]
-   *
    */
-  function addToReg(object: Object3D) {
-    blocklyObjectRegistry.options.push([object.name, object.id.toString()])
-    workspace?.refreshToolboxSelection()
-  }
-
-  /**
-   * @private
-   * Removes an object from the blockly object registry
-   */
-  function removeFromReg(object: Object3D) {
-    blocklyObjectRegistry.options = blocklyObjectRegistry.options.filter(
-      ([, id]) => object.id.toString() !== id
-    )
+  function rebuildBlocklyUI() {
+    const entries = Array.from(objects.current.entries())
+    blocklyUI.objectMenu = entries.map(([id, object]) => [object.name, id])
     workspace?.refreshToolboxSelection()
   }
 
@@ -97,13 +86,12 @@ export function useObjectActions() {
     }
 
     applyHelpers(object)
+    setCurrentObject(object)
 
-    /** If it's a top level sprite, set it as current */
-    if (target === scene.current) {
-      setCurrentObject(object)
-      addToReg(object)
-    }
+    /** Add it to the registry */
+    objects.current.set((nextId++).toString(), object)
 
+    rebuildBlocklyUI()
     setObjectVersion((v) => v + 1)
     return object
   }
@@ -118,7 +106,6 @@ export function useObjectActions() {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
     parent.remove(object)
-    removeFromReg(object)
 
     /** If it's the current object, set another one as current */
     if (object === currentObject) {
@@ -150,6 +137,18 @@ export function useObjectActions() {
       }
     }
 
+    /** Remove it from the registry */
+    const entry = Array.from(objects.current.entries()).find(
+      ([, obj]) => obj === object
+    )
+    if (!entry)
+      throw Error(
+        `${object.name || 'unnamed'} (${object.type}) was not found in the registry.`
+      )
+    const [id] = entry
+    objects.current.delete(id)
+
+    rebuildBlocklyUI()
     setObjectVersion((v) => v + 1)
   }
 
@@ -165,9 +164,13 @@ export function useObjectActions() {
     clone.position.x += 2
 
     parent.add(clone)
-
     setCurrentObject(clone)
-    addToReg(clone)
+
+    /** Add it to the registry */
+    objects.current.set((nextId++).toString(), clone)
+
+    rebuildBlocklyUI()
+    setObjectVersion((v) => v + 1)
   }
 
   function groupObject(object: Object3D) {

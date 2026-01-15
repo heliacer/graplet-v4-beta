@@ -1,15 +1,15 @@
 import { common } from 'blockly'
 
-export const blocklyObjectRegistry: { options: string[][] } = { options: [] }
+export const blocklyUI: { objectMenu: string[][] } = { objectMenu: [] }
 
 const flagIconURL =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1mbGFnLWljb24gbHVjaWRlLWZsYWciPjxwYXRoIGQ9Ik00IDIyVjRhMSAxIDAgMCAxIC40LS44QTYgNiAwIDAgMSA4IDJjMyAwIDUgMiA3LjMzMyAycTIgMCAzLjA2Ny0uOEExIDEgMCAwIDEgMjAgNHYxMGExIDEgMCAwIDEtLjQuOEE2IDYgMCAwIDEgMTYgMTZjLTMgMC01LTItOC0yYTYgNiAwIDAgMC00IDEuNTI4Ii8+PC9zdmc+'
 
 function options() {
-  if (blocklyObjectRegistry.options.length === 0) {
+  if (blocklyUI.objectMenu.length === 0) {
     return [['', '']]
   }
-  return blocklyObjectRegistry.options
+  return blocklyUI.objectMenu
 }
 
 export const definitions = common.createBlockDefinitionsFromJsonArray([

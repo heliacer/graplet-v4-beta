@@ -133,7 +133,7 @@ export interface TreeItem {
  */
 export class ParentError extends Error {
   constructor(object: Object3D) {
-    super(`${object.name || 'Unnamed'} (${object.type}) does not have a parent`)
+    super(`${object.name || 'unnamed'} (${object.type}) does not have a parent`)
     this.name = 'ParentError'
   }
 }
