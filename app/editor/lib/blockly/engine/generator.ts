@@ -509,6 +509,7 @@ exprGenerator.forBlock(
 // FUNCTIONS
 exprGenerator.forBlock(
   'procedures_defnoreturn',
+  /** @deprecated legacy built-in functions */
   function (block: Block, generator: ExpressionGenerator): Expression {
     const exprs: Expression[] = generateExprsFromInput(
       block.getInput('STACK'),
@@ -526,6 +527,7 @@ exprGenerator.forBlock(
 
 exprGenerator.forBlock(
   'procedures_defreturn',
+  /** @deprecated legacy built-in functions */
   function (block: Block, generator: ExpressionGenerator): Expression {
     const exprs: Expression[] = generateExprsFromInput(
       block.getInput('STACK'),
@@ -545,6 +547,7 @@ exprGenerator.forBlock(
 
 exprGenerator.forBlock(
   'procedures_callnoreturn',
+  /** @deprecated legacy built-in functions */
   function (block: Block, generator: ExpressionGenerator): Expression {
     const extraState =
       block.saveExtraState && (block.saveExtraState(true) as ExtraState)
@@ -569,6 +572,7 @@ exprGenerator.forBlock(
 
 exprGenerator.forBlock(
   'procedures_callreturn',
+  /** @deprecated legacy built-in functions */
   function (block: Block, generator: ExpressionGenerator): Expression {
     const extraState =
       block.saveExtraState && (block.saveExtraState(true) as ExtraState)

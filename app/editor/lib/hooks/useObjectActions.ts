@@ -195,25 +195,23 @@ export function useObjectActions() {
   function copyObjects(objects: Object3D[]) {
     const sobjects = objects.map(serializeObject)
     const data = JSON.stringify(sobjects)
-    const blob = new Blob([data], { type: 'text/plain' })
-    const item = new ClipboardItem({ [blob.type]: blob })
-    navigator.clipboard.write([item])
+    navigator.clipboard.writeText(data)
   }
 
-  function pasteObjects(target: Object3D) {
+  async function pasteObjects(target: Object3D) {
     /** @todo this is too primitive, needs to be a bit safer and check the clipboard values */
 
-    navigator.clipboard.read().then((items) =>
-      items.forEach((item) =>
-        item
-          .getType('text/plain')
-          .then((blob) => blob.text())
-          .then((text) => {
-            const objects: SObject3D[] = JSON.parse(text)
-            objects.forEach((object) => addObject(object, target))
-          })
-      )
-    )
+    const text = await navigator.clipboard.readText()
+    try {
+      const objects: SObject3D[] = JSON.parse(text)
+      objects.forEach((object) => addObject(object, target))
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.warn('invalid paste just happened')
+      } else {
+        console.error(error)
+      }
+    }
   }
 
   return {

@@ -13,6 +13,7 @@
     "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "dependencies": {
+    "@blockly/block-shareable-procedures": "^6.0.9",
     "@blockly/continuous-toolbox": "^7.0.2",
     "@headless-tree/core": "^1.5.1",
     "@headless-tree/react": "^1.5.1",

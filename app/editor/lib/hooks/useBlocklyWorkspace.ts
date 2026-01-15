@@ -1,9 +1,9 @@
-import { inject, Variables, Events, WorkspaceSvg } from 'blockly'
+import { inject, Events, WorkspaceSvg } from 'blockly'
 import { useEffect, useRef } from 'react'
 import { useEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
-import { variableCategory } from '../blockly/categories/variables'
-import { procedureCategory } from '../blockly/categories/procedures'
+// import { variableCategory } from '../blockly/categories/variables'
+// import { procedureCategory } from '../blockly/categories/procedures'
 import { execute, resize } from '../utils/blockly'
 import { exprGenerator } from '../blockly/engine/generator'
 
@@ -21,11 +21,18 @@ export function useBlocklyWorkspace(
     setWorkspace(ws)
 
     ws.getVariableMap().createVariable('my variable')
-    ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
-    ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
-    ws.registerButtonCallback('CREATE_VARIABLE', (button) => {
-      Variables.createVariableButtonHandler(button.getTargetWorkspace())
-    })
+
+    /** @todo Completely revamp variable callback */
+    // ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
+    // ws.registerButtonCallback('CREATE_VARIABLE', (button) => {
+    //   Variables.createVariableButtonHandler(button.getTargetWorkspace())
+    // })
+
+    /**
+     * @todo Add custom Functions using the data model
+     * -> first make custom function blocks (not use built in, -> config.ts)
+     */
+    // ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
 
     const variableListener = (event: Events.Abstract) => {
       if (

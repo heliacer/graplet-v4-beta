@@ -57,7 +57,7 @@ export function DropdownItemList({ items, path = [] }: DropdownItemListProps) {
 
   useLayoutEffect(() => {
     const ul = listRef.current
-    if (!ul) return
+    if (!ul) throw Error('list ref ul was not found.')
     const rect = ul.getBoundingClientRect()
     if (rect.right > window.innerWidth) setFlip(true)
     else if (rect.left < 0) setFlip(false)
@@ -91,11 +91,7 @@ function DropdownItem({
   const isActive = isActiveFolder(path, activePath)
 
   return (
-    <li
-      title={`${path}`}
-      className='relative'
-      onMouseEnter={() => setActivePath(path)}
-    >
+    <li className='relative' onMouseEnter={() => setActivePath(path)}>
       <div className='mx-0.5'>
         <button
           disabled={disabled}
