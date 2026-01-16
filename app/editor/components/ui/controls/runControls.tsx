@@ -19,7 +19,7 @@ export function RunControls() {
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
   function togglePaused() {
-    setIsPaused((prev) => {
+    setIsPaused(prev => {
       runState.current.shouldPause = !prev
       return !prev
     })
@@ -38,12 +38,12 @@ export function RunControls() {
       },
       setIsRunning
     )
-    setObjectVersion((v) => v + 1)
+    setObjectVersion(v => v + 1)
   }
 
   function handleStop() {
     runState.current.shouldStop = true
-    setObjectVersion((v) => v + 1)
+    setObjectVersion(v => v + 1)
     setIsPaused(false)
   }
 

@@ -25,7 +25,7 @@ function NotificationItem({ item }: { item: NotificationItemProps }) {
             'hover:bg-ui-750 bg-ui-800'
           )}
           onClick={() =>
-            setNotifications(notifications.filter((n) => n !== item))
+            setNotifications(notifications.filter(n => n !== item))
           }
         >
           <X size={14} />

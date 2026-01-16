@@ -9,12 +9,12 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user
 
       const protectedPaths = ['/editor', '/mystuff', 'account']
-      const isOnProtected = protectedPaths.some((path) =>
+      const isOnProtected = protectedPaths.some(path =>
         nextUrl.pathname.startsWith(path)
       )
 
       const adminOnlyPaths = ['/admin']
-      const isOnAdminOnly = adminOnlyPaths.some((path) =>
+      const isOnAdminOnly = adminOnlyPaths.some(path =>
         nextUrl.pathname.startsWith(path)
       )
 

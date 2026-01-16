@@ -104,7 +104,7 @@ function DropdownItem({
                 ? 'bg-ui-700 border-ui-600'
                 : 'border-transparent hover:border-ui-600 hover:bg-ui-700'
           )}
-          onMouseDown={(e) => {
+          onMouseDown={e => {
             onClick?.(e)
             if (!children && checked === undefined) {
               setIsOpen(false)
@@ -147,7 +147,7 @@ export function Dropdown({ label, items, Icon }: DropdownProps) {
     >
       <div className='relative' ref={refClick}>
         <button
-          onMouseDown={() => setIsOpen((prev) => !prev)}
+          onMouseDown={() => setIsOpen(prev => !prev)}
           className={clsx(
             'text-sm flex items-center gap-1 px-1',
             'border rounded-md relative',

@@ -74,7 +74,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
         <CheckBoxProperty
           label='Enable OrbitControls'
           checked={!!orbitMap.current.get(object.id)}
-          action={(checked) => {
+          action={checked => {
             if (checked) {
               if (orbit)
                 throw Error(
@@ -91,7 +91,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
               orbit.dispose()
               orbitMap.current.delete(object.id)
             }
-            setObjectVersion((v) => v + 1)
+            setObjectVersion(v => v + 1)
           }}
         />
       </>

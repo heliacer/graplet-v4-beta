@@ -22,7 +22,7 @@ export function useHeaderControls(props: IDockviewHeaderActionsProps) {
       api.onDidLocationChange?.(updateState)
     ].filter(Boolean)
 
-    return () => disposables.forEach((d) => d?.dispose())
+    return () => disposables.forEach(d => d?.dispose())
   }, [api, containerApi])
 
   const toggleMaximized = () => {

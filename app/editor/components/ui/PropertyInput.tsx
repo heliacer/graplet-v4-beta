@@ -27,14 +27,14 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
     <div className='flex justify-between w-full'>
       <p className='text-nowrap'>{label}</p>
       <div className='flex gap-1'>
-        {(['x', 'y', 'z'] as const).map((axis) => (
+        {(['x', 'y', 'z'] as const).map(axis => (
           <div key={axis} className='relative'>
             <DragNumberInput
               className='rounded border outline-none w-10 text-center hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number(object[property][axis])}
-              onChange={(newVal) => {
+              onChange={newVal => {
                 object[property][axis] = newVal
-                setObjectVersion((v) => v + 1)
+                setObjectVersion(v => v + 1)
               }}
               step={0.1}
             />
@@ -56,16 +56,16 @@ export function Vec3AngleProperty({
     <div className='flex justify-between w-full'>
       <p className='text-nowrap'>{label}</p>
       <div className='flex gap-1'>
-        {(['x', 'y', 'z'] as const).map((axis) => (
+        {(['x', 'y', 'z'] as const).map(axis => (
           <div key={axis} className='relative'>
             <DragNumberInput
               className='rounded border outline-none w-10 text-center pr-1 hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number((object[property][axis] * 180) / Math.PI)}
               step={1}
               decimals={0}
-              onChange={(newVal) => {
+              onChange={newVal => {
                 object[property][axis] = (newVal * Math.PI) / 180
-                setObjectVersion((v) => v + 1)
+                setObjectVersion(v => v + 1)
               }}
             />
             <span className='absolute right-1.5 top-0.5 text-xs select-none'>
@@ -89,14 +89,14 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
         className='rounded border outline-none px-1 w-32 hover:bg-ui-750 focus:bg-ui-750'
         key={object[property]}
         defaultValue={object[property]}
-        onBlur={(e) => {
+        onBlur={e => {
           object[property] = e.target.value
-          setObjectVersion((v) => v + 1)
+          setObjectVersion(v => v + 1)
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter') {
             object[property] = e.currentTarget.value
-            setObjectVersion((v) => v + 1)
+            setObjectVersion(v => v + 1)
           }
         }}
       />
@@ -144,7 +144,7 @@ export function CheckBoxProperty({
         className='cursor-pointer accent-teal'
         type='checkbox'
         checked={checked}
-        onChange={(e) => action(e.target.checked)}
+        onChange={e => action(e.target.checked)}
       />
     </div>
   )

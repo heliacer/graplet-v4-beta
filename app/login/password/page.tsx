@@ -109,7 +109,7 @@ export default function Password() {
             'bg-ui-800 border-ui-600',
             !isLoading && 'cursor-pointer'
           )}
-          onClick={() => setShowPassword((prev) => !prev)}
+          onClick={() => setShowPassword(prev => !prev)}
         >
           {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
         </button>

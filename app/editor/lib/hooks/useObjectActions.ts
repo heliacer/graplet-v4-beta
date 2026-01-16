@@ -20,12 +20,13 @@ export function useObjectActions() {
     scene,
     objects,
     objectIds,
-    currentObject,
+    selectedItems,
+    setSelectedItems,
     workspace,
     camera,
     setCamera,
-    setCurrentObject,
     setObjectVersion,
+    setTreeVersion,
     orbitMap,
     canvas
   } = useEditor()
@@ -86,15 +87,16 @@ export function useObjectActions() {
       }
     }
 
-    applyHelpers(object)
-    setCurrentObject(object)
-
     /** Add it to the registry */
     const id = (nextId++).toString()
     objects.current.set(id, object)
     objectIds.current.set(object, id)
 
+    applyHelpers(object)
+    setSelectedItems([id])
+
     rebuildBlocklyUI()
+    setTreeVersion((v) => v + 1)
     setObjectVersion((v) => v + 1)
     return object
   }
@@ -109,18 +111,6 @@ export function useObjectActions() {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
     parent.remove(object)
-
-    /** If it's the current object, set another one as current */
-    if (object === currentObject) {
-      if (parent.children.length > 0) {
-        const child = [...parent.children]
-          .reverse()
-          .find((c) => !isInternalObject(c))
-        setCurrentObject(child || null)
-      } else {
-        setCurrentObject(parent)
-      }
-    }
 
     if (object instanceof Camera) {
       /** If it's the active camera, set another one active instead */
@@ -142,10 +132,37 @@ export function useObjectActions() {
 
     /** Remove it from the registry */
     const id = objectIds.current.get(object)
-    if (!id) throw new RegistryError(object)
-    objects.current.delete(id)
+    if (id) {
+      objects.current.delete(id)
+      objectIds.current.delete(object)
+
+      /** If it's the selection, remove it */
+      if (selectedItems.includes(id)) {
+        const newSelection = selectedItems.filter((item) => item !== id)
+        setSelectedItems(newSelection)
+
+        /** If it was the last in the selection, find a new one to select  */
+        if (!newSelection) {
+          if (parent.children.length > 0) {
+            const child = [...parent.children]
+              .reverse()
+              .find((c) => !isInternalObject(c))
+            if (child) {
+              const childId = objectIds.current.get(child)
+              if (childId) setSelectedItems([childId])
+            }
+          } else {
+            const parentId = objectIds.current.get(parent)
+            if (parentId) setSelectedItems([parentId])
+          }
+        }
+      }
+    } else if (!isInternalObject(object)) {
+      throw new RegistryError(object)
+    }
 
     rebuildBlocklyUI()
+    setTreeVersion((v) => v + 1)
     setObjectVersion((v) => v + 1)
   }
 
@@ -161,12 +178,16 @@ export function useObjectActions() {
     clone.position.x += 2
 
     parent.add(clone)
-    setCurrentObject(clone)
 
     /** Add it to the registry */
-    objects.current.set((nextId++).toString(), clone)
+    const id = (nextId++).toString()
+    objects.current.set(id, object)
+    objectIds.current.set(object, id)
+
+    setSelectedItems([id])
 
     rebuildBlocklyUI()
+    setTreeVersion((v) => v + 1)
     setObjectVersion((v) => v + 1)
   }
 
@@ -189,7 +210,7 @@ export function useObjectActions() {
     /**
      * @todo multiselect all children which were previously in the group
      */
-    setCurrentObject(null)
+    setSelectedItems([])
   }
 
   function copyObjects(objects: Object3D[]) {

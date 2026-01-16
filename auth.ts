@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {},
         password: {}
       },
-      authorize: async (credentials) => {
+      authorize: async credentials => {
         const parsedCredentials = credentialsSchema.safeParse(credentials)
         if (!parsedCredentials.success) {
           throw new InvalidCredentialsError()

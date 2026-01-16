@@ -121,19 +121,19 @@ const geometryFactory: Record<
   SGeometry['type'],
   (args: number[]) => BufferGeometry
 > = {
-  BoxGeometry: (a) => new BoxGeometry(...a),
-  SphereGeometry: (a) => new SphereGeometry(...a),
-  PlaneGeometry: (a) => new PlaneGeometry(...a),
-  CircleGeometry: (a) => new CircleGeometry(...a),
-  CylinderGeometry: (a) => new CylinderGeometry(...a),
-  ConeGeometry: (a) => new ConeGeometry(...a),
-  RingGeometry: (a) => new RingGeometry(...a),
-  DodecahedronGeometry: (a) => new DodecahedronGeometry(...a),
-  OctahedronGeometry: (a) => new OctahedronGeometry(...a),
-  IcosahedronGeometry: (a) => new IcosahedronGeometry(...a),
-  TetrahedronGeometry: (a) => new TetrahedronGeometry(...a),
-  TorusGeometry: (a) => new TorusGeometry(...a),
-  TorusKnotGeometry: (a) => new TorusKnotGeometry(...a)
+  BoxGeometry: a => new BoxGeometry(...a),
+  SphereGeometry: a => new SphereGeometry(...a),
+  PlaneGeometry: a => new PlaneGeometry(...a),
+  CircleGeometry: a => new CircleGeometry(...a),
+  CylinderGeometry: a => new CylinderGeometry(...a),
+  ConeGeometry: a => new ConeGeometry(...a),
+  RingGeometry: a => new RingGeometry(...a),
+  DodecahedronGeometry: a => new DodecahedronGeometry(...a),
+  OctahedronGeometry: a => new OctahedronGeometry(...a),
+  IcosahedronGeometry: a => new IcosahedronGeometry(...a),
+  TetrahedronGeometry: a => new TetrahedronGeometry(...a),
+  TorusGeometry: a => new TorusGeometry(...a),
+  TorusKnotGeometry: a => new TorusKnotGeometry(...a)
 }
 
 function createGeometry(geometry: SGeometry): BufferGeometry {
@@ -164,7 +164,7 @@ export function serializeObject(object: Object3D): SObject3D {
   /** Common Props */
   const { name, position, rotation, scale } = object
   const children = object.children
-    .filter((child) => !isInternalObject(child))
+    .filter(child => !isInternalObject(child))
     .map(serializeObject) as readonly SObject3D[]
 
   const base: SBase = {

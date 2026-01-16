@@ -29,14 +29,19 @@ interface EditorContextType {
   controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
 
+  // UI VERSIONS
+  objectVersion: number
+  treeVersion: number
+  setObjectVersion: StateFunc<number>
+  setTreeVersion: StateFunc<number>
+
   // UI STATE
   notifications: NotificationItemProps[]
   camera: Camera | null
   workspace: WorkspaceSvg | null
-  currentObject: Object3D | null
+  selectedItems: string[]
   currentTool: TransformControlsMode
   isRunning: boolean
-  objectVersion: number
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
@@ -47,9 +52,8 @@ interface EditorContextType {
   setContextMenu: StateFunc<ContextMenuProps | null>
   setCamera: StateFunc<Camera | null>
   setShouldLoad: StateFunc<boolean>
-  setObjectVersion: StateFunc<number>
   setWorkspace: StateFunc<WorkspaceSvg | null>
-  setCurrentObject: StateFunc<Object3D | null>
+  setSelectedItems: StateFunc<string[]>
   setCurrentTool: StateFunc<TransformControlsMode>
   setIsRunning: StateFunc<boolean>
 }
@@ -79,13 +83,14 @@ export function EditorProvider({
     shouldStep: false
   })
 
+  const [objectVersion, setObjectVersion] = useState(0)
+  const [treeVersion, setTreeVersion] = useState(0)
+
   const [camera, setCamera] = useState<Camera | null>(null)
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
-  const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
   const [currentTool, setCurrentTool] =
     useState<TransformControlsMode>('translate')
   const [isRunning, setIsRunning] = useState<boolean>(false)
-  const [objectVersion, setObjectVersion] = useState(0)
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
@@ -93,6 +98,7 @@ export function EditorProvider({
   const [notifications, setNotifications] = useState<NotificationItemProps[]>(
     []
   )
+  const [selectedItems, setSelectedItems] = useState<string[]>([])
 
   return (
     <EditorContext.Provider
@@ -108,13 +114,17 @@ export function EditorProvider({
         runState,
         controls,
 
+        objectVersion,
+        treeVersion,
+        setObjectVersion,
+        setTreeVersion,
+
         notifications,
         camera,
         workspace,
-        currentObject,
+        selectedItems,
         currentTool,
         isRunning,
-        objectVersion,
         shouldLoad,
         contextMenu,
         dvApi,
@@ -125,9 +135,8 @@ export function EditorProvider({
         setContextMenu,
         setCamera,
         setShouldLoad,
-        setObjectVersion,
         setWorkspace,
-        setCurrentObject,
+        setSelectedItems,
         setCurrentTool,
         setIsRunning
       }}

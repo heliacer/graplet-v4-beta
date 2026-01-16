@@ -34,7 +34,7 @@ export function createAddItemsMenu(
   addObject: (props: SObject3D, target?: Object3D) => Object3D,
   target?: Object3D
 ) {
-  const meshChildren: DropdownItemProps[] = geometries.map((geo) => ({
+  const meshChildren: DropdownItemProps[] = geometries.map(geo => ({
     label: geo.slice(0, -8),
     onClick: () =>
       addObject(
@@ -48,7 +48,7 @@ export function createAddItemsMenu(
       )
   }))
 
-  const lightChildren: DropdownItemProps[] = lights.map((light) => ({
+  const lightChildren: DropdownItemProps[] = lights.map(light => ({
     label: light,
     onClick: () =>
       addObject(
@@ -60,7 +60,7 @@ export function createAddItemsMenu(
       )
   }))
 
-  const cameraChildren: DropdownItemProps[] = cameras.map((camera) => ({
+  const cameraChildren: DropdownItemProps[] = cameras.map(camera => ({
     label: camera,
     onClick: () =>
       addObject(

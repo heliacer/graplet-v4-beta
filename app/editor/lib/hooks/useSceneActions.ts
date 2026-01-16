@@ -7,7 +7,7 @@ import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
 
 export function useSceneActions() {
-  const { scene, workspace, setCurrentObject, orbitMap, controls } = useEditor()
+  const { scene, workspace, orbitMap, controls, setSelectedItems } = useEditor()
   const { addObject, removeObject } = useObjectActions()
 
   /**
@@ -54,7 +54,7 @@ export function useSceneActions() {
       if (project.scene) {
         const { children } = project.scene
         applyProps(scene.current, project.scene)
-        children?.forEach((child) => addObject(child))
+        children?.forEach(child => addObject(child))
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
 
         if (!workspace) throw Error('Missing workspace.')
@@ -75,7 +75,7 @@ export function useSceneActions() {
       const child = scene.current.children[i]
       removeObject(child)
     }
-    setCurrentObject(null)
+    setSelectedItems([])
     blocklyUI.objectMenu = []
     orbitMap.current.clear()
     controls.current?.dispose()

@@ -43,7 +43,7 @@ export function ObjectSnap() {
                 ? controls.current.translationSnap
                 : 0.5
         }
-        onChange={(newVal) => {
+        onChange={newVal => {
           if (currentTool === 'rotate') {
             controls.current?.setRotationSnap((newVal / 180) * Math.PI)
           } else if (currentTool === 'scale') {

@@ -6,6 +6,13 @@ class ObjectError extends Error {
   }
 }
 
+export class NotFoundError extends Error {
+  constructor(objectId?: string) {
+    super(`Object ${objectId} was not found in the registry`)
+    this.name = 'NotFoundError'
+  }
+}
+
 /**
  * The given Object3D does not have a parent Object3D
  */
@@ -21,7 +28,7 @@ export class ParentError extends ObjectError {
  */
 export class RegistryError extends ObjectError {
   constructor(object: Object3D) {
-    super(object, 'was not found in the registry')
+    super(object, 'was not registered in the registry')
     this.name = 'RegistryError'
   }
 }

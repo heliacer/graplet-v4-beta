@@ -2,19 +2,21 @@ import { useEffect } from 'react'
 import { useEditor } from '../EditorContext'
 import { TransformControls } from 'three/examples/jsm/Addons.js'
 import { isInternalObject } from '../utils/three'
+import { useCurrentObject } from './useCurrentObject'
 
 export function useTransformControls() {
   const {
     scene,
     canvas,
-    currentObject,
     camera,
     orbitMap,
     currentTool,
     controls,
     setObjectVersion
   } = useEditor()
-
+  const object = useCurrentObject()
+  
+  
   useEffect(() => {
     if (!camera || !canvas.current) return
 
@@ -30,18 +32,18 @@ export function useTransformControls() {
       helper.name = 'TransformHelper'
       scene.current.add(helper)
 
-      controls.current.addEventListener('dragging-changed', (e) => {
+      controls.current.addEventListener('dragging-changed', e => {
         const orbit = orbitMap.current.get(camera.id)
         if (orbit) orbit.enabled = !e.value
       })
 
       controls.current.addEventListener('change', () =>
-        setObjectVersion((v) => v + 1)
+        setObjectVersion(v => v + 1)
       )
     }
 
-    if (currentObject && !isInternalObject(currentObject)) {
-      controls.current.attach(currentObject)
+    if (object && !isInternalObject(object)) {
+      controls.current.attach(object)
       controls.current.setMode(currentTool)
     } else {
       controls.current.detach()
@@ -51,13 +53,13 @@ export function useTransformControls() {
       controls.current?.detach()
     }
   }, [
-    currentObject,
+    object,
     camera,
     controls,
     canvas,
     currentTool,
     orbitMap,
     scene,
-    setObjectVersion
+    setObjectVersion,
   ])
 }

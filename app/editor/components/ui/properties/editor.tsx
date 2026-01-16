@@ -9,7 +9,7 @@ export function EditorPane() {
       <CheckBoxProperty
         label='Local Transforms'
         checked={controls.current?.space === 'local'}
-        action={(checked) => {
+        action={checked => {
           if (checked) {
             controls.current?.setSpace('local')
           } else {

@@ -83,10 +83,10 @@ function ItemViewContent({ item, object }: ItemViewContentProps) {
           item.isSelected() || !object.visible ? 'block' : 'hidden',
           'cursor-pointer'
         )}
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation()
           object.visible = !object.visible
-          setObjectVersion((v) => v + 1)
+          setObjectVersion(v => v + 1)
         }}
       >
         {object.visible ? <Eye size={12} /> : <EyeClosed size={12} />}
@@ -145,7 +145,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         onDoubleClick={() =>
           item.isExpanded() ? item.collapse() : item.expand()
         }
-        onContextMenu={(e) => {
+        onContextMenu={e => {
           e.preventDefault()
           e.stopPropagation()
           if (isInternalObject(object)) return

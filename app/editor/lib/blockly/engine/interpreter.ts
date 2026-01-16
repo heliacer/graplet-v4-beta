@@ -157,7 +157,7 @@ export async function checkPoint(
       break
     }
 
-    await new Promise((res) => requestAnimationFrame(res))
+    await new Promise(res => requestAnimationFrame(res))
   }
 
   return true
