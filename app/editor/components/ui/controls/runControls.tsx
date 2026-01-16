@@ -10,7 +10,7 @@ export function RunControls() {
     runState,
     workspace,
     isRunning,
-    scene,
+    objects,
     funcEnv,
     varEnv,
     setIsRunning,
@@ -31,7 +31,7 @@ export function RunControls() {
     await execute(
       expr,
       {
-        scene: scene.current,
+        objects: objects.current,
         variables: varEnv.current,
         functions: funcEnv.current,
         runState: runState

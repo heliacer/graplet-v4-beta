@@ -15,22 +15,7 @@ import {
   Sun,
   Wrench
 } from 'lucide-react'
-
-export type IconT =
-  | 'Puzzle'
-  | 'Airplay'
-  | 'PenTool'
-  | 'Folder'
-  | 'Wrench'
-  | 'Box'
-  | 'Component'
-  | 'Sun'
-  | 'Lightbulb'
-  | 'Camera'
-  | 'SquareSquare'
-  | 'Settings2'
-  | 'Keyboard'
-  | 'FileText'
+import { IconT } from '../types'
 
 const ItemIcons: Record<IconT, LucideIcon> = {
   Puzzle,

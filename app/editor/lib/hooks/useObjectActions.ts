@@ -8,7 +8,7 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
-import { ParentError, SObject3D } from '../types'
+import { ParentError, RegistryError, SObject3D } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { isInternalObject, moveObject } from '../utils/three'
@@ -19,6 +19,7 @@ export function useObjectActions() {
   const {
     scene,
     objects,
+    objectIds,
     currentObject,
     workspace,
     camera,
@@ -89,7 +90,9 @@ export function useObjectActions() {
     setCurrentObject(object)
 
     /** Add it to the registry */
-    objects.current.set((nextId++).toString(), object)
+    const id = (nextId++).toString()
+    objects.current.set(id, object)
+    objectIds.current.set(object, id)
 
     rebuildBlocklyUI()
     setObjectVersion((v) => v + 1)
@@ -138,14 +141,8 @@ export function useObjectActions() {
     }
 
     /** Remove it from the registry */
-    const entry = Array.from(objects.current.entries()).find(
-      ([, obj]) => obj === object
-    )
-    if (!entry)
-      throw Error(
-        `${object.name || 'unnamed'} (${object.type}) was not found in the registry.`
-      )
-    const [id] = entry
+    const id = objectIds.current.get(object)
+    if (!id) throw new RegistryError(object)
     objects.current.delete(id)
 
     rebuildBlocklyUI()

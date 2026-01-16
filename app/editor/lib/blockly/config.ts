@@ -14,7 +14,7 @@ import {
   ContinuousToolbox,
   RecyclableBlockFlyoutInflater
 } from '@blockly/continuous-toolbox'
-import { definitions } from './blocks'
+import './blocks/'
 import {
   isDivisibleMutatorMixin,
   isDivisibleMutatorExtension
@@ -49,15 +49,14 @@ export function initializeBlockly() {
   unregisterProcedureBlocks()
   /**
    * @todo For now built in, but later use custom function blocks.
-   * 
+   *
    * Includes:
    * -> custom mutator: block editor mechanism, with custom model, etc.
    * -> draggable param blocks, similar to MIT's Scratch 3.
-   * 
+   *
    * (part of local param migration)
    */
   common.defineBlocks(blocks)
-  common.defineBlocks(definitions)
 
   blockRendering.register('graplet', GrapletRenderer)
   VerticalFlyout.prototype.getFlyoutScale = function () {

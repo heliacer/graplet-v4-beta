@@ -1,13 +1,4 @@
-import { ItemInstance } from '@headless-tree/core'
-import { Object3D } from 'three'
-import { IconT } from './utils/icons'
-
 type Vec3 = readonly [number, number, number]
-
-export interface ProjectData {
-  workspace: Record<string, unknown>
-  scene: SScene
-}
 
 /**
  * Serialized Object3D
@@ -107,42 +98,3 @@ export interface SMaterial {
   type: 'MeshBasicMaterial' | 'MeshStandardMaterial' | 'MeshToonMaterial'
   color?: string
 }
-
-/**
- * Context Menu Props
- * @todo Allow multiple items to be manipulated
- */
-export interface ContextMenuProps {
-  item?: ItemInstance<TreeItem>
-  x: number
-  y: number
-}
-
-/**
- * TreeItem: Representation of an Object in the Explorer Panel
- */
-export interface TreeItem {
-  id: number
-  name: string
-  type: IconT
-  hasChildren: boolean
-}
-
-/**
- * The given Object3D does not have a parent Object3D
- */
-export class ParentError extends Error {
-  constructor(object: Object3D) {
-    super(`${object.name || 'unnamed'} (${object.type}) does not have a parent`)
-    this.name = 'ParentError'
-  }
-}
-
-/** @todo might add more stuff */
-export interface NotificationItemProps {
-  title: string
-  content?: string
-  iconType?: IconT
-}
-
-export type StateFunc<T> = React.Dispatch<React.SetStateAction<T>>

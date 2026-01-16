@@ -487,6 +487,21 @@ export const toolbox = {
       name: 'Functions',
       custom: 'PROCEDURE',
       categorystyle: 'procedure_category'
+    },
+    {
+      kind: 'category',
+      name: 'Functions',
+      categorystyle: 'functions_category',
+      contents: [
+        {
+          kind: 'block',
+          type: 'function_def'
+        },
+        {
+          kind: 'block',
+          type: 'function_return'
+        }
+      ]
     }
   ]
 }

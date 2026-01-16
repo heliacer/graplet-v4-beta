@@ -11,11 +11,12 @@ import { useTree } from '@headless-tree/react'
 import { useEffect, useState } from 'react'
 import { TreeItemView } from '../ui/TreeItemView'
 import { moveObject, isInternalObject } from '../../lib/utils/three'
-import { TreeItem } from '../../lib/types'
+import { RegistryError, TreeItem } from '../../lib/types'
 
 export default function ExplorerPanel() {
   const {
-    scene,
+    objects,
+    objectIds,
     setObjectVersion,
     currentObject,
     setCurrentObject,
@@ -32,22 +33,22 @@ export default function ExplorerPanel() {
        * @summary Sets multiselect items state, while in the current context state only one object can be selected.
        * @todo This is good for now, but once multiple 3D Objects can be selected (maybe temporary group) then it should share the same state.
        */
+
       const items = value as string[]
-      const object = scene.current.getObjectById(Number(items[0]))
+      const object = objects.current.get(items[0])
       setCurrentObject(object || null)
       setSelectedItems(items)
     },
-    rootItemId: scene.current.id.toString(),
+    rootItemId: 'scene',
     getItemName: (item) => item.getItemData()?.name ?? 'Unnamed',
     isItemFolder: (item) => item.getItemData().type === 'Component',
     canRename: (item) => {
-      const object = scene.current.getObjectById(item.getItemData().id)
+      const object = objects.current.get(item.getId())
       if (!object) return false
       return !isInternalObject(object)
     },
     onRename: (item, value) => {
-      const id = item.getItemData().id
-      const object = scene.current.getObjectById(id)
+      const object = objects.current.get(item.getId())
       if (object) object.name = value
       setObjectVersion((v) => v + 1)
     },
@@ -59,35 +60,36 @@ export default function ExplorerPanel() {
     onDrop: (items, target) => {
       console.log(items, target)
       for (const item of items) {
-        const object = scene.current.getObjectById(item.getItemData().id)
+        const object = objects.current.get(item.getId())
         if (!object) throw Error('Object from item does not exist')
-        const targetObj = scene.current.getObjectById(
-          target.item.getItemData().id
-        )
-        if (!targetObj) throw Error('Object from target item does not exist')
+        const targetObj = objects.current.get(target.item.getId())
+        if (!targetObj)
+          throw Error('Object from target Treeitem id does not exist')
         moveObject(object, targetObj)
         setObjectVersion((v) => v + 1)
       }
     },
     canReorder: true,
     dataLoader: {
-      getItem: (itemId) => {
-        const object = scene.current.getObjectById(Number(itemId))
-        if (!object)
-          return { id: 0, name: '', type: 'Component', hasChildren: false }
+      getItem: (itemId): TreeItem => {
+        const object = objects.current.get(itemId)
+        if (!object) return { name: '', type: 'Component', hasChildren: false }
+
         return {
-          id: object.id,
           name: object.name || 'unnamed',
           type: getIconT(object.type),
           hasChildren: object.children.length > 0
         }
       },
       getChildren: (itemId) => {
-        const object = scene.current.getObjectById(Number(itemId))
+        if (itemId === 'scene') return Array.from(objects.current.keys())
+        const object = objects.current.get(itemId)
         if (!object) return []
-        return object.children
-          .filter((obj) => !isInternalObject(obj))
-          .map((obj) => String(obj.id))
+        return object.children.map((object) => {
+          const id = objectIds.current.get(object)
+          if (!id) throw new RegistryError(object)
+          return id
+        })
       }
     },
     features: [

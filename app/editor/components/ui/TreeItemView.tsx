@@ -101,11 +101,10 @@ interface ItemViewProps {
 }
 
 export function TreeItemView({ tree, item }: ItemViewProps) {
-  const { scene, setContextMenu } = useEditor()
+  const { objects, setContextMenu } = useEditor()
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
-  const objectId = item.getItemData().id
-  const object = scene.current.getObjectById(objectId)
+  const object = objects.current.get(item.getId())
   if (!object) return
 
   if (item.isRenaming()) return <RenamingItemView item={item} />

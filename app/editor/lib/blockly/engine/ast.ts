@@ -1,13 +1,14 @@
-import { Scene } from 'three'
+import { Object3D } from 'three'
 
 export type VarEnv = Map<string, Value> // all variables are global
 export type FuncEnv = Map<string, Expression>
 export type StackEnv = Map<string, Value>[] // only for function calls
 
 export interface ProgramState {
-  scene: Scene
+  objects: Map<string, Object3D>
   variables: VarEnv
   functions: FuncEnv
+  /** @todo Add functions stack */
   stack?: StackEnv
   runState: React.RefObject<RunState>
 }

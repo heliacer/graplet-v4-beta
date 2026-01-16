@@ -25,7 +25,7 @@ import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
  * relocating on edge also not working yet, wip
  */
 export function ContextMenu() {
-  const { contextMenu, setContextMenu, scene } = useEditor()
+  const { contextMenu, setContextMenu, scene, objects } = useEditor()
   const [activePath, setActivePath] = useState<number[]>([])
   const {
     removeObject,
@@ -42,13 +42,11 @@ export function ContextMenu() {
   })
 
   if (!contextMenu) return
-
-  const treeItem = contextMenu.item
+  const { item } = contextMenu
   const menuItems: DropdownItemProps[] = []
 
-  if (treeItem) {
-    const objectId = treeItem.getItemData().id
-    const object = scene.current.getObjectById(objectId)
+  if (item) {
+    const object = objects.current.get(item.getId())
     if (!object) return
     const isGroup = object.type === 'Group'
 

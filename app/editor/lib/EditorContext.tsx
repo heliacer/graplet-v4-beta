@@ -23,6 +23,7 @@ interface EditorContextType {
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
   objects: RefObject<Map<string, Object3D>>
+  objectIds: RefObject<WeakMap<Object3D, string>>
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement>
   controls: RefObject<TransformControls | null>
@@ -66,6 +67,7 @@ export function EditorProvider({
   const funcEnv = useRef<FuncEnv>(new Map())
   const scene = useRef(new Scene())
   const objects = useRef(new Map())
+  const objectIds = useRef<WeakMap<Object3D, string>>(new WeakMap())
   const modelScene = useRef(new Scene())
   const canvas = useRef<HTMLCanvasElement>(null!)
   const controls = useRef<TransformControls | null>(null)
@@ -99,6 +101,7 @@ export function EditorProvider({
         varEnv,
         scene,
         objects,
+        objectIds,
         orbitMap,
         canvas,
         modelScene,

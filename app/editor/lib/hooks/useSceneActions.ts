@@ -16,6 +16,17 @@ export function useSceneActions() {
   function loadDefaultScene() {
     clearScene()
     addObject({
+      type: 'Mesh',
+      name: 'Box',
+      geometry: {
+        type: 'BoxGeometry',
+        args: [1, 1, 1]
+      },
+      material: {
+        type: 'MeshStandardMaterial'
+      }
+    })
+    addObject({
       type: 'PerspectiveCamera',
       name: 'Main Camera',
       position: [0, 8, 14],
@@ -32,17 +43,6 @@ export function useSceneActions() {
       type: 'DirectionalLight',
       position: [0, 5, 0],
       intensity: 2
-    })
-    addObject({
-      type: 'Mesh',
-      name: 'Box',
-      geometry: {
-        type: 'BoxGeometry',
-        args: [1, 1, 1]
-      },
-      material: {
-        type: 'MeshStandardMaterial'
-      }
     })
   }
 
