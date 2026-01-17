@@ -1,50 +1,17 @@
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
-import { useState } from 'react'
 import { useEditor } from '../../../lib/EditorContext'
-import { exprGenerator } from '../../../lib/blockly/engine/generator'
-import { execute } from '../../../lib/utils/blockly'
 import clsx from 'clsx'
+import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'
+import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator'
 
 export function RunControls() {
-  const {
-    runState,
-    workspace,
-    isRunning,
-    objects,
-    funcEnv,
-    varEnv,
-    setIsRunning,
-    setObjectVersion
-  } = useEditor()
-  const [isPaused, setIsPaused] = useState<boolean>(false)
-
-  function togglePaused() {
-    setIsPaused(prev => {
-      runState.current.shouldPause = !prev
-      return !prev
-    })
-  }
+  const { runState, isRunning, isPaused, workspace } = useEditor()
+  const { execute, stop, pauseOrResume } = useRuntime()
 
   async function handleRun() {
-    if (!workspace) return
-    const expr = exprGenerator.workspaceToExpression(workspace)
-    await execute(
-      expr,
-      {
-        objects: objects.current,
-        variables: varEnv.current,
-        functions: funcEnv.current,
-        runState: runState
-      },
-      setIsRunning
-    )
-    setObjectVersion(v => v + 1)
-  }
-
-  function handleStop() {
-    runState.current.shouldStop = true
-    setObjectVersion(v => v + 1)
-    setIsPaused(false)
+    if (!workspace) throw Error('Missing workspace')
+    const expression = exprGenerator.workspaceToExpression(workspace)
+    await execute(expression)
   }
 
   return (
@@ -62,7 +29,7 @@ export function RunControls() {
           <Flag size={16} />
         </button>
         <button
-          onClick={togglePaused}
+          onClick={pauseOrResume}
           title={isPaused ? 'resume' : 'pause'}
           className={clsx(
             'p-1 rounded',
@@ -77,7 +44,7 @@ export function RunControls() {
           {isPaused ? <Play size={16} /> : <Pause size={16} />}
         </button>
         <button
-          onClick={handleStop}
+          onClick={stop}
           title='stop'
           className={clsx(
             'p-1 rounded',

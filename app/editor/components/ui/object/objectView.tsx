@@ -89,9 +89,7 @@ export function ObjectView() {
         lightHelpers.get(object.id) ??
         scene.current
           .getObjectsByProperty('type', 'DirectionalLightHelper')
-          .some(
-            helper => (helper as DirectionalLightHelper).light === object
-          ),
+          .some(helper => (helper as DirectionalLightHelper).light === object),
       onClick: () =>
         toggleHelper(
           'DirectionalLightHelper',

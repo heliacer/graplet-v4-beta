@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { useEditor } from '../EditorContext'
 import { TransformControls } from 'three/examples/jsm/Addons.js'
-import { isInternalObject } from '../utils/three'
+import { isInternalObject, isTransformControlsMode } from '../utils/three'
 import { useCurrentObject } from './useCurrentObject'
+import { useObjectActions } from './useObjectActions'
 
 export function useTransformControls() {
   const {
@@ -11,38 +12,42 @@ export function useTransformControls() {
     camera,
     orbitMap,
     currentTool,
+    isRunning,
     controls,
     setObjectVersion
   } = useEditor()
   const object = useCurrentObject()
-  
-  
+  const { bump } = useObjectActions()
+
   useEffect(() => {
     if (!camera || !canvas.current) return
 
     /** init transformcontrols */
     if (!controls.current) {
-      controls.current = new TransformControls(camera, canvas.current)
+      const cs = new TransformControls(camera, canvas.current)
+      cs.setTranslationSnap(0.5)
+      cs.setRotationSnap((45 * Math.PI) / 180)
+      cs.setScaleSnap(1)
 
-      controls.current.setTranslationSnap(0.5)
-      controls.current.setRotationSnap((45 * Math.PI) / 180)
-      controls.current.setScaleSnap(1)
-
-      const helper = controls.current.getHelper()
+      const helper = cs.getHelper()
       helper.name = 'TransformHelper'
       scene.current.add(helper)
 
-      controls.current.addEventListener('dragging-changed', e => {
+      cs.addEventListener('dragging-changed', e => {
         const orbit = orbitMap.current.get(camera.id)
         if (orbit) orbit.enabled = !e.value
       })
+      cs.addEventListener('change', bump)
 
-      controls.current.addEventListener('change', () =>
-        setObjectVersion(v => v + 1)
-      )
+      controls.current = cs
     }
 
-    if (object && !isInternalObject(object)) {
+    if (
+      object &&
+      !isInternalObject(object) &&
+      !isRunning &&
+      isTransformControlsMode(currentTool)
+    ) {
       controls.current.attach(object)
       controls.current.setMode(currentTool)
     } else {
@@ -59,7 +64,9 @@ export function useTransformControls() {
     canvas,
     currentTool,
     orbitMap,
+    isRunning,
     scene,
     setObjectVersion,
+    bump
   ])
 }

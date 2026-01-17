@@ -4,8 +4,9 @@ import { useEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
 // import { variableCategory } from '../blockly/categories/variables'
 // import { procedureCategory } from '../blockly/categories/procedures'
-import { execute, resize } from '../utils/blockly'
+import { resize } from '../utils/blockly'
 import { exprGenerator } from '../blockly/engine/generator'
+import { useRuntime } from './useRuntime'
 
 export function useBlocklyWorkspace(
   containerRef: React.RefObject<HTMLDivElement>
@@ -13,6 +14,8 @@ export function useBlocklyWorkspace(
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
   const { setWorkspace, objects, varEnv, funcEnv, runState, setIsRunning } =
     useEditor()
+  const { execute } = useRuntime()
+
   useEffect(() => {
     if (!containerRef.current || workspaceRef.current) return
 
@@ -51,16 +54,7 @@ export function useBlocklyWorkspace(
           const block = event.getEventWorkspace_().getBlockById(event.blockId)
           if (block) {
             const expression = exprGenerator.blockToExpression(block)
-            await execute(
-              expression,
-              {
-                objects: objects.current,
-                variables: varEnv.current,
-                functions: funcEnv.current,
-                runState: runState
-              },
-              setIsRunning
-            )
+            await execute(expression)
           }
         }
       }
@@ -85,6 +79,7 @@ export function useBlocklyWorkspace(
     containerRef,
     setWorkspace,
     setIsRunning,
+    execute,
     funcEnv,
     runState,
     objects,

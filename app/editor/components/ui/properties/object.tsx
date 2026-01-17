@@ -3,6 +3,7 @@ import {
   DirectionalLight,
   Group,
   Mesh,
+  MOUSE,
   Object3D,
   OrthographicCamera,
   PerspectiveCamera
@@ -17,6 +18,7 @@ import {
 import { Crosshair, SwitchCamera } from 'lucide-react'
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
   return (
@@ -37,7 +39,8 @@ function BaseObjectProps({ object }: { object: Object3D }) {
 }
 
 export function ObjectPane({ object }: { object: Object3D }) {
-  const { canvas, setCamera, orbitMap, setObjectVersion } = useEditor()
+  const { canvas, setCamera, orbitMap } = useEditor()
+  const { bump } = useObjectActions()
 
   if (object instanceof Group) {
     return <BaseObjectProps object={object} />
@@ -53,6 +56,29 @@ export function ObjectPane({ object }: { object: Object3D }) {
   }
   if (object instanceof PerspectiveCamera) {
     const orbit = orbitMap.current.get(object.id)
+
+    /**
+     * @todo This is shit, needs to be somewhere else
+     */
+    const orbitAction = (checked: boolean) => {
+      if (checked) {
+        if (orbit)
+          throw Error(`There already exists an OrbitControls for ${object.id}`)
+        const controls = new OrbitControls(object, canvas.current)
+        controls.mouseButtons = {
+          MIDDLE: MOUSE.PAN,
+          RIGHT: MOUSE.ROTATE
+        }
+        orbitMap.current.set(object.id, controls)
+      } else {
+        if (!orbit)
+          throw Error(`There's no OrbitControls for object ${object.id}`)
+        orbitMap.current.delete(object.id)
+        orbit.disconnect()
+        orbit.dispose()
+      }
+      bump()
+    }
 
     return (
       <>
@@ -74,25 +100,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
         <CheckBoxProperty
           label='Enable OrbitControls'
           checked={!!orbitMap.current.get(object.id)}
-          action={checked => {
-            if (checked) {
-              if (orbit)
-                throw Error(
-                  `There already exists an OrbitControls for ${object.id}`
-                )
-              orbitMap.current.set(
-                object.id,
-                new OrbitControls(object, canvas.current)
-              )
-            } else {
-              if (!orbit)
-                throw Error(`There's no OrbitControls for object ${object.id}`)
-              orbit.disconnect()
-              orbit.dispose()
-              orbitMap.current.delete(object.id)
-            }
-            setObjectVersion(v => v + 1)
-          }}
+          action={orbitAction}
         />
       </>
     )

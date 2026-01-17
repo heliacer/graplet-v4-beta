@@ -56,7 +56,7 @@ function PaneButton({
 
 export default function PropertiesPanel() {
   const [activePane, setActivePane] = useState<Pane>('object')
-  
+
   const object = useCurrentObject()
   if (!object) return
 

@@ -13,7 +13,12 @@ import {
   TransformControls,
   TransformControlsMode
 } from 'three/examples/jsm/Addons.js'
-import { ContextMenuProps, NotificationItemProps, StateFunc } from './types'
+import {
+  ContextMenuProps,
+  NotificationItemProps,
+  StateFunc,
+  ToolItem
+} from './types'
 import { DockviewApi } from 'dockview-react'
 
 interface EditorContextType {
@@ -29,33 +34,31 @@ interface EditorContextType {
   controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
 
-  // UI VERSIONS
-  objectVersion: number
-  treeVersion: number
-  setObjectVersion: StateFunc<number>
-  setTreeVersion: StateFunc<number>
-
   // UI STATE
   notifications: NotificationItemProps[]
   camera: Camera | null
   workspace: WorkspaceSvg | null
   selectedItems: string[]
-  currentTool: TransformControlsMode
+  currentTool: TransformControlsMode | ToolItem
   isRunning: boolean
+  isPaused: boolean
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
+  objectVersion: number
   currentTheme: string
   setNotifications: StateFunc<NotificationItemProps[]>
   setCurrentTheme: StateFunc<string>
+  setObjectVersion: StateFunc<number>
   setDvApi: StateFunc<DockviewApi | null>
   setContextMenu: StateFunc<ContextMenuProps | null>
   setCamera: StateFunc<Camera | null>
   setShouldLoad: StateFunc<boolean>
   setWorkspace: StateFunc<WorkspaceSvg | null>
   setSelectedItems: StateFunc<string[]>
-  setCurrentTool: StateFunc<TransformControlsMode>
+  setCurrentTool: StateFunc<TransformControlsMode | ToolItem>
   setIsRunning: StateFunc<boolean>
+  setIsPaused: StateFunc<boolean>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -84,13 +87,14 @@ export function EditorProvider({
   })
 
   const [objectVersion, setObjectVersion] = useState(0)
-  const [treeVersion, setTreeVersion] = useState(0)
 
   const [camera, setCamera] = useState<Camera | null>(null)
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
-  const [currentTool, setCurrentTool] =
-    useState<TransformControlsMode>('translate')
+  const [currentTool, setCurrentTool] = useState<
+    TransformControlsMode | ToolItem
+  >('translate')
   const [isRunning, setIsRunning] = useState<boolean>(false)
+  const [isPaused, setIsPaused] = useState<boolean>(false)
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
@@ -114,22 +118,20 @@ export function EditorProvider({
         runState,
         controls,
 
-        objectVersion,
-        treeVersion,
-        setObjectVersion,
-        setTreeVersion,
-
         notifications,
         camera,
+        objectVersion,
         workspace,
         selectedItems,
         currentTool,
         isRunning,
+        isPaused,
         shouldLoad,
         contextMenu,
         dvApi,
         currentTheme,
         setNotifications,
+        setObjectVersion,
         setCurrentTheme,
         setDvApi,
         setContextMenu,
@@ -138,7 +140,8 @@ export function EditorProvider({
         setWorkspace,
         setSelectedItems,
         setCurrentTool,
-        setIsRunning
+        setIsRunning,
+        setIsPaused
       }}
     >
       {children}

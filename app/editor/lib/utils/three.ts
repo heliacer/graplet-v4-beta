@@ -7,6 +7,7 @@ import {
 import {
   TransformControls,
   TransformControlsGizmo,
+  TransformControlsMode,
   TransformControlsPlane
 } from 'three/examples/jsm/Addons.js'
 import { ParentError } from '../types'
@@ -51,4 +52,10 @@ export function moveObject(object: Object3D, target: Object3D) {
   if (!parent) throw new ParentError(object)
   parent.remove(object)
   target.add(object)
+}
+
+export function isTransformControlsMode(
+  value: string
+): value is TransformControlsMode {
+  return value === 'translate' || value === 'rotate' || value === 'scale'
 }

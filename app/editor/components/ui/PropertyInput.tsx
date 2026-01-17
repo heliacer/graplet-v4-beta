@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react'
-import { useEditor } from '../../lib/EditorContext'
 import { Object3D } from 'three'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
 
 interface BasePropertyProps {
   label: string
@@ -21,7 +21,7 @@ interface Vec3AnglePropertyProps extends BasePropertyProps {
 }
 
 export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
-  const { setObjectVersion } = useEditor()
+  const { bump } = useObjectActions()
 
   return (
     <div className='flex justify-between w-full'>
@@ -34,7 +34,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
               value={Number(object[property][axis])}
               onChange={newVal => {
                 object[property][axis] = newVal
-                setObjectVersion(v => v + 1)
+                bump()
               }}
               step={0.1}
             />
@@ -50,7 +50,7 @@ export function Vec3AngleProperty({
   object,
   property
 }: Vec3AnglePropertyProps) {
-  const { setObjectVersion } = useEditor()
+  const { bump } = useObjectActions()
 
   return (
     <div className='flex justify-between w-full'>
@@ -65,7 +65,7 @@ export function Vec3AngleProperty({
               decimals={0}
               onChange={newVal => {
                 object[property][axis] = (newVal * Math.PI) / 180
-                setObjectVersion(v => v + 1)
+                bump()
               }}
             />
             <span className='absolute right-1.5 top-0.5 text-xs select-none'>
@@ -79,7 +79,8 @@ export function Vec3AngleProperty({
 }
 
 export function TextProperty({ label, object, property }: TextPropertyProps) {
-  const { setObjectVersion } = useEditor()
+  const { bump } = useObjectActions()
+
   return (
     <div className='flex justify-between'>
       <p className='text-nowrap'>{label}</p>
@@ -91,12 +92,12 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
         defaultValue={object[property]}
         onBlur={e => {
           object[property] = e.target.value
-          setObjectVersion(v => v + 1)
+          bump()
         }}
         onKeyDown={e => {
           if (e.key === 'Enter') {
             object[property] = e.currentTarget.value
-            setObjectVersion(v => v + 1)
+            bump()
           }
         }}
       />

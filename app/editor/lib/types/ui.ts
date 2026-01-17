@@ -43,3 +43,5 @@ export interface NotificationItemProps {
   content?: string
   iconType?: IconT
 }
+
+export type ToolItem = 'move' | 'path'

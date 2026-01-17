@@ -12,17 +12,20 @@ import { useEffect } from 'react'
 import { TreeItemView } from '../ui/TreeItemView'
 import { moveObject, isInternalObject } from '../../lib/utils/three'
 import { NotFoundError, RegistryError, TreeItem } from '../../lib/types'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
 
 export default function ExplorerPanel() {
   const {
     objects,
     objectIds,
-    setObjectVersion,
-    treeVersion,
+    objectVersion,
     selectedItems,
     setSelectedItems,
     setContextMenu
   } = useEditor()
+
+  const { bump } = useObjectActions()
+
   const tree = useTree<TreeItem>({
     state: { selectedItems },
     setSelectedItems,
@@ -37,7 +40,7 @@ export default function ExplorerPanel() {
     onRename: (item, value) => {
       const object = objects.current.get(item.getId())
       if (object) object.name = value
-      setObjectVersion(v => v + 1)
+      bump()
     },
     /**
      * @todo Add reordering for improved UX, and save the item state to serialization
@@ -50,13 +53,13 @@ export default function ExplorerPanel() {
         const id = item.getId()
         const object = objects.current.get(id)
         if (!object) throw new NotFoundError(id)
-        
-        const targetId = target.item.getId() 
+
+        const targetId = target.item.getId()
         const targetObj = objects.current.get(targetId)
         if (!targetObj) throw new NotFoundError(targetId)
 
         moveObject(object, targetObj)
-        setObjectVersion(v => v + 1)
+        bump()
       }
     },
     canReorder: true,
@@ -91,7 +94,7 @@ export default function ExplorerPanel() {
     ]
   })
 
-  useEffect(() => tree.rebuildTree(), [treeVersion, tree])
+  useEffect(() => tree.rebuildTree(), [objectVersion, tree])
 
   return (
     <div

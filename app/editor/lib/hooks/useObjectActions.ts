@@ -4,6 +4,7 @@ import {
   CameraHelper,
   DirectionalLight,
   DirectionalLightHelper,
+  MOUSE,
   Object3D,
   PerspectiveCamera
 } from 'three'
@@ -26,7 +27,6 @@ export function useObjectActions() {
     camera,
     setCamera,
     setObjectVersion,
-    setTreeVersion,
     orbitMap,
     canvas
   } = useEditor()
@@ -51,6 +51,10 @@ export function useObjectActions() {
       if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
         setCamera(object)
         const controls = new OrbitControls(object, canvas.current)
+        controls.mouseButtons = {
+          MIDDLE: MOUSE.PAN,
+          RIGHT: MOUSE.ROTATE
+        }
         orbitMap.current.set(object.id, controls)
         helper.visible = false
       }
@@ -94,10 +98,7 @@ export function useObjectActions() {
 
     applyHelpers(object)
     setSelectedItems([id])
-
-    rebuildBlocklyUI()
-    setTreeVersion((v) => v + 1)
-    setObjectVersion((v) => v + 1)
+    bump()
     return object
   }
 
@@ -138,7 +139,7 @@ export function useObjectActions() {
 
       /** If it's the selection, remove it */
       if (selectedItems.includes(id)) {
-        const newSelection = selectedItems.filter((item) => item !== id)
+        const newSelection = selectedItems.filter(item => item !== id)
         setSelectedItems(newSelection)
 
         /** If it was the last in the selection, find a new one to select  */
@@ -146,7 +147,7 @@ export function useObjectActions() {
           if (parent.children.length > 0) {
             const child = [...parent.children]
               .reverse()
-              .find((c) => !isInternalObject(c))
+              .find(c => !isInternalObject(c))
             if (child) {
               const childId = objectIds.current.get(child)
               if (childId) setSelectedItems([childId])
@@ -161,9 +162,7 @@ export function useObjectActions() {
       throw new RegistryError(object)
     }
 
-    rebuildBlocklyUI()
-    setTreeVersion((v) => v + 1)
-    setObjectVersion((v) => v + 1)
+    bump()
   }
 
   /**
@@ -181,14 +180,11 @@ export function useObjectActions() {
 
     /** Add it to the registry */
     const id = (nextId++).toString()
-    objects.current.set(id, object)
-    objectIds.current.set(object, id)
+    objects.current.set(id, clone)
+    objectIds.current.set(clone, id)
 
     setSelectedItems([id])
-
-    rebuildBlocklyUI()
-    setTreeVersion((v) => v + 1)
-    setObjectVersion((v) => v + 1)
+    bump()
   }
 
   function groupObject(object: Object3D) {
@@ -225,7 +221,7 @@ export function useObjectActions() {
     const text = await navigator.clipboard.readText()
     try {
       const objects: SObject3D[] = JSON.parse(text)
-      objects.forEach((object) => addObject(object, target))
+      objects.forEach(object => addObject(object, target))
     } catch (error) {
       if (error instanceof SyntaxError) {
         console.warn('invalid paste just happened')
@@ -235,6 +231,14 @@ export function useObjectActions() {
     }
   }
 
+  /**
+   * Triggers ui re-renders
+   */
+  function bump() {
+    setObjectVersion(v => v + 1)
+    rebuildBlocklyUI()
+  }
+
   return {
     addObject,
     removeObject,
@@ -242,6 +246,7 @@ export function useObjectActions() {
     groupObject,
     unGroupObject,
     copyObjects,
-    pasteObjects
+    pasteObjects,
+    bump
   }
 }
