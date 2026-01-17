@@ -19,6 +19,7 @@ export default function ExplorerPanel() {
     objectIds,
     objectVersion,
     selectedItems,
+    scene,
     setSelectedItems,
     setContextMenu,
     setObjectVersion
@@ -49,11 +50,11 @@ export default function ExplorerPanel() {
       console.log(items, target)
       for (const item of items) {
         const id = item.getId()
-        const object = objects.current.get(id)
+        const object = id === 'scene' ? scene.current : objects.current.get(id)
         if (!object) throw new NotFoundError(id)
 
         const targetId = target.item.getId()
-        const targetObj = objects.current.get(targetId)
+        const targetObj = targetId === 'scene' ? scene.current : objects.current.get(targetId)
         if (!targetObj) throw new NotFoundError(targetId)
 
         moveObject(object, targetObj)
@@ -63,7 +64,7 @@ export default function ExplorerPanel() {
     canReorder: true,
     dataLoader: {
       getItem: (itemId): TreeItem => {
-        const object = objects.current.get(itemId)
+        const object = itemId === 'scene' ? scene.current : objects.current.get(itemId)
         if (!object) return { name: '', type: 'Component', hasChildren: false }
 
         return {
@@ -73,10 +74,9 @@ export default function ExplorerPanel() {
         }
       },
       getChildren: itemId => {
-        if (itemId === 'scene') return Array.from(objects.current.keys())
-        const object = objects.current.get(itemId)
+        const object = itemId === 'scene' ? scene.current : objects.current.get(itemId)
         if (!object) return []
-        return object.children.map(object => {
+        return object.children.filter(object => !isInternalObject(object)).map(object => {
           const id = objectIds.current.get(object)
           if (!id) throw new RegistryError(object)
           return id
