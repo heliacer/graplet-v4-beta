@@ -98,7 +98,8 @@ export function useObjectActions() {
 
     applyHelpers(object)
     setSelectedItems([id])
-    bump()
+    setObjectVersion(v => v + 1)
+    rebuildBlocklyUI()
     return object
   }
 
@@ -162,7 +163,8 @@ export function useObjectActions() {
       throw new RegistryError(object)
     }
 
-    bump()
+    setObjectVersion(v => v + 1)
+    rebuildBlocklyUI()
   }
 
   /**
@@ -184,7 +186,8 @@ export function useObjectActions() {
     objectIds.current.set(clone, id)
 
     setSelectedItems([id])
-    bump()
+    setObjectVersion(v => v + 1)
+    rebuildBlocklyUI()
   }
 
   function groupObject(object: Object3D) {
@@ -231,14 +234,6 @@ export function useObjectActions() {
     }
   }
 
-  /**
-   * Triggers ui re-renders
-   */
-  function bump() {
-    setObjectVersion(v => v + 1)
-    rebuildBlocklyUI()
-  }
-
   return {
     addObject,
     removeObject,
@@ -246,7 +241,6 @@ export function useObjectActions() {
     groupObject,
     unGroupObject,
     copyObjects,
-    pasteObjects,
-    bump
+    pasteObjects
   }
 }

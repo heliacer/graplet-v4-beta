@@ -18,7 +18,6 @@ import {
 import { Crosshair, SwitchCamera } from 'lucide-react'
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import { useObjectActions } from '@/app/editor/lib/hooks/useObjectActions'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
   return (
@@ -40,7 +39,7 @@ function BaseObjectProps({ object }: { object: Object3D }) {
 
 export function ObjectPane({ object }: { object: Object3D }) {
   const { canvas, setCamera, orbitMap } = useEditor()
-  const { bump } = useObjectActions()
+  const { setObjectVersion } = useEditor()
 
   if (object instanceof Group) {
     return <BaseObjectProps object={object} />
@@ -77,7 +76,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
         orbit.disconnect()
         orbit.dispose()
       }
-      bump()
+      setObjectVersion(v => v + 1)
     }
 
     return (

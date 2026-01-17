@@ -7,7 +7,6 @@ import { useState } from 'react'
 import { Object3D } from 'three'
 import { isInternalObject } from '../../lib/utils/three'
 import { TreeItem } from '../../lib/types'
-import { useObjectActions } from '../../lib/hooks/useObjectActions'
 
 interface RenamingItemViewProps {
   item: ItemInstance<TreeItem>
@@ -66,7 +65,7 @@ interface ItemViewContentProps {
 }
 
 function ItemViewContent({ item, object }: ItemViewContentProps) {
-  const { bump } = useObjectActions()
+  const { setObjectVersion } = useEditor()
 
   return (
     <div
@@ -87,7 +86,7 @@ function ItemViewContent({ item, object }: ItemViewContentProps) {
         onClick={e => {
           e.stopPropagation()
           object.visible = !object.visible
-          bump()
+          setObjectVersion(v => v + 1)
         }}
       >
         {object.visible ? <Eye size={12} /> : <EyeClosed size={12} />}

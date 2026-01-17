@@ -3,7 +3,6 @@ import { useEditor } from '../EditorContext'
 import { TransformControls } from 'three/examples/jsm/Addons.js'
 import { isInternalObject, isTransformControlsMode } from '../utils/three'
 import { useCurrentObject } from './useCurrentObject'
-import { useObjectActions } from './useObjectActions'
 
 export function useTransformControls() {
   const {
@@ -17,7 +16,6 @@ export function useTransformControls() {
     setObjectVersion
   } = useEditor()
   const object = useCurrentObject()
-  const { bump } = useObjectActions()
 
   useEffect(() => {
     if (!camera || !canvas.current) return
@@ -37,7 +35,7 @@ export function useTransformControls() {
         const orbit = orbitMap.current.get(camera.id)
         if (orbit) orbit.enabled = !e.value
       })
-      cs.addEventListener('change', bump)
+      cs.addEventListener('change', () => setObjectVersion(v => v + 1))
 
       controls.current = cs
     }
@@ -66,7 +64,6 @@ export function useTransformControls() {
     orbitMap,
     isRunning,
     scene,
-    setObjectVersion,
-    bump
+    setObjectVersion
   ])
 }
