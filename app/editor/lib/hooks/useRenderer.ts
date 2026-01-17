@@ -1,11 +1,16 @@
-import { OrthographicCamera, PerspectiveCamera, WebGLRenderer } from 'three'
+import {
+  Camera,
+  OrthographicCamera,
+  PerspectiveCamera,
+  WebGLRenderer
+} from 'three'
 import { useEditor } from '../../lib/EditorContext'
 import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
-import { ViewHelper } from 'three/examples/jsm/Addons.js'
+import { OrbitControls, ViewHelper } from 'three/examples/jsm/Addons.js'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { scene, camera, canvas, orbitMap } = useEditor()
+  const { scene, camera, canvas, orbitMap, isRunning } = useEditor()
   const rendererRef = useRef<WebGLRenderer | null>(null)
 
   useEffect(() => {
@@ -48,12 +53,21 @@ export function useRenderer(panelApi: DockviewPanelApi) {
 
     resize()
 
-    renderer.setAnimationLoop(() => {
-      orbitMap.current.get(camera.id)?.update()
+    function render(camera: Camera, orbit?: OrbitControls | null) {
+      orbit?.update()
       renderer.clear()
-      renderer.render(scene.current, camera)
       helper.render(renderer)
-    })
+      renderer.render(scene.current, camera)
+    }
+
+    const orbit = orbitMap.current.get(camera.id)
+    if (isRunning) {
+      helper.visible = false
+      renderer.setAnimationLoop(() => render(camera, orbit))
+    } else {
+      helper.visible = true
+      renderer.setAnimationLoop(() => render(camera, orbit))
+    }
 
     const resizeListener = panelApi.onDidDimensionsChange(resize)
 
@@ -63,5 +77,5 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       resizeListener.dispose()
       rendererRef.current = null
     }
-  }, [canvas, scene, camera, panelApi, orbitMap])
+  }, [canvas, scene, camera, panelApi, orbitMap, isRunning])
 }

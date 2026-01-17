@@ -3,11 +3,11 @@ import { useEditor } from '../EditorContext'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
-import { blocklyObjectRegistry } from '../blockly/blocks'
+import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
 
 export function useSceneActions() {
-  const { scene, workspace, setCurrentObject, orbitMap, controls } = useEditor()
+  const { scene, workspace, orbitMap, controls, setSelectedItems } = useEditor()
   const { addObject, removeObject } = useObjectActions()
 
   /**
@@ -15,6 +15,17 @@ export function useSceneActions() {
    */
   function loadDefaultScene() {
     clearScene()
+    addObject({
+      type: 'Mesh',
+      name: 'Box',
+      geometry: {
+        type: 'BoxGeometry',
+        args: [1, 1, 1]
+      },
+      material: {
+        type: 'MeshStandardMaterial'
+      }
+    })
     addObject({
       type: 'PerspectiveCamera',
       name: 'Main Camera',
@@ -33,17 +44,6 @@ export function useSceneActions() {
       position: [0, 5, 0],
       intensity: 2
     })
-    addObject({
-      type: 'Mesh',
-      name: 'Box',
-      geometry: {
-        type: 'BoxGeometry',
-        args: [1, 1, 1]
-      },
-      material: {
-        type: 'MeshStandardMaterial'
-      }
-    })
   }
 
   function loadProjectData(data: string) {
@@ -54,10 +54,10 @@ export function useSceneActions() {
       if (project.scene) {
         const { children } = project.scene
         applyProps(scene.current, project.scene)
-        children?.forEach((child) => addObject(child))
+        children?.forEach(child => addObject(child))
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
 
-        if (!workspace) throw Error('Missing workspace.')
+        if (!workspace) throw Error('Missing workspace')
         serialization.workspaces.load(project.workspace, workspace)
         console.info(
           '%cLoaded workspace state: ',
@@ -75,8 +75,8 @@ export function useSceneActions() {
       const child = scene.current.children[i]
       removeObject(child)
     }
-    setCurrentObject(null)
-    blocklyObjectRegistry.options = []
+    setSelectedItems([])
+    blocklyUI.objectMenu = []
     orbitMap.current.clear()
     controls.current?.dispose()
     controls.current = null

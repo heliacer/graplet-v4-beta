@@ -46,7 +46,7 @@ export class ExpressionGenerator {
 
   workspaceToExpression(workspace: Workspace): Expression {
     const topBlocks = workspace.getTopBlocks(true)
-    const entries = topBlocks.map((block) => this.blockToExpression(block))
+    const entries = topBlocks.map(block => this.blockToExpression(block))
 
     return {
       type: 'main',

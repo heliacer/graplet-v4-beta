@@ -1,4 +1,5 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
 import { StateFunc } from '@/app/editor/lib/types'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { Rows2 } from 'lucide-react'
@@ -21,22 +22,23 @@ function toggleHelper(
   setHelpers: StateFunc<Map<number, boolean>>
 ) {
   const helpers = scene.getObjectsByProperty('type', type) as CameraHelper[]
-  const existing = helpers.find((h) => compare(h, object))
+  const existing = helpers.find(h => compare(h, object))
 
   if (existing) {
     const toggled = !existing.visible
     existing.visible = toggled
-    setHelpers((prev) => new Map(prev).set(object.id, toggled))
+    setHelpers(prev => new Map(prev).set(object.id, toggled))
   } else {
     const helper = factory(object)
     helper.name = type
     scene.add(helper)
-    setHelpers((prev) => new Map(prev).set(object.id, true))
+    setHelpers(prev => new Map(prev).set(object.id, true))
   }
 }
 
 export function ObjectView() {
-  const { scene, currentObject } = useEditor()
+  const { scene } = useEditor()
+  const object = useCurrentObject()
 
   /** Helpers, some of them maps for helper n - object 1 */
   const [gridHelper, setGridHelper] = useState<boolean>(true)
@@ -56,47 +58,44 @@ export function ObjectView() {
         const helper = scene.current.getObjectByProperty('type', 'GridHelper')
         if (!helper) throw Error('Grid Helper does not exist')
         helper.visible = !gridHelper
-        setGridHelper((prev) => !prev)
+        setGridHelper(prev => !prev)
       }
     }
   ]
 
-  if (currentObject instanceof Camera) {
+  if (object instanceof Camera) {
     items.push({
       label: 'Camera Helper',
       checked:
-        cameraHelpers.get(currentObject.id) ??
+        cameraHelpers.get(object.id) ??
         scene.current
           .getObjectsByProperty('type', 'CameraHelper')
-          .some((helper) => (helper as CameraHelper).camera === currentObject),
+          .some(helper => (helper as CameraHelper).camera === object),
       onClick: () =>
         toggleHelper(
           'CameraHelper',
-          currentObject,
+          object,
           scene.current,
-          (camera) => new CameraHelper(camera as Camera),
+          camera => new CameraHelper(camera as Camera),
           (helper, camera) => (helper as CameraHelper).camera === camera,
           setCameraHelpers
         )
     })
   }
-  if (currentObject instanceof DirectionalLight) {
+  if (object instanceof DirectionalLight) {
     items.push({
       label: 'Light Helper',
       checked:
-        lightHelpers.get(currentObject.id) ??
+        lightHelpers.get(object.id) ??
         scene.current
           .getObjectsByProperty('type', 'DirectionalLightHelper')
-          .some(
-            (helper) =>
-              (helper as DirectionalLightHelper).light === currentObject
-          ),
+          .some(helper => (helper as DirectionalLightHelper).light === object),
       onClick: () =>
         toggleHelper(
           'DirectionalLightHelper',
-          currentObject,
+          object,
           scene.current,
-          (light) => new DirectionalLightHelper(light as DirectionalLight),
+          light => new DirectionalLightHelper(light as DirectionalLight),
           (helper, light) => (helper as DirectionalLightHelper).light === light,
           setLightHelpers
         )

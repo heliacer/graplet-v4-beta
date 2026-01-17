@@ -23,7 +23,7 @@ function MeshStandardMaterialPane({
         value={color}
         className='w-32 h-6'
         type='color'
-        onChange={(e) => {
+        onChange={e => {
           const newColor = e.target.value
           setColor(newColor)
           material.color = new Color(newColor)

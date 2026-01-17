@@ -13,7 +13,12 @@ import {
   TransformControls,
   TransformControlsMode
 } from 'three/examples/jsm/Addons.js'
-import { ContextMenuProps, NotificationItemProps, StateFunc } from './types'
+import {
+  ContextMenuProps,
+  NotificationItemProps,
+  StateFunc,
+  ToolItem
+} from './types'
 import { DockviewApi } from 'dockview-react'
 
 interface EditorContextType {
@@ -22,6 +27,8 @@ interface EditorContextType {
   funcEnv: RefObject<FuncEnv>
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
+  objects: RefObject<Map<string, Object3D>>
+  objectIds: RefObject<WeakMap<Object3D, string>>
   modelScene: RefObject<Scene>
   canvas: RefObject<HTMLCanvasElement>
   controls: RefObject<TransformControls | null>
@@ -31,25 +38,27 @@ interface EditorContextType {
   notifications: NotificationItemProps[]
   camera: Camera | null
   workspace: WorkspaceSvg | null
-  currentObject: Object3D | null
-  currentTool: TransformControlsMode
+  selectedItems: string[]
+  currentTool: TransformControlsMode | ToolItem
   isRunning: boolean
-  objectVersion: number
+  isPaused: boolean
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
+  objectVersion: number
   currentTheme: string
   setNotifications: StateFunc<NotificationItemProps[]>
   setCurrentTheme: StateFunc<string>
+  setObjectVersion: StateFunc<number>
   setDvApi: StateFunc<DockviewApi | null>
   setContextMenu: StateFunc<ContextMenuProps | null>
   setCamera: StateFunc<Camera | null>
   setShouldLoad: StateFunc<boolean>
-  setObjectVersion: StateFunc<number>
   setWorkspace: StateFunc<WorkspaceSvg | null>
-  setCurrentObject: StateFunc<Object3D | null>
-  setCurrentTool: StateFunc<TransformControlsMode>
+  setSelectedItems: StateFunc<string[]>
+  setCurrentTool: StateFunc<TransformControlsMode | ToolItem>
   setIsRunning: StateFunc<boolean>
+  setIsPaused: StateFunc<boolean>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -64,6 +73,8 @@ export function EditorProvider({
   const varEnv = useRef<VarEnv>(new Map())
   const funcEnv = useRef<FuncEnv>(new Map())
   const scene = useRef(new Scene())
+  const objects = useRef(new Map())
+  const objectIds = useRef<WeakMap<Object3D, string>>(new WeakMap())
   const modelScene = useRef(new Scene())
   const canvas = useRef<HTMLCanvasElement>(null!)
   const controls = useRef<TransformControls | null>(null)
@@ -75,13 +86,15 @@ export function EditorProvider({
     shouldStep: false
   })
 
+  const [objectVersion, setObjectVersion] = useState(0)
+
   const [camera, setCamera] = useState<Camera | null>(null)
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
-  const [currentObject, setCurrentObject] = useState<Object3D | null>(null)
-  const [currentTool, setCurrentTool] =
-    useState<TransformControlsMode>('translate')
+  const [currentTool, setCurrentTool] = useState<
+    TransformControlsMode | ToolItem
+  >('translate')
   const [isRunning, setIsRunning] = useState<boolean>(false)
-  const [objectVersion, setObjectVersion] = useState(0)
+  const [isPaused, setIsPaused] = useState<boolean>(false)
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
@@ -89,6 +102,7 @@ export function EditorProvider({
   const [notifications, setNotifications] = useState<NotificationItemProps[]>(
     []
   )
+  const [selectedItems, setSelectedItems] = useState<string[]>([])
 
   return (
     <EditorContext.Provider
@@ -96,6 +110,8 @@ export function EditorProvider({
         funcEnv,
         varEnv,
         scene,
+        objects,
+        objectIds,
         orbitMap,
         canvas,
         modelScene,
@@ -104,26 +120,28 @@ export function EditorProvider({
 
         notifications,
         camera,
+        objectVersion,
         workspace,
-        currentObject,
+        selectedItems,
         currentTool,
         isRunning,
-        objectVersion,
+        isPaused,
         shouldLoad,
         contextMenu,
         dvApi,
         currentTheme,
         setNotifications,
+        setObjectVersion,
         setCurrentTheme,
         setDvApi,
         setContextMenu,
         setCamera,
         setShouldLoad,
-        setObjectVersion,
         setWorkspace,
-        setCurrentObject,
+        setSelectedItems,
         setCurrentTool,
-        setIsRunning
+        setIsRunning,
+        setIsPaused
       }}
     >
       {children}

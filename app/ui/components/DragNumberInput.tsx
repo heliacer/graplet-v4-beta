@@ -67,7 +67,7 @@ export function DragNumberInput({
       title={title}
       className={clsx('cursor-n-resize', className)}
       value={value.toFixed(decimals)}
-      onChange={(e) => onChange(Number(e.target.value))}
+      onChange={e => onChange(Number(e.target.value))}
       onMouseDown={handleMouseDown}
     />
   )

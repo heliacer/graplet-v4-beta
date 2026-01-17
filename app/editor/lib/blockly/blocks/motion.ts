@@ -1,54 +1,14 @@
 import { common } from 'blockly'
-
-export const blocklyObjectRegistry: { options: string[][] } = { options: [] }
-
-const flagIconURL =
-  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1mbGFnLWljb24gbHVjaWRlLWZsYWciPjxwYXRoIGQ9Ik00IDIyVjRhMSAxIDAgMCAxIC40LS44QTYgNiAwIDAgMSA4IDJjMyAwIDUgMiA3LjMzMyAycTIgMCAzLjA2Ny0uOEExIDEgMCAwIDEgMjAgNHYxMGExIDEgMCAwIDEtLjQuOEE2IDYgMCAwIDEgMTYgMTZjLTMgMC01LTItOC0yYTYgNiAwIDAgMC00IDEuNTI4Ii8+PC9zdmc+'
+import { blocklyUI } from '.'
 
 function options() {
-  if (blocklyObjectRegistry.options.length === 0) {
+  if (blocklyUI.objectMenu.length === 0) {
     return [['', '']]
   }
-  return blocklyObjectRegistry.options
+  return blocklyUI.objectMenu
 }
 
-export const definitions = common.createBlockDefinitionsFromJsonArray([
-  {
-    type: 'onflagclick',
-    message0: 'when %1 clicked',
-    args0: [
-      {
-        type: 'field_image',
-        src: flagIconURL,
-        width: 30,
-        height: 30
-      }
-    ],
-    nextStatement: null,
-    style: 'event_blocks'
-  },
-  {
-    type: 'text',
-    message0: '%1',
-    args0: [
-      {
-        type: 'field_input',
-        name: 'VALUE'
-      }
-    ],
-    output: null
-  },
-  {
-    type: 'number',
-    message0: '%1',
-    args0: [
-      {
-        type: 'field_number',
-        name: 'NUM'
-      }
-    ],
-    output: null
-  },
+const motionBlocks = common.createBlockDefinitionsFromJsonArray([
   {
     type: 'object',
     message0: '%1',
@@ -238,100 +198,7 @@ export const definitions = common.createBlockDefinitionsFromJsonArray([
     previousStatement: null,
     nextStatement: null,
     style: 'motion_blocks'
-  },
-  {
-    type: 'repeat',
-    message0: 'repeat %1 times %2 %3',
-    args0: [
-      {
-        type: 'input_value',
-        name: 'TIMES',
-        check: 'Number'
-      },
-      {
-        type: 'input_dummy'
-      },
-      {
-        type: 'input_statement',
-        name: 'ACTIONS'
-      }
-    ],
-    previousStatement: null,
-    nextStatement: null,
-    style: 'logic_blocks'
-  },
-  {
-    type: 'wait',
-    message0: 'wait %1 ms',
-    args0: [
-      {
-        type: 'input_value',
-        name: 'MS',
-        check: 'Number'
-      }
-    ],
-    previousStatement: null,
-    nextStatement: null,
-    style: 'logic_blocks'
-  },
-  {
-    type: 'math_map',
-    message0: 'map %1 from %2 , %3 to %4 , %5',
-    args0: [
-      {
-        type: 'input_value',
-        name: 'NUM',
-        check: 'Number'
-      },
-      {
-        type: 'input_value',
-        name: 'FROM_MIN',
-        check: 'Number'
-      },
-      {
-        type: 'input_value',
-        name: 'FROM_MAX',
-        check: 'Number'
-      },
-      {
-        type: 'input_value',
-        name: 'TO_MIN',
-        check: 'Number'
-      },
-      {
-        type: 'input_value',
-        name: 'TO_MAX',
-        check: 'Number'
-      }
-    ],
-    output: 'Number',
-    style: 'math_blocks',
-    inputsInline: true
-  },
-  {
-    type: 'math_htrig',
-    message0: '%1 %2',
-    args0: [
-      {
-        type: 'field_dropdown',
-        name: 'OP',
-        options: [
-          ['sinh', 'SINH'],
-          ['cosh', 'COSH'],
-          ['tanh', 'TANH'],
-          ['arcsinh', 'ARCSINH'],
-          ['arccosh', 'ARCCOSH'],
-          ['arctanh', 'ARCTANH']
-        ]
-      },
-      {
-        type: 'input_value',
-        name: 'NUM',
-        check: 'Number'
-      }
-    ],
-    output: 'Number',
-    style: 'math_blocks',
-    inputsInline: true
   }
 ])
+
+common.defineBlocks(motionBlocks)

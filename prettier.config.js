@@ -4,5 +4,6 @@ export default {
   tabWidth: 2,
   semi: false,
   singleQuote: true,
-  jsxSingleQuote: true
+  jsxSingleQuote: true,
+  arrowParens: 'avoid'
 }

@@ -23,7 +23,7 @@ export function variableCategory(
     a.getName().localeCompare(b.getName(), undefined, { sensitivity: 'base' })
   )
 
-  sortedVariables.forEach((variable) => {
+  sortedVariables.forEach(variable => {
     blockList.push({
       kind: 'block',
       type: 'variables_get',

@@ -6,7 +6,7 @@ import { RunControls } from './ui/controls/runControls'
 
 export function EditorHeader() {
   return (
-    <nav className='h-11 flex items-center justify-between px-2'>
+    <nav className='h-9.5 flex items-center justify-between px-1.5'>
       <div className='w-full h-full flex items-center gap-3'>
         <Link href='/'>
           <Logo size={20} />

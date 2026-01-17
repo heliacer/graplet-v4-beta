@@ -5,9 +5,9 @@ export default function AssetsPanel() {
 
   useEffect(() => {
     fetch('https://graplet.github.io/assetlib/manifest.json')
-      .then((response) => response.json())
-      .then((data) => setManifestData(data))
-      .catch((error) => console.error('Error fetching manifest:', error))
+      .then(response => response.json())
+      .then(data => setManifestData(data))
+      .catch(error => console.error('Error fetching manifest:', error))
   }, [])
 
   return (

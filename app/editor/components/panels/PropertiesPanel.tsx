@@ -1,4 +1,3 @@
-import { useEditor } from '../../lib/EditorContext'
 import { useState } from 'react'
 import { Cone, Cuboid, LucideIcon, Settings2, Wrench } from 'lucide-react'
 import clsx from 'clsx'
@@ -7,8 +6,8 @@ import { GeometryPane } from '../ui/properties/geometry'
 import { MaterialPane } from '../ui/properties/material'
 import { ObjectPane } from '../ui/properties/object'
 import { StateFunc } from '../../lib/types'
+import { useCurrentObject } from '../../lib/hooks/useCurrentObject'
 
-/** Each Pane holds their respective props of the currentObject */
 type Pane = 'editor' | 'object' | 'geometry' | 'material'
 
 interface PaneButtonProps {
@@ -57,8 +56,9 @@ function PaneButton({
 
 export default function PropertiesPanel() {
   const [activePane, setActivePane] = useState<Pane>('object')
-  const { currentObject } = useEditor()
-  if (!currentObject) return
+
+  const object = useCurrentObject()
+  if (!object) return
 
   return (
     <div className='flex h-full'>
@@ -92,9 +92,9 @@ export default function PropertiesPanel() {
         />
       </nav>
       <div className='p-1.5 flex flex-col gap-2 text-xs w-full'>
-        {activePane === 'object' && <ObjectPane object={currentObject} />}
-        {activePane === 'geometry' && <GeometryPane object={currentObject} />}
-        {activePane === 'material' && <MaterialPane object={currentObject} />}
+        {activePane === 'object' && <ObjectPane object={object} />}
+        {activePane === 'geometry' && <GeometryPane object={object} />}
+        {activePane === 'material' && <MaterialPane object={object} />}
         {activePane === 'editor' && <EditorPane />}
       </div>
     </div>

@@ -16,7 +16,7 @@ export async function interpMain(expression: Expression, state: ProgramState) {
         break
     }
   }
-  const promises = runExprs.map((expr) => evaluateExpression(expr, state))
+  const promises = runExprs.map(expr => evaluateExpression(expr, state))
   await Promise.all(promises)
   return
 }
@@ -91,6 +91,6 @@ export async function interpWait(expression: Expression, state: ProgramState) {
   if (!(await checkPoint(runState))) return
   if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
   const ms = Number(await evaluateExpression(args[0], state))
-  await new Promise((res) => setTimeout(res, ms))
+  await new Promise(res => setTimeout(res, ms))
   return
 }

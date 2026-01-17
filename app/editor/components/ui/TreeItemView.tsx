@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Object3D } from 'three'
 import { isInternalObject } from '../../lib/utils/three'
 import { TreeItem } from '../../lib/types'
+import { useObjectActions } from '../../lib/hooks/useObjectActions'
 
 interface RenamingItemViewProps {
   item: ItemInstance<TreeItem>
@@ -65,7 +66,7 @@ interface ItemViewContentProps {
 }
 
 function ItemViewContent({ item, object }: ItemViewContentProps) {
-  const { setObjectVersion } = useEditor()
+  const { bump } = useObjectActions()
 
   return (
     <div
@@ -83,10 +84,10 @@ function ItemViewContent({ item, object }: ItemViewContentProps) {
           item.isSelected() || !object.visible ? 'block' : 'hidden',
           'cursor-pointer'
         )}
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation()
           object.visible = !object.visible
-          setObjectVersion((v) => v + 1)
+          bump()
         }}
       >
         {object.visible ? <Eye size={12} /> : <EyeClosed size={12} />}
@@ -101,11 +102,10 @@ interface ItemViewProps {
 }
 
 export function TreeItemView({ tree, item }: ItemViewProps) {
-  const { scene, setContextMenu } = useEditor()
+  const { objects, setContextMenu } = useEditor()
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
-  const objectId = item.getItemData().id
-  const object = scene.current.getObjectById(objectId)
+  const object = objects.current.get(item.getId())
   if (!object) return
 
   if (item.isRenaming()) return <RenamingItemView item={item} />
@@ -146,7 +146,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         onDoubleClick={() =>
           item.isExpanded() ? item.collapse() : item.expand()
         }
-        onContextMenu={(e) => {
+        onContextMenu={e => {
           e.preventDefault()
           e.stopPropagation()
           if (isInternalObject(object)) return

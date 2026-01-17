@@ -1,5 +1,6 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
-import { IconT, ItemIcon } from '@/app/editor/lib/utils/icons'
+import { IconT } from '@/app/editor/lib/types'
+import { ItemIcon } from '@/app/editor/lib/utils/icons'
 import clsx from 'clsx'
 
 interface PanelMenuProps {

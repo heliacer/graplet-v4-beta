@@ -4,23 +4,28 @@ import {
   CameraHelper,
   DirectionalLight,
   DirectionalLightHelper,
+  MOUSE,
   Object3D,
   PerspectiveCamera
 } from 'three'
-import { blocklyObjectRegistry } from '../blockly/blocks'
-import { ParentError, SObject3D } from '../types'
+import { blocklyUI } from '../blockly/blocks'
+import { ParentError, RegistryError, SObject3D } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { isInternalObject, moveObject } from '../utils/three'
 
+let nextId = 0
+
 export function useObjectActions() {
   const {
     scene,
-    currentObject,
+    objects,
+    objectIds,
+    selectedItems,
+    setSelectedItems,
     workspace,
     camera,
     setCamera,
-    setCurrentObject,
     setObjectVersion,
     orbitMap,
     canvas
@@ -28,24 +33,10 @@ export function useObjectActions() {
 
   /**
    * @private
-   * Adds an object to the blockly object registry
-   *
-   * E.g Use cases: Move [object v] (0.5) units [forwards v]
-   *
    */
-  function addToReg(object: Object3D) {
-    blocklyObjectRegistry.options.push([object.name, object.id.toString()])
-    workspace?.refreshToolboxSelection()
-  }
-
-  /**
-   * @private
-   * Removes an object from the blockly object registry
-   */
-  function removeFromReg(object: Object3D) {
-    blocklyObjectRegistry.options = blocklyObjectRegistry.options.filter(
-      ([, id]) => object.id.toString() !== id
-    )
+  function rebuildBlocklyUI() {
+    const entries = Array.from(objects.current.entries())
+    blocklyUI.objectMenu = entries.map(([id, object]) => [object.name, id])
     workspace?.refreshToolboxSelection()
   }
 
@@ -60,6 +51,10 @@ export function useObjectActions() {
       if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
         setCamera(object)
         const controls = new OrbitControls(object, canvas.current)
+        controls.mouseButtons = {
+          MIDDLE: MOUSE.PAN,
+          RIGHT: MOUSE.ROTATE
+        }
         orbitMap.current.set(object.id, controls)
         helper.visible = false
       }
@@ -96,15 +91,14 @@ export function useObjectActions() {
       }
     }
 
+    /** Add it to the registry */
+    const id = (nextId++).toString()
+    objects.current.set(id, object)
+    objectIds.current.set(object, id)
+
     applyHelpers(object)
-
-    /** If it's a top level sprite, set it as current */
-    if (target === scene.current) {
-      setCurrentObject(object)
-      addToReg(object)
-    }
-
-    setObjectVersion((v) => v + 1)
+    setSelectedItems([id])
+    bump()
     return object
   }
 
@@ -118,19 +112,6 @@ export function useObjectActions() {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
     parent.remove(object)
-    removeFromReg(object)
-
-    /** If it's the current object, set another one as current */
-    if (object === currentObject) {
-      if (parent.children.length > 0) {
-        const child = [...parent.children]
-          .reverse()
-          .find((c) => !isInternalObject(c))
-        setCurrentObject(child || null)
-      } else {
-        setCurrentObject(parent)
-      }
-    }
 
     if (object instanceof Camera) {
       /** If it's the active camera, set another one active instead */
@@ -150,7 +131,38 @@ export function useObjectActions() {
       }
     }
 
-    setObjectVersion((v) => v + 1)
+    /** Remove it from the registry */
+    const id = objectIds.current.get(object)
+    if (id) {
+      objects.current.delete(id)
+      objectIds.current.delete(object)
+
+      /** If it's the selection, remove it */
+      if (selectedItems.includes(id)) {
+        const newSelection = selectedItems.filter(item => item !== id)
+        setSelectedItems(newSelection)
+
+        /** If it was the last in the selection, find a new one to select  */
+        if (!newSelection) {
+          if (parent.children.length > 0) {
+            const child = [...parent.children]
+              .reverse()
+              .find(c => !isInternalObject(c))
+            if (child) {
+              const childId = objectIds.current.get(child)
+              if (childId) setSelectedItems([childId])
+            }
+          } else {
+            const parentId = objectIds.current.get(parent)
+            if (parentId) setSelectedItems([parentId])
+          }
+        }
+      }
+    } else if (!isInternalObject(object)) {
+      throw new RegistryError(object)
+    }
+
+    bump()
   }
 
   /**
@@ -166,8 +178,13 @@ export function useObjectActions() {
 
     parent.add(clone)
 
-    setCurrentObject(clone)
-    addToReg(clone)
+    /** Add it to the registry */
+    const id = (nextId++).toString()
+    objects.current.set(id, clone)
+    objectIds.current.set(clone, id)
+
+    setSelectedItems([id])
+    bump()
   }
 
   function groupObject(object: Object3D) {
@@ -189,7 +206,7 @@ export function useObjectActions() {
     /**
      * @todo multiselect all children which were previously in the group
      */
-    setCurrentObject(null)
+    setSelectedItems([])
   }
 
   function copyObjects(objects: Object3D[]) {
@@ -204,7 +221,7 @@ export function useObjectActions() {
     const text = await navigator.clipboard.readText()
     try {
       const objects: SObject3D[] = JSON.parse(text)
-      objects.forEach((object) => addObject(object, target))
+      objects.forEach(object => addObject(object, target))
     } catch (error) {
       if (error instanceof SyntaxError) {
         console.warn('invalid paste just happened')
@@ -214,6 +231,14 @@ export function useObjectActions() {
     }
   }
 
+  /**
+   * Triggers ui re-renders
+   */
+  function bump() {
+    setObjectVersion(v => v + 1)
+    rebuildBlocklyUI()
+  }
+
   return {
     addObject,
     removeObject,
@@ -221,6 +246,7 @@ export function useObjectActions() {
     groupObject,
     unGroupObject,
     copyObjects,
-    pasteObjects
+    pasteObjects,
+    bump
   }
 }

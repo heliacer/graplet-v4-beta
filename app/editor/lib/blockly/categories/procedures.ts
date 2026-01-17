@@ -53,7 +53,7 @@ export function procedureCategory(
     .getBlocksByType('procedures_defnoreturn', false)
     .concat(workspace.getBlocksByType('procedures_defreturn', false))
 
-  allProcedures.forEach((block) => {
+  allProcedures.forEach(block => {
     const name = block.getFieldValue('NAME')
     const hasReturn = block.type === 'procedures_defreturn'
 
