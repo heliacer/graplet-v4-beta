@@ -56,7 +56,7 @@ Blocks['function_def'] = {
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
-    console.log(this.model.getParameters())
+    console.log('parameters: ', this.model.getParameters())
   }
 }
 

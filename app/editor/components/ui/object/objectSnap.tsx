@@ -14,7 +14,7 @@ export function ObjectSnap() {
   const { controls, currentTool } = useEditor()
 
   return (
-    <div className='relative text-sm h-5.5'>
+    <div className='relative text-sm h-5.5 pointer-events-auto'>
       <RulerDimensionLine
         size={14}
         className='absolute left-1.25 top-1 text-xs select-none'

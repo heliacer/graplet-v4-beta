@@ -47,7 +47,7 @@ export default function Password() {
         })
 
         if (result?.error) {
-          console.log('Auth error:', result)
+          console.error('Auth error:', result)
           setIsLoading(false)
           switch (result.code) {
             case 'invalid_credentials':

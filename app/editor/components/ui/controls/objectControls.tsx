@@ -13,12 +13,14 @@ export function ObjectControls() {
   if (isRunning) return
 
   return (
-    <div className='flex gap-2 absolute m-1.5'>
+    <div className='flex gap-2 absolute m-1.5 pointer-events-none'>
       <ObjectTools />
-      <ObjectAdd />
-      <ObjectView />
-      {object && <ObjectActions object={object} />}
-      <ObjectSnap />
+      <div className='flex gap-2 h-min'>
+        <ObjectAdd />
+        <ObjectView />
+        {object && <ObjectActions object={object} />}
+        <ObjectSnap />
+      </div>
     </div>
   )
 }

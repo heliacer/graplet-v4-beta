@@ -10,6 +10,7 @@ import { useEditor } from '../../../lib/EditorContext'
 import clsx from 'clsx'
 import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { ToolItem } from '@/app/editor/lib/types'
+import { MOUSE } from 'three'
 
 interface ToolButtonProps {
   tool: TransformControlsMode | ToolItem
@@ -17,14 +18,28 @@ interface ToolButtonProps {
 }
 
 function ToolButton({ tool, Icon }: ToolButtonProps) {
-  const { currentTool, setCurrentTool } = useEditor()
+  const { currentTool, setCurrentTool, orbitMap, camera } = useEditor()
 
   return (
     <button
       title={tool}
-      onClick={() => setCurrentTool(tool)}
+      onClick={() => {
+        /** @todo Testing, might move this */
+        if (camera) {
+          const orbit = orbitMap.current.get(camera.id)
+          if (orbit) {
+            if (currentTool === 'move') {
+              orbit.mouseButtons.LEFT = null
+            }
+            if (tool === 'move') {
+              orbit.mouseButtons.LEFT = MOUSE.PAN
+            }
+          }
+        }
+        setCurrentTool(tool)
+      }}
       className={clsx(
-        'border p-1 rounded-md cursor-pointer',
+        'border p-1 rounded-md cursor-pointer pointer-events-auto',
         currentTool === tool
           ? 'border-teal/70 bg-teal/20'
           : 'bg-ui-800 border-ui-700 hover:bg-ui-750'

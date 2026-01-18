@@ -22,7 +22,7 @@ export function useRuntime() {
   const execute = useCallback(
     async (expression: Expression) => {
       setIsRunning(true)
-      console.log('%cRunning...', 'color: aquamarine;')
+      console.info('%cRunning...', 'color: aquamarine;')
       console.time('Done in')
       const state = {
         objects: objects.current,
@@ -32,9 +32,9 @@ export function useRuntime() {
       }
       try {
         const result = await evaluateExpression(expression, state)
-        console.log('%coutput:', 'color: deepskyblue;', result)
-      } catch (err) {
-        console.error(err)
+        console.info('%coutput:', 'color: deepskyblue;', result)
+      } catch (error) {
+        console.error(error)
       } finally {
         console.timeEnd('Done in')
         setIsRunning(false)

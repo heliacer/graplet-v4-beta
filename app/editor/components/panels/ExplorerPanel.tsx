@@ -47,7 +47,6 @@ export default function ExplorerPanel() {
      * -> right now it just mimicks the Scene Object3D children array
      */
     onDrop: (items, target) => {
-      console.log(items, target)
       for (const item of items) {
         const id = item.getId()
         const object = id === 'scene' ? scene.current : objects.current.get(id)

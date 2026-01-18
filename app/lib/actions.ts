@@ -24,7 +24,7 @@ export async function checkEmail(email: string): Promise<AuthResponse> {
       // later: { status: 'ok', message: '' } (will redirect to /signup)
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return { status: 'error', message: 'Something went wrong.' }
   }
 }
@@ -38,7 +38,7 @@ export async function signUp(data: Omit<UserT, 'id'>): Promise<AuthResponse> {
     await createUser(data)
     return { status: 'ok', message: 'Success.' }
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return { status: 'error', message: 'Something went wrong.' }
   }
 }

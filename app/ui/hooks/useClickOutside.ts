@@ -25,12 +25,14 @@ export function useClickOutside<T extends HTMLElement = HTMLElement>(
       document.addEventListener('keydown', handleEscapeKey)
     }
 
-    return () => {
+    function cleanup() {
       document.removeEventListener('mousedown', handleClickOutside)
       if (listenToEscape) {
         document.removeEventListener('keydown', handleEscapeKey)
       }
     }
+
+    return cleanup
   }, [handler, listenToEscape])
 
   return ref

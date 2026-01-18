@@ -20,6 +20,13 @@ export function useTransformControls() {
   useEffect(() => {
     if (!camera || !canvas.current) return
 
+    const dragListener = (e: { value: unknown }) => {
+      const orbit = orbitMap.current.get(camera.id)
+      if (orbit) orbit.enabled = !e.value
+    }
+
+    const changeListener = () => setObjectVersion(v => v + 1)
+
     /** init transformcontrols */
     if (!controls.current) {
       const cs = new TransformControls(camera, canvas.current)
@@ -31,11 +38,8 @@ export function useTransformControls() {
       helper.name = 'TransformHelper'
       scene.current.add(helper)
 
-      cs.addEventListener('dragging-changed', e => {
-        const orbit = orbitMap.current.get(camera.id)
-        if (orbit) orbit.enabled = !e.value
-      })
-      cs.addEventListener('change', () => setObjectVersion(v => v + 1))
+      cs.addEventListener('dragging-changed', dragListener)
+      cs.addEventListener('change', changeListener)
 
       controls.current = cs
     }
@@ -50,11 +54,15 @@ export function useTransformControls() {
       controls.current.setMode(currentTool)
     } else {
       controls.current.detach()
+      controls.current.removeEventListener('dragging-changed', dragListener)
+      controls.current.removeEventListener('change', changeListener)
     }
 
-    return () => {
+    function cleanup() {
       controls.current?.detach()
     }
+
+    return cleanup
   }, [
     object,
     camera,

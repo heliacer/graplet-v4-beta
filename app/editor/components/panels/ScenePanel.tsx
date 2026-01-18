@@ -4,9 +4,10 @@ import { useProjectLoader } from '../../lib/hooks/useProjectLoader'
 import { useRenderer } from '../../lib/hooks/useRenderer'
 import { ObjectControls } from '../ui/controls/objectControls'
 import { useTransformControls } from '../../lib/hooks/useTransformControls'
+import clsx from 'clsx'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
-  const { canvas } = useEditor()
+  const { canvas, currentTool } = useEditor()
 
   useProjectLoader()
   useRenderer(props.api)
@@ -15,7 +16,13 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   return (
     <>
       <ObjectControls />
-      <canvas ref={canvas} className='w-full h-full' />
+      <canvas
+        ref={canvas}
+        className={clsx(
+          currentTool === 'move' && 'cursor-grab active:cursor-grabbing',
+          'w-full h-full'
+        )}
+        />
     </>
   )
 }

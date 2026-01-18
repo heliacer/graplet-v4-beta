@@ -65,8 +65,8 @@ export function useSceneActions() {
           project.workspace
         )
       }
-    } catch (err) {
-      console.error('Could not parse JSON data.', err)
+    } catch (error) {
+      console.error('Could not parse JSON data.', error)
     }
   }
 

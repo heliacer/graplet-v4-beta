@@ -67,7 +67,7 @@ export function useBlocklyWorkspace(
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(containerRef.current)
 
-    return () => {
+    function cleanup() {
       resizeObserver.disconnect()
       ws.removeChangeListener(variableListener)
       ws.removeChangeListener(blockListener)
@@ -75,6 +75,8 @@ export function useBlocklyWorkspace(
       workspaceRef.current = null
       setWorkspace(null)
     }
+
+    return cleanup
   }, [
     containerRef,
     setWorkspace,

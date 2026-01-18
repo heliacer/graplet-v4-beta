@@ -68,7 +68,8 @@ export function DropdownItemList({ items, path = [] }: DropdownItemListProps) {
       ref={listRef}
       className={clsx(
         path.length > 0 && (flip ? 'right-full -top-1' : 'left-full -top-1'),
-        'absolute z-999 mt-0.5 text-xs bg-ui-800 border border-ui-700 rounded py-0.5'
+        'bg-ui-800 border border-ui-700 rounded py-0.5',
+        'mt-0.5 text-xs absolute z-999 pointer-events-auto'
       )}
     >
       {items.map((item, i) => (
@@ -149,7 +150,7 @@ export function Dropdown({ label, items, Icon }: DropdownProps) {
         <button
           onMouseDown={() => setIsOpen(prev => !prev)}
           className={clsx(
-            'text-sm flex items-center gap-1 px-1',
+            'text-sm flex items-center gap-1 px-1 pointer-events-auto',
             'border rounded-md relative',
             'border-ui-700',
             'hover:bg-ui-750 bg-ui-800'

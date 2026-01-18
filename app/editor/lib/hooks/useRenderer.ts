@@ -71,11 +71,13 @@ export function useRenderer(panelApi: DockviewPanelApi) {
 
     const resizeListener = panelApi.onDidDimensionsChange(resize)
 
-    return () => {
+    function cleanup() {
       renderer.setAnimationLoop(null)
       renderer.dispose()
       resizeListener.dispose()
       rendererRef.current = null
     }
+
+    return cleanup
   }, [canvas, scene, camera, panelApi, orbitMap, isRunning])
 }
