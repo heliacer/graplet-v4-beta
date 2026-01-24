@@ -2,7 +2,7 @@ import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
 import { useEditor } from '../../../lib/EditorContext'
 import clsx from 'clsx'
 import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'
-import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator'
+import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator/index'
 
 export function RunControls() {
   const { runState, isRunning, isPaused, workspace } = useEditor()

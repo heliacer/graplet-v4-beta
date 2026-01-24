@@ -22,7 +22,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
           currentTool === 'move' && 'cursor-grab active:cursor-grabbing',
           'w-full h-full'
         )}
-        />
+      />
     </>
   )
 }

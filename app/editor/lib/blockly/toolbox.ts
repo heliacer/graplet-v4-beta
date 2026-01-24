@@ -1,4 +1,6 @@
-export const toolbox = {
+import { utils } from 'blockly'
+
+export const toolbox: utils.toolbox.ToolboxDefinition = {
   kind: 'categoryToolbox',
   contents: [
     {
@@ -484,24 +486,15 @@ export const toolbox = {
     },
     {
       kind: 'category',
-      name: 'Functions',
+      name: 'Deprecated',
       custom: 'PROCEDURE',
-      categorystyle: 'procedure_category'
+      categorystyle: 'functions_category'
     },
     {
       kind: 'category',
       name: 'Functions',
-      categorystyle: 'functions_category',
-      contents: [
-        {
-          kind: 'block',
-          type: 'function_def'
-        },
-        {
-          kind: 'block',
-          type: 'function_return'
-        }
-      ]
+      custom: 'FUNCTIONS',
+      categorystyle: 'functions_category'
     }
   ]
 }

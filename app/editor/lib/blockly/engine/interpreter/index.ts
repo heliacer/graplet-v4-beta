@@ -1,16 +1,12 @@
-import { Expression, ProgramState, RunState, Value } from './ast'
+import { Expression, ProgramState, RunState, Value } from '../ast'
 import {
   interpIf,
   interpMain,
   interpRepeat,
   interpRunseq,
   interpWait
-} from './evaluators/control'
-import {
-  interpChangevar,
-  interpSetfunc,
-  interpSetvar
-} from './evaluators/effects'
+} from './control'
+import { interpChangevar, interpSetfunc, interpSetvar } from './effects'
 import {
   interpAndor,
   interpArithmetic,
@@ -26,15 +22,15 @@ import {
   interpRound,
   interpSingle,
   interpTrig
-} from './evaluators/operators'
+} from './operators'
 import {
   interpRotatexyz,
   interpSetposxyz,
   interpSetroteulerxyz,
   interpSetscalexyz,
   interpTranslatexyz
-} from './evaluators/statements'
-import { interpCall, interpLiteral, interpVar } from './evaluators/values'
+} from './statements'
+import { interpCall, interpLiteral, interpVar } from './values'
 
 export async function evaluateExpression(
   expression: Expression,

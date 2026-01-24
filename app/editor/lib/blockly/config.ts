@@ -4,6 +4,7 @@ import {
   ContextMenuItems,
   Extensions,
   registry,
+  Toolbox,
   ToolboxCategory,
   VerticalFlyout
 } from 'blockly'
@@ -25,6 +26,7 @@ import {
   unregisterProcedureBlocks,
   registerProcedureSerializer
 } from '@blockly/block-shareable-procedures'
+import { functionsCategory } from './categories/functions'
 
 class ContinuousIconCategory extends ContinuousCategory {
   override createIconDom_(): Element {
@@ -57,6 +59,16 @@ export function initializeBlockly() {
    * (part of local param migration)
    */
   common.defineBlocks(blocks)
+
+  /* register dynamic categories before injection (sneaky) */
+  const sourceToolboxInit = Toolbox.prototype.init
+  Toolbox.prototype.init = function () {
+    this.workspace_.registerToolboxCategoryCallback(
+      'FUNCTIONS',
+      functionsCategory
+    )
+    sourceToolboxInit.call(this)
+  }
 
   blockRendering.register('graplet', GrapletRenderer)
   VerticalFlyout.prototype.getFlyoutScale = function () {

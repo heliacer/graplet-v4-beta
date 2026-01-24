@@ -1,5 +1,5 @@
 import { Expression, ProgramState, Value } from '../ast'
-import { evaluateExpression } from '../interpreter'
+import { evaluateExpression } from '.'
 
 export async function interpAndor(
   expression: Expression,

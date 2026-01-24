@@ -7,3 +7,19 @@ export declare class ProcedureBlock extends Block {
   doProcedureUpdate(): void
   isProcedureDef(): boolean
 }
+
+export type OldExtraState = {
+  name: string
+  params?: string[]
+}
+
+export interface FunctionExtraState {
+  procedureId: string
+  name?: string
+  parameters?: {
+    name: string
+    id: string
+  }[]
+  returnTypes?: string[] | null
+  createNewModel?: boolean
+}

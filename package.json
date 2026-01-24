@@ -4,6 +4,7 @@
   "private": true,
   "description": "A block-based 3D scene editor using ThreeJS and Blockly.",
   "author": "heliacer@gmx.ch",
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

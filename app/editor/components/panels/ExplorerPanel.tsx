@@ -53,7 +53,8 @@ export default function ExplorerPanel() {
         if (!object) throw new NotFoundError(id)
 
         const targetId = target.item.getId()
-        const targetObj = targetId === 'scene' ? scene.current : objects.current.get(targetId)
+        const targetObj =
+          targetId === 'scene' ? scene.current : objects.current.get(targetId)
         if (!targetObj) throw new NotFoundError(targetId)
 
         moveObject(object, targetObj)
@@ -63,7 +64,8 @@ export default function ExplorerPanel() {
     canReorder: true,
     dataLoader: {
       getItem: (itemId): TreeItem => {
-        const object = itemId === 'scene' ? scene.current : objects.current.get(itemId)
+        const object =
+          itemId === 'scene' ? scene.current : objects.current.get(itemId)
         if (!object) return { name: '', type: 'Component', hasChildren: false }
 
         return {
@@ -73,13 +75,16 @@ export default function ExplorerPanel() {
         }
       },
       getChildren: itemId => {
-        const object = itemId === 'scene' ? scene.current : objects.current.get(itemId)
+        const object =
+          itemId === 'scene' ? scene.current : objects.current.get(itemId)
         if (!object) return []
-        return object.children.filter(object => !isInternalObject(object)).map(object => {
-          const id = objectIds.current.get(object)
-          if (!id) throw new RegistryError(object)
-          return id
-        })
+        return object.children
+          .filter(object => !isInternalObject(object))
+          .map(object => {
+            const id = objectIds.current.get(object)
+            if (!id) throw new RegistryError(object)
+            return id
+          })
       }
     },
     features: [
