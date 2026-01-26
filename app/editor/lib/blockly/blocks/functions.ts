@@ -35,21 +35,30 @@ Blocks['function_def'] = {
     this.setStyle('function_blocks')
     this.setOutputShape(10)
 
-    this.model = new ObservableProcedureModel(this.workspace, 'default name')
-    const map = this.workspace.getProcedureMap()
-    console.log(map)
-    map.add(this.model)
+    if (!this.model) {
+      this.model = new ObservableProcedureModel(this.workspace, 'default name')
+      this.workspace.getProcedureMap().add(this.model)
+    }
+    console.log(
+      '%cDEF [init]',
+      'color: lightgreen;',
+      this.workspace.getProcedureMap(),
+      this.svgGroup
+    )
 
     input.appendField('function')
     input.connection?.setShadowState({
-      type: 'function_call'
+      type: 'function_call',
+      extraState: {
+        procedureId: this.model.getId()
+      }
     })
 
     // etc...
   },
 
   destroy: function (this: ProcedureBlock) {
-    console.log('def (destroy)')
+    console.log('%cDEF [destroy]', 'color: red;', this.model.getId())
     if (this.isInsertionMarker()) return
     this.workspace.getProcedureMap().delete(this.model.getId())
   },
@@ -70,17 +79,23 @@ Blocks['function_def'] = {
 
   doProcedureUpdate(this: ProcedureBlock) {
     const model = this.model
-    console.groupCollapsed('def (doProcedureUpdate)')
 
     const name = model.getName()
-
-    console.log('parameters', model.getParameters())
-    console.log('name', name)
 
     this.getField('NAME')?.setValue(name)
     this.getField('ID')?.setValue(model.getId())
 
-    console.groupEnd()
+    const input = this.getInput('DEF')
+    console.log(
+      'DEF [doProcedureUpdate] updating input connection',
+      model.getId()
+    )
+    input?.connection?.setShadowState({
+      type: 'function_call',
+      extraState: {
+        procedureId: model.getId()
+      }
+    })
   },
 
   saveExtraState(
@@ -105,22 +120,18 @@ Blocks['function_def'] = {
   loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
     const { procedureId, name, returnTypes, parameters, createNewModel } = state
 
-    console.groupCollapsed('def (loadExtraState)')
-    console.log('state', state)
+    const model = this.workspace.getProcedureMap().get(procedureId)
 
-    const map = this.workspace.getProcedureMap()
-    const model = map.get(procedureId)
+    console.log(
+      'DEF [loadExtraState]',
+      state.procedureId,
+      model ? 'use as new model' : `use existing model ${this.model.getId()}`
+    )
 
     if (model && model instanceof ObservableProcedureModel && !createNewModel) {
-      console.log('model extraState [true]', model)
-
-      map.delete(this.model.getId())
+      this.workspace.getProcedureMap().delete(this.model.getId())
       this.model = model
-      console.groupEnd()
     } else {
-      console.log('model extraState [false]', model)
-      console.log('model this', this.model)
-
       if (name) this.model.setName(name)
       if (returnTypes) this.model.setReturnTypes(returnTypes)
       if (parameters) {
@@ -131,12 +142,15 @@ Blocks['function_def'] = {
           )
         }
       }
-
-      console.groupEnd()
-      this.doProcedureUpdate()
     }
+    this.doProcedureUpdate()
   }
 }
+
+/**
+ * all procedure map logs are showing something else than the functionCategory list
+ * -> yet they still sync up. like we have a completely different copy
+ */
 
 Blocks['function_call'] = {
   init(this: ProcedureBlock) {
@@ -144,6 +158,12 @@ Blocks['function_call'] = {
     this.setPreviousStatement(true, null)
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
+    console.log(
+      '%cCALL [init]',
+      'color: lightgreen;',
+      this.workspace.getProcedureMap(),
+      this.svgGroup
+    )
   },
 
   getProcedureModel(this: ProcedureBlock) {
@@ -162,53 +182,43 @@ Blocks['function_call'] = {
 
   doProcedureUpdate(this: ProcedureBlock) {
     const model = this.model
-    console.groupCollapsed('call (doProcedureUpdate)')
     const field = this.getField('NAME')
     if (model) {
-      console.log('model [true]', model)
       field?.setValue(model.getName())
     } else {
-      console.warn('model [false]', model)
-      field?.setValue('(no model) this.model, call')
+      field?.setValue('(no model)')
     }
-    console.groupEnd()
   },
 
   saveExtraState(this: ProcedureBlock) /* FunctionExtraState */ {
-    console.groupCollapsed('call (saveExtraState)')
     const model = this.model
     if (model) {
-      console.log('model [true]', model)
       const state: FunctionExtraState = {
         procedureId: model.getId()
       }
-      console.groupEnd()
       return state
-    } else {
-      console.warn('model [false]', model)
-      console.groupEnd()
     }
+  },
+
+  destroy: function (this: ProcedureBlock) {
+    console.log('%cCALL [destroy]', 'color: red;')
   },
 
   loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
     const { procedureId } = state
 
-    console.groupCollapsed('call (loadExtraState)')
-    console.log('state', state)
-    console.log('model', this.model)
-    console.log('block', this)
+    const model = this.workspace.getProcedureMap().get(procedureId)
 
-    const map = this.workspace.getProcedureMap()
-    const model = map.get(procedureId)
+    console.log(
+      'CALL [loadExtraState]',
+      state.procedureId,
+      model,
+      this.svgGroup
+    )
 
     if (model && model instanceof ObservableProcedureModel) {
-      console.log('model [true]', model)
       this.model = model
-    } else {
-      console.warn('model [false]', model)
     }
-
-    console.groupEnd()
 
     this.doProcedureUpdate()
   }

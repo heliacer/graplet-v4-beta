@@ -8,7 +8,11 @@ export function functionsCategory(workspace: WorkspaceSvg) {
     type: 'function_def'
   })
 
-  for (const model of workspace.getProcedureMap().getProcedures()) {
+  const procedures = workspace.getProcedureMap().getProcedures()
+  // logs the right procedures
+  console.log('procedures (functionsCategory)', procedures)
+
+  for (const model of procedures) {
     blockList.push({
       kind: 'block',
       type: 'function_call',

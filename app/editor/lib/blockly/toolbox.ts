@@ -484,12 +484,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       custom: 'VARIABLE',
       categorystyle: 'variables_category'
     },
-    {
+    /*     {
       kind: 'category',
       name: 'Deprecated',
       custom: 'PROCEDURE',
       categorystyle: 'functions_category'
-    },
+    }, */
     {
       kind: 'category',
       name: 'Functions',

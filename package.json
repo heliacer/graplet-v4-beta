@@ -38,11 +38,11 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
-    "@types/node": "^20.19.27",
+    "@types/node": "^25.0.10",
     "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.180.0",
+    "@types/three": "^0.182.0",
     "eslint": "9.31.0",
     "eslint-config-next": "^15.5.2",
     "prettier": "^3.6.2",
