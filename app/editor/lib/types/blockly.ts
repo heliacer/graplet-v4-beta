@@ -1,9 +1,8 @@
 import { ObservableProcedureModel } from '@blockly/block-shareable-procedures'
-import { Block, procedures } from 'blockly'
+import { BlockSvg, procedures } from 'blockly'
 
-export declare class ProcedureBlock extends Block {
-  svgGroup: Element
-  model: ObservableProcedureModel
+export declare class ProcedureBlock extends BlockSvg {
+  model?: ObservableProcedureModel
   getProcedureModel(): procedures.IProcedureModel
   doProcedureUpdate(): void
   isProcedureDef(): boolean

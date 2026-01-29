@@ -3,6 +3,7 @@ import {
   common,
   ContextMenuItems,
   Extensions,
+  Options,
   registry,
   Toolbox,
   ToolboxCategory,
@@ -19,14 +20,18 @@ import './blocks/'
 import {
   isDivisibleMutatorMixin,
   isDivisibleMutatorExtension
-} from './overrides/divisibleby'
+} from './extensions/divisibleBy'
 import { GrapletRenderer } from './renderer'
 import {
-  blocks,
+  blocks as defaultFunctionBlocks,
   unregisterProcedureBlocks,
   registerProcedureSerializer
 } from '@blockly/block-shareable-procedures'
 import { functionsCategory } from './categories/functions'
+
+/**
+ * @todo refactor
+ */
 
 class ContinuousIconCategory extends ContinuousCategory {
   override createIconDom_(): Element {
@@ -35,6 +40,31 @@ class ContinuousIconCategory extends ContinuousCategory {
     icon.classList.add(this.name_)
     icon.style.backgroundColor = this.colour_
     return icon
+  }
+}
+
+class CompactContinuousFlyout extends ContinuousFlyout {
+  GAP_Y: number
+  constructor(options: Options) {
+    super(options)
+    this.GAP_Y = 20
+  }
+}
+
+export class ContinuousClosableMetrics extends ContinuousMetrics {
+  override getViewMetrics(getWorkspaceCoordinates = false) {
+    const metrics = super.getViewMetrics(getWorkspaceCoordinates)
+    const flyoutMetrics = this.getFlyoutMetrics(false)
+    const scale = getWorkspaceCoordinates ? this.workspace_.scale : 1
+    metrics.width += flyoutMetrics.width / scale
+    return metrics
+  }
+
+  override getAbsoluteMetrics() {
+    const abs = super.getAbsoluteMetrics()
+    const flyoutMetrics = this.getFlyoutMetrics(false)
+    abs.left -= flyoutMetrics.width
+    return abs
   }
 }
 
@@ -49,6 +79,7 @@ export function initializeBlockly() {
   )
 
   unregisterProcedureBlocks()
+
   /**
    * @todo For now built in, but later use custom function blocks.
    *
@@ -58,7 +89,7 @@ export function initializeBlockly() {
    *
    * (part of local param migration)
    */
-  common.defineBlocks(blocks)
+  common.defineBlocks(defaultFunctionBlocks)
 
   /* register dynamic categories before injection (sneaky) */
   const sourceToolboxInit = Toolbox.prototype.init
@@ -73,7 +104,7 @@ export function initializeBlockly() {
   blockRendering.register('graplet', GrapletRenderer)
   VerticalFlyout.prototype.getFlyoutScale = function () {
     if (common.getMainWorkspace()?.id === this.getTargetWorkspace().id) {
-      return 0.45
+      return 0.8
     } else {
       return this.getTargetWorkspace().scale
     }
@@ -89,14 +120,14 @@ export function initializeBlockly() {
   registry.register(
     registry.Type.METRICS_MANAGER,
     'ContinuousMetrics',
-    ContinuousMetrics,
+    ContinuousClosableMetrics,
     true
   )
 
   registry.register(
     registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
     'ContinuousFlyout',
-    ContinuousFlyout,
+    CompactContinuousFlyout,
     true
   )
 

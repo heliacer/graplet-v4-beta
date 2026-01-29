@@ -23,12 +23,12 @@ export const theme: ITheme = {
     flyoutBackgroundColour: 'var(--color-ui-850)',
     toolboxForegroundColour: 'var(--color-ui-200)',
     flyoutForegroundColour: 'var(--color-ui-200)',
-    flyoutOpacity: 1
+    flyoutOpacity: 0.9
   },
   fontStyle: {
     family: 'Nunito, Nunito Fallback',
     weight: '600',
-    size: 18
+    size: 10
   },
   startHats: true,
   categoryStyles: {

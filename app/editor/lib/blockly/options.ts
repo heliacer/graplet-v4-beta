@@ -9,16 +9,17 @@ export const blocklyOptions: BlocklyOptions = {
   trashcan: false,
   grid: {
     length: 2,
-    spacing: 30,
+    spacing: 20,
     snap: true
   },
   zoom: {
     wheel: true,
     controls: true,
-    maxScale: 2,
-    startScale: 0.45,
-    minScale: 0.1
+    startScale: 0.8,
+    minScale: 0.05
   },
+  oneBasedIndex: false,
+  sounds: false,
   plugins: {
     metricsManager: 'ContinuousMetrics',
     toolbox: 'ContinuousToolbox',

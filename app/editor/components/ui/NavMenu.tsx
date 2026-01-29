@@ -9,7 +9,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 `
 
 export function NavMenu() {
-  const { notifications, setNotifications } = useEditor()
+  const { notifications, setNotifications, workspace } = useEditor()
 
   return (
     <nav className='w-full h-full flex items-center gap-2'>
@@ -33,7 +33,23 @@ export function NavMenu() {
           ])
         }}
       >
-        Trigger Notification
+        trigger notification!
+      </button>
+      <button
+        className={clsx(
+          'text-sm flex gap-1 px-1 items-center',
+          'border rounded-md',
+          'border-ui-700',
+          'hover:bg-ui-750 bg-ui-800'
+        )}
+        onClick={() => {
+          const flyout = workspace?.getFlyout()
+          if (flyout) {
+            flyout.autoClose = !flyout.autoClose
+          }
+        }}
+      >
+        toggle flyout autoclose!
       </button>
     </nav>
   )

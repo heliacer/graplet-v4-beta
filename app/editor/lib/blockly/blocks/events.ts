@@ -11,8 +11,8 @@ const eventBlocks = common.createBlockDefinitionsFromJsonArray([
       {
         type: 'field_image',
         src: flagIconURL,
-        width: 30,
-        height: 30
+        width: 20,
+        height: 20
       }
     ],
     nextStatement: null,

@@ -83,10 +83,6 @@
   overflow: visible;
 }
 
-.blocklyFlyoutLabelText {
-  font-size: 28px !important;
-}
-
 .blocklyTextarea {
   color: var(--color-ui-800);
 }
@@ -101,8 +97,8 @@
 
 .blocklyFlyoutButtonBackground {
   stroke: var(--color-ui-600);
-  rx: 12;
-  ry: 12;
+  rx: 6;
+  ry: 6;
 }
 
 .blocklyFlyoutButton {

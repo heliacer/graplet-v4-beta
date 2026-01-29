@@ -167,7 +167,7 @@ exprGenerator.forBlock('logic_operation', logicOperationGen)
 
 exprGenerator.forBlock('logic_negate', logicNegateGen)
 
-exprGenerator.forBlock('logic_negate', logicCompareGen)
+exprGenerator.forBlock('logic_compare', logicCompareGen)
 
 exprGenerator.forBlock('math_change', mathChangeGen)
 

@@ -29,7 +29,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 40
+          gap: 25
         },
         {
           kind: 'block',
@@ -224,7 +224,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 40
+          gap: 25
         },
         {
           kind: 'block',
@@ -236,7 +236,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 40
+          gap: 25
         },
         {
           kind: 'block',
@@ -248,7 +248,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 40
+          gap: 25
         },
         {
           kind: 'block',
@@ -303,7 +303,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 40
+          gap: 25
         },
         {
           kind: 'block',
@@ -375,7 +375,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 40
+          gap: 25
         },
         {
           kind: 'block',
@@ -390,7 +390,7 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         },
         {
           kind: 'sep',
-          gap: 40
+          gap: 25
         },
         {
           kind: 'block',
