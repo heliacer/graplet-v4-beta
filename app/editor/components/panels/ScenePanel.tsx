@@ -14,7 +14,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useTransformControls()
 
   return (
-    <>
+    <div className='relative h-full'>
       <ObjectControls />
       <canvas
         ref={canvas}
@@ -23,6 +23,6 @@ export default function ScenePanel(props: IDockviewPanelProps) {
           'w-full h-full'
         )}
       />
-    </>
+    </div>
   )
 }

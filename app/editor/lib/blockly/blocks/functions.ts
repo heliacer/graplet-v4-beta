@@ -1,7 +1,6 @@
-import { Blocks, common, icons } from 'blockly'
+import { Blocks, common } from 'blockly'
 import { FunctionExtraState, ProcedureBlock } from '../../types'
-
-const { MutatorIcon } = icons
+import { FunctionEditorIcon } from '../extensions/functionEditorIcon'
 
 function createLogs(
   block: ProcedureBlock,
@@ -47,7 +46,7 @@ const functionBlocks = common.createBlockDefinitionsFromJsonArray([
 common.defineBlocks(functionBlocks)
 
 Blocks['function_def'] = {
-  init: function (this: ProcedureBlock) {
+  init(this: ProcedureBlock) {
     const input = this.appendStatementInput('DEF')
     input.appendField('function')
     input.connection?.setShadowState({
@@ -56,11 +55,37 @@ Blocks['function_def'] = {
 
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
-
-    const icon = new MutatorIcon(['wait'], this)
-    this.setMutator(icon)
+    this.addIcon(new FunctionEditorIcon(this))
 
     console.log(...createLogs(this, 'init', 'aquamarine'))
+  },
+
+  getProcedureModel(this: ProcedureBlock) {
+    return this.model
+  },
+
+  isProcedureDef(this: ProcedureBlock) {
+    return true
+  },
+
+  getVarModels(this: ProcedureBlock) {
+    return []
+  },
+
+  doProcedureUpdate(this: ProcedureBlock) {
+    console.log(...createLogs(this, 'doProcedureUpdate'))
+  },
+
+  saveExtraState(this: ProcedureBlock) {
+    console.log(...createLogs(this, 'saveExtraState'))
+  },
+
+  loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
+    console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
+  },
+
+  destroy(this: ProcedureBlock) {
+    console.log(...createLogs(this, 'destroy', 'crimson'))
   }
 }
 
@@ -72,5 +97,30 @@ Blocks['function_call'] = {
     this.setStyle('function_blocks')
 
     console.log(...createLogs(this, 'init', 'aquamarine'))
+  },
+
+  getProcedureModel(this: ProcedureBlock) {
+    return this.model
+  },
+
+  isProcedureDef(this: ProcedureBlock) {
+    return false
+  },
+
+  getVarModels(this: ProcedureBlock) {
+    console.log(...createLogs(this, 'getVarModels'))
+    return []
+  },
+
+  doProcedureUpdate(this: ProcedureBlock) {
+    console.log(...createLogs(this, 'doProcedureUpdate'))
+  },
+
+  saveExtraState(this: ProcedureBlock) {
+    console.log(...createLogs(this, 'saveExtraState'))
+  },
+
+  loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
+    console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
   }
 }

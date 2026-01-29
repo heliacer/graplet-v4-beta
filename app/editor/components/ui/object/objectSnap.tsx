@@ -1,5 +1,6 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
+import { RulerDimensionLine } from 'lucide-react'
 
 /**
  * @todo Modify Snapping
@@ -13,9 +14,13 @@ export function ObjectSnap() {
   const { controls, currentTool } = useEditor()
 
   return (
-    <div className='text-sm h-5.5 pointer-events-auto'>
+    <div className='relative text-sm h-5.5 pointer-events-auto'>
+      <RulerDimensionLine
+        size={14}
+        className='absolute left-1.25 top-1 text-xs select-none'
+      />
       <DragNumberInput
-        className='rounded border select-none outline-none w-10 text-center bg-ui-800 hover:bg-ui-750 focus:bg-ui-750'
+        className='rounded border select-none outline-none w-14 pl-4 text-center bg-ui-800 hover:bg-ui-750 focus:bg-ui-750'
         title={`${currentTool} snap`}
         min={0}
         max={currentTool === 'rotate' ? 360 : Infinity}

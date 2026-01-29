@@ -33,7 +33,7 @@ export function NavMenu() {
           ])
         }}
       >
-        trigger notification!
+        notification!
       </button>
       <button
         className={clsx(
@@ -49,7 +49,7 @@ export function NavMenu() {
           }
         }}
       >
-        toggle flyout autoclose!
+        flyout.autoclose!
       </button>
     </nav>
   )

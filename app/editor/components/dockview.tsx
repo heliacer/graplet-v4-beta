@@ -19,6 +19,7 @@ import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
 import SettingsPanel from './panels/SettingsPanel'
 import KeybindsPanel from './panels/KeybindsPanel'
+import { useEffect } from 'react'
 
 const panelComponents = {
   debug: DebugPanel,
@@ -118,13 +119,36 @@ const jsonLayout: SerializedDockview = {
 }
 
 export function GrapletDockview() {
-  const { setDvApi } = useEditor()
+  const { dvApi, setDvApi } = useEditor()
 
   function mount(event: DockviewReadyEvent) {
     const { api } = event
-    api.fromJSON(jsonLayout)
+    const data = localStorage.getItem('dvLayout')
+
+    if (data) {
+      try {
+        const layout = JSON.parse(data)
+        api.fromJSON(layout)
+        console.info('%cLoaded dockview layout:', 'color: salmon;', layout)
+      } catch (error) {
+        console.error('Could not parse JSON data', error)
+      }
+    } else {
+      api.fromJSON(jsonLayout)
+    }
     setDvApi(api)
   }
+
+  useEffect(() => {
+    if (!dvApi) return
+
+    const layoutListener = () => {
+      const layout = dvApi.toJSON()
+      localStorage.setItem('dvLayout', JSON.stringify(layout))
+    }
+
+    dvApi.onDidLayoutChange(layoutListener)
+  }, [dvApi])
 
   return (
     <DockviewReact

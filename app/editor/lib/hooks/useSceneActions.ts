@@ -60,7 +60,7 @@ export function useSceneActions() {
         if (!workspace) throw Error('Missing workspace')
         serialization.workspaces.load(project.workspace, workspace)
         console.info(
-          '%cLoaded workspace state: ',
+          '%cLoaded workspace state:',
           'color: salmon;',
           project.workspace
         )

@@ -13,7 +13,7 @@ export function ObjectControls() {
   if (isRunning) return
 
   return (
-    <div className='flex gap-2 absolute m-1.5 pointer-events-none'>
+    <div className='absolute flex gap-2 m-1.5 pointer-events-none'>
       <ObjectTools />
       <div className='flex gap-2 h-min'>
         <ObjectAdd />

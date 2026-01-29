@@ -26,7 +26,11 @@ export function FileMenu() {
     /** @todo Consider using object registry and pass that as ProjectData, skipping internal objects (1) */
     const projectData = createProjectData(workspace, scene.current)
     localStorage.setItem('projectData', JSON.stringify(projectData))
-    console.info('Saved project to localStorage', projectData)
+    console.info(
+      '%cSaved project to localStorage:',
+      'color: salmon;',
+      projectData
+    )
   }
 
   function handleSaveFile() {
