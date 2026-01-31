@@ -2,6 +2,7 @@
 import { EditorHeader } from './components/Header'
 import { GrapletDockview } from './components/dockview'
 import { ContextMenu } from './components/ui/contextMenu'
+import { Footer } from './components/ui/footer'
 import { Notifications } from './components/ui/notifications'
 import { EditorProvider } from './lib/EditorContext'
 
@@ -11,9 +12,7 @@ export default function Editor() {
       <EditorProvider>
         <EditorHeader />
         <GrapletDockview />
-        <footer className='h-6 flex items-center'>
-          <p>Footer</p>
-        </footer>
+        <Footer/>
         <Notifications />
         <ContextMenu />
       </EditorProvider>

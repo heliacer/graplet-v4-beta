@@ -1,5 +1,6 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { IconT } from '@/app/editor/lib/types'
+import { upsertPanel } from '@/app/editor/lib/utils/dockview'
 import { ItemIcon } from '@/app/editor/lib/utils/icons'
 import clsx from 'clsx'
 
@@ -11,31 +12,11 @@ interface PanelMenuProps {
 
 export function PanelMenu({ component, title, iconType }: PanelMenuProps) {
   const { dvApi } = useEditor()
+  if (!dvApi) return
 
   return (
     <button
-      onClick={() => {
-        const panel = dvApi?.getPanel(component)
-        if (panel) {
-          panel.api.setActive()
-        } else {
-          dvApi?.addPanel({
-            id: component,
-            component,
-            title,
-            params: {
-              iconType,
-              closable: true
-            },
-            floating: {
-              x: document.body.clientWidth / 2 - 450,
-              y: document.body.clientHeight / 2 - 320,
-              width: 900,
-              height: 550
-            }
-          })
-        }
-      }}
+      onClick={() => upsertPanel(dvApi, component, title, iconType)}
       className={clsx(
         'text-sm flex gap-1 px-1 items-center',
         'border rounded-md',

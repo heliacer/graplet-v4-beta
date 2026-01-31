@@ -23,7 +23,7 @@ export const theme: ITheme = {
     flyoutBackgroundColour: 'var(--color-ui-850)',
     toolboxForegroundColour: 'var(--color-ui-200)',
     flyoutForegroundColour: 'var(--color-ui-200)',
-    flyoutOpacity: 0.9
+    flyoutOpacity: 0.8
   },
   fontStyle: {
     family: 'Nunito, Nunito Fallback',

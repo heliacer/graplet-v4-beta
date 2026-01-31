@@ -39,7 +39,7 @@ export default function SettingsPanel() {
   const themeNames = ['dark', 'light', 'arctic', 'lime', 'red']
 
   return (
-    <div className='flex flex-col gap-2 m-4'>
+    <div className='flex flex-col gap-1 m-4 text-sm'>
       <p>Theme</p>
       <div className='flex gap-2'>
         {themeNames.map((theme, key) => (
