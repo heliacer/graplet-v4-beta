@@ -45,3 +45,26 @@ export interface NotificationItemProps {
 }
 
 export type ToolItem = 'move' | 'path'
+
+export type EditorCommandT =
+  /**
+   * it's important to distinguish general keybinds (can be the same, e.g copy paste, but do different stuff across panels!!)
+   */
+  | 'openKeybinds'
+
+  /** scene-specific */
+  | 'copyObject'
+  | 'pasteObject'
+  | 'groupObject'
+  | 'addObject'
+  | 'removeObject'
+  | 'cloneObject'
+
+export interface EditorCommand {
+  label: string
+  run: () => void
+}
+
+export type EditorCommands = {
+  [K in EditorCommandT]: EditorCommand
+}

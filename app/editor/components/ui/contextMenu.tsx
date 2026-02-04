@@ -17,6 +17,7 @@ import {
 } from '@/app/ui/components/Dropdown'
 import { useState } from 'react'
 import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
+import { Object3D } from 'three'
 
 /**
  * @todo This shit is unstable, renaming doesn't work,
@@ -25,11 +26,12 @@ import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
  * relocating on edge also not working yet, wip
  */
 export function ContextMenu() {
-  const { contextMenu, setContextMenu, scene, objects } = useEditor()
+  const { contextMenu, setContextMenu, scene, objects, selectedItems } =
+    useEditor()
   const [activePath, setActivePath] = useState<number[]>([])
   const {
     removeObject,
-    groupObject,
+    groupObjects,
     unGroupObject,
     cloneObject,
     copyObjects,
@@ -42,42 +44,53 @@ export function ContextMenu() {
   })
 
   if (!contextMenu) return
-  const { item } = contextMenu
   const menuItems: DropdownItemProps[] = []
 
-  if (item) {
-    const object = objects.current.get(item.getId())
-    if (!object) return
-    const isGroup = object.type === 'Group'
+  if (contextMenu.item) {
+    const targetId = contextMenu.item.getId()
+    const itemIds = selectedItems.includes(targetId)
+      ? selectedItems
+      : [targetId]
+    const selection: Object3D[] = []
+    for (const itemId of itemIds) {
+      const obj = objects.current.get(itemId)
+      if (obj) selection.push(obj)
+    }
+    const groups = selection.filter(obj => obj.type === 'Group')
+    const groupsWithChildren = groups.filter(obj => obj.children.length > 0)
+    const isSingleGroup = groups.length > 0 && selection.length === 1
+    const multipleSuffix = selectedItems.length > 1 ? '*' : ''
 
     menuItems.push(
       {
-        label: 'Copy',
+        label: `Copy ${multipleSuffix}`,
         Icon: ClipboardCopy,
-        onClick: () => copyObjects([object])
+        onClick: () => copyObjects(selection)
       },
       {
         label: 'Paste',
-        disabled: !isGroup,
+        disabled: !isSingleGroup,
         Icon: ClipboardPaste,
-        onClick: () => pasteObjects(object)
+        onClick: () => pasteObjects(selection[0])
       },
       {
         label: 'Clone',
         Icon: Copy,
-        onClick: () => cloneObject(object)
+        disabled: selectedItems.length > 1,
+        onClick: () => cloneObject(selection[0])
       },
+      /** @todo Fix multiple selection */
       {
-        label: 'Group',
+        label: `Group ${multipleSuffix}`,
         Icon: Group,
-        onClick: () => groupObject(object)
+        onClick: () => groupObjects(selection)
       }
     )
 
-    if (isGroup) {
-      const objectAddItems = createAddItemsMenu(addObject, object)
+    if (isSingleGroup) {
+      const objectAddItems = createAddItemsMenu(addObject, selection[0])
       menuItems.push({
-        label: `Add to ${object.name}`,
+        label: 'Add to Group',
         Icon: DiamondPlus,
         children: objectAddItems
       })
@@ -85,15 +98,23 @@ export function ContextMenu() {
 
     menuItems.push(
       {
-        label: 'Ungroup',
+        label: `Ungroup ${multipleSuffix}`,
         Icon: Ungroup,
-        disabled: object.children.length === 0,
-        onClick: () => unGroupObject(object)
+        disabled: groupsWithChildren.length === 0,
+        onClick: () => {
+          for (const object of groupsWithChildren) {
+            unGroupObject(object)
+          }
+        }
       },
       {
-        label: 'Delete',
+        label: `Delete ${multipleSuffix}`,
         Icon: Trash,
-        onClick: () => removeObject(object)
+        onClick: async () => {
+          for (const object of selection) {
+            removeObject(object)
+          }
+        }
       }
     )
   } else {

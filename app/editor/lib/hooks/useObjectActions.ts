@@ -12,7 +12,12 @@ import { blocklyUI } from '../blockly/blocks'
 import { ParentError, RegistryError, SObject3D } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import { isInternalObject, moveObject } from '../utils/three'
+import {
+  findTopLevelObject,
+  getFallbackObject,
+  isInternalObject,
+  moveObject
+} from '../utils/three'
 
 let nextId = 0
 
@@ -140,24 +145,12 @@ export function useObjectActions() {
 
       /** If it's the selection, remove it */
       if (selectedItems.includes(id)) {
-        const newSelection = selectedItems.filter(item => item !== id)
-        setSelectedItems(newSelection)
-
-        /** If it was the last in the selection, find a new one to select  */
-        if (!newSelection) {
-          if (parent.children.length > 0) {
-            const child = [...parent.children]
-              .reverse()
-              .find(c => !isInternalObject(c))
-            if (child) {
-              const childId = objectIds.current.get(child)
-              if (childId) setSelectedItems([childId])
-            }
-          } else {
-            const parentId = objectIds.current.get(parent)
-            if (parentId) setSelectedItems([parentId])
-          }
-        }
+        const fallback = getFallbackObject(parent)
+        const fallbackId = objectIds.current.get(fallback)
+        setSelectedItems(prev => {
+          const next = prev.filter(item => item !== id)
+          return next.length === 0 && fallbackId ? [fallbackId] : next
+        })
       }
     } else if (!isInternalObject(object)) {
       throw new RegistryError(object)
@@ -190,11 +183,18 @@ export function useObjectActions() {
     rebuildBlocklyUI()
   }
 
-  function groupObject(object: Object3D) {
-    const parent = object.parent
-    if (!parent) throw new ParentError(object)
+  function groupObjects(objects: Object3D[]) {
+    if (objects.length === 0) return
+    const firstParent = objects[0].parent
+    if (!firstParent) throw new ParentError(objects[0])
+    const parent =
+      objects.length === 1
+        ? firstParent
+        : findTopLevelObject(objects, scene.current)
     const target = addObject({ type: 'Group', name: 'Group' }, parent)
-    moveObject(object, target)
+    for (const object of objects) {
+      moveObject(object, target)
+    }
   }
 
   function unGroupObject(object: Object3D) {
@@ -238,7 +238,7 @@ export function useObjectActions() {
     addObject,
     removeObject,
     cloneObject,
-    groupObject,
+    groupObjects,
     unGroupObject,
     copyObjects,
     pasteObjects

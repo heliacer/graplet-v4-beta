@@ -12,7 +12,7 @@ export default function Editor() {
       <EditorProvider>
         <EditorHeader />
         <GrapletDockview />
-        <Footer/>
+        <Footer />
         <Notifications />
         <ContextMenu />
       </EditorProvider>

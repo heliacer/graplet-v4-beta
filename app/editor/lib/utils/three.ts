@@ -2,7 +2,8 @@ import {
   CameraHelper,
   DirectionalLightHelper,
   GridHelper,
-  Object3D
+  Object3D,
+  Scene
 } from 'three'
 import {
   TransformControls,
@@ -58,4 +59,46 @@ export function isTransformControlsMode(
   value: string
 ): value is TransformControlsMode {
   return value === 'translate' || value === 'rotate' || value === 'scale'
+}
+
+export function findTopLevelObject(
+  objects: Object3D[],
+  scene: Scene
+): Object3D {
+  if (objects.length === 0) throw Error('An Empty object list serves me shit')
+  const objectSet = new Set(objects)
+
+  for (const object of objects) {
+    let parent = object.parent
+    if (!parent) throw new ParentError(object)
+
+    let isTopLevel = true
+
+    while (parent !== scene) {
+      /** another selected object is above us, oh no we lost :< */
+      if (objectSet.has(parent)) {
+        isTopLevel = false
+        break
+      }
+
+      if (!parent.parent) throw new ParentError(parent)
+      parent = parent.parent
+    }
+    if (isTopLevel) {
+      return object
+    }
+  }
+  throw Error('How did we get there?')
+}
+
+export function getFallbackObject(object: Object3D) {
+  if (object.children.length > 0) {
+    const child = [...object.children].reverse().find(c => !isInternalObject(c))
+    if (child) {
+      return child
+    }
+  }
+  const parent = object.parent
+  if (!parent) throw new ParentError(object)
+  return parent
 }
