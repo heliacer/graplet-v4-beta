@@ -2,7 +2,7 @@
   "name": "graplet",
   "version": "0.1.0",
   "private": true,
-  "description": "A block-based 3D scene editor using ThreeJS and Blockly.",
+  "description": "A block-based 3D Scene Editor",
   "author": "heliacer@gmx.ch",
   "type": "module",
   "scripts": {
