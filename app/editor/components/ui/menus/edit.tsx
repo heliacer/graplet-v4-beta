@@ -1,9 +1,12 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
+import { upsertPanel } from '@/app/editor/lib/utils/dockview'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
-import { Keyboard, PenLine } from 'lucide-react'
+import { Keyboard, PenLine, Settings2 } from 'lucide-react'
 
 export function EditMenu() {
   const { dvApi } = useEditor()
+
+  if (!dvApi) return
 
   /**
    * @todo Implement Edit menu
@@ -15,28 +18,12 @@ export function EditMenu() {
     {
       label: 'Keybinds ...',
       Icon: Keyboard,
-      onClick: () => {
-        const panel = dvApi?.getPanel('keybinds')
-        if (panel) {
-          panel.api.setActive()
-        } else {
-          dvApi?.addPanel({
-            id: 'keybinds',
-            component: 'keybinds',
-            title: 'Keybinds',
-            params: {
-              iconType: 'Keyboard',
-              closable: true
-            },
-            floating: {
-              x: document.body.clientWidth / 2 - 450,
-              y: document.body.clientHeight / 2 - 320,
-              width: 900,
-              height: 550
-            }
-          })
-        }
-      }
+      onClick: () => upsertPanel(dvApi, 'keybinds', 'Keybinds', 'Keyboard')
+    },
+    {
+      label: 'Settings ...',
+      Icon: Settings2,
+      onClick: () => upsertPanel(dvApi, 'settings', 'Settings', 'Settings2')
     }
   ]
 

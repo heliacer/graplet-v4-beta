@@ -33,7 +33,7 @@ function PaneButton({
       title={pane}
       onClick={() => setActivePane(pane)}
       className={clsx(
-        'border-l rounded-md cursor-pointer',
+        'border-l rounded-l-md cursor-pointer',
         activePane === pane
           ? 'border-teal bg-ui-800'
           : 'border-transparent hover:bg-ui-800 hover:border-ui-700',
@@ -42,7 +42,7 @@ function PaneButton({
     >
       <div
         className={clsx(
-          'border border-l-0 p-0.5 rounded-md',
+          'border-y border-l-0 p-0.5 pr-1 rounded-l-md',
           activePane === pane
             ? 'border-ui-700'
             : 'border-transparent hover:border-ui-700'
@@ -62,7 +62,7 @@ export default function PropertiesPanel() {
 
   return (
     <div className='flex h-full'>
-      <nav className='flex flex-col gap-1 p-0.5'>
+      <nav className='flex flex-col gap-1 pl-0.5'>
         <PaneButton
           className='text-cyan'
           Icon={Wrench}
@@ -91,7 +91,7 @@ export default function PropertiesPanel() {
           setActivePane={setActivePane}
         />
       </nav>
-      <div className='p-1.5 flex flex-col gap-2 text-xs w-full'>
+      <div className='p-1.5 flex flex-col gap-2 text-xs w-full rounded outline-1 z-10 outline-ui-700'>
         {activePane === 'object' && <ObjectPane object={object} />}
         {activePane === 'geometry' && <GeometryPane object={object} />}
         {activePane === 'material' && <MaterialPane object={object} />}

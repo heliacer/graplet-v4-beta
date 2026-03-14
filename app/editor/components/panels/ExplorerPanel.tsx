@@ -109,7 +109,7 @@ export default function ExplorerPanel() {
         setContextMenu({ x: e.clientX, y: e.clientY })
       }}
     >
-      <div className='py-1 flex flex-col gap-0.5 items-start border-r border-ui-700 min-h-full'>
+      <div className='py-1 flex flex-col items-start border-r border-ui-700 min-h-full'>
         {tree.getItems().map(item => (
           <TreeItemView key={item.getId()} tree={tree} item={item} />
         ))}

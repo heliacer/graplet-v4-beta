@@ -43,7 +43,7 @@ export function Notifications() {
     <ul
       className={clsx(
         'flex flex-col absolute bottom-8 right-2',
-        'text-sm rounded gap-1'
+        'text-sm rounded gap-1 z-20'
       )}
     >
       {notifications.map((item, key) => (

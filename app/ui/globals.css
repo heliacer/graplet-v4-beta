@@ -172,6 +172,10 @@ input {
   border-color: var(--color-ui-700);
 }
 
+input:hover {
+  border-color: var(--color-ui-650);
+}
+
 button:focus {
   outline-style: none;
 }
@@ -183,4 +187,9 @@ input:focus {
 
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
+}
+
+
+body::selection{
+  background: var(--color-ui-700);  
 }

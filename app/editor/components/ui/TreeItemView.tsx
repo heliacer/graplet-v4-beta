@@ -152,12 +152,9 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
           setContextMenu({ item, x: e.clientX, y: e.clientY })
         }}
         className={clsx(
-          item.isSelected()
-            ? 'border-teal/70 bg-teal/20'
-            : isHovered
-              ? 'bg-ui-800 border-ui-650'
-              : 'border-transparent',
-          'border w-full rounded-l-md px-1 focus:outline-none'
+          item.isSelected() ? 'bg-teal/20' : isHovered && 'bg-ui-750',
+
+          'border focus:border-teal/50 border-transparent w-full rounded-l-md px-1'
         )}
       >
         <ItemViewContent item={item} object={object} />

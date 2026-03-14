@@ -88,12 +88,13 @@ export default function Password() {
           type='reset'
           onClick={() => router.push('/login')}
           className={clsx(
-            'absolute right-2 top-1.75 border px-2 py-0.5 rounded-full',
-            'bg-ui-800 border-ui-600',
+            'absolute right-2 top-1.75 border px-2 py-1 rounded-full',
+            'transition bg-ui-800 border-ui-600',
+            'hover:border-ui-550 hover:bg-ui-750',
             !isLoading && 'cursor-pointer'
           )}
         >
-          <Pen size={18} />
+          <Pen size={14} />
         </button>
         <CredentialsInput
           placeholder='Enter Password'
@@ -105,13 +106,14 @@ export default function Password() {
         <button
           type='button'
           className={clsx(
-            'absolute right-12.5 bottom-1.75 border px-2 py-0.5 rounded-full',
-            'bg-ui-800 border-ui-600',
+            'absolute right-12.5 bottom-1.75 border px-2 py-1 rounded-full',
+            'transition bg-ui-800 border-ui-600',
+            'hover:border-ui-550 hover:bg-ui-750',
             !isLoading && 'cursor-pointer'
           )}
           onClick={() => setShowPassword(prev => !prev)}
         >
-          {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
+          {showPassword ? <Eye size={14} /> : <EyeClosed size={14} />}
         </button>
         <SubmitButton isLoading={isLoading} />
       </form>

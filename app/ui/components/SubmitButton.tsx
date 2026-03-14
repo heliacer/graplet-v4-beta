@@ -6,16 +6,17 @@ export function SubmitButton({ isLoading }: { isLoading: boolean }) {
     <button
       type='submit'
       className={clsx(
-        'absolute right-2 bottom-1.75 border px-2 py-0.5 rounded-full',
-        'bg-ui-800 border-ui-600',
+        'absolute right-2 bottom-1.75 border px-2 py-1 rounded-full',
+        'transition bg-ui-800 border-ui-600',
+        'hover:border-ui-550 hover:bg-ui-750',
         !isLoading && 'cursor-pointer'
       )}
       disabled={isLoading}
     >
       {isLoading ? (
-        <LoaderCircle className='animate-spin' size={18} />
+        <LoaderCircle className='animate-spin' size={14} />
       ) : (
-        <ArrowRight size={18} />
+        <ArrowRight size={14} />
       )}
     </button>
   )

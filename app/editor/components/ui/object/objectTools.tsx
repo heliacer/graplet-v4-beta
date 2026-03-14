@@ -39,7 +39,7 @@ function ToolButton({ tool, Icon }: ToolButtonProps) {
         setCurrentTool(tool)
       }}
       className={clsx(
-        'border p-1 rounded-md cursor-pointer pointer-events-auto',
+        'border p-0.5 rounded-md cursor-pointer pointer-events-auto',
         currentTool === tool
           ? 'border-teal/70 bg-teal/20'
           : 'bg-ui-800 border-ui-700 hover:bg-ui-750'

@@ -19,7 +19,7 @@ export function CredentialsInput({
     name: name || type,
     className: clsx(
       'w-full pr-12 border py-1.5 pl-3 rounded-full truncate',
-      'focus:outline-none'
+      'focus:outline-none transition'
     ),
     placeholder: placeholder || type,
     type,
