@@ -96,6 +96,7 @@
 }
 
 .blocklyFlyoutButtonBackground {
+
   stroke: var(--color-ui-600);
   rx: 6;
   ry: 6;
@@ -152,4 +153,8 @@
 
 .graplet-renderer.graplet-theme .blocklySelected:active>.blocklyPath.blocklyPathSelected{
   filter: var(--blocklySelectedGlowFilter);
+}
+
+.graplet-renderer.graplet-theme .blocklyFlyoutButton .blocklyText{
+  fill: var(--color-ui-200);
 }

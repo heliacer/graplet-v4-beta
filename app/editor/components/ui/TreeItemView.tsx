@@ -153,7 +153,6 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         }}
         className={clsx(
           item.isSelected() ? 'bg-teal/20' : isHovered && 'bg-ui-750',
-
           'border focus:border-teal/50 border-transparent w-full rounded-l-md px-1'
         )}
       >
