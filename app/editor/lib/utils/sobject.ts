@@ -1,4 +1,10 @@
-import { SGeometry, SObject3D, SMaterial, SBase } from '../types'
+import {
+  SGeometry,
+  SObject3D,
+  SMaterial,
+  SBase,
+  ObjectUserData
+} from '../types'
 import {
   AmbientLight,
   BoxGeometry,
@@ -167,12 +173,22 @@ export function serializeObject(object: Object3D): SObject3D {
     .filter(child => !isInternalObject(child))
     .map(serializeObject) as readonly SObject3D[]
 
+  const userData = object.userData as ObjectUserData
+  /** 
+   * @todo think about making this more permissive and just ignore it,
+   * or make it strict and include it not as userData (which can be undefined!)
+   * but as it's own sharedId for SBase:
+   * 
+    if (!userData.sharedId) throw Error('Object is not linked with a shared Id')
+   */
+
   const base: SBase = {
     name,
     position: [position.x, position.y, position.z],
     rotation: [rotation.x, rotation.y, rotation.z],
     scale: [scale.x, scale.y, scale.z],
-    ...(children.length > 0 && { children })
+    ...(children.length > 0 && { children }),
+    userData
   }
 
   /**

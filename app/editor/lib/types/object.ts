@@ -32,3 +32,8 @@ export class RegistryError extends ObjectError {
     this.name = 'RegistryError'
   }
 }
+
+export interface ObjectUserData {
+  /** used when loading an existing serlialized object to link it together properly */
+  sharedId?: string
+}

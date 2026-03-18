@@ -9,7 +9,7 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
-import { ParentError, RegistryError, SObject3D } from '../types'
+import { ObjectUserData, ParentError, RegistryError, SObject3D } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import {
@@ -100,6 +100,12 @@ export function useObjectActions() {
     const id = (nextId++).toString()
     objects.current.set(id, object)
     objectIds.current.set(object, id)
+
+    /** @todo needs testing */
+    const userData: ObjectUserData = {
+      sharedId: id
+    }
+    object.userData = userData
 
     applyHelpers(object)
     setSelectedItems([id])

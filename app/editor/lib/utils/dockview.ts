@@ -2,11 +2,12 @@ import { DockviewApi } from 'dockview-react'
 import { IconT } from '../types'
 
 export function upsertPanel(
-  api: DockviewApi,
+  api: DockviewApi | null,
   component: string,
   title: string,
   iconType: IconT
 ) {
+  if (!api) return
   const panel = api.getPanel(component)
   if (panel) {
     panel.api.setActive()

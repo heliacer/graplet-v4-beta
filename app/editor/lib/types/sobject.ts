@@ -1,3 +1,5 @@
+import { ObjectUserData } from "./object"
+
 type Vec3 = readonly [number, number, number]
 
 /**
@@ -17,10 +19,12 @@ export type SObject3D =
  */
 export interface SBase {
   name: string
+  sharedId?: number
   position?: Vec3
   rotation?: Vec3
   scale?: Vec3
   children?: readonly SObject3D[]
+  userData?: ObjectUserData
 }
 
 /** Serialized Scene */
