@@ -11,12 +11,11 @@ import { useTree } from '@headless-tree/react'
 import { useEffect } from 'react'
 import { TreeItemView } from '../ui/TreeItemView'
 import { moveObject, isInternalObject } from '../../lib/utils/three'
-import { NotFoundError, RegistryError, TreeItem } from '../../lib/types'
+import { NotFoundError, TreeItem } from '../../lib/types'
 
 export default function ExplorerPanel() {
   const {
     objects,
-    objectIds,
     objectVersion,
     selectedItems,
     scene,
@@ -80,11 +79,7 @@ export default function ExplorerPanel() {
         if (!object) return []
         return object.children
           .filter(object => !isInternalObject(object))
-          .map(object => {
-            const id = objectIds.current.get(object)
-            if (!id) throw new RegistryError(object)
-            return id
-          })
+          .map(object => object.sharedId)
       }
     },
     features: [

@@ -9,23 +9,22 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
-import { ObjectUserData, ParentError, RegistryError, SObject3D } from '../types'
+import { ParentError, SObject3D, TransformProps } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import {
   findTopLevelObject,
   getFallbackObject,
-  isInternalObject,
   moveObject
 } from '../utils/three'
+import { Optional } from '@/app/lib/types'
 
-let nextId = 0
+let nextSharedId = 0
 
 export function useObjectActions() {
   const {
     scene,
     objects,
-    objectIds,
     selectedItems,
     setSelectedItems,
     workspace,
@@ -78,7 +77,7 @@ export function useObjectActions() {
    * @param target Object3D to add it to, scene by default
    */
   function addObject(
-    props: SObject3D,
+    props: Optional<SObject3D, TransformProps>,
     target: Object3D = scene.current
   ): Object3D {
     const object = createObject(props)
@@ -96,19 +95,24 @@ export function useObjectActions() {
       }
     }
 
-    /** Add it to the registry */
-    const id = (nextId++).toString()
-    objects.current.set(id, object)
-    objectIds.current.set(object, id)
-
-    /** @todo needs testing */
-    const userData: ObjectUserData = {
-      sharedId: id
+    /**
+     * Apply userData, sharedId and add to registry
+     * @todo refactor and clean this shit
+     */
+    if (props.sharedId) {
+      object.sharedId = props.sharedId
+      /** Ensure no conflicts happen when adding more objects */
+      const sharedId = Number(props.sharedId)
+      if (sharedId >= nextSharedId) {
+        nextSharedId = sharedId + 1
+      }
+    } else {
+      object.sharedId = (nextSharedId++).toString()
     }
-    object.userData = userData
 
+    objects.current.set(object.sharedId, object)
     applyHelpers(object)
-    setSelectedItems([id])
+    setSelectedItems([object.sharedId])
     setObjectVersion(v => v + 1)
     rebuildBlocklyUI()
     return object
@@ -144,22 +148,17 @@ export function useObjectActions() {
     }
 
     /** Remove it from the registry */
-    const id = objectIds.current.get(object)
-    if (id) {
-      objects.current.delete(id)
-      objectIds.current.delete(object)
+    objects.current.delete(object.sharedId)
 
-      /** If it's the selection, remove it */
-      if (selectedItems.includes(id)) {
-        const fallback = getFallbackObject(parent)
-        const fallbackId = objectIds.current.get(fallback)
-        setSelectedItems(prev => {
-          const next = prev.filter(item => item !== id)
-          return next.length === 0 && fallbackId ? [fallbackId] : next
-        })
-      }
-    } else if (!isInternalObject(object)) {
-      throw new RegistryError(object)
+    /** If it's the selection, remove it */
+    if (selectedItems.includes(object.sharedId)) {
+      const fallback = getFallbackObject(parent)
+      setSelectedItems(prev => {
+        const next = prev.filter(item => item !== object.sharedId)
+        return next.length === 0 && fallback.sharedId
+          ? [fallback.sharedId]
+          : next
+      })
     }
 
     setObjectVersion(v => v + 1)
@@ -174,19 +173,9 @@ export function useObjectActions() {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
 
-    const clone = object.clone()
+    const sObject = serializeObject(object)
+    const clone = addObject(sObject, parent)
     clone.position.x += 2
-
-    parent.add(clone)
-
-    /** Add it to the registry */
-    const id = (nextId++).toString()
-    objects.current.set(id, clone)
-    objectIds.current.set(clone, id)
-
-    setSelectedItems([id])
-    setObjectVersion(v => v + 1)
-    rebuildBlocklyUI()
   }
 
   function groupObjects(objects: Object3D[]) {
@@ -219,7 +208,7 @@ export function useObjectActions() {
   }
 
   function copyObjects(objects: Object3D[]) {
-    const sobjects = objects.map(serializeObject)
+    const sobjects = objects.map(object => object)
     const data = JSON.stringify(sobjects)
     navigator.clipboard.writeText(data)
   }

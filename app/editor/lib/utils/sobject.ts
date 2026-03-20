@@ -3,7 +3,7 @@ import {
   SObject3D,
   SMaterial,
   SBase,
-  ObjectUserData
+  TransformProps
 } from '../types'
 import {
   AmbientLight,
@@ -35,6 +35,7 @@ import {
   TorusKnotGeometry
 } from 'three'
 import { isInternalObject } from './three'
+import { Optional } from '@/app/lib/types'
 
 /**
  * creates a Object3D from serialization
@@ -50,7 +51,7 @@ import { isInternalObject } from './three'
  *   }
  * })
  */
-export function createObject(props: SObject3D) {
+export function createObject(props: Optional<SObject3D, TransformProps>) {
   switch (props.type) {
     case 'Scene': {
       return new Scene()
@@ -83,7 +84,10 @@ export function createObject(props: SObject3D) {
   }
 }
 
-export function applyProps(object: Object3D, props: SObject3D) {
+export function applyProps(
+  object: Object3D,
+  props: Optional<SObject3D, TransformProps>
+) {
   const { type, name, rotation, scale, position } = props
 
   /** Ensure Object and Serialized Props are of same type */
@@ -166,29 +170,30 @@ function createMaterial(material: SMaterial): Material {
 /**
  * Serializes an object with its metadata
  */
-export function serializeObject(object: Object3D): SObject3D {
+export function serializeObject(
+  object: Object3D,
+  includeId?: boolean
+): SObject3D {
   /** Common Props */
   const { name, position, rotation, scale } = object
   const children = object.children
     .filter(child => !isInternalObject(child))
-    .map(serializeObject) as readonly SObject3D[]
-
-  const userData = object.userData as ObjectUserData
-  /** 
-   * @todo think about making this more permissive and just ignore it,
-   * or make it strict and include it not as userData (which can be undefined!)
-   * but as it's own sharedId for SBase:
-   * 
-    if (!userData.sharedId) throw Error('Object is not linked with a shared Id')
-   */
+    .map(object => serializeObject(object, includeId)) as readonly SObject3D[]
 
   const base: SBase = {
     name,
     position: [position.x, position.y, position.z],
     rotation: [rotation.x, rotation.y, rotation.z],
     scale: [scale.x, scale.y, scale.z],
-    ...(children.length > 0 && { children }),
-    userData
+    ...(children.length > 0 && { children })
+  }
+
+  /**
+   * @example the sharedId is included when saving state,
+   * but when duplicating objects, identity should never be copied.
+   */
+  if (includeId) {
+    base.sharedId = object.sharedId
   }
 
   /**

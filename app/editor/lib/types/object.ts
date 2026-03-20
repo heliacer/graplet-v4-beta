@@ -22,18 +22,3 @@ export class ParentError extends ObjectError {
     this.name = 'ParentError'
   }
 }
-
-/**
- * The given Object3D was not found in the registry
- */
-export class RegistryError extends ObjectError {
-  constructor(object: Object3D) {
-    super(object, 'was not registered in the registry')
-    this.name = 'RegistryError'
-  }
-}
-
-export interface ObjectUserData {
-  /** used when loading an existing serlialized object to link it together properly */
-  sharedId?: string
-}

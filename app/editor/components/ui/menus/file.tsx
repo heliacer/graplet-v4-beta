@@ -12,7 +12,7 @@ import { upsertPanel } from '@/app/editor/lib/utils/dockview'
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {
     workspace: serialization.workspaces.save(workspace),
-    scene: serializeObject(scene) as SScene
+    scene: serializeObject(scene, true) as SScene
   }
 }
 
