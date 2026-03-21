@@ -147,6 +147,12 @@ export function useObjectActions() {
       }
     }
 
+    if (!object.sharedId) {
+      throw Error(
+        `${object.name} does not have a sharedId.\nNote: do not use this function to dispose of an internal Object3D`
+      )
+    }
+
     /** Remove it from the registry */
     objects.current.delete(object.sharedId)
 

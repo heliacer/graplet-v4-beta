@@ -1,7 +1,14 @@
 import { useEditor } from '@/app/editor/lib/EditorContext'
 import { serializeObject } from '@/app/editor/lib/utils/sobject'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
-import { File, FolderDown, FolderSync, FolderUp, Save, Settings2 } from 'lucide-react'
+import {
+  File,
+  FolderDown,
+  FolderSync,
+  FolderUp,
+  Save,
+  Settings2
+} from 'lucide-react'
 import { useRef } from 'react'
 import { serialization, WorkspaceSvg } from 'blockly'
 import { Scene } from 'three'

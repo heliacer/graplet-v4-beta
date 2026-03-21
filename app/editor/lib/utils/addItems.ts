@@ -32,7 +32,10 @@ const cameras: CameraT[] = ['PerspectiveCamera', 'OrthographicCamera']
  * @returns a list of dropdown items with all common object add options
  */
 export function createAddItemsMenu(
-  addObject: (props: Optional<SObject3D, TransformProps>, target?: Object3D) => Object3D,
+  addObject: (
+    props: Optional<SObject3D, TransformProps>,
+    target?: Object3D
+  ) => Object3D,
   target?: Object3D
 ) {
   const meshChildren: DropdownItemProps[] = geometries.map(geo => ({

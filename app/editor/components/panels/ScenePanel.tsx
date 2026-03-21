@@ -20,8 +20,12 @@ export default function ScenePanel(props: IDockviewPanelProps) {
       <ObjectControls />
       <canvas
         ref={canvas}
-        onMouseDown={(e) => {if (e.button === 2) setRightDown(true)}}
-        onMouseUp={(e) => {if (e.button === 2) setRightDown(false)}}
+        onMouseDown={e => {
+          if (e.button === 2) setRightDown(true)
+        }}
+        onMouseUp={e => {
+          if (e.button === 2) setRightDown(false)
+        }}
         className={clsx(
           rightDown && 'cursor-grabbing',
           currentTool === 'move' && 'cursor-grab active:cursor-grabbing',

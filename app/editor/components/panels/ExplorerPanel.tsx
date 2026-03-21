@@ -79,7 +79,11 @@ export default function ExplorerPanel() {
         if (!object) return []
         return object.children
           .filter(object => !isInternalObject(object))
-          .map(object => object.sharedId)
+          .map(object => {
+            const id = object.sharedId
+            if (!id) throw Error(`${object.name} does not have a sharedId`)
+            return id
+          })
       }
     },
     features: [
