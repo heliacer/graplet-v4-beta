@@ -1,3 +1,5 @@
+export {}
+
 import 'three'
 
 declare module 'three' {

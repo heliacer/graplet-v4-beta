@@ -48,7 +48,7 @@ export default function ExplorerPanel() {
     onDrop: (items, target) => {
       for (const item of items) {
         const id = item.getId()
-        const object = id === 'scene' ? scene.current : objects.current.get(id)
+        const object = objects.current.get(id)
         if (!object) throw new NotFoundError(id)
 
         const targetId = target.item.getId()
