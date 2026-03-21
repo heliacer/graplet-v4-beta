@@ -147,24 +147,20 @@ export function useObjectActions() {
       }
     }
 
-    if (!object.sharedId) {
-      throw Error(
-        `${object.name} does not have a sharedId.\nNote: do not use this function to dispose of an internal Object3D`
-      )
-    }
+    if (object.sharedId) {
+      /** Remove it from the registry */
+      objects.current.delete(object.sharedId)
 
-    /** Remove it from the registry */
-    objects.current.delete(object.sharedId)
-
-    /** If it's the selection, remove it */
-    if (selectedItems.includes(object.sharedId)) {
-      const fallback = getFallbackObject(parent)
-      setSelectedItems(prev => {
-        const next = prev.filter(item => item !== object.sharedId)
-        return next.length === 0 && fallback.sharedId
-          ? [fallback.sharedId]
-          : next
-      })
+      /** If it's the selection, remove it */
+      if (selectedItems.includes(object.sharedId)) {
+        const fallback = getFallbackObject(parent)
+        setSelectedItems(prev => {
+          const next = prev.filter(item => item !== object.sharedId)
+          return next.length === 0 && fallback.sharedId
+            ? [fallback.sharedId]
+            : next
+        })
+      }
     }
 
     setObjectVersion(v => v + 1)
