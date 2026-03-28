@@ -2,6 +2,7 @@ import { LucideIcon } from 'lucide-react'
 import { Object3D } from 'three'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 import { useEditor } from '../../lib/EditorContext'
+import { useId } from 'react'
 
 interface BasePropertyProps {
   label: string
@@ -134,7 +135,7 @@ export function CheckBoxProperty({
   checked,
   action
 }: CheckBoxPropertyProps) {
-  const uuid = crypto.randomUUID()
+  const uuid = useId()
   return (
     <div className='flex gap-2'>
       <label className='cursor-pointer select-none' htmlFor={uuid}>

@@ -3,7 +3,7 @@ import { ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
 import { useEditor } from '../../lib/EditorContext'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Object3D } from 'three'
 import { isInternalObject } from '../../lib/utils/three'
 import { TreeItem } from '../../lib/types'
@@ -13,7 +13,7 @@ interface RenamingItemViewProps {
 }
 
 function RenamingItemView({ item }: RenamingItemViewProps) {
-  const uuid = crypto.randomUUID()
+  const uuid = useId()
   return (
     <div className='flex w-full'>
       <div style={{ marginLeft: `${item.getItemMeta().level * 8 + 12}px` }} />

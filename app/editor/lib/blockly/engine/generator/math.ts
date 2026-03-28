@@ -147,7 +147,7 @@ export function mathModuloGen(
   }
 }
 
-export function mathConstainGen(
+export function mathConstrainGen(
   block: Block,
   generator: ExpressionGenerator
 ): Expression {

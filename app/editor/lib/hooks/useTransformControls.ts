@@ -60,6 +60,8 @@ export function useTransformControls() {
 
     function cleanup() {
       controls.current?.detach()
+      controls.current?.removeEventListener('dragging-changed', dragListener)
+      controls.current?.removeEventListener('change', changeListener)
     }
 
     return cleanup

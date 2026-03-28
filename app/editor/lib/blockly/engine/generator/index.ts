@@ -22,6 +22,7 @@ import {
   mathAtan2Gen,
   mathChangeGen,
   mathConstantGen,
+  mathConstrainGen,
   mathHTrigGen,
   mathMapGen,
   mathModuloGen,
@@ -189,7 +190,7 @@ exprGenerator.forBlock('math_atan2', mathAtan2Gen)
 
 exprGenerator.forBlock('math_modulo', mathModuloGen)
 
-exprGenerator.forBlock('math_constrain', mathConstantGen)
+exprGenerator.forBlock('math_constrain', mathConstrainGen)
 
 exprGenerator.forBlock('math_random_float', mathRandomFloatGen)
 

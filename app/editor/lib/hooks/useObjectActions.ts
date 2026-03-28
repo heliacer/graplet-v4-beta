@@ -202,7 +202,8 @@ export function useObjectActions() {
       parent.add(child)
     }
     parent.remove(object)
-
+    removeObject(object)
+    
     /**
      * @todo multiselect all children which were previously in the group
      */
@@ -210,7 +211,7 @@ export function useObjectActions() {
   }
 
   function copyObjects(objects: Object3D[]) {
-    const sobjects = objects.map(object => object)
+    const sobjects = objects.map(object => serializeObject(object))
     const data = JSON.stringify(sobjects)
     navigator.clipboard.writeText(data)
   }

@@ -46,9 +46,9 @@ const mathBlocks = common.createBlockDefinitionsFromJsonArray([
           ['sinh', 'SINH'],
           ['cosh', 'COSH'],
           ['tanh', 'TANH'],
-          ['arcsinh', 'ARCSINH'],
-          ['arccosh', 'ARCCOSH'],
-          ['arctanh', 'ARCTANH']
+          ['arcsinh', 'ASINH'],
+          ['arccosh', 'ACOSH'],
+          ['arctanh', 'ATANH']
         ]
       },
       {
