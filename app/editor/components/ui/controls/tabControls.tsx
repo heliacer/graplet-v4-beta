@@ -7,7 +7,6 @@ import {
   SquareArrowOutDownLeft,
   SquareArrowOutUpRight
 } from 'lucide-react'
-import { useId } from 'react'
 
 export function RightControls(props: IDockviewHeaderActionsProps) {
   const { isMaximised, isFloating, toggleMaximized, toggleFloating } =

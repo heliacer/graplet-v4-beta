@@ -76,6 +76,6 @@ export function useBlocklyWorkspace(
     }
 
     return cleanup
-  }, [containerRef, setWorkspace])
+  }, [containerRef, setWorkspace, execute])
   return workspaceRef.current
 }
