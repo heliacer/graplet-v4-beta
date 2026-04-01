@@ -78,7 +78,6 @@ export function EditorProvider({
   const controls = useRef<TransformControls | null>(null)
   const orbitMap = useRef(new Map())
   const runState = useRef<RunState>({
-    shouldRun: false,
     shouldPause: false,
     shouldStop: false,
     shouldStep: false

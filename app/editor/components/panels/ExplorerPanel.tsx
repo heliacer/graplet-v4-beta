@@ -70,7 +70,8 @@ export default function ExplorerPanel() {
         return {
           name: object.name || 'unnamed',
           type: getIconT(object.type),
-          hasChildren: object.children.filter(c => !isInternalObject(c)).length > 0
+          hasChildren:
+            object.children.filter(c => !isInternalObject(c)).length > 0
         }
       },
       getChildren: itemId => {

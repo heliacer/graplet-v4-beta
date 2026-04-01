@@ -203,7 +203,7 @@ export function useObjectActions() {
     }
     parent.remove(object)
     removeObject(object)
-    
+
     /**
      * @todo multiselect all children which were previously in the group
      */

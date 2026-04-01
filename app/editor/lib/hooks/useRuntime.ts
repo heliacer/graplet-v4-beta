@@ -28,7 +28,7 @@ export function useRuntime() {
         objects: objects.current,
         variables: varEnv.current,
         functions: funcEnv.current,
-        runState: runState
+        runState
       }
       try {
         const result = await evaluateExpression(expression, state)

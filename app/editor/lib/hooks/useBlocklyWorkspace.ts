@@ -12,8 +12,7 @@ export function useBlocklyWorkspace(
   containerRef: React.RefObject<HTMLDivElement>
 ) {
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
-  const { setWorkspace, objects, varEnv, funcEnv, runState, setIsRunning } =
-    useEditor()
+  const { setWorkspace } = useEditor()
   const { execute } = useRuntime()
 
   useEffect(() => {
@@ -77,15 +76,6 @@ export function useBlocklyWorkspace(
     }
 
     return cleanup
-  }, [
-    containerRef,
-    setWorkspace,
-    setIsRunning,
-    execute,
-    funcEnv,
-    runState,
-    objects,
-    varEnv
-  ])
+  }, [containerRef, setWorkspace])
   return workspaceRef.current
 }
