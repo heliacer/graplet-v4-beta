@@ -1,5 +1,5 @@
 import { Expression, ProgramState, Value } from '../ast'
-import { evaluateExpression } from '.'
+import { evaluateExpression } from '../interpreter'
 
 export function interpSetfunc(expression: Expression, state: ProgramState) {
   const { args, value, children } = expression

@@ -1,5 +1,5 @@
 import { Expression, ProgramState } from '../ast'
-import { checkPoint, evaluateExpression } from '.'
+import { checkPoint, evaluateExpression } from '../interpreter'
 
 export function interpLiteral(expression: Expression) {
   const { value } = expression

@@ -23,7 +23,6 @@ import { DockviewApi } from 'dockview-react'
 
 interface EditorContextType {
   // REFS
-  runState: RefObject<RunState>
   funcEnv: RefObject<FuncEnv>
   varEnv: RefObject<VarEnv>
   scene: RefObject<Scene>
@@ -77,11 +76,6 @@ export function EditorProvider({
   const canvas = useRef<HTMLCanvasElement>(null!)
   const controls = useRef<TransformControls | null>(null)
   const orbitMap = useRef(new Map())
-  const runState = useRef<RunState>({
-    shouldPause: false,
-    shouldStop: false,
-    shouldStep: false
-  })
 
   const [objectVersion, setObjectVersion] = useState(0)
 
@@ -111,7 +105,6 @@ export function EditorProvider({
         orbitMap,
         canvas,
         modelScene,
-        runState,
         controls,
 
         notifications,

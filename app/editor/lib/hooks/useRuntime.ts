@@ -1,6 +1,6 @@
-import { useCallback } from 'react'
-import { Expression } from '../blockly/engine/ast'
-import { evaluateExpression } from '../blockly/engine/interpreter'
+import { useCallback, useRef } from 'react'
+import { Expression, Thread } from '../blockly/engine/ast'
+import { evaluateExpression, initProgram, stepThread } from '../blockly/engine/interpreter'
 import { useEditor } from '../EditorContext'
 
 export function useRuntime() {
@@ -8,16 +8,21 @@ export function useRuntime() {
     objects,
     varEnv,
     funcEnv,
-    runState,
     setIsRunning,
     setIsPaused,
     setObjectVersion
   } = useEditor()
 
+  /** @deprecated */
+  const runState = useRef<RunState>({
+    shouldPause: false,
+    shouldStop: false,
+    shouldStep: false
+  })
+
   /**
+   * @deprecated
    * Executes the program in the interpreter
-   *
-   * If no specific expression is given, it will use the workspace expression
    */
   const execute = useCallback(
     async (expression: Expression) => {
@@ -46,21 +51,53 @@ export function useRuntime() {
     [objects, varEnv, funcEnv, runState, setIsRunning, setObjectVersion]
   )
 
-  /**
-   * Toggle pause / resume
-   */
+  let running = false
+  let paused = false
+  let threads: Thread[] = []
+
+  const state = {
+    objects: objects.current,
+    variables: varEnv.current,
+    functions: funcEnv.current
+  }
+
+  function start(expression: Expression) {
+    setIsRunning(true)
+
+    threads = initProgram(expression, state)
+    running = true
+    loop()
+  }
+
+  function loop() {
+    if (!running) return
+    if (!paused) {
+      for (const thread of threads) {
+        stepThread(thread, state)
+      }
+    }
+    requestAnimationFrame(loop)
+  }
+
   function pauseOrResume() {
     setIsPaused(p => {
-      runState.current.shouldPause = !p
+      paused = !paused
       return !p
     })
   }
 
-  function stop() {
-    runState.current.shouldStop = true
-    setObjectVersion(v => v + 1)
-    setIsPaused(false)
+  function step() {
+    for (const thread of threads) {
+      stepThread(thread, state)
+    }
   }
 
-  return { execute, pauseOrResume, stop }
+  function stop() {
+    running = false
+    setIsPaused(false)
+    setIsRunning(false)
+    setObjectVersion(v => v + 1)
+  }
+
+  return { execute, start, pauseOrResume, step, stop }
 }

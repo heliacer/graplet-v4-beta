@@ -1,5 +1,5 @@
-import { Expression, ProgramState } from '../ast'
-import { evaluateExpression, checkPoint } from '.'
+import { Expression, ProgramState, Thread } from '../ast'
+import { evaluateExpression, checkPoint } from '../interpreter'
 
 export async function interpMain(expression: Expression, state: ProgramState) {
   const { children } = expression
@@ -21,19 +21,16 @@ export async function interpMain(expression: Expression, state: ProgramState) {
   return
 }
 
-export async function interpRunseq(
-  expression: Expression,
-  state: ProgramState
+export function handleRunseq(
+  expr: Expression,
+  state: ProgramState,
+  thread: Thread,
 ) {
-  const { children } = expression
-  const { runState } = state
-
+  const { children } = expr
   if (!children) return
-  for (const expr of children) {
-    if (!(await checkPoint(runState))) return
-    await evaluateExpression(expr, state)
+  for (let i = children.length - 1; i >= 0; i--) {
+    thread.stack.push(children[i])
   }
-  return
 }
 
 export async function interpIf(expression: Expression, state: ProgramState) {

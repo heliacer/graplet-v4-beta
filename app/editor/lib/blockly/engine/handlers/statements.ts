@@ -1,5 +1,5 @@
 import { Expression, ProgramState, Value } from '../ast'
-import { evaluateExpression } from '.'
+import { evaluateExpression } from '../interpreter'
 
 export async function interpSetposxyz(
   expression: Expression,

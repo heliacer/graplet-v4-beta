@@ -5,8 +5,8 @@ import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'
 import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator/index'
 
 export function RunControls() {
-  const { runState, isRunning, isPaused, workspace } = useEditor()
-  const { execute, stop, pauseOrResume } = useRuntime()
+  const { isRunning, isPaused, workspace } = useEditor()
+  const { execute, stop, step, pauseOrResume } = useRuntime()
 
   async function handleRun() {
     if (!workspace) throw Error('Missing workspace')
@@ -54,7 +54,7 @@ export function RunControls() {
           <Octagon size={16} />
         </button>
         <button
-          onClick={() => (runState.current.shouldStep = true)}
+          onClick={step}
           className={clsx(
             'p-1 rounded',
             isRunning && isPaused ? 'cursor-pointer bg-blue' : 'bg-ui-700'
