@@ -11,12 +11,22 @@ export interface ProgramState {
 }
 
 export type Thread = {
-  stack: Expression[]
+  stack: Frame[]
+  valueStack: Value[]
   waitingUntil?: number
   done: boolean
 }
 
-export type Handler = (thread: Thread, state: ProgramState, expr: Expression) => void
+export type Frame = {
+  expr: Expression
+  stage: number
+}
+
+export type Handler = (
+  frame: Frame,
+  thread: Thread,
+  state: ProgramState
+) => void
 
 export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
 

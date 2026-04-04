@@ -1,4 +1,5 @@
 import { Expression, ExpressionT, Handler, ProgramState, Thread } from './ast'
+import { handleRunseq } from './handlers/control'
 
 function setFunction(expression: Expression, state: ProgramState) {
   const { args, value, children } = expression
@@ -25,7 +26,8 @@ export function initProgram(
     if (expr.type === 'setfunc') setFunction(expr, state)
     if (expr.type === 'runseq') {
       threads.push({
-        stack: [expr],
+        stack: [{ expr, stage: 0 }],
+        valueStack: [],
         done: false
       })
     }
@@ -34,195 +36,48 @@ export function initProgram(
   return threads
 }
 
-export function stepThread(thread: Thread, state: ProgramState) {
+export function step(thread: Thread, state: ProgramState) {
   if (thread.done) return
 
   if (thread.waitingUntil && Date.now() < thread.waitingUntil) return
 
-  const expr = thread.stack.pop()
-  if (!expr) {
+  const frame = thread.stack.pop()
+  if (!frame) {
     thread.done = true
     return
   }
 
-  const handler = handlers[expr.type as RuntimeExpressionT]
-  if (!handler) throw new Error(`Unknown type ${expr.type}`)
-
-  handler(thread, state, expr)
+  handlers[frame.expr.type](frame, thread, state)
 }
 
-type RuntimeExpressionT = Exclude<ExpressionT, 'main' | 'setfunc'>
-
-const handlers: Record<RuntimeExpressionT, Handler> = {
-  func: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  runseq: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  if: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  repeat: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  wait: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  setvar: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  changevar: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  literal: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  var: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  call: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  andor: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  neg: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  compare: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  arithmetic: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  map: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  trig: function (thread: Thread, state: ProgramState, expr: Expression): void {
-    throw new Error('Function not implemented.')
-  },
-  htrig: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  round: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  single: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  atan2: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  modulo: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  constrain: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  randomfloat: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  randomint: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  setposxyz: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  translatexyz: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  setscalexyz: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  setroteulerxyz: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  },
-  rotatexyz: function (
-    thread: Thread,
-    state: ProgramState,
-    expr: Expression
-  ): void {
-    throw new Error('Function not implemented.')
-  }
+/** @todo revamp all old interps to the new handler system */
+const handlers: Record<ExpressionT, Handler> = {
+  runseq: handleRunseq,
+  if: () => {},
+  repeat: () => {},
+  wait: () => {},
+  setvar: () => {},
+  changevar: () => {},
+  literal: () => {},
+  var: () => {},
+  call: () => {},
+  andor: () => {},
+  neg: () => {},
+  compare: () => {},
+  arithmetic: () => {},
+  map: () => {},
+  trig: () => {},
+  htrig: () => {},
+  round: () => {},
+  single: () => {},
+  atan2: () => {},
+  modulo: () => {},
+  constrain: () => {},
+  randomfloat: () => {},
+  randomint: () => {},
+  setposxyz: () => {},
+  translatexyz: () => {},
+  setscalexyz: () => {},
+  setroteulerxyz: () => {},
+  rotatexyz: () => {}
 }

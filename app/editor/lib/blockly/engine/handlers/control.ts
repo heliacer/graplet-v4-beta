@@ -1,93 +1,107 @@
-import { Expression, ProgramState, Thread } from '../ast'
-import { evaluateExpression, checkPoint } from '../interpreter'
+import { Frame, ProgramState, Thread, Value } from '../ast'
 
-export async function interpMain(expression: Expression, state: ProgramState) {
-  const { children } = expression
+function pushFrame(thread: Thread, expr: Frame['expr'], stage = 0) {
+  thread.stack.push({ expr, stage })
+}
 
-  if (!children) return
-  const runExprs: Expression[] = []
-  for (const expr of children) {
-    switch (expr.type) {
-      case 'runseq':
-        runExprs.push(expr)
-        break
-      case 'setfunc':
-        await evaluateExpression(expr, state)
-        break
-    }
+function popValue(thread: Thread): Value {
+  const value = thread.valueStack.pop()
+  if (value === undefined) {
+    throw new Error('Expected value on thread.valueStack')
   }
-  const promises = runExprs.map(expr => evaluateExpression(expr, state))
-  await Promise.all(promises)
-  return
+  return value
 }
 
 export function handleRunseq(
-  expr: Expression,
-  state: ProgramState,
+  frame: Frame,
   thread: Thread,
+  _state: ProgramState
 ) {
-  const { children } = expr
-  if (!children) return
+  if (frame.stage !== 0) {
+    throw new Error('runseq only supports stage 0')
+  }
+
+  const children = frame.expr.children ?? []
   for (let i = children.length - 1; i >= 0; i--) {
-    thread.stack.push(children[i])
+    pushFrame(thread, children[i])
   }
 }
 
-export async function interpIf(expression: Expression, state: ProgramState) {
-  const { args, type, children } = expression
-  const { runState } = state
+export function handleWait(frame: Frame, thread: Thread, _state: ProgramState) {
+  const { expr, stage } = frame
+  const args = expr.args ?? []
 
-  if (!(await checkPoint(runState))) return
-  if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
-  if (!children) return
+  if (args.length < 1) throw new Error('Invalid args for "wait"')
 
-  const conditions: boolean[] = []
-  for (const condExpr of args) {
-    conditions.push(Boolean(await evaluateExpression(condExpr, state)))
+  if (stage === 0) {
+    thread.stack.push({ expr, stage: 1 })
+    pushFrame(thread, args[0])
+    return
   }
 
-  for (let i = 0; i < conditions.length; i++) {
-    if (conditions[i] && children[i]) {
-      await evaluateExpression(children[i], state)
-      return
-    }
+  if (stage === 1) {
+    const ms = Number(popValue(thread))
+    thread.waitingUntil = Date.now() + ms
+    return
   }
 
-  const elseBranch = children[conditions.length]
-  if (elseBranch) {
-    await evaluateExpression(elseBranch, state)
-  }
-  return
+  throw new Error(`Invalid stage ${stage} for "wait"`)
 }
 
-export async function interpRepeat(
-  expression: Expression,
-  state: ProgramState
+export function handleRepeat(
+  frame: Frame,
+  thread: Thread,
+  _state: ProgramState
 ) {
-  const { args, type, children } = expression
-  const { runState } = state
+  const { expr, stage } = frame
+  const args = expr.args ?? []
+  const children = expr.children ?? []
 
-  if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
-  const times = Number(await evaluateExpression(args[0], state))
-  if (children) {
+  if (args.length < 1) throw new Error('Invalid args for "repeat"')
+
+  if (stage === 0) {
+    thread.stack.push({ expr, stage: 1 })
+    pushFrame(thread, args[0])
+    return
+  }
+
+  if (stage === 1) {
+    const times = Math.max(0, Math.floor(Number(popValue(thread))))
+
     for (let i = 0; i < times; i++) {
-      if (!(await checkPoint(runState))) return
-      for (const expr of children) {
-        if (!(await checkPoint(runState))) return
-        await evaluateExpression(expr, state)
+      for (let j = children.length - 1; j >= 0; j--) {
+        pushFrame(thread, children[j])
       }
     }
+    return
   }
-  return
+
+  throw new Error(`Invalid stage ${stage} for "repeat"`)
 }
 
-export async function interpWait(expression: Expression, state: ProgramState) {
-  const { args, type } = expression
-  const { runState } = state
+export function handleIf(frame: Frame, thread: Thread, _state: ProgramState) {
+  const { expr, stage } = frame
+  const args = expr.args ?? []
+  const children = expr.children ?? []
 
-  if (!(await checkPoint(runState))) return
-  if (!args || args.length < 1) throw Error(`Invalid args for "${type}"`)
-  const ms = Number(await evaluateExpression(args[0], state))
-  await new Promise(res => setTimeout(res, ms))
-  return
+  if (args.length < 1) throw new Error('Invalid args for "if"')
+
+  if (stage === 0) {
+    thread.stack.push({ expr, stage: 1 })
+    pushFrame(thread, args[0])
+    return
+  }
+
+  if (stage === 1) {
+    const condition = Boolean(popValue(thread))
+
+    if (condition) {
+      if (children[0]) pushFrame(thread, children[0])
+    } else {
+      if (children[1]) pushFrame(thread, children[1])
+    }
+    return
+  }
+
+  throw new Error(`Invalid stage ${stage} for "if"`)
 }

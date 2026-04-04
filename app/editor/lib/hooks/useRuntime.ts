@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react'
 import { Expression, Thread } from '../blockly/engine/ast'
-import { evaluateExpression, initProgram, stepThread } from '../blockly/engine/interpreter'
+import { initProgram, step } from '../blockly/engine/interpreter'
 import { useEditor } from '../EditorContext'
 
 export function useRuntime() {
@@ -73,7 +73,7 @@ export function useRuntime() {
     if (!running) return
     if (!paused) {
       for (const thread of threads) {
-        stepThread(thread, state)
+        step(thread, state)
       }
     }
     requestAnimationFrame(loop)
@@ -86,9 +86,9 @@ export function useRuntime() {
     })
   }
 
-  function step() {
+  function oneStep() {
     for (const thread of threads) {
-      stepThread(thread, state)
+      step(thread, state)
     }
   }
 
@@ -99,5 +99,5 @@ export function useRuntime() {
     setObjectVersion(v => v + 1)
   }
 
-  return { execute, start, pauseOrResume, step, stop }
+  return { execute, start, pauseOrResume, oneStep, stop }
 }
