@@ -6,12 +6,12 @@ import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator/index'
 
 export function RunControls() {
   const { isRunning, isPaused, workspace } = useEditor()
-  const { execute, stop, oneStep: step, pauseOrResume } = useRuntime()
+  const { start, stop, step, pauseOrResume } = useRuntime()
 
   async function handleRun() {
     if (!workspace) throw Error('Missing workspace')
     const expression = exprGenerator.workspaceToExpression(workspace)
-    await execute(expression)
+    start(expression)
   }
 
   return (

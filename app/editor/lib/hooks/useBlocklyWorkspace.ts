@@ -13,7 +13,7 @@ export function useBlocklyWorkspace(
 ) {
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
   const { setWorkspace } = useEditor()
-  const { execute } = useRuntime()
+  const { start } = useRuntime()
 
   useEffect(() => {
     if (!containerRef.current || workspaceRef.current) return
@@ -53,7 +53,7 @@ export function useBlocklyWorkspace(
           const block = event.getEventWorkspace_().getBlockById(event.blockId)
           if (block) {
             const expression = exprGenerator.blockToExpression(block)
-            await execute(expression)
+            start(expression)
           }
         }
       }
@@ -76,6 +76,6 @@ export function useBlocklyWorkspace(
     }
 
     return cleanup
-  }, [containerRef, setWorkspace, execute])
+  }, [containerRef, setWorkspace, start])
   return workspaceRef.current
 }

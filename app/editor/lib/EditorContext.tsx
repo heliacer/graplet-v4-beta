@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react'
 import { WorkspaceSvg } from 'blockly'
-import { RunState, FuncEnv, VarEnv } from './blockly/engine/ast'
+import { FuncEnv, VarEnv } from './blockly/engine/ast'
 import { Camera, Object3D, Scene } from 'three'
 import {
   OrbitControls,

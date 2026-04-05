@@ -1,11 +1,41 @@
 import { Expression, ExpressionT, Handler, ProgramState, Thread } from './ast'
-import { handleRunseq } from './handlers/control'
+import {
+  handleIf,
+  handleRepeat,
+  handleRunseq,
+  handleWait
+} from './handlers/control'
+import { handleChangevar, handleSetvar } from './handlers/effects'
+import {
+  handleAndor,
+  handleArithmetic,
+  handleAtan2,
+  handleCompare,
+  handleConstrain,
+  handleHtrig,
+  handleMap,
+  handleModulo,
+  handleNeg,
+  handleRandomfloat,
+  handleRandomint,
+  handleRound,
+  handleSingle,
+  handleTrig
+} from './handlers/operators'
+import {
+  handleRotatexyz,
+  handleSetposxyz,
+  handleSetroteulerxyz,
+  handleSetscalexyz,
+  handleTranslatexyz
+} from './handlers/statements'
+import { handleCall, handleLiteral, handleVar } from './handlers/values'
 
 function setFunction(expression: Expression, state: ProgramState) {
   const { args, value, children } = expression
   const { functions } = state
 
-  if (!value) throw Error('Function name is undefined')
+  if (value === undefined) throw Error('Function name is undefined')
   const funcExpr: Expression = {
     type: 'func',
     children,
@@ -26,7 +56,7 @@ export function initProgram(
     if (expr.type === 'setfunc') setFunction(expr, state)
     if (expr.type === 'runseq') {
       threads.push({
-        stack: [{ expr, stage: 0 }],
+        stack: [{ expression: expr, stage: 0 }],
         valueStack: [],
         done: false
       })
@@ -36,7 +66,7 @@ export function initProgram(
   return threads
 }
 
-export function step(thread: Thread, state: ProgramState) {
+export function threadStep(thread: Thread, state: ProgramState) {
   if (thread.done) return
 
   if (thread.waitingUntil && Date.now() < thread.waitingUntil) return
@@ -47,37 +77,40 @@ export function step(thread: Thread, state: ProgramState) {
     return
   }
 
-  handlers[frame.expr.type](frame, thread, state)
+  const type = frame.expression.type
+  if (!(type in handlers)) throw Error(`Non-runtime expression: ${type}`)
+  handlers[type as RegularExpressionT](frame, thread, state)
 }
 
-/** @todo revamp all old interps to the new handler system */
-const handlers: Record<ExpressionT, Handler> = {
+type RegularExpressionT = Exclude<ExpressionT, 'main' | 'setfunc' | 'func'>
+
+const handlers: Record<RegularExpressionT, Handler> = {
   runseq: handleRunseq,
-  if: () => {},
-  repeat: () => {},
-  wait: () => {},
-  setvar: () => {},
-  changevar: () => {},
-  literal: () => {},
-  var: () => {},
-  call: () => {},
-  andor: () => {},
-  neg: () => {},
-  compare: () => {},
-  arithmetic: () => {},
-  map: () => {},
-  trig: () => {},
-  htrig: () => {},
-  round: () => {},
-  single: () => {},
-  atan2: () => {},
-  modulo: () => {},
-  constrain: () => {},
-  randomfloat: () => {},
-  randomint: () => {},
-  setposxyz: () => {},
-  translatexyz: () => {},
-  setscalexyz: () => {},
-  setroteulerxyz: () => {},
-  rotatexyz: () => {}
+  if: handleIf,
+  repeat: handleRepeat,
+  wait: handleWait,
+  setvar: handleSetvar,
+  changevar: handleChangevar,
+  literal: handleLiteral,
+  var: handleVar,
+  call: handleCall,
+  andor: handleAndor,
+  neg: handleNeg,
+  compare: handleCompare,
+  arithmetic: handleArithmetic,
+  map: handleMap,
+  trig: handleTrig,
+  htrig: handleHtrig,
+  round: handleRound,
+  single: handleSingle,
+  atan2: handleAtan2,
+  modulo: handleModulo,
+  constrain: handleConstrain,
+  randomfloat: handleRandomfloat,
+  randomint: handleRandomint,
+  setposxyz: handleSetposxyz,
+  translatexyz: handleTranslatexyz,
+  setscalexyz: handleSetscalexyz,
+  setroteulerxyz: handleSetroteulerxyz,
+  rotatexyz: handleRotatexyz
 }

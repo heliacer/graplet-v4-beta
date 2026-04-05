@@ -1,7 +1,9 @@
 import { useCallback, useRef } from 'react'
-import { Expression, Thread } from '../blockly/engine/ast'
-import { initProgram, step } from '../blockly/engine/interpreter'
+import { Expression, ProgramState, Thread } from '../blockly/engine/ast'
+import { initProgram, threadStep } from '../blockly/engine/interpreter'
 import { useEditor } from '../EditorContext'
+
+const STEPS_PER_FRAME = 100 /** should make this globally tweakable, this is peak */
 
 export function useRuntime() {
   const {
@@ -13,91 +15,94 @@ export function useRuntime() {
     setObjectVersion
   } = useEditor()
 
-  /** @deprecated */
-  const runState = useRef<RunState>({
-    shouldPause: false,
-    shouldStop: false,
-    shouldStep: false
-  })
+  const running = useRef(false)
+  const paused = useRef(false)
+  const threads = useRef<Thread[]>([])
 
-  /**
-   * @deprecated
-   * Executes the program in the interpreter
-   */
-  const execute = useCallback(
-    async (expression: Expression) => {
-      setIsRunning(true)
-      console.info('%cRunning...', 'color: aquamarine;')
-      console.time('Done in')
+  const start = useCallback(
+    (expression: Expression) => {
+      if (running.current) return
+
       const state = {
         objects: objects.current,
         variables: varEnv.current,
-        functions: funcEnv.current,
-        runState
+        functions: funcEnv.current
       }
-      try {
-        const result = await evaluateExpression(expression, state)
-        console.info('%coutput:', 'color: deepskyblue;', result)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        console.timeEnd('Done in')
-        setIsRunning(false)
-        runState.current.shouldStop = false
-        runState.current.shouldPause = false
-      }
-      setObjectVersion(v => v + 1)
+
+      setIsRunning(true)
+      console.info('%cRunning...', 'color: aquamarine;')
+      console.time('Time elapsed')
+
+      threads.current = initProgram(expression, state)
+      running.current = true
+
+      loop(state)
     },
-    [objects, varEnv, funcEnv, runState, setIsRunning, setObjectVersion]
+    [objects, varEnv, funcEnv, setIsRunning]
   )
 
-  let running = false
-  let paused = false
-  let threads: Thread[] = []
-
-  const state = {
-    objects: objects.current,
-    variables: varEnv.current,
-    functions: funcEnv.current
-  }
-
-  function start(expression: Expression) {
-    setIsRunning(true)
-
-    threads = initProgram(expression, state)
-    running = true
-    loop()
-  }
-
-  function loop() {
-    if (!running) return
-    if (!paused) {
-      for (const thread of threads) {
-        step(thread, state)
+  function loop(state: ProgramState) {
+    if (!running.current) return
+    if (!paused.current) {
+      try {
+        for (let i = 0; i < STEPS_PER_FRAME; i++) {
+          let allDone = true
+          if (paused.current) break
+          for (const thread of threads.current) {
+            threadStep(thread, state)
+            if (!thread.done) allDone = false
+          }
+          if (allDone) {
+            running.current = false
+            console.log('Done.')
+            finalize()
+            return
+          }
+        }
+      } catch (error) {
+        console.error(error)
+        running.current = false
+        console.log('Crashed.')
+        finalize()
+        return
       }
     }
-    requestAnimationFrame(loop)
+    requestAnimationFrame(() => loop(state))
   }
 
   function pauseOrResume() {
-    setIsPaused(p => {
-      paused = !paused
-      return !p
+    setIsPaused(prev => {
+      const next = !prev
+      paused.current = next
+      return next
     })
   }
-
-  function oneStep() {
-    for (const thread of threads) {
-      step(thread, state)
+  function step() {
+    const state = {
+      objects: objects.current,
+      variables: varEnv.current,
+      functions: funcEnv.current
+    }
+    for (const thread of threads.current) {
+      threadStep(thread, state)
     }
   }
 
   function stop() {
-    running = false
-    setIsPaused(false)
+    if (!running.current) return
+    running.current = false
+    paused.current = false
+    console.log('Stopped.')
+    finalize()
+  }
+
+  /** @private */
+  function finalize() {
+    console.timeEnd('Time elapsed')
     setIsRunning(false)
+    setIsPaused(false)
     setObjectVersion(v => v + 1)
   }
 
-  return { execute, start, pauseOrResume, oneStep, stop }
+  return { start, pauseOrResume, step, stop }
 }

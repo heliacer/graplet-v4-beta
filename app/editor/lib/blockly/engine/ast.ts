@@ -18,7 +18,7 @@ export type Thread = {
 }
 
 export type Frame = {
-  expr: Expression
+  expression: Expression
   stage: number
 }
 
