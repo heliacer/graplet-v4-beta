@@ -1,5 +1,5 @@
 import { serialization } from 'blockly'
-import { useEditor } from '../EditorContext'
+import { useOldEditor } from '../EditorContext'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
@@ -7,7 +7,7 @@ import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
 
 export function useSceneActions() {
-  const { scene, workspace, orbitMap, controls, setSelectedItems } = useEditor()
+  const { scene, workspace, orbitMap, controls, setSelectedItems } = useOldEditor()
   const { addObject, removeObject } = useObjectActions()
 
   /**

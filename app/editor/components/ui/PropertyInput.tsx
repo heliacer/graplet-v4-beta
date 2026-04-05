@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react'
 import { Object3D } from 'three'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
-import { useEditor } from '../../lib/EditorContext'
+import { useOldEditor } from '../../lib/EditorContext'
 import { useId } from 'react'
 
 interface BasePropertyProps {
@@ -22,7 +22,7 @@ interface Vec3AnglePropertyProps extends BasePropertyProps {
 }
 
 export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
-  const { setObjectVersion } = useEditor()
+  const { setObjectVersion } = useOldEditor()
 
   return (
     <div className='flex justify-between w-full'>
@@ -51,7 +51,7 @@ export function Vec3AngleProperty({
   object,
   property
 }: Vec3AnglePropertyProps) {
-  const { setObjectVersion } = useEditor()
+  const { setObjectVersion } = useOldEditor()
 
   return (
     <div className='flex justify-between w-full'>
@@ -80,7 +80,7 @@ export function Vec3AngleProperty({
 }
 
 export function TextProperty({ label, object, property }: TextPropertyProps) {
-  const { setObjectVersion } = useEditor()
+  const { setObjectVersion } = useOldEditor()
 
   return (
     <div className='flex justify-between'>

@@ -38,8 +38,6 @@ interface EditorContextType {
   workspace: WorkspaceSvg | null
   selectedItems: string[]
   currentTool: TransformControlsMode | ToolItem
-  isRunning: boolean
-  isPaused: boolean
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
@@ -55,13 +53,11 @@ interface EditorContextType {
   setWorkspace: StateFunc<WorkspaceSvg | null>
   setSelectedItems: StateFunc<string[]>
   setCurrentTool: StateFunc<TransformControlsMode | ToolItem>
-  setIsRunning: StateFunc<boolean>
-  setIsPaused: StateFunc<boolean>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
 
-export function useEditor() {
+export function useOldEditor() {
   return useContext(EditorContext)
 }
 
@@ -84,8 +80,6 @@ export function EditorProvider({
   const [currentTool, setCurrentTool] = useState<
     TransformControlsMode | ToolItem
   >('translate')
-  const [isRunning, setIsRunning] = useState<boolean>(false)
-  const [isPaused, setIsPaused] = useState<boolean>(false)
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
@@ -113,8 +107,6 @@ export function EditorProvider({
         workspace,
         selectedItems,
         currentTool,
-        isRunning,
-        isPaused,
         shouldLoad,
         contextMenu,
         dvApi,
@@ -129,8 +121,6 @@ export function EditorProvider({
         setWorkspace,
         setSelectedItems,
         setCurrentTool,
-        setIsRunning,
-        setIsPaused
       }}
     >
       {children}

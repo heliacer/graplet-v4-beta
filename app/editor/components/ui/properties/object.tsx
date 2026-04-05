@@ -16,7 +16,7 @@ import {
   Vec3Property
 } from '../PropertyInput'
 import { Crosshair, SwitchCamera } from 'lucide-react'
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useOldEditor } from '@/app/editor/lib/EditorContext'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
@@ -38,8 +38,8 @@ function BaseObjectProps({ object }: { object: Object3D }) {
 }
 
 export function ObjectPane({ object }: { object: Object3D }) {
-  const { canvas, setCamera, orbitMap } = useEditor()
-  const { setObjectVersion } = useEditor()
+  const { canvas, setCamera, orbitMap } = useOldEditor()
+  const { setObjectVersion } = useOldEditor()
 
   if (object instanceof Group) {
     return <BaseObjectProps object={object} />

@@ -1,6 +1,6 @@
 import { inject, Events, WorkspaceSvg } from 'blockly'
 import { useEffect, useRef } from 'react'
-import { useEditor } from '../EditorContext'
+import { useOldEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
 // import { variableCategory } from '../blockly/categories/variables'
 // import { procedureCategory } from '../blockly/categories/procedures'
@@ -12,7 +12,7 @@ export function useBlocklyWorkspace(
   containerRef: React.RefObject<HTMLDivElement>
 ) {
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
-  const { setWorkspace } = useEditor()
+  const { setWorkspace } = useOldEditor()
   const { start } = useRuntime()
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { Expression, ExpressionT, Handler, ProgramState, Thread } from './ast'
+import { Expression, ExpressionT, Handler, ProgramState, Thread } from '../ast'
 import {
   handleIf,
   handleRepeat,

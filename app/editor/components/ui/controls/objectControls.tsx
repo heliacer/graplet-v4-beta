@@ -1,4 +1,4 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useEditor } from '@/app/editor/lib/state'
 import { ObjectActions } from '../object/objectActions'
 import { ObjectAdd } from '../object/objectAdd'
 import { ObjectSnap } from '../object/objectSnap'
@@ -7,7 +7,8 @@ import { ObjectView } from '../object/objectView'
 import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
 
 export function ObjectControls() {
-  const { isRunning } = useEditor()
+  const isRunning = useEditor(s => s.isRunning)
+
   const object = useCurrentObject()
 
   if (isRunning) return

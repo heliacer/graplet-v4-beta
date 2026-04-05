@@ -1,4 +1,4 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useOldEditor } from '@/app/editor/lib/EditorContext'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 import { RulerDimensionLine } from 'lucide-react'
 
@@ -11,7 +11,7 @@ import { RulerDimensionLine } from 'lucide-react'
  * x: 0.25 -> snapping of 1 -> goes to 1 instead of 1.25
  */
 export function ObjectSnap() {
-  const { controls, currentTool } = useEditor()
+  const { controls, currentTool } = useOldEditor()
 
   return (
     <div className='relative text-sm h-5.5 pointer-events-auto'>

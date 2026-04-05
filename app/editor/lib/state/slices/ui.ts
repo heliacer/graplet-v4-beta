@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand'
 
-export type EngineSlice = {
+export type UiSlice = {
   isRunning: boolean
   isPaused: boolean
 
@@ -8,7 +8,7 @@ export type EngineSlice = {
   setPaused: (v: boolean) => void
 }
 
-export const createEngineSlice: StateCreator<EngineSlice> = set => ({
+export const createUiSlice: StateCreator<UiSlice> = set => ({
   isRunning: false,
   isPaused: false,
 

@@ -1,8 +1,8 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useOldEditor } from '@/app/editor/lib/EditorContext'
 import { CheckBoxProperty } from '../PropertyInput'
 
 export function EditorPane() {
-  const { controls } = useEditor()
+  const { controls } = useOldEditor()
 
   return (
     <>

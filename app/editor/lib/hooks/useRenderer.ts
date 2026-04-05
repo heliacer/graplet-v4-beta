@@ -4,13 +4,15 @@ import {
   PerspectiveCamera,
   WebGLRenderer
 } from 'three'
-import { useEditor } from '../../lib/EditorContext'
+import { useOldEditor } from '../../lib/EditorContext'
 import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
 import { OrbitControls, ViewHelper } from 'three/examples/jsm/Addons.js'
+import { useEditor } from '../state'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { scene, camera, canvas, orbitMap, isRunning } = useEditor()
+  const { scene, camera, canvas, orbitMap } = useOldEditor()
+  const isRunning = useEditor(s => s.isRunning)
   const rendererRef = useRef<WebGLRenderer | null>(null)
 
   useEffect(() => {

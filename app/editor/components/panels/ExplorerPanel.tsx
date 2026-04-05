@@ -1,4 +1,4 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useOldEditor } from '@/app/editor/lib/EditorContext'
 import { getIconT } from '@/app/editor/lib/utils/icons'
 import {
   dragAndDropFeature,
@@ -22,7 +22,7 @@ export default function ExplorerPanel() {
     setSelectedItems,
     setContextMenu,
     setObjectVersion
-  } = useEditor()
+  } = useOldEditor()
 
   const tree = useTree<TreeItem>({
     state: { selectedItems },

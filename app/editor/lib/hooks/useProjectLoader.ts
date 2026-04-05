@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { useEditor } from '../EditorContext'
+import { useOldEditor } from '../EditorContext'
 import { useSceneActions } from './useSceneActions'
 
 /** @todo Add session project loading, this is only local for now */
 export function useProjectLoader() {
   const { loadProjectData, loadDefaultScene } = useSceneActions()
-  const { scene, workspace, shouldLoad, setShouldLoad } = useEditor()
+  const { scene, workspace, shouldLoad, setShouldLoad } = useOldEditor()
 
   useEffect(() => {
     if (workspace && shouldLoad) {

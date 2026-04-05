@@ -1,10 +1,10 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useOldEditor } from '@/app/editor/lib/EditorContext'
 import { upsertPanel } from '@/app/editor/lib/utils/dockview'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { Keyboard, PenLine } from 'lucide-react'
 
 export function EditMenu() {
-  const { dvApi } = useEditor()
+  const { dvApi } = useOldEditor()
 
   /**
    * @todo Implement Edit menu

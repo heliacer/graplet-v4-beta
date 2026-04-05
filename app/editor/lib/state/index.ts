@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { createEngineSlice, EngineSlice } from './slices/engineSlice'
+import { createUiSlice, UiSlice } from './slices/ui'
 
 /** @future zustand impl! (hyped) */
 
@@ -11,8 +11,8 @@ import { createEngineSlice, EngineSlice } from './slices/engineSlice'
 
 /** combine all slices from different logical locations */
 
-type EditorStore = EngineSlice // later & OtherSlice
+type EditorStore = UiSlice // later & OtherSlice
 
-export const useEditorStore = create<EditorStore>()((...a) => ({
-  ...createEngineSlice(...a)
+export const useEditor = create<EditorStore>()((...a) => ({
+  ...createUiSlice(...a)
 }))

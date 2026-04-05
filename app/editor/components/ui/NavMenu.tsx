@@ -1,14 +1,14 @@
 import clsx from 'clsx'
 import { EditMenu } from './menus/edit'
 import { FileMenu } from './menus/file'
-import { useEditor } from '../../lib/EditorContext'
+import { useOldEditor } from '../../lib/EditorContext'
 
 const lorem = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 `
 
 export function NavMenu() {
-  const { notifications, setNotifications, workspace } = useEditor()
+  const { notifications, setNotifications, workspace } = useOldEditor()
 
   return (
     <nav className='w-full h-full flex items-center gap-2'>

@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import { useEditor } from '../EditorContext'
+import { useOldEditor } from '../EditorContext'
 import { TransformControls } from 'three/examples/jsm/Addons.js'
 import { isInternalObject, isTransformControlsMode } from '../utils/three'
 import { useCurrentObject } from './useCurrentObject'
+import { useEditor } from '../state'
 
 export function useTransformControls() {
   const {
@@ -11,10 +12,10 @@ export function useTransformControls() {
     camera,
     orbitMap,
     currentTool,
-    isRunning,
     controls,
     setObjectVersion
-  } = useEditor()
+  } = useOldEditor()
+  const isRunning = useEditor(s => s.isRunning)
   const object = useCurrentObject()
 
   useEffect(() => {

@@ -1,13 +1,13 @@
 import clsx from 'clsx'
 import { MiniGraplet } from '@/app/ui/assets/MiniGraplet'
-import { useEditor } from '../../lib/EditorContext'
+import { useOldEditor } from '../../lib/EditorContext'
 
 interface ThemeButtonProps {
   theme: string
 }
 
 function ThemeButton({ theme }: ThemeButtonProps) {
-  const { currentTheme, setCurrentTheme } = useEditor()
+  const { currentTheme, setCurrentTheme } = useOldEditor()
   function handleClick() {
     document.documentElement.className = theme
     setCurrentTheme(theme)

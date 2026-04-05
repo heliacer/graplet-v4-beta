@@ -1,19 +1,16 @@
 import { useCallback, useRef } from 'react'
 import { Expression, ProgramState, Thread } from '../blockly/engine/ast'
 import { initProgram, threadStep } from '../blockly/engine/interpreter'
-import { useEditor } from '../EditorContext'
+import { useOldEditor } from '../EditorContext'
+import { useEditor } from '../state'
 
 const STEPS_PER_FRAME = 100 /** should make this globally tweakable, this is peak */
 
 export function useRuntime() {
-  const {
-    objects,
-    varEnv,
-    funcEnv,
-    setIsRunning,
-    setIsPaused,
-    setObjectVersion
-  } = useEditor()
+  const { objects, varEnv, funcEnv, setObjectVersion } = useOldEditor()
+  const setRunning = useEditor(s => s.setRunning)
+  const setPaused = useEditor(s => s.setPaused)
+  const isPaused = useEditor(s => s.isPaused)
 
   const running = useRef(false)
   const paused = useRef(false)
@@ -29,7 +26,7 @@ export function useRuntime() {
         functions: funcEnv.current
       }
 
-      setIsRunning(true)
+      setRunning(true)
       console.info('%cRunning...', 'color: aquamarine;')
       console.time('Time elapsed')
 
@@ -38,7 +35,7 @@ export function useRuntime() {
 
       loop(state)
     },
-    [objects, varEnv, funcEnv, setIsRunning]
+    [objects, varEnv, funcEnv, setRunning, loop]
   )
 
   function loop(state: ProgramState) {
@@ -71,11 +68,9 @@ export function useRuntime() {
   }
 
   function pauseOrResume() {
-    setIsPaused(prev => {
-      const next = !prev
-      paused.current = next
-      return next
-    })
+    const next = !isPaused
+    paused.current = next
+    setPaused(next)
   }
   function step() {
     const state = {
@@ -99,8 +94,8 @@ export function useRuntime() {
   /** @private */
   function finalize() {
     console.timeEnd('Time elapsed')
-    setIsRunning(false)
-    setIsPaused(false)
+    setRunning(false)
+    setPaused(false)
     setObjectVersion(v => v + 1)
   }
 

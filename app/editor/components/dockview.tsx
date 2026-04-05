@@ -10,7 +10,7 @@ import '../styles/base.css'
 import '../styles/dvtheme.css'
 import { LeftControls, RightControls } from './ui/controls/tabControls'
 import { TabHeader } from './ui/tabHeader'
-import { useEditor } from '../lib/EditorContext'
+import { useOldEditor } from '../lib/EditorContext'
 
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
@@ -119,7 +119,7 @@ const jsonLayout: SerializedDockview = {
 }
 
 export function GrapletDockview() {
-  const { dvApi, setDvApi } = useEditor()
+  const { dvApi, setDvApi } = useOldEditor()
 
   function mount(event: DockviewReadyEvent) {
     const { api } = event

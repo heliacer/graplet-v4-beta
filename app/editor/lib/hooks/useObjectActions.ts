@@ -1,4 +1,4 @@
-import { useEditor } from '../EditorContext'
+import { useOldEditor } from '../EditorContext'
 import {
   Camera,
   CameraHelper,
@@ -33,7 +33,7 @@ export function useObjectActions() {
     setObjectVersion,
     orbitMap,
     canvas
-  } = useEditor()
+  } = useOldEditor()
 
   /**
    * @private

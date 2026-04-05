@@ -1,4 +1,4 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useOldEditor } from '@/app/editor/lib/EditorContext'
 import { serializeObject } from '@/app/editor/lib/utils/sobject'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
 import {
@@ -24,7 +24,7 @@ function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
 }
 
 export function FileMenu() {
-  const { workspace, scene, dvApi } = useEditor()
+  const { workspace, scene, dvApi } = useOldEditor()
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)

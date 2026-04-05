@@ -7,7 +7,7 @@ import {
   Trash,
   Ungroup
 } from 'lucide-react'
-import { useEditor } from '../../lib/EditorContext'
+import { useOldEditor } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { createAddItemsMenu } from '../../lib/utils/addItems'
 import {
@@ -27,7 +27,7 @@ import { Object3D } from 'three'
  */
 export function ContextMenu() {
   const { contextMenu, setContextMenu, scene, objects, selectedItems } =
-    useEditor()
+    useOldEditor()
   const [activePath, setActivePath] = useState<number[]>([])
   const {
     removeObject,

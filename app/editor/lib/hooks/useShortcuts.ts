@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useEditor } from '../EditorContext'
+import { useOldEditor } from '../EditorContext'
 
 /**
  * @todo display (e.g / instead of Shift+Key7 and a instead of Keya )
@@ -20,7 +20,7 @@ const modifiers = [
 ]
 
 export function useShortcuts() {
-  const { dvApi } = useEditor()
+  const { dvApi } = useOldEditor()
 
   useEffect(() => {
     if (!dvApi) return

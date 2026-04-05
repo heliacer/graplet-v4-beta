@@ -1,7 +1,7 @@
 import { ItemInstance, TreeInstance } from '@headless-tree/core'
 import { ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
-import { useEditor } from '../../lib/EditorContext'
+import { useOldEditor } from '../../lib/EditorContext'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
 import { useId, useState } from 'react'
 import { Object3D } from 'three'
@@ -65,7 +65,7 @@ interface ItemViewContentProps {
 }
 
 function ItemViewContent({ item, object }: ItemViewContentProps) {
-  const { setObjectVersion } = useEditor()
+  const { setObjectVersion } = useOldEditor()
 
   return (
     <div
@@ -101,7 +101,7 @@ interface ItemViewProps {
 }
 
 export function TreeItemView({ tree, item }: ItemViewProps) {
-  const { objects, setContextMenu } = useEditor()
+  const { objects, setContextMenu } = useOldEditor()
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
   const object = objects.current.get(item.getId())
