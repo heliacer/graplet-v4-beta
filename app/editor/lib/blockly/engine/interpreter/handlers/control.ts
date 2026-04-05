@@ -1,4 +1,4 @@
-import { Frame, Thread } from '../ast'
+import { Frame, Thread } from '../../ast'
 import { popValue, pushFrame } from './utils'
 
 export function handleRunseq(frame: Frame, thread: Thread) {

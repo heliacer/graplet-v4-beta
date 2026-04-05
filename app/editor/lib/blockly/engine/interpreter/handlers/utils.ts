@@ -1,4 +1,4 @@
-import { Expression, Thread, Value } from '../ast'
+import { Expression, Thread, Value } from '../../ast'
 
 export function pushFrame(thread: Thread, expr: Expression, stage = 0) {
   thread.stack.push({ expression: expr, stage })

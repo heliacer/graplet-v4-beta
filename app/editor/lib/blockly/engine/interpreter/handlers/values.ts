@@ -1,4 +1,4 @@
-import { Frame, ProgramState, Thread } from '../ast'
+import { Frame, ProgramState, Thread } from '../../ast'
 import { pushFrame, pushValue } from './utils'
 
 export function handleLiteral(frame: Frame, thread: Thread) {

@@ -1,4 +1,4 @@
-import { Frame, ProgramState, Thread } from '../ast'
+import { Frame, ProgramState, Thread } from '../../ast'
 import { popValue, pushFrame } from './utils'
 
 export function handleSetposxyz(

@@ -1,4 +1,4 @@
-import { Frame, Thread } from '../ast'
+import { Frame, Thread } from '../../ast'
 import { popValue, pushFrame, pushValue } from './utils'
 
 export function handleAndor(frame: Frame, thread: Thread) {
