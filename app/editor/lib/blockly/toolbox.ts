@@ -287,6 +287,10 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       contents: [
         {
           kind: 'block',
+          type: 'number'
+        },
+        {
+          kind: 'block',
           type: 'math_arithmetic',
           inputs: {
             A: {
@@ -484,15 +488,15 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       custom: 'VARIABLE',
       categorystyle: 'variables_category'
     },
-    /*     {
-      kind: 'category',
-      name: 'Deprecated',
-      custom: 'PROCEDURE',
-      categorystyle: 'functions_category'
-    }, */
     {
       kind: 'category',
       name: 'Functions',
+      custom: 'PROCEDURE',
+      categorystyle: 'functions_category'
+    },
+    {
+      kind: 'category',
+      name: 'Shit-That-Doesnt-Work-Yet',
       custom: 'FUNCTIONS',
       categorystyle: 'functions_category'
     }

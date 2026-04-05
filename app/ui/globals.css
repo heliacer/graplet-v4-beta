@@ -188,8 +188,3 @@ input:focus {
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
-
-
-body::selection{
-  background: var(--color-ui-700);  
-}
