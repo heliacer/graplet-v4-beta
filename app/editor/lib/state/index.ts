@@ -1,18 +1,12 @@
 import { create } from 'zustand'
 import { createUiSlice, UiSlice } from './slices/ui'
+import { createObjectSlice, ObjectSlice } from './slices/object'
 
-/** @future zustand impl! (hyped) */
+/** @future zustand implementation! (hyped) */
 
-/**
- * @todo new cleaner "index.ts - like" pattern approach:
- * have one index.ts, side files in a separate folder.
- * e.g state/index.ts state/slices/...
- */
-
-/** combine all slices from different logical locations */
-
-type EditorStore = UiSlice // later & OtherSlice
+type EditorStore = UiSlice & ObjectSlice
 
 export const useEditor = create<EditorStore>()((...a) => ({
-  ...createUiSlice(...a)
+  ...createUiSlice(...a),
+  ...createObjectSlice(...a)
 }))

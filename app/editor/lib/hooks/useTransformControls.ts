@@ -6,16 +6,10 @@ import { useCurrentObject } from './useCurrentObject'
 import { useEditor } from '../state'
 
 export function useTransformControls() {
-  const {
-    scene,
-    canvas,
-    camera,
-    orbitMap,
-    currentTool,
-    controls,
-    setObjectVersion
-  } = useOldEditor()
+  const { scene, canvas, camera, orbitMap, controls, setObjectVersion } =
+    useOldEditor()
   const isRunning = useEditor(s => s.isRunning)
+  const currentTool = useEditor(s => s.currentTool)
   const object = useCurrentObject()
 
   useEffect(() => {

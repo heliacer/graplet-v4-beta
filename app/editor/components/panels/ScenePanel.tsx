@@ -6,9 +6,11 @@ import { ObjectControls } from '../ui/controls/objectControls'
 import { useTransformControls } from '../../lib/hooks/useTransformControls'
 import { useState } from 'react'
 import clsx from 'clsx'
+import { useEditor } from '../../lib/state'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
-  const { canvas, currentTool } = useOldEditor()
+  const { canvas } = useOldEditor()
+  const currentTool = useEditor(s => s.currentTool)
   const [rightDown, setRightDown] = useState(false)
 
   useProjectLoader()

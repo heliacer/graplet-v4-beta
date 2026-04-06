@@ -11,13 +11,11 @@ import { Camera, Object3D, Scene } from 'three'
 import {
   OrbitControls,
   TransformControls,
-  TransformControlsMode
 } from 'three/examples/jsm/Addons.js'
 import {
   ContextMenuProps,
   NotificationItemProps,
   StateFunc,
-  ToolItem
 } from './types'
 import { DockviewApi } from 'dockview-react'
 
@@ -37,14 +35,11 @@ interface EditorContextType {
   camera: Camera | null
   workspace: WorkspaceSvg | null
   selectedItems: string[]
-  currentTool: TransformControlsMode | ToolItem
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
   dvApi: DockviewApi | null
   objectVersion: number
-  currentTheme: string
   setNotifications: StateFunc<NotificationItemProps[]>
-  setCurrentTheme: StateFunc<string>
   setObjectVersion: StateFunc<number>
   setDvApi: StateFunc<DockviewApi | null>
   setContextMenu: StateFunc<ContextMenuProps | null>
@@ -52,7 +47,6 @@ interface EditorContextType {
   setShouldLoad: StateFunc<boolean>
   setWorkspace: StateFunc<WorkspaceSvg | null>
   setSelectedItems: StateFunc<string[]>
-  setCurrentTool: StateFunc<TransformControlsMode | ToolItem>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -77,13 +71,9 @@ export function EditorProvider({
 
   const [camera, setCamera] = useState<Camera | null>(null)
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
-  const [currentTool, setCurrentTool] = useState<
-    TransformControlsMode | ToolItem
-  >('translate')
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
   const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
-  const [currentTheme, setCurrentTheme] = useState<string>('')
   const [notifications, setNotifications] = useState<NotificationItemProps[]>(
     []
   )
@@ -106,21 +96,17 @@ export function EditorProvider({
         objectVersion,
         workspace,
         selectedItems,
-        currentTool,
         shouldLoad,
         contextMenu,
         dvApi,
-        currentTheme,
         setNotifications,
         setObjectVersion,
-        setCurrentTheme,
         setDvApi,
         setContextMenu,
         setCamera,
         setShouldLoad,
         setWorkspace,
         setSelectedItems,
-        setCurrentTool,
       }}
     >
       {children}

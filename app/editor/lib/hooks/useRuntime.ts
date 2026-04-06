@@ -16,6 +16,14 @@ export function useRuntime() {
   const paused = useRef(false)
   const threads = useRef<Thread[]>([])
 
+  /** @private */
+  const finalize = useCallback(() => {
+    console.timeEnd('Time elapsed')
+    setRunning(false)
+    setPaused(false)
+    setObjectVersion(v => v + 1)
+  }, [setObjectVersion, setPaused, setRunning])
+
   const start = useCallback(
     (expression: Expression) => {
       if (running.current) return
@@ -33,42 +41,42 @@ export function useRuntime() {
       threads.current = initProgram(expression, state)
       running.current = true
 
-      loop(state)
-    },
-    [objects, varEnv, funcEnv, setRunning, loop]
-  )
-
-  function loop(state: ProgramState) {
-    if (!running.current) return
-    if (!paused.current) {
-      try {
-        for (let i = 0; i < STEPS_PER_FRAME; i++) {
-          let allDone = true
-          if (paused.current) break
-          for (const thread of threads.current) {
-            threadStep(thread, state)
-            if (!thread.done) allDone = false
-          }
-          if (allDone) {
+      function loop(state: ProgramState) {
+        if (!running.current) return
+        if (!paused.current) {
+          try {
+            for (let i = 0; i < STEPS_PER_FRAME; i++) {
+              let allDone = true
+              if (paused.current) break
+              for (const thread of threads.current) {
+                threadStep(thread, state)
+                if (!thread.done) allDone = false
+              }
+              if (allDone) {
+                running.current = false
+                console.log('Done.')
+                finalize()
+                return
+              }
+            }
+          } catch (error) {
+            console.error(error)
             running.current = false
-            console.log('Done.')
+            console.log('Crashed.')
             finalize()
             return
           }
         }
-      } catch (error) {
-        console.error(error)
-        running.current = false
-        console.log('Crashed.')
-        finalize()
-        return
+        requestAnimationFrame(() => loop(state))
       }
-    }
-    requestAnimationFrame(() => loop(state))
-  }
+
+      loop(state)
+    },
+    [objects, varEnv, funcEnv, setRunning, finalize]
+  )
 
   function pauseOrResume() {
-    const next = !isPaused
+    const next = !paused.current
     paused.current = next
     setPaused(next)
   }
@@ -89,14 +97,6 @@ export function useRuntime() {
     paused.current = false
     console.log('Stopped.')
     finalize()
-  }
-
-  /** @private */
-  function finalize() {
-    console.timeEnd('Time elapsed')
-    setRunning(false)
-    setPaused(false)
-    setObjectVersion(v => v + 1)
   }
 
   return { start, pauseOrResume, step, stop }
