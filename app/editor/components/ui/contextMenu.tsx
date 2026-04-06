@@ -18,6 +18,7 @@ import {
 import { useState } from 'react'
 import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
 import { Object3D } from 'three'
+import { useEditor } from '../../lib/state'
 
 /**
  * @todo This shit is unstable, renaming doesn't work,
@@ -26,8 +27,8 @@ import { Object3D } from 'three'
  * relocating on edge also not working yet, wip
  */
 export function ContextMenu() {
-  const { contextMenu, setContextMenu, scene, objects, selectedItems } =
-    useOldEditor()
+  const { contextMenu, setContextMenu, scene, objects } = useOldEditor()
+  const selectedItems = useEditor(s => s.selectedItems)
   const [activePath, setActivePath] = useState<number[]>([])
   const {
     removeObject,

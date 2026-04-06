@@ -1,22 +1,33 @@
 import { Object3D } from 'three'
 import { StateCreator } from 'zustand'
 
+/** might move this up somewhere */
+type Updater<T> = T | ((old: T) => T)
+
 /**
  * @todo the new object versioning pattern, specific to each object :D
- * 
- * i might optimise this further, and have a separate property-specific versioning table, 
+ *
+ * i might optimise this further, and have a separate property-specific versioning table,
  * next to the general object-specific versioning
  */
 export type ObjectSlice = {
+  selectedItems: string[]
   objectVersions: Record<string, number>
 
+  setSelectedItems: (updater: Updater<string[]>) => void
   updateObject: (object: Object3D, update: (draft: Object3D) => void) => void
   invalidateObject: (sharedId: string) => void
 }
 
 export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
+  selectedItems: [],
   objectVersions: {},
 
+  setSelectedItems: updater =>
+    set(state => ({
+      selectedItems:
+        typeof updater === 'function' ? updater(state.selectedItems) : updater
+    })),
   updateObject: (object, update) => {
     update(object)
     if (object.sharedId) {

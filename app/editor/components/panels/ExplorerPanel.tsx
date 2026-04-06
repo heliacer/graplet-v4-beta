@@ -12,17 +12,13 @@ import { useEffect } from 'react'
 import { TreeItemView } from '../ui/TreeItemView'
 import { moveObject, isInternalObject } from '../../lib/utils/three'
 import { NotFoundError, TreeItem } from '../../lib/types'
+import { useEditor } from '../../lib/state'
 
 export default function ExplorerPanel() {
-  const {
-    objects,
-    objectVersion,
-    selectedItems,
-    scene,
-    setSelectedItems,
-    setContextMenu,
-    setObjectVersion
-  } = useOldEditor()
+  const { objects, objectVersion, scene, setContextMenu, setObjectVersion } =
+    useOldEditor()
+  const selectedItems = useEditor(s => s.selectedItems)
+  const setSelectedItems = useEditor(s => s.setSelectedItems)
 
   const tree = useTree<TreeItem>({
     state: { selectedItems },

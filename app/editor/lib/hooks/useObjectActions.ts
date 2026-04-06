@@ -18,6 +18,7 @@ import {
   moveObject
 } from '../utils/three'
 import { Optional } from '@/app/lib/types'
+import { useEditor } from '../state'
 
 let nextSharedId = 0
 
@@ -25,8 +26,6 @@ export function useObjectActions() {
   const {
     scene,
     objects,
-    selectedItems,
-    setSelectedItems,
     workspace,
     camera,
     setCamera,
@@ -34,6 +33,8 @@ export function useObjectActions() {
     orbitMap,
     canvas
   } = useOldEditor()
+  const selectedItems = useEditor(s => s.selectedItems)
+  const setSelectedItems = useEditor(s => s.setSelectedItems)
 
   /**
    * @private

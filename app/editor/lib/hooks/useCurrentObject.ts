@@ -1,4 +1,5 @@
 import { useOldEditor } from '../EditorContext'
+import { useEditor } from '../state'
 import { NotFoundError } from '../types'
 
 /**
@@ -6,7 +7,8 @@ import { NotFoundError } from '../types'
  * No, we are NOT keeping this.
  */
 export function useCurrentObject() {
-  const { selectedItems, objects } = useOldEditor()
+  const { objects } = useOldEditor()
+  const selectedItems = useEditor(s => s.selectedItems)
 
   if (selectedItems.length !== 1) return
 

@@ -5,11 +5,13 @@ import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
 import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
+import { useEditor } from '../state'
 
 export function useSceneActions() {
-  const { scene, workspace, orbitMap, controls, setSelectedItems } = useOldEditor()
+  const { scene, workspace, orbitMap, controls } = useOldEditor()
   const { addObject, removeObject } = useObjectActions()
-
+  const setSelectedItems = useEditor(s => s.setSelectedItems)
+  
   /**
    * Adds Ambient light, Directional light and a Camera
    */

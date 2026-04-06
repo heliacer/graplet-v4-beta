@@ -14,10 +14,8 @@ import {
 } from 'three/examples/jsm/Addons.js'
 import {
   ContextMenuProps,
-  NotificationItemProps,
   StateFunc,
 } from './types'
-import { DockviewApi } from 'dockview-react'
 
 interface EditorContextType {
   // REFS
@@ -31,22 +29,16 @@ interface EditorContextType {
   orbitMap: RefObject<Map<number, OrbitControls | null>>
 
   // UI STATE
-  notifications: NotificationItemProps[]
   camera: Camera | null
   workspace: WorkspaceSvg | null
-  selectedItems: string[]
   shouldLoad: boolean
   contextMenu: ContextMenuProps | null
-  dvApi: DockviewApi | null
   objectVersion: number
-  setNotifications: StateFunc<NotificationItemProps[]>
   setObjectVersion: StateFunc<number>
-  setDvApi: StateFunc<DockviewApi | null>
   setContextMenu: StateFunc<ContextMenuProps | null>
   setCamera: StateFunc<Camera | null>
   setShouldLoad: StateFunc<boolean>
   setWorkspace: StateFunc<WorkspaceSvg | null>
-  setSelectedItems: StateFunc<string[]>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -68,16 +60,10 @@ export function EditorProvider({
   const orbitMap = useRef(new Map())
 
   const [objectVersion, setObjectVersion] = useState(0)
-
   const [camera, setCamera] = useState<Camera | null>(null)
   const [workspace, setWorkspace] = useState<WorkspaceSvg | null>(null)
   const [shouldLoad, setShouldLoad] = useState(true)
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null)
-  const [dvApi, setDvApi] = useState<DockviewApi | null>(null)
-  const [notifications, setNotifications] = useState<NotificationItemProps[]>(
-    []
-  )
-  const [selectedItems, setSelectedItems] = useState<string[]>([])
 
   return (
     <EditorContext.Provider
@@ -91,22 +77,16 @@ export function EditorProvider({
         modelScene,
         controls,
 
-        notifications,
         camera,
         objectVersion,
         workspace,
-        selectedItems,
         shouldLoad,
         contextMenu,
-        dvApi,
-        setNotifications,
         setObjectVersion,
-        setDvApi,
         setContextMenu,
         setCamera,
         setShouldLoad,
         setWorkspace,
-        setSelectedItems,
       }}
     >
       {children}

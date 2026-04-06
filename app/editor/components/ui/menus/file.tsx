@@ -15,6 +15,7 @@ import { Scene } from 'three'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { useSceneActions } from '@/app/editor/lib/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/lib/utils/dockview'
+import { useEditor } from '@/app/editor/lib/state'
 
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {
@@ -24,7 +25,8 @@ function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
 }
 
 export function FileMenu() {
-  const { workspace, scene, dvApi } = useOldEditor()
+  const { workspace, scene } = useOldEditor()
+  const dvApi = useEditor(s => s.dvApi)
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
