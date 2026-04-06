@@ -1,6 +1,6 @@
 import { Block } from 'blockly'
-import { ExpressionGenerator, generateExprsFromInput } from '.'
-import { Expression } from '../ast'
+import { ExpressionGenerator, generateExprsFromInput } from '..'
+import { Expression } from '../../ast'
 
 export function repeatGen(
   block: Block,

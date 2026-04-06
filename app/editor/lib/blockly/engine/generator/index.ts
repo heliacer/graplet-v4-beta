@@ -1,12 +1,12 @@
 import { Block, Input, Workspace } from 'blockly'
 import { Value, Expression, ExpressionT } from '../ast'
-import { onflagclickGen } from './events'
+import { onflagclickGen } from './blocks/events'
 import {
   moveunitsxyzGen,
   objectGen,
   rotatexyzGen,
   translatexyzGen
-} from './motion'
+} from './blocks/motion'
 import {
   controlsIfElseGen,
   controlsIfGen,
@@ -16,7 +16,7 @@ import {
   logicOperationGen,
   repeatGen,
   waitGen
-} from './logic'
+} from './blocks/logic'
 import {
   mathArithmeticGen,
   mathAtan2Gen,
@@ -31,8 +31,8 @@ import {
   mathRoundGen,
   mathSingleGen,
   mathTrigGen
-} from './math'
-import { variablesGetGen, variablesSetGen } from './variables'
+} from './blocks/math'
+import { variablesGetGen, variablesSetGen } from './blocks/variables'
 import {
   functionCallGen,
   functionDefGen,
@@ -40,7 +40,7 @@ import {
   proceduresCallReturnGen,
   proceduresDefNoReturnGen,
   proceduresDefReturnGen
-} from './functions'
+} from './blocks/functions'
 
 export class ExpressionGenerator {
   private generators: Record<
@@ -126,98 +126,51 @@ exprGenerator.forBlock('text', function (block: Block): Expression {
   }
 })
 
-/**
- * Events
- */
-
+/** Events */
 exprGenerator.forBlock('onflagclick', onflagclickGen)
 
-/**
- * Motion
- */
-
+/** Motion */
 exprGenerator.forBlock('object', objectGen)
-
 exprGenerator.forBlock('moveunitsxyz', moveunitsxyzGen)
-
 exprGenerator.forBlock('setposxyz', createXYZExpr('setposxyz'))
-
 exprGenerator.forBlock('setscalexyz', createXYZExpr('setscalexyz'))
-
 exprGenerator.forBlock('setroteulerxyz', createXYZExpr('setroteulerxyz'))
-
 exprGenerator.forBlock('rotatexyz', rotatexyzGen)
-
 exprGenerator.forBlock('translatexyz', translatexyzGen)
 
-/**
- * Logic
- */
-
+/** Logic */
 exprGenerator.forBlock('repeat', repeatGen)
-
 exprGenerator.forBlock('controls_if', controlsIfGen)
-
 exprGenerator.forBlock('controls_ifelse', controlsIfElseGen)
-
 exprGenerator.forBlock('wait', waitGen)
-
 exprGenerator.forBlock('logic_boolean', logicBooleanGen)
-
 exprGenerator.forBlock('logic_operation', logicOperationGen)
-
 exprGenerator.forBlock('logic_negate', logicNegateGen)
-
 exprGenerator.forBlock('logic_compare', logicCompareGen)
-
 exprGenerator.forBlock('math_change', mathChangeGen)
-
 exprGenerator.forBlock('math_arithmetic', mathArithmeticGen)
-
 exprGenerator.forBlock('math_map', mathMapGen)
-
 exprGenerator.forBlock('math_constant', mathConstantGen)
-
 exprGenerator.forBlock('math_trig', mathTrigGen)
-
 exprGenerator.forBlock('math_htrig', mathHTrigGen)
-
 exprGenerator.forBlock('math_round', mathRoundGen)
-
 exprGenerator.forBlock('math_single', mathSingleGen)
-
 exprGenerator.forBlock('math_atan2', mathAtan2Gen)
-
 exprGenerator.forBlock('math_modulo', mathModuloGen)
-
 exprGenerator.forBlock('math_constrain', mathConstrainGen)
-
 exprGenerator.forBlock('math_random_float', mathRandomFloatGen)
-
 exprGenerator.forBlock('math_random_int', mathRandomIntGen)
 
-/**
- * Variables
- */
-
+/** Variables */
 exprGenerator.forBlock('variables_get', variablesGetGen)
-
 exprGenerator.forBlock('variables_set', variablesSetGen)
 
-/**
- * Functions
- */
-
+/** Functions */
 exprGenerator.forBlock('procedures_defnoreturn', proceduresDefNoReturnGen)
-
 exprGenerator.forBlock('procedures_defreturn', proceduresDefReturnGen)
-
 exprGenerator.forBlock('procedures_callnoreturn', proceduresCallNoReturnGen)
-
 exprGenerator.forBlock('procedures_callreturn', proceduresCallReturnGen)
-
 exprGenerator.forBlock('function_def', functionDefGen)
-
 exprGenerator.forBlock('function_call', functionCallGen)
 
 export function generateExprsFromInput(

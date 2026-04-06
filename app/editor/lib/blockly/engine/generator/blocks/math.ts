@@ -1,6 +1,6 @@
 import { Block } from 'blockly'
-import { ExpressionGenerator } from '.'
-import { Expression } from '../ast'
+import { ExpressionGenerator } from '..'
+import { Expression } from '../../ast'
 
 export function mathChangeGen(
   block: Block,

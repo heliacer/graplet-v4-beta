@@ -12,8 +12,8 @@ export function RunControls() {
   const isPaused = useEditor(s => s.isPaused)
 
   async function handleRun() {
-    if (!workspace) throw Error('Missing workspace')
-    const expression = exprGenerator.workspaceToExpression(workspace)
+    if (!workspace.current) throw Error('Missing workspace')
+    const expression = exprGenerator.workspaceToExpression(workspace.current)
     start(expression)
   }
 

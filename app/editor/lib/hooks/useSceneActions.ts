@@ -59,8 +59,8 @@ export function useSceneActions() {
         children?.forEach(child => addObject(child))
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
 
-        if (!workspace) throw Error('Missing workspace')
-        serialization.workspaces.load(project.workspace, workspace)
+        if (!workspace.current) throw Error('Missing workspace')
+        serialization.workspaces.load(project.workspace, workspace.current)
         console.info(
           '%cLoaded workspace state:',
           'color: salmon;',

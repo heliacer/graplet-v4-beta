@@ -5,6 +5,8 @@ import { NotFoundError } from '../types'
 /**
  * This IS temporary, as long as some tool doesn't support multiselect yet.
  * No, we are NOT keeping this.
+ * 
+ * I'm afraid we're keeping this longer than I anticipated.
  */
 export function useCurrentObject() {
   const { objects } = useOldEditor()

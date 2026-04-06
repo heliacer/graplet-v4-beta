@@ -44,7 +44,7 @@ export function NavMenu() {
           'hover:bg-ui-750 bg-ui-800'
         )}
         onClick={() => {
-          const flyout = workspace?.getFlyout()
+          const flyout = workspace.current?.getFlyout()
           if (flyout) {
             flyout.autoClose = !flyout.autoClose
           }

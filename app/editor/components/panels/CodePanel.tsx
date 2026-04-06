@@ -6,8 +6,8 @@ import { initializeBlockly } from '../../lib/blockly/config'
 initializeBlockly()
 
 export default function CodePanel() {
-  const containerRef = useRef<HTMLDivElement>(null!)
-  useBlocklyWorkspace(containerRef)
+  const blocklyDiv = useRef<HTMLDivElement>(null!)
+  useBlocklyWorkspace(blocklyDiv)
 
-  return <div ref={containerRef} className='w-full h-full' />
+  return <div ref={blocklyDiv} className='w-full h-full' />
 }

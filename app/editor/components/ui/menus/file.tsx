@@ -32,9 +32,9 @@ export function FileMenu() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   function handleSave() {
-    if (!workspace) throw Error('Missing workspace')
+    if (!workspace.current) throw Error('Missing workspace')
     /** @todo Consider using object registry and pass that as ProjectData, skipping internal objects (1) */
-    const projectData = createProjectData(workspace, scene.current)
+    const projectData = createProjectData(workspace.current, scene.current)
     localStorage.setItem('projectData', JSON.stringify(projectData))
     console.info(
       '%cSaved project to localStorage:',
@@ -44,9 +44,9 @@ export function FileMenu() {
   }
 
   function handleSaveFile() {
-    if (!workspace) throw Error('Missing workspace')
+    if (!workspace.current) throw Error('Missing workspace')
     /** @todo Consider using object registry and pass that as ProjectData, skipping internal objects (2) */
-    const projectData = createProjectData(workspace, scene.current)
+    const projectData = createProjectData(workspace.current, scene.current)
     const blob = new Blob([JSON.stringify(projectData, null, 2)], {
       type: 'application/json'
     })
@@ -76,12 +76,12 @@ export function FileMenu() {
   }
 
   function handleStartFresh() {
-    if (!workspace) throw Error('Missing workspace')
+    if (!workspace.current) throw Error('Missing workspace')
     const isConfirmed = confirm(
       'This will remove any existing progress. Are you sure?'
     )
     if (isConfirmed) {
-      serialization.workspaces.load({}, workspace)
+      serialization.workspaces.load({}, workspace.current)
       loadDefaultScene()
     }
   }

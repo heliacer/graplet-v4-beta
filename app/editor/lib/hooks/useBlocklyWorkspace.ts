@@ -1,5 +1,5 @@
-import { inject, Events, WorkspaceSvg } from 'blockly'
-import { useEffect, useRef } from 'react'
+import { inject, Events } from 'blockly'
+import { useEffect } from 'react'
 import { useOldEditor } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
 // import { variableCategory } from '../blockly/categories/variables'
@@ -9,18 +9,16 @@ import { exprGenerator } from '../blockly/engine/generator'
 import { useRuntime } from './useRuntime'
 
 export function useBlocklyWorkspace(
-  containerRef: React.RefObject<HTMLDivElement>
+  blocklyDiv: React.RefObject<HTMLDivElement>
 ) {
-  const workspaceRef = useRef<WorkspaceSvg | null>(null)
-  const { setWorkspace } = useOldEditor()
+  const { workspace } = useOldEditor()
   const { start } = useRuntime()
 
   useEffect(() => {
-    if (!containerRef.current || workspaceRef.current) return
+    if (!blocklyDiv.current || workspace.current) return
 
-    const ws = inject(containerRef.current, blocklyOptions)
-    workspaceRef.current = ws
-    setWorkspace(ws)
+    const ws = inject(blocklyDiv.current, blocklyOptions)
+    workspace.current = ws
 
     ws.getVariableMap().createVariable('my variable')
 
@@ -53,7 +51,7 @@ export function useBlocklyWorkspace(
           const block = event.getEventWorkspace_().getBlockById(event.blockId)
           if (block) {
             const expression = exprGenerator.blockToExpression(block)
-            start(expression)
+            start(expression, true)
           }
         }
       }
@@ -64,18 +62,16 @@ export function useBlocklyWorkspace(
     ws.getFlyout()?.getWorkspace().addChangeListener(blockListener)
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
-    resizeObserver.observe(containerRef.current)
+    resizeObserver.observe(blocklyDiv.current)
 
     function cleanup() {
       resizeObserver.disconnect()
       ws.removeChangeListener(variableListener)
       ws.removeChangeListener(blockListener)
       ws.dispose()
-      workspaceRef.current = null
-      setWorkspace(null)
+      workspace.current = null
     }
 
     return cleanup
-  }, [containerRef, setWorkspace, start])
-  return workspaceRef.current
+  }, [blocklyDiv, workspace, start])
 }

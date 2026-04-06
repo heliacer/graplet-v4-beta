@@ -10,7 +10,6 @@ export function useRuntime() {
   const { objects, varEnv, funcEnv, setObjectVersion } = useOldEditor()
   const setRunning = useEditor(s => s.setRunning)
   const setPaused = useEditor(s => s.setPaused)
-  const isPaused = useEditor(s => s.isPaused)
 
   const running = useRef(false)
   const paused = useRef(false)
@@ -25,7 +24,7 @@ export function useRuntime() {
   }, [setObjectVersion, setPaused, setRunning])
 
   const start = useCallback(
-    (expression: Expression) => {
+    (expression: Expression, single?: boolean) => {
       if (running.current) return
 
       const state = {
@@ -38,7 +37,18 @@ export function useRuntime() {
       console.info('%cRunning...', 'color: aquamarine;')
       console.time('Time elapsed')
 
-      threads.current = initProgram(expression, state)
+      if (single) {
+        threads.current = [
+          {
+            stack: [{ expression, stage: 0 }],
+            valueStack: [],
+            done: false
+          }
+        ]
+      } else {
+        threads.current = initProgram(expression, state)
+      }
+      
       running.current = true
 
       function loop(state: ProgramState) {

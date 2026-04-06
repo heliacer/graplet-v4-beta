@@ -42,7 +42,7 @@ export function useObjectActions() {
   function rebuildBlocklyUI() {
     const entries = Array.from(objects.current.entries())
     blocklyUI.objectMenu = entries.map(([id, object]) => [object.name, id])
-    workspace?.refreshToolboxSelection()
+    workspace.current?.updateToolbox(workspace.current.options.languageTree)
   }
 
   /**
