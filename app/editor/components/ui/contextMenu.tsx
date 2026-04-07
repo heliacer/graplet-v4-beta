@@ -7,7 +7,7 @@ import {
   Trash,
   Ungroup
 } from 'lucide-react'
-import { useOldEditor } from '../../lib/EditorContext'
+import { useEditorRefs } from '../../lib/EditorContext'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { createAddItemsMenu } from '../../lib/utils/addItems'
 import {
@@ -18,17 +18,17 @@ import {
 import { useState } from 'react'
 import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
 import { Object3D } from 'three'
-import { useEditor } from '../../lib/state'
+import { useEditorStore } from '../../lib/state'
 
 /**
  * @todo This shit is unstable, renaming doesn't work,
  * need to find a solution to put it together
- *
- * relocating on edge also not working yet, wip
  */
 export function ContextMenu() {
-  const { contextMenu, setContextMenu, scene, objects } = useOldEditor()
-  const selectedItems = useEditor(s => s.selectedItems)
+  const { scene, objects } = useEditorRefs()
+  const selectedItems = useEditorStore(s => s.selectedItems)
+  const contextMenu = useEditorStore(s => s.contextMenu)
+  const setContextMenu = useEditorStore(s => s.setContextMenu)
   const [activePath, setActivePath] = useState<number[]>([])
   const {
     removeObject,
@@ -80,7 +80,7 @@ export function ContextMenu() {
         disabled: selectedItems.length > 1,
         onClick: () => cloneObject(selection[0])
       },
-      /** @todo Fix multiple selection */
+      /** @todo @bug Fix multiple selection */
       {
         label: `Group ${multipleSuffix}`,
         Icon: Group,

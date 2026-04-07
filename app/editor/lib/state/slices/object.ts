@@ -1,4 +1,4 @@
-import { Object3D } from 'three'
+import { Camera, Object3D } from 'three'
 import { StateCreator } from 'zustand'
 
 /** might move this up somewhere */
@@ -13,15 +13,18 @@ type Updater<T> = T | ((old: T) => T)
 export type ObjectSlice = {
   selectedItems: string[]
   objectVersions: Record<string, number>
+  camera: Camera | null
 
   setSelectedItems: (updater: Updater<string[]>) => void
   updateObject: (object: Object3D, update: (draft: Object3D) => void) => void
   invalidateObject: (sharedId: string) => void
+  setCamera: (camera: Camera | null) => void
 }
 
 export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
   selectedItems: [],
   objectVersions: {},
+  camera: null,
 
   setSelectedItems: updater =>
     set(state => ({
@@ -41,5 +44,6 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
         [sharedId]: (state.objectVersions[sharedId] || 0) + 1
       }
     }))
-  }
+  },
+  setCamera: v => set({ camera: v })
 })

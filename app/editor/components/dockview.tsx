@@ -18,7 +18,7 @@ import PropertiesPanel from './panels/PropertiesPanel'
 import SettingsPanel from './panels/SettingsPanel'
 import KeybindsPanel from './panels/KeybindsPanel'
 import { useEffect } from 'react'
-import { useEditor } from '../lib/state'
+import { useEditorStore } from '../lib/state'
 
 const panelComponents = {
   debug: DebugPanel,
@@ -118,8 +118,8 @@ const jsonLayout: SerializedDockview = {
 }
 
 export function GrapletDockview() {
-  const dvApi = useEditor(s => s.dvApi)
-  const setDvApi = useEditor(s => s.setDvApi)
+  const dvApi = useEditorStore(s => s.dvApi)
+  const setDvApi = useEditorStore(s => s.setDvApi)
 
   function mount(event: DockviewReadyEvent) {
     const { api } = event

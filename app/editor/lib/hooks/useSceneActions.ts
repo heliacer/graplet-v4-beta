@@ -1,16 +1,16 @@
 import { serialization } from 'blockly'
-import { useOldEditor } from '../EditorContext'
+import { useEditorRefs } from '../EditorContext'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
 import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
-import { useEditor } from '../state'
+import { useEditorStore } from '../state'
 
 export function useSceneActions() {
-  const { scene, workspace, orbitMap, controls } = useOldEditor()
+  const { scene, workspace, orbitMap, controls } = useEditorRefs()
   const { addObject, removeObject } = useObjectActions()
-  const setSelectedItems = useEditor(s => s.setSelectedItems)
+  const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   
   /**
    * Adds Ambient light, Directional light and a Camera

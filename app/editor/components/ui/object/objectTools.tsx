@@ -6,12 +6,12 @@ import {
   Scale3D,
   Spline
 } from 'lucide-react'
-import { useOldEditor } from '../../../lib/EditorContext'
+import { useEditorRefs } from '../../../lib/EditorContext'
 import clsx from 'clsx'
 import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { ToolItem } from '@/app/editor/lib/types'
 import { MOUSE } from 'three'
-import { useEditor } from '@/app/editor/lib/state'
+import { useEditorStore } from '@/app/editor/lib/state'
 
 interface ToolButtonProps {
   tool: TransformControlsMode | ToolItem
@@ -19,9 +19,10 @@ interface ToolButtonProps {
 }
 
 function ToolButton({ tool, Icon }: ToolButtonProps) {
-  const { orbitMap, camera } = useOldEditor()
-  const currentTool = useEditor(s => s.currentTool)
-  const setCurrentTool = useEditor(s => s.setCurrentTool)
+  const { orbitMap } = useEditorRefs()
+  const currentTool = useEditorStore(s => s.currentTool)
+  const setCurrentTool = useEditorStore(s => s.setCurrentTool)
+  const camera = useEditorStore(s => s.camera)
 
   return (
     <button

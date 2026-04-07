@@ -1,4 +1,4 @@
-import { useOldEditor } from '../EditorContext'
+import { useEditorRefs } from '../EditorContext'
 import {
   Camera,
   CameraHelper,
@@ -18,23 +18,17 @@ import {
   moveObject
 } from '../utils/three'
 import { Optional } from '@/app/lib/types'
-import { useEditor } from '../state'
+import { useEditorStore } from '../state'
 
 let nextSharedId = 0
 
 export function useObjectActions() {
-  const {
-    scene,
-    objects,
-    workspace,
-    camera,
-    setCamera,
-    setObjectVersion,
-    orbitMap,
-    canvas
-  } = useOldEditor()
-  const selectedItems = useEditor(s => s.selectedItems)
-  const setSelectedItems = useEditor(s => s.setSelectedItems)
+  const { scene, objects, workspace, setObjectVersion, orbitMap, canvas } =
+    useEditorRefs()
+  const selectedItems = useEditorStore(s => s.selectedItems)
+  const setSelectedItems = useEditorStore(s => s.setSelectedItems)
+  const setCamera = useEditorStore(s => s.setCamera)
+  const camera = useEditorStore(s => s.camera)
 
   /**
    * @private

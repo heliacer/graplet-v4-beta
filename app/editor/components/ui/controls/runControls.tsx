@@ -1,15 +1,15 @@
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
-import { useOldEditor } from '../../../lib/EditorContext'
-import { useEditor } from '@/app/editor/lib/state'
+import { useEditorRefs } from '../../../lib/EditorContext'
+import { useEditorStore } from '@/app/editor/lib/state'
 import clsx from 'clsx'
 import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'
 import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator/index'
 
 export function RunControls() {
-  const { workspace } = useOldEditor()
+  const { workspace } = useEditorRefs()
   const { start, stop, step, pauseOrResume } = useRuntime()
-  const isRunning = useEditor(s => s.isRunning)
-  const isPaused = useEditor(s => s.isPaused)
+  const isRunning = useEditorStore(s => s.isRunning)
+  const isPaused = useEditorStore(s => s.isPaused)
 
   async function handleRun() {
     if (!workspace.current) throw Error('Missing workspace')

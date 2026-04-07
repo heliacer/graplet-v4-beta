@@ -1,6 +1,6 @@
 import { inject, Events } from 'blockly'
 import { useEffect } from 'react'
-import { useOldEditor } from '../EditorContext'
+import { useEditorRefs } from '../EditorContext'
 import { blocklyOptions } from '../blockly/options'
 // import { variableCategory } from '../blockly/categories/variables'
 // import { procedureCategory } from '../blockly/categories/procedures'
@@ -11,7 +11,7 @@ import { useRuntime } from './useRuntime'
 export function useBlocklyWorkspace(
   blocklyDiv: React.RefObject<HTMLDivElement>
 ) {
-  const { workspace } = useOldEditor()
+  const { workspace } = useEditorRefs()
   const { start } = useRuntime()
 
   useEffect(() => {

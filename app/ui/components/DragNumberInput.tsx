@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useRef, useCallback, useId } from 'react'
+import { useRef, useCallback } from 'react'
 
 interface DragNumberInputProps {
   value: number
@@ -58,11 +58,8 @@ export function DragNumberInput({
     [value, handleMouseMove, handleMouseUp]
   )
 
-  const id = useId()
-
   return (
     <input
-      id={id}
       type='number'
       title={title}
       className={clsx('cursor-n-resize', className)}

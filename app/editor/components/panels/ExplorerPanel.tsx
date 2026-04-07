@@ -1,4 +1,4 @@
-import { useOldEditor } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/EditorContext'
 import { getIconT } from '@/app/editor/lib/utils/icons'
 import {
   dragAndDropFeature,
@@ -12,13 +12,13 @@ import { useEffect } from 'react'
 import { TreeItemView } from '../ui/TreeItemView'
 import { moveObject, isInternalObject } from '../../lib/utils/three'
 import { NotFoundError, TreeItem } from '../../lib/types'
-import { useEditor } from '../../lib/state'
+import { useEditorStore } from '../../lib/state'
 
 export default function ExplorerPanel() {
-  const { objects, objectVersion, scene, setContextMenu, setObjectVersion } =
-    useOldEditor()
-  const selectedItems = useEditor(s => s.selectedItems)
-  const setSelectedItems = useEditor(s => s.setSelectedItems)
+  const { objects, objectVersion, scene, setObjectVersion } = useEditorRefs()
+  const selectedItems = useEditorStore(s => s.selectedItems)
+  const setSelectedItems = useEditorStore(s => s.setSelectedItems)
+  const setContextMenu = useEditorStore(s => s.setContextMenu)
 
   const tree = useTree<TreeItem>({
     state: { selectedItems },

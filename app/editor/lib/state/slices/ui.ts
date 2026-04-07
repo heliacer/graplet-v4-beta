@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand'
-import { NotificationItemProps, ToolItem } from '../../types'
+import { ContextMenuProps, NotificationItemProps, ToolItem } from '../../types'
 import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { DockviewApi } from 'dockview-react'
 
@@ -10,6 +10,7 @@ export type UiSlice = {
   currentTool: TransformControlsMode | ToolItem
   notifications: NotificationItemProps[]
   dvApi: DockviewApi | null
+  contextMenu: ContextMenuProps | null
 
   setRunning: (bool: boolean) => void
   setPaused: (bool: boolean) => void
@@ -17,6 +18,7 @@ export type UiSlice = {
   setCurrentTool: (tool: TransformControlsMode | ToolItem) => void
   setNotifications: (notifications: NotificationItemProps[]) => void
   setDvApi: (api: DockviewApi) => void
+  setContextMenu: (contextMenu: ContextMenuProps | null) => void
 }
 
 export const createUiSlice: StateCreator<UiSlice> = set => ({
@@ -26,11 +28,13 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   currentTool: 'translate',
   notifications: [],
   dvApi: null,
+  contextMenu: null,
 
   setRunning: v => set({ isRunning: v }),
   setPaused: v => set({ isPaused: v }),
   setCurrentTheme: v => set({ currentTheme: v }),
   setCurrentTool: v => set({ currentTool: v }),
   setNotifications: v => set({ notifications: v }),
-  setDvApi: v => set({ dvApi: v })
+  setDvApi: v => set({ dvApi: v }),
+  setContextMenu: v => set({ contextMenu: v })
 })

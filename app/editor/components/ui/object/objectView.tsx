@@ -1,4 +1,4 @@
-import { useOldEditor } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/EditorContext'
 import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
 import { StateFunc } from '@/app/editor/lib/types'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
@@ -37,7 +37,7 @@ function toggleHelper(
 }
 
 export function ObjectView() {
-  const { scene } = useOldEditor()
+  const { scene } = useEditorRefs()
   const object = useCurrentObject()
 
   /** Helpers, some of them maps for helper n - object 1 */

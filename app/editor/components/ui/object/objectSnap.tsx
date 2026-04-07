@@ -1,5 +1,5 @@
-import { useOldEditor } from '@/app/editor/lib/EditorContext'
-import { useEditor } from '@/app/editor/lib/state'
+import { useEditorRefs } from '@/app/editor/lib/EditorContext'
+import { useEditorStore } from '@/app/editor/lib/state'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 import { RulerDimensionLine } from 'lucide-react'
 
@@ -12,8 +12,8 @@ import { RulerDimensionLine } from 'lucide-react'
  * x: 0.25 -> snapping of 1 -> goes to 1 instead of 1.25
  */
 export function ObjectSnap() {
-  const { controls } = useOldEditor()
-  const currentTool = useEditor(s => s.currentTool)
+  const { controls } = useEditorRefs()
+  const currentTool = useEditorStore(s => s.currentTool)
 
   return (
     <div className='relative text-sm h-5.5 pointer-events-auto'>
@@ -29,6 +29,7 @@ export function ObjectSnap() {
         dragSpeed={0.1}
         decimals={currentTool === 'rotate' ? 0 : 2}
         step={currentTool === 'rotate' ? 15 : 0.25}
+        /** @todo wtf is this bro (what was I thinking?) */
         value={
           currentTool === 'rotate'
             ? controls.current?.rotationSnap !== undefined &&

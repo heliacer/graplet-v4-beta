@@ -1,5 +1,5 @@
-import { useOldEditor } from '../EditorContext'
-import { useEditor } from '../state'
+import { useEditorRefs } from '../EditorContext'
+import { useEditorStore } from '../state'
 import { NotFoundError } from '../types'
 
 /**
@@ -9,8 +9,8 @@ import { NotFoundError } from '../types'
  * I'm afraid we're keeping this longer than I anticipated.
  */
 export function useCurrentObject() {
-  const { objects } = useOldEditor()
-  const selectedItems = useEditor(s => s.selectedItems)
+  const { objects } = useEditorRefs()
+  const selectedItems = useEditorStore(s => s.selectedItems)
 
   if (selectedItems.length !== 1) return
 

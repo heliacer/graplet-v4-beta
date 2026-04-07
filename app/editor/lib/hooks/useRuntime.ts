@@ -1,15 +1,15 @@
 import { useCallback, useRef } from 'react'
 import { Expression, ProgramState, Thread } from '../blockly/engine/ast'
 import { initProgram, threadStep } from '../blockly/engine/interpreter'
-import { useOldEditor } from '../EditorContext'
-import { useEditor } from '../state'
+import { useEditorRefs } from '../EditorContext'
+import { useEditorStore } from '../state'
 
 const STEPS_PER_FRAME = 100 /** should make this globally tweakable, this is peak */
 
 export function useRuntime() {
-  const { objects, varEnv, funcEnv, setObjectVersion } = useOldEditor()
-  const setRunning = useEditor(s => s.setRunning)
-  const setPaused = useEditor(s => s.setPaused)
+  const { objects, varEnv, funcEnv, setObjectVersion } = useEditorRefs()
+  const setRunning = useEditorStore(s => s.setRunning)
+  const setPaused = useEditorStore(s => s.setPaused)
 
   const running = useRef(false)
   const paused = useRef(false)

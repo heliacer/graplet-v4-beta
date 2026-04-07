@@ -6,7 +6,7 @@ import { createObjectSlice, ObjectSlice } from './slices/object'
 
 type EditorStore = UiSlice & ObjectSlice
 
-export const useEditor = create<EditorStore>()((...a) => ({
+export const useEditorStore = create<EditorStore>()((...a) => ({
   ...createUiSlice(...a),
   ...createObjectSlice(...a)
 }))

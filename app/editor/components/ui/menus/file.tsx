@@ -1,4 +1,4 @@
-import { useOldEditor } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/EditorContext'
 import { serializeObject } from '@/app/editor/lib/utils/sobject'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
 import {
@@ -15,7 +15,7 @@ import { Scene } from 'three'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { useSceneActions } from '@/app/editor/lib/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/lib/utils/dockview'
-import { useEditor } from '@/app/editor/lib/state'
+import { useEditorStore } from '@/app/editor/lib/state'
 
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {
@@ -25,8 +25,8 @@ function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
 }
 
 export function FileMenu() {
-  const { workspace, scene } = useOldEditor()
-  const dvApi = useEditor(s => s.dvApi)
+  const { workspace, scene } = useEditorRefs()
+  const dvApi = useEditorStore(s => s.dvApi)
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
