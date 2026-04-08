@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { EditMenu } from './menus/edit'
 import { FileMenu } from './menus/file'
-import { useEditorRefs } from '../../lib/EditorContext'
+import { useEditorRefs } from '../../lib/context'
 import { useEditorStore } from '../../lib/state'
 
 const lorem = `

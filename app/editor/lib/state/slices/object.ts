@@ -1,15 +1,8 @@
 import { Camera, Object3D } from 'three'
 import { StateCreator } from 'zustand'
 
-/** might move this up somewhere */
 type Updater<T> = T | ((old: T) => T)
 
-/**
- * @todo the new object versioning pattern, specific to each object :D
- *
- * i might optimise this further, and have a separate property-specific versioning table,
- * next to the general object-specific versioning
- */
 export type ObjectSlice = {
   selectedItems: string[]
   objectVersions: Record<string, number>
@@ -17,7 +10,8 @@ export type ObjectSlice = {
 
   setSelectedItems: (updater: Updater<string[]>) => void
   updateObject: (object: Object3D, update: (draft: Object3D) => void) => void
-  invalidateObject: (sharedId: string) => void
+  invalidateObject: (object: Object3D) => void
+  invalidateObjectsAll: () => void
   setCamera: (camera: Camera | null) => void
 }
 
@@ -26,18 +20,24 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
   objectVersions: {},
   camera: null,
 
-  setSelectedItems: updater =>
+  setSelectedItems: updater => {
     set(state => ({
       selectedItems:
         typeof updater === 'function' ? updater(state.selectedItems) : updater
-    })),
+    }))
+  },
+
   updateObject: (object, update) => {
     update(object)
     if (object.sharedId) {
-      get().invalidateObject(object.sharedId)
+      get().invalidateObject(object)
     }
   },
-  invalidateObject: sharedId => {
+
+  invalidateObject: object => {
+    const sharedId = object.sharedId
+    console.log(object.name)
+    if (sharedId === undefined) return
     set(state => ({
       objectVersions: {
         ...state.objectVersions,
@@ -45,5 +45,16 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
       }
     }))
   },
+
+  invalidateObjectsAll: () => {
+    set(state => {
+      const objectVersions = { ...state.objectVersions }
+      for (const key in objectVersions) {
+        objectVersions[key]++
+      }
+      return { objectVersions }
+    })
+  },
+
   setCamera: v => set({ camera: v })
 })

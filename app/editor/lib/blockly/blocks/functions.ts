@@ -1,33 +1,36 @@
 import { Blocks, common } from 'blockly'
-import { FunctionExtraState, ProcedureBlock } from '../../types'
+import { ProcedureBlock } from '../../types'
 import { FunctionEditorIcon } from '../extensions/functionEditorIcon'
 
-function createLogs(
-  block: ProcedureBlock,
-  functionName: string,
-  color: string = 'aliceblue',
-  extraState?: FunctionExtraState
-) {
-  const logs = {
-    id: block.id,
-    type: block.type,
-    isInFlyout: block.isInFlyout,
-    isShadow: block.isShadow(),
-    procedureMap: Array.from(block.workspace.getProcedureMap().values(), v =>
-      v.getId()
-    ),
-    extraState,
-    ...(block.model && {
-      model: {
-        id: block.model.getId(),
-        name: block.model.getName()
-      }
-    })
+/** 
+ * @todo finally get a hold of this shit with observable procedure models
+
+  function createLogs(
+    block: ProcedureBlock,
+    functionName: string,
+    color: string = 'aliceblue',
+    extraState?: FunctionExtraState
+  ) {
+    const logs = {
+      id: block.id,
+      type: block.type,
+      isInFlyout: block.isInFlyout,
+      isShadow: block.isShadow(),
+      procedureMap: Array.from(block.workspace.getProcedureMap().values(), v =>
+        v.getId()
+      ),
+      extraState,
+      ...(block.model && {
+        model: {
+          id: block.model.getId(),
+          name: block.model.getName()
+        }
+      })
+    }
+
+    return [`%c[${block.type}:${functionName}]`, `color: ${color};`, logs]
   }
-
-  return [`%c[${block.type}:${functionName}]`, `color: ${color};`, logs]
-}
-
+ */
 const functionBlocks = common.createBlockDefinitionsFromJsonArray([
   {
     type: 'function_return',
@@ -57,7 +60,7 @@ Blocks['function_def'] = {
     this.setStyle('function_blocks')
     this.addIcon(new FunctionEditorIcon(this))
 
-    console.log(...createLogs(this, 'init', 'aquamarine'))
+    // console.log(...createLogs(this, 'init', 'aquamarine'))
   },
 
   getProcedureModel(this: ProcedureBlock) {
@@ -73,19 +76,19 @@ Blocks['function_def'] = {
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'doProcedureUpdate'))
+    // console.log(...createLogs(this, 'doProcedureUpdate'))
   },
 
   saveExtraState(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'saveExtraState'))
+    // console.log(...createLogs(this, 'saveExtraState'))
   },
 
-  loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
-    console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
+  loadExtraState(this: ProcedureBlock /* state: FunctionExtraState */) {
+    // console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
   },
 
   destroy(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'destroy', 'crimson'))
+    // console.log(...createLogs(this, 'destroy', 'crimson'))
   }
 }
 
@@ -96,7 +99,7 @@ Blocks['function_call'] = {
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
 
-    console.log(...createLogs(this, 'init', 'aquamarine'))
+    // console.log(...createLogs(this, 'init', 'aquamarine'))
   },
 
   getProcedureModel(this: ProcedureBlock) {
@@ -108,19 +111,19 @@ Blocks['function_call'] = {
   },
 
   getVarModels(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'getVarModels'))
+    // console.log(...createLogs(this, 'getVarModels'))
     return []
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'doProcedureUpdate'))
+    // console.log(...createLogs(this, 'doProcedureUpdate'))
   },
 
   saveExtraState(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'saveExtraState'))
+    // console.log(...createLogs(this, 'saveExtraState'))
   },
 
-  loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
-    console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
+  loadExtraState(this: ProcedureBlock /* state: FunctionExtraState */) {
+    // console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
   }
 }

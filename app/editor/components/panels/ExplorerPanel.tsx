@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/context'
 import { getIconT } from '@/app/editor/lib/utils/icons'
 import {
   dragAndDropFeature,
@@ -15,10 +15,13 @@ import { NotFoundError, TreeItem } from '../../lib/types'
 import { useEditorStore } from '../../lib/state'
 
 export default function ExplorerPanel() {
-  const { objects, objectVersion, scene, setObjectVersion } = useEditorRefs()
+  const { objects, scene } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setContextMenu = useEditorStore(s => s.setContextMenu)
+  const updateObject = useEditorStore(s => s.updateObject)
+  const invalidateObject = useEditorStore(s => s.invalidateObject)
+  const objectVersions = useEditorStore(s => s.objectVersions)
 
   const tree = useTree<TreeItem>({
     state: { selectedItems },
@@ -33,8 +36,7 @@ export default function ExplorerPanel() {
     },
     onRename: (item, value) => {
       const object = objects.current.get(item.getId())
-      if (object) object.name = value
-      setObjectVersion(v => v + 1)
+      if (object) updateObject(object, o => (o.name = value))
     },
     /**
      * @todo Add reordering for improved UX, and save the item state to serialization
@@ -53,7 +55,7 @@ export default function ExplorerPanel() {
         if (!targetObj) throw new NotFoundError(targetId)
 
         moveObject(object, targetObj)
-        setObjectVersion(v => v + 1)
+        invalidateObject(object)
       }
     },
     canReorder: true,
@@ -92,7 +94,7 @@ export default function ExplorerPanel() {
     ]
   })
 
-  useEffect(() => tree.rebuildTree(), [objectVersion, tree])
+  useEffect(() => tree.rebuildTree(), [objectVersions, tree])
 
   return (
     <div

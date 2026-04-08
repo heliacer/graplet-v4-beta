@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/context'
 import { useEditorStore } from '@/app/editor/lib/state'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 import { RulerDimensionLine } from 'lucide-react'

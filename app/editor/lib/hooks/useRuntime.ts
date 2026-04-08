@@ -1,16 +1,16 @@
 import { useCallback, useRef } from 'react'
 import { Expression, ProgramState, Thread } from '../blockly/engine/ast'
 import { initProgram, threadStep } from '../blockly/engine/interpreter'
-import { useEditorRefs } from '../EditorContext'
+import { useEditorRefs } from '../context'
 import { useEditorStore } from '../state'
 
 const STEPS_PER_FRAME = 100 /** should make this globally tweakable, this is peak */
 
 export function useRuntime() {
-  const { objects, varEnv, funcEnv, setObjectVersion } = useEditorRefs()
+  const { objects, varEnv, funcEnv } = useEditorRefs()
   const setRunning = useEditorStore(s => s.setRunning)
   const setPaused = useEditorStore(s => s.setPaused)
-
+  const invalidateAllObjects = useEditorStore(s => s.invalidateObjectsAll)
   const running = useRef(false)
   const paused = useRef(false)
   const threads = useRef<Thread[]>([])
@@ -20,8 +20,8 @@ export function useRuntime() {
     console.timeEnd('Time elapsed')
     setRunning(false)
     setPaused(false)
-    setObjectVersion(v => v + 1)
-  }, [setObjectVersion, setPaused, setRunning])
+    invalidateAllObjects()
+  }, [setPaused, setRunning, invalidateAllObjects])
 
   const start = useCallback(
     (expression: Expression, single?: boolean) => {
@@ -48,7 +48,7 @@ export function useRuntime() {
       } else {
         threads.current = initProgram(expression, state)
       }
-      
+
       running.current = true
 
       function loop(state: ProgramState) {

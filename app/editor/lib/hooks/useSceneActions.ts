@@ -1,5 +1,5 @@
 import { serialization } from 'blockly'
-import { useEditorRefs } from '../EditorContext'
+import { useEditorRefs } from '../context'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
@@ -11,6 +11,13 @@ export function useSceneActions() {
   const { scene, workspace, orbitMap, controls } = useEditorRefs()
   const { addObject, removeObject } = useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
+
+  /** 
+   * @todo for both loadDefaultScene and loadProjectData:
+   * - make addObject be slient? about marking the added object as selectedItem
+   * - save the active item sharedId, so that we can select it back
+   * - in default load just don't set silent? to true 
+   */
   
   /**
    * Adds Ambient light, Directional light and a Camera

@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/context'
 import { serializeObject } from '@/app/editor/lib/utils/sobject'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
 import {

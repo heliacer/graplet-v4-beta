@@ -1,6 +1,6 @@
 import { inject, Events } from 'blockly'
 import { useEffect } from 'react'
-import { useEditorRefs } from '../EditorContext'
+import { useEditorRefs } from '../context'
 import { blocklyOptions } from '../blockly/options'
 // import { variableCategory } from '../blockly/categories/variables'
 // import { procedureCategory } from '../blockly/categories/procedures'

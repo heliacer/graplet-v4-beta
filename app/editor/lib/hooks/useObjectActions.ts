@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../EditorContext'
+import { useEditorRefs } from '../context'
 import {
   Camera,
   CameraHelper,
@@ -23,12 +23,12 @@ import { useEditorStore } from '../state'
 let nextSharedId = 0
 
 export function useObjectActions() {
-  const { scene, objects, workspace, setObjectVersion, orbitMap, canvas } =
-    useEditorRefs()
+  const { scene, objects, workspace, orbitMap, canvas } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setCamera = useEditorStore(s => s.setCamera)
   const camera = useEditorStore(s => s.camera)
+  const invalidateObject = useEditorStore(s => s.invalidateObject)
 
   /**
    * @private
@@ -108,7 +108,7 @@ export function useObjectActions() {
     objects.current.set(object.sharedId, object)
     applyHelpers(object)
     setSelectedItems([object.sharedId])
-    setObjectVersion(v => v + 1)
+    invalidateObject(object)
     rebuildBlocklyUI()
     return object
   }
@@ -158,7 +158,7 @@ export function useObjectActions() {
       }
     }
 
-    setObjectVersion(v => v + 1)
+    invalidateObject(object)
     rebuildBlocklyUI()
   }
 

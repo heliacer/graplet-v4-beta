@@ -6,7 +6,7 @@ import {
   Scale3D,
   Spline
 } from 'lucide-react'
-import { useEditorRefs } from '../../../lib/EditorContext'
+import { useEditorRefs } from '../../../lib/context'
 import clsx from 'clsx'
 import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { ToolItem } from '@/app/editor/lib/types'

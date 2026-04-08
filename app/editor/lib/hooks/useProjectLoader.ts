@@ -1,33 +1,22 @@
-import { useEffect, useState } from 'react'
-import { useEditorRefs } from '../EditorContext'
+import { useEffect, useRef } from 'react'
+import { useEditorRefs } from '../context'
 import { useSceneActions } from './useSceneActions'
 
 /** @todo Add session project loading, this is only local for now */
 export function useProjectLoader() {
   const { loadProjectData, loadDefaultScene } = useSceneActions()
-  const { scene, workspace } = useEditorRefs()
-  const [shouldLoad, setShouldLoad] = useState(true)
+  const { workspace } = useEditorRefs()
+  const hasLoaded = useRef(false)
 
   useEffect(() => {
-    if (workspace && shouldLoad) {
-      setShouldLoad(false)
-      const data = localStorage.getItem('projectData')
-      if (data) {
-        loadProjectData(data)
-      } else {
-        /**
-         * @todo Maybe add default blocks
-         * @todo Add tutorial floating panel
-         */
-        loadDefaultScene()
-      }
+    if (!workspace || hasLoaded.current) return
+    hasLoaded.current = true
+
+    const data = localStorage.getItem('projectData')
+    if (data) {
+      loadProjectData(data)
+    } else {
+      loadDefaultScene()
     }
-  }, [
-    loadDefaultScene,
-    workspace,
-    loadProjectData,
-    scene,
-    setShouldLoad,
-    shouldLoad
-  ])
+  }, [workspace, loadDefaultScene, loadProjectData])
 }

@@ -1,8 +1,8 @@
 import { LucideIcon } from 'lucide-react'
 import { Object3D } from 'three'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
-import { useEditorRefs } from '../../lib/EditorContext'
 import { useId } from 'react'
+import { useEditorStore } from '../../lib/state'
 
 interface BasePropertyProps {
   label: string
@@ -22,7 +22,7 @@ interface Vec3AnglePropertyProps extends BasePropertyProps {
 }
 
 export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
-  const { setObjectVersion } = useEditorRefs()
+  const updateObject = useEditorStore(s => s.updateObject)
 
   return (
     <div className='flex justify-between w-full'>
@@ -34,8 +34,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
               className='rounded border outline-none w-10 text-center hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number(object[property][axis])}
               onChange={newVal => {
-                object[property][axis] = newVal
-                setObjectVersion(v => v + 1)
+                updateObject(object, o => (o[property][axis] = newVal))
               }}
               step={0.1}
             />
@@ -51,7 +50,7 @@ export function Vec3AngleProperty({
   object,
   property
 }: Vec3AnglePropertyProps) {
-  const { setObjectVersion } = useEditorRefs()
+  const updateObject = useEditorStore(s => s.updateObject)
 
   return (
     <div className='flex justify-between w-full'>
@@ -65,8 +64,10 @@ export function Vec3AngleProperty({
               step={1}
               decimals={0}
               onChange={newVal => {
-                object[property][axis] = (newVal * Math.PI) / 180
-                setObjectVersion(v => v + 1)
+                updateObject(
+                  object,
+                  o => (o[property][axis] = (newVal * Math.PI) / 180)
+                )
               }}
             />
             <span className='absolute right-1.5 top-0.5 text-xs select-none'>
@@ -80,7 +81,7 @@ export function Vec3AngleProperty({
 }
 
 export function TextProperty({ label, object, property }: TextPropertyProps) {
-  const { setObjectVersion } = useEditorRefs()
+  const updateObject = useEditorStore(s => s.updateObject)
 
   return (
     <div className='flex justify-between'>
@@ -92,13 +93,11 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
         key={object[property]}
         defaultValue={object[property]}
         onBlur={e => {
-          object[property] = e.target.value
-          setObjectVersion(v => v + 1)
+          updateObject(object, o => (o[property] = e.target.value))
         }}
         onKeyDown={e => {
           if (e.key === 'Enter') {
-            object[property] = e.currentTarget.value
-            setObjectVersion(v => v + 1)
+            updateObject(object, o => (o[property] = e.currentTarget.value))
           }
         }}
       />

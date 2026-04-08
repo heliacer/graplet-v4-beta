@@ -1,5 +1,5 @@
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
-import { useEditorRefs } from '../../../lib/EditorContext'
+import { useEditorRefs } from '../../../lib/context'
 import { useEditorStore } from '@/app/editor/lib/state'
 import clsx from 'clsx'
 import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'

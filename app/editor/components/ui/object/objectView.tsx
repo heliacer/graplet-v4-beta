@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/context'
 import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
 import { StateFunc } from '@/app/editor/lib/types'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'

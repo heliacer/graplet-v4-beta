@@ -1,7 +1,7 @@
 import { ItemInstance, TreeInstance } from '@headless-tree/core'
 import { ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
-import { useEditorRefs } from '../../lib/EditorContext'
+import { useEditorRefs } from '../../lib/context'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
 import { useId, useState } from 'react'
 import { Object3D } from 'three'
@@ -66,7 +66,7 @@ interface ItemViewContentProps {
 }
 
 function ItemViewContent({ item, object }: ItemViewContentProps) {
-  const { setObjectVersion } = useEditorRefs()
+  const updateObject = useEditorStore(s => s.updateObject)
 
   return (
     <div
@@ -86,8 +86,7 @@ function ItemViewContent({ item, object }: ItemViewContentProps) {
         )}
         onClick={e => {
           e.stopPropagation()
-          object.visible = !object.visible
-          setObjectVersion(v => v + 1)
+          updateObject(object, o => (o.visible = !o.visible))
         }}
       >
         {object.visible ? <Eye size={12} /> : <EyeClosed size={12} />}

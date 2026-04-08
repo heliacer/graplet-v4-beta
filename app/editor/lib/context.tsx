@@ -1,15 +1,8 @@
-import React, {
-  createContext,
-  RefObject,
-  useContext,
-  useRef,
-  useState
-} from 'react'
+import React, { createContext, RefObject, useContext, useRef } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { FuncEnv, VarEnv } from './blockly/engine/ast'
 import { Object3D, Scene } from 'three'
 import { OrbitControls, TransformControls } from 'three/examples/jsm/Addons.js'
-import { StateFunc } from './types'
 
 interface EditorContextType {
   funcEnv: RefObject<FuncEnv>
@@ -21,10 +14,6 @@ interface EditorContextType {
   controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
   workspace: RefObject<WorkspaceSvg | null>
-
-  /** @deprecated, to be removed */
-  objectVersion: number
-  setObjectVersion: StateFunc<number>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -46,8 +35,6 @@ export function EditorProvider({
   const orbitMap = useRef(new Map())
   const workspace = useRef<WorkspaceSvg | null>(null)
 
-  const [objectVersion, setObjectVersion] = useState(0)
-
   return (
     <EditorContext.Provider
       value={{
@@ -59,10 +46,7 @@ export function EditorProvider({
         canvas,
         modelScene,
         controls,
-        workspace,
-
-        objectVersion,
-        setObjectVersion
+        workspace
       }}
     >
       {children}

@@ -4,7 +4,7 @@ import {
   PerspectiveCamera,
   WebGLRenderer
 } from 'three'
-import { useEditorRefs } from '../../lib/EditorContext'
+import { useEditorRefs } from '../context'
 import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
 import { OrbitControls, ViewHelper } from 'three/examples/jsm/Addons.js'

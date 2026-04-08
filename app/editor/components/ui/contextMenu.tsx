@@ -7,7 +7,7 @@ import {
   Trash,
   Ungroup
 } from 'lucide-react'
-import { useEditorRefs } from '../../lib/EditorContext'
+import { useEditorRefs } from '../../lib/context'
 import { useObjectActions } from '../../lib/hooks/useObjectActions'
 import { createAddItemsMenu } from '../../lib/utils/addItems'
 import {
