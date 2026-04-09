@@ -97,34 +97,6 @@ export function applyProps(
   if (rotation) object.rotation.set(...rotation)
   if (scale) object.scale.set(...scale)
   if (position) object.position.set(...position)
-
-  if (object instanceof Scene && props.type === 'Scene') {
-    /** nothing for now */
-  }
-  if (object instanceof Group && props.type === 'Group') {
-    /** nothing for now */
-  }
-  if (object instanceof Mesh && props.type === 'Mesh') {
-    /** @todo */
-  }
-  if (object instanceof AmbientLight && props.type === 'AmbientLight') {
-    /** @todo */
-  }
-  if (object instanceof DirectionalLight && props.type === 'DirectionalLight') {
-    /** @todo */
-  }
-  if (
-    object instanceof PerspectiveCamera &&
-    props.type === 'PerspectiveCamera'
-  ) {
-    /** @todo */
-  }
-  if (
-    object instanceof OrthographicCamera &&
-    props.type === 'OrthographicCamera'
-  ) {
-    /** @todo */
-  }
 }
 
 const geometryFactory: Record<
