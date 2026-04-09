@@ -64,13 +64,7 @@ export default function PropertiesPanel() {
     return s.objectVersions[selectedItems[0]]
   })
 
-  /**
-   * @todo temporary, until multiselect is supported
-   * for multiselect, add additional tools / remove certain stuffs that only suppport one object,
-   * needs to be dynamic. Make it similar to Figma with multiple selected!
-   * But this will be the pattern for each object-specific modifier
-   * maybe do one that fetches all vers for all sharedIds of a list
-   */
+  /** @todo (#57) Support multiselect + virtualise property inputs & panes */
 
   if (objectVersion === undefined) return /* no object selected */
   const sharedId = selectedItems[0]

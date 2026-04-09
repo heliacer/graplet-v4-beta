@@ -38,11 +38,7 @@ export default function ExplorerPanel() {
       const object = objects.current.get(item.getId())
       if (object) updateObject(object, o => (o.name = value))
     },
-    /**
-     * @todo Add reordering for improved UX, and save the item state to serialization
-     * Update: need to get the index of the drop location, then re-order the object children array
-     * -> right now it just mimicks the Scene Object3D children array
-     */
+    /** @todo (#60) Add reordering for improved UX */
     onDrop: (items, target) => {
       for (const item of items) {
         const id = item.getId()
@@ -113,7 +109,7 @@ export default function ExplorerPanel() {
         ))}
       </div>
       <div
-        /** @todo Upgrade looks */
+        /** @todo (#60) upgrade looks */
         style={tree.getDragLineStyle()}
         className='border border-teal'
       />

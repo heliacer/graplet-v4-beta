@@ -49,7 +49,7 @@ export function DragNumberInput({
         onChange(normalizedNew)
       }
     },
-    [step, min, max, onChange, dragSpeed, decimals, value]
+    [step, min, max, onChange, dragSpeed, decimals]
   )
 
   useEffect(() => {

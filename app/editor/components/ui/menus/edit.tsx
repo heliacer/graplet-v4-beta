@@ -6,11 +6,7 @@ import { Keyboard, PenLine } from 'lucide-react'
 export function EditMenu() {
   const dvApi = useEditorStore(s => s.dvApi)
 
-  /**
-   * @todo Implement Edit menu
-   * - undo / redo (oh boy)
-   * - keybinds
-   */
+  /** @todo (#62) Edit Menu */
 
   const items: DropdownItemProps[] = [
     {

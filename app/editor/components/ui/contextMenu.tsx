@@ -20,10 +20,7 @@ import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
 import { Object3D } from 'three'
 import { useEditorStore } from '../../lib/state'
 
-/**
- * @todo This shit is unstable, renaming doesn't work,
- * need to find a solution to put it together
- */
+/** @todo (#35) Object Context Menu revamp + fix renaming */
 export function ContextMenu() {
   const { scene, objects } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
@@ -80,7 +77,7 @@ export function ContextMenu() {
         disabled: selectedItems.length > 1,
         onClick: () => cloneObject(selection[0])
       },
-      /** @todo @bug Fix multiple selection */
+      /** @todo (#47) Fix multiple selection grouping */
       {
         label: `Group ${multipleSuffix}`,
         Icon: Group,

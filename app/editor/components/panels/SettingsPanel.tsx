@@ -37,14 +37,13 @@ function ThemeButton({ theme }: ThemeButtonProps) {
 }
 
 export default function SettingsPanel() {
-  /** @todo Make available themes more flexible, maybe save them in a state */
-  const themeNames = ['dark', 'light', 'arctic', 'lime', 'red']
+  const builtInThemes = ['dark', 'light', 'arctic', 'lime', 'red']
 
   return (
     <div className='flex flex-col gap-1 m-4 text-sm'>
       <p>Theme</p>
       <div className='flex gap-2'>
-        {themeNames.map((theme, key) => (
+        {builtInThemes.map((theme, key) => (
           <ThemeButton key={key} theme={theme} />
         ))}
       </div>

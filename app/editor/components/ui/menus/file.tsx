@@ -33,7 +33,6 @@ export function FileMenu() {
 
   function handleSave() {
     if (!workspace.current) throw Error('Missing workspace')
-    /** @todo Consider using object registry and pass that as ProjectData, skipping internal objects (1) */
     const projectData = createProjectData(workspace.current, scene.current)
     localStorage.setItem('projectData', JSON.stringify(projectData))
     console.info(
@@ -45,7 +44,6 @@ export function FileMenu() {
 
   function handleSaveFile() {
     if (!workspace.current) throw Error('Missing workspace')
-    /** @todo Consider using object registry and pass that as ProjectData, skipping internal objects (2) */
     const projectData = createProjectData(workspace.current, scene.current)
     const blob = new Blob([JSON.stringify(projectData, null, 2)], {
       type: 'application/json'

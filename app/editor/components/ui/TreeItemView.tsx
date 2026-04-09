@@ -110,11 +110,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
 
   if (item.isRenaming()) return <RenamingItemView item={item} />
 
-  /**
-   * @summary Custom implementation of the TreeItem onClick, since we want to exclude folder toggles (done separately by the Spacers)
-   * @todo F12 toggle doesn't work (just selects top-most item)
-   * @todo Shift selecting upwards does not work
-   */
+  /** @todo (#61) Treeitem: Fix F2 renaming & shift selecting upwards */
   function handleItemClick(e: React.MouseEvent) {
     if (tree.getSelectedItems().includes(item)) {
       tree.setSelectedItems([])

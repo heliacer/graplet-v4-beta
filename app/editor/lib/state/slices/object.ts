@@ -1,4 +1,5 @@
 import { Camera, Object3D } from 'three'
+import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { StateCreator } from 'zustand'
 
 type Updater<T> = T | ((old: T) => T)
@@ -6,18 +7,29 @@ type Updater<T> = T | ((old: T) => T)
 export type ObjectSlice = {
   selectedItems: string[]
   objectVersions: Record<string, number>
+  objectSnapping: {
+    translate: number
+    rotate: number /* degrees */
+    scale: number
+  }
   camera: Camera | null
 
   setSelectedItems: (updater: Updater<string[]>) => void
   updateObject: (object: Object3D, update: (draft: Object3D) => void) => void
   invalidateObject: (object: Object3D) => void
   invalidateObjectsAll: () => void
+  setObjectSnapping: (tool: TransformControlsMode, value: number) => void
   setCamera: (camera: Camera | null) => void
 }
 
 export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
   selectedItems: [],
   objectVersions: {},
+  objectSnapping: {
+    translate: 0.5,
+    rotate: 45,
+    scale: 1
+  },
   camera: null,
 
   setSelectedItems: updater => {
@@ -36,7 +48,6 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
 
   invalidateObject: object => {
     const sharedId = object.sharedId
-    console.log(object.name)
     if (sharedId === undefined) return
     set(state => ({
       objectVersions: {
@@ -55,6 +66,14 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
       return { objectVersions }
     })
   },
+
+  setObjectSnapping: (tool, value) =>
+    set(state => ({
+      objectSnapping: {
+        ...state.objectSnapping,
+        [tool]: value
+      }
+    })),
 
   setCamera: v => set({ camera: v })
 })

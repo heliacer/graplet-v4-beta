@@ -5,11 +5,19 @@ import { ObjectSnap } from '../object/objectSnap'
 import { ObjectTools } from '../object/objectTools'
 import { ObjectView } from '../object/objectView'
 import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
+import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 
 export function ObjectControls() {
   const isRunning = useEditorStore(s => s.isRunning)
+  const currentTool = useEditorStore(s => s.currentTool)
 
   const object = useCurrentObject()
+
+  enum Modes {
+    'translate',
+    'rotate',
+    'scale'
+  }
 
   if (isRunning) return
 
@@ -20,7 +28,9 @@ export function ObjectControls() {
         <ObjectAdd />
         <ObjectView />
         {object && <ObjectActions object={object} />}
-        <ObjectSnap />
+        {currentTool in Modes && (
+          <ObjectSnap mode={currentTool as TransformControlsMode} />
+        )}
       </div>
     </div>
   )
