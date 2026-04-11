@@ -99,6 +99,7 @@ export function applyProps(
   if (position) object.position.set(...position)
 }
 
+/** @todo (#70) Specific args instead of args array in geometry args */
 const geometryFactory: Record<
   SGeometry['type'],
   (args: number[]) => BufferGeometry
@@ -168,11 +169,6 @@ export function serializeObject(
     base.sharedId = object.sharedId
   }
 
-  /**
-   * @todo Consider make specific args (e.g geometry args), not an args array.
-   * this will be a pain in the ass but it needs to be specific to every argument
-   */
-
   /** Specific Props */
   if (object instanceof Scene) {
     return {
@@ -187,9 +183,7 @@ export function serializeObject(
     }
   }
   if (object instanceof Mesh) {
-    /**
-     * @todo This is fragile, works right now, but not for multiple materials, textures etc.
-     */
+    /** @todo (#71) expand serialization on material and allow multiple */
     const color = object.material.color as Color
     return {
       type: 'Mesh',

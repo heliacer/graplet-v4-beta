@@ -64,7 +64,7 @@ export default function PropertiesPanel() {
     return s.objectVersions[selectedItems[0]]
   })
 
-  /** @todo (#57) Support multiselect + virtualise property inputs & panes */
+  /** @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect */
 
   if (objectVersion === undefined) return /* no object selected */
   const sharedId = selectedItems[0]

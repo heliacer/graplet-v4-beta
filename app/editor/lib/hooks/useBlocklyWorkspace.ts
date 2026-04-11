@@ -2,8 +2,6 @@ import { inject, Events } from 'blockly'
 import { useEffect } from 'react'
 import { useEditorRefs } from '../context'
 import { blocklyOptions } from '../blockly/options'
-// import { variableCategory } from '../blockly/categories/variables'
-// import { procedureCategory } from '../blockly/categories/procedures'
 import { resize } from '../utils/blockly'
 import { exprGenerator } from '../blockly/engine/generator'
 import { useRuntime } from './useRuntime'
@@ -15,24 +13,10 @@ export function useBlocklyWorkspace(
   const { start } = useRuntime()
 
   useEffect(() => {
-    if (!blocklyDiv.current || workspace.current) return
+    if (workspace.current) return
 
     const ws = inject(blocklyDiv.current, blocklyOptions)
     workspace.current = ws
-
-    ws.getVariableMap().createVariable('my variable')
-
-    /** @todo Completely revamp variable callback */
-    // ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
-    // ws.registerButtonCallback('CREATE_VARIABLE', (button) => {
-    //   Variables.createVariableButtonHandler(button.getTargetWorkspace())
-    // })
-
-    /**
-     * @todo Add custom Functions using the data model
-     * -> first make custom function blocks (not use built in, -> config.ts)
-     */
-    // ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
 
     const variableListener = (event: Events.Abstract) => {
       if (

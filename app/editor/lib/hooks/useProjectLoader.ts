@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import { useEditorRefs } from '../context'
 import { useSceneActions } from './useSceneActions'
 
-/** @todo Add session project loading, this is only local for now */
 export function useProjectLoader() {
   const { loadProjectData, loadDefaultScene } = useSceneActions()
   const { workspace } = useEditorRefs()

@@ -29,9 +29,7 @@ import {
 } from '@blockly/block-shareable-procedures'
 import { functionsCategory } from './categories/functions'
 
-/**
- * @todo refactor
- */
+/** @todo (#66) Blockly config: Refactor */
 
 class ContinuousIconCategory extends ContinuousCategory {
   override createIconDom_(): Element {
@@ -81,17 +79,13 @@ export function initializeBlockly() {
   unregisterProcedureBlocks()
 
   /**
-   * @todo For now built in, but later use custom function blocks.
+   * @todo (#14) Graplet Procedures
    *
-   * Includes:
-   * -> custom mutator: block editor mechanism, with custom model, etc.
-   * -> draggable param blocks, similar to MIT's Scratch 3.
-   *
-   * (part of local param migration)
+   * For now use built in, but later the custom function blocks will be used.
    */
   common.defineBlocks(defaultFunctionBlocks)
 
-  /* register dynamic categories before injection (sneaky) */
+  /* register dynamic categories before injection */
   const sourceToolboxInit = Toolbox.prototype.init
   Toolbox.prototype.init = function () {
     this.workspace_.registerToolboxCategoryCallback(

@@ -1,7 +1,10 @@
 import { Object3D } from 'three'
 
 export type VarEnv = Map<string, Value> // all variables are global for some reason (blockly)
-/** @todo make a local var lookup table later which is checked first */
+/**
+ * @todo (#14) Graplet Procedures
+ * make a local var lookup table
+ */
 export type FuncEnv = Map<string, Expression>
 
 export interface ProgramState {

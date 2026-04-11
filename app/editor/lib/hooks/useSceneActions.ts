@@ -13,10 +13,12 @@ export function useSceneActions() {
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
 
   /**
-   * @todo for both loadDefaultScene and loadProjectData:
-   * - make addObject be slient? about marking the added object as selectedItem
+   * @todo (#69) Save active item to project data and allow for silent object addition
+   * 
+   * for both loadDefaultScene and loadProjectData:
+   * - make addObject be slient about marking the added object as selectedItem
    * - save the active item sharedId, so that we can select it back
-   * - in default load just don't set silent? to true
+   * - in default load just don't set silent to true
    */
 
   /**

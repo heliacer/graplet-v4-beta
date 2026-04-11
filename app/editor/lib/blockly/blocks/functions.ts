@@ -2,9 +2,9 @@ import { Blocks, common } from 'blockly'
 import { ProcedureBlock } from '../../types'
 import { FunctionEditorIcon } from '../extensions/functionEditorIcon'
 
-/** 
- * @todo finally get a hold of this shit with observable procedure models
+/** @todo (#14) Graplet Procedures */
 
+/*
   function createLogs(
     block: ProcedureBlock,
     functionName: string,
@@ -29,8 +29,9 @@ import { FunctionEditorIcon } from '../extensions/functionEditorIcon'
     }
 
     return [`%c[${block.type}:${functionName}]`, `color: ${color};`, logs]
-  }
- */
+  } 
+*/
+
 const functionBlocks = common.createBlockDefinitionsFromJsonArray([
   {
     type: 'function_return',

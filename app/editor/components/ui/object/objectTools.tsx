@@ -28,7 +28,6 @@ function ToolButton({ tool, Icon }: ToolButtonProps) {
     <button
       title={tool}
       onClick={() => {
-        /** @todo Testing, might move this */
         if (camera) {
           const orbit = orbitMap.current.get(camera.id)
           if (orbit) {

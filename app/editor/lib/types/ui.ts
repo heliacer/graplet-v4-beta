@@ -2,7 +2,6 @@ import { ItemInstance } from '@headless-tree/core'
 
 /**
  * Context Menu Props
- * @todo Allow multiple items to be manipulated
  */
 export interface ContextMenuProps {
   item?: ItemInstance<TreeItem>

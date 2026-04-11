@@ -90,22 +90,18 @@ export function useObjectActions() {
       }
     }
 
-    /**
-     * Apply userData, sharedId and add to registry
-     * @todo refactor and clean this shit
-     */
+    /** Apply sharedId */
     if (props.sharedId) {
       object.sharedId = props.sharedId
-      /** Ensure no conflicts happen when adding more objects */
       const sharedId = Number(props.sharedId)
-      if (sharedId >= nextSharedId) {
-        nextSharedId = sharedId + 1
-      }
+      if (sharedId >= nextSharedId) nextSharedId = sharedId + 1
     } else {
       object.sharedId = (nextSharedId++).toString()
     }
 
+    /** Add it to the registry */
     objects.current.set(object.sharedId, object)
+
     applyHelpers(object)
     setSelectedItems([object.sharedId])
     invalidateObject(object)
@@ -116,8 +112,7 @@ export function useObjectActions() {
   /**
    * Removes an object from its parent and disposes of everything associated with it
    *
-   * @todo Dispose of geometry & material after removing (disposeObject)
-   * @todo Delete helpers if they have them
+   * @todo (#67) ObjectActions: dispose of geometry, material and remove helpers
    */
   function removeObject(object: Object3D) {
     const parent = object.parent
@@ -162,10 +157,6 @@ export function useObjectActions() {
     rebuildBlocklyUI()
   }
 
-  /**
-   * @todo Should separate geometry & material, since those are shared by default -> option to keep them / make new
-   * @todo Also add helpers if needed
-   */
   function cloneObject(object: Object3D) {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
@@ -199,9 +190,7 @@ export function useObjectActions() {
     parent.remove(object)
     removeObject(object)
 
-    /**
-     * @todo multiselect all children which were previously in the group
-     */
+    /** @todo (#47) multiselect all children which were previously in the group */
     setSelectedItems([])
   }
 
@@ -212,7 +201,7 @@ export function useObjectActions() {
   }
 
   async function pasteObjects(target: Object3D) {
-    /** @todo this is too primitive, needs to be a bit safer and check the clipboard values */
+    /** @todo (#68) useObjectActions: check clipboard values so it's safer */
 
     const text = await navigator.clipboard.readText()
     try {

@@ -59,7 +59,10 @@ export function ObjectPane({ object }: { object: Object3D }) {
     const orbit = orbitMap.current.get(object.id)
 
     /**
-     * @todo This is shit, needs to be somewhere else
+     * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
+     *
+     * Generalise orbit attach / detach, refactor to an util,
+     * other one is in applyHelpers in useObjectActions 
      */
     const orbitAction = (checked: boolean) => {
       if (checked) {
