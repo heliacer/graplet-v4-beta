@@ -1,4 +1,4 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/context'
 import { serializeObject } from '@/app/editor/lib/utils/sobject'
 import { ProjectData, SScene } from '@/app/editor/lib/types'
 import {
@@ -15,6 +15,7 @@ import { Scene } from 'three'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { useSceneActions } from '@/app/editor/lib/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/lib/utils/dockview'
+import { useEditorStore } from '@/app/editor/lib/state'
 
 function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
   return {
@@ -24,15 +25,15 @@ function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
 }
 
 export function FileMenu() {
-  const { workspace, scene, dvApi } = useEditor()
+  const { workspace, scene } = useEditorRefs()
+  const dvApi = useEditorStore(s => s.dvApi)
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   function handleSave() {
-    if (!workspace) throw Error('Missing workspace')
-    /** @todo Consider using object registry and pass that as ProjectData, skipping internal objects (1) */
-    const projectData = createProjectData(workspace, scene.current)
+    if (!workspace.current) throw Error('Missing workspace')
+    const projectData = createProjectData(workspace.current, scene.current)
     localStorage.setItem('projectData', JSON.stringify(projectData))
     console.info(
       '%cSaved project to localStorage:',
@@ -42,9 +43,8 @@ export function FileMenu() {
   }
 
   function handleSaveFile() {
-    if (!workspace) throw Error('Missing workspace')
-    /** @todo Consider using object registry and pass that as ProjectData, skipping internal objects (2) */
-    const projectData = createProjectData(workspace, scene.current)
+    if (!workspace.current) throw Error('Missing workspace')
+    const projectData = createProjectData(workspace.current, scene.current)
     const blob = new Blob([JSON.stringify(projectData, null, 2)], {
       type: 'application/json'
     })
@@ -74,12 +74,12 @@ export function FileMenu() {
   }
 
   function handleStartFresh() {
-    if (!workspace) throw Error('Missing workspace')
+    if (!workspace.current) throw Error('Missing workspace')
     const isConfirmed = confirm(
       'This will remove any existing progress. Are you sure?'
     )
     if (isConfirmed) {
-      serialization.workspaces.load({}, workspace)
+      serialization.workspaces.load({}, workspace.current)
       loadDefaultScene()
     }
   }

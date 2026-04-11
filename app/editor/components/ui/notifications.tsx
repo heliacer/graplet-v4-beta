@@ -1,11 +1,12 @@
 import { Info, X } from 'lucide-react'
-import { useEditor } from '../../lib/EditorContext'
 import { NotificationItemProps } from '../../lib/types'
 import { ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
+import { useEditorStore } from '../../lib/state'
 
 function NotificationItem({ item }: { item: NotificationItemProps }) {
-  const { notifications, setNotifications } = useEditor()
+  const notifications = useEditorStore(s => s.notifications)
+  const setNotifications = useEditorStore(s => s.setNotifications)
 
   return (
     <li className={clsx('p-1 w-100 border rounded', 'bg-ui-850 border-ui-750')}>
@@ -37,7 +38,7 @@ function NotificationItem({ item }: { item: NotificationItemProps }) {
 }
 
 export function Notifications() {
-  const { notifications } = useEditor()
+  const notifications = useEditorStore(s => s.notifications)
 
   return (
     <ul

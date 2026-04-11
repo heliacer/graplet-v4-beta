@@ -1,160 +1,116 @@
-import { Expression, ProgramState, RunState, Value } from '../ast'
+import { Expression, ExpressionT, Handler, ProgramState, Thread } from '../ast'
 import {
-  interpIf,
-  interpMain,
-  interpRepeat,
-  interpRunseq,
-  interpWait
-} from './control'
-import { interpChangevar, interpSetfunc, interpSetvar } from './effects'
+  handleIf,
+  handleRepeat,
+  handleRunseq,
+  handleWait
+} from './handlers/control'
+import { handleChangevar, handleSetvar } from './handlers/effects'
 import {
-  interpAndor,
-  interpArithmetic,
-  interpAtan2,
-  interpCompare,
-  interpConstrain,
-  interpHtrig,
-  interpMap,
-  interpModulo,
-  interpNeg,
-  interpRandomfloat,
-  interpRandomint,
-  interpRound,
-  interpSingle,
-  interpTrig
-} from './operators'
+  handleAndor,
+  handleArithmetic,
+  handleAtan2,
+  handleCompare,
+  handleConstrain,
+  handleHtrig,
+  handleMap,
+  handleModulo,
+  handleNeg,
+  handleRandomfloat,
+  handleRandomint,
+  handleRound,
+  handleSingle,
+  handleTrig
+} from './handlers/operators'
 import {
-  interpRotatexyz,
-  interpSetposxyz,
-  interpSetroteulerxyz,
-  interpSetscalexyz,
-  interpTranslatexyz
-} from './statements'
-import { interpCall, interpLiteral, interpVar } from './values'
+  handleRotatexyz,
+  handleSetposxyz,
+  handleSetroteulerxyz,
+  handleSetscalexyz,
+  handleTranslatexyz
+} from './handlers/statements'
+import { handleCall, handleLiteral, handleVar } from './handlers/values'
 
-export async function evaluateExpression(
-  expression: Expression,
-  state: ProgramState
-): Promise<Value | undefined> {
-  switch (expression.type) {
-    case 'main': {
-      await interpMain(expression, state)
-      break
-    }
-    case 'runseq': {
-      await interpRunseq(expression, state)
-      break
-    }
-    case 'if': {
-      await interpIf(expression, state)
-      break
-    }
-    case 'repeat': {
-      await interpRepeat(expression, state)
-      break
-    }
-    case 'wait': {
-      await interpWait(expression, state)
-      break
-    }
-    case 'setfunc': {
-      interpSetfunc(expression, state)
-      break
-    }
-    case 'setvar': {
-      await interpSetvar(expression, state)
-      break
-    }
-    case 'changevar': {
-      await interpChangevar(expression, state)
-      break
-    }
-    case 'literal': {
-      return interpLiteral(expression)
-    }
-    case 'var': {
-      return interpVar(expression, state)
-    }
-    case 'call': {
-      return await interpCall(expression, state)
-    }
-    case 'andor': {
-      return await interpAndor(expression, state)
-    }
-    case 'neg': {
-      return await interpNeg(expression, state)
-    }
-    case 'compare': {
-      return await interpCompare(expression, state)
-    }
-    case 'arithmetic': {
-      return await interpArithmetic(expression, state)
-    }
-    case 'map': {
-      return await interpMap(expression, state)
-    }
-    case 'trig': {
-      return await interpTrig(expression, state)
-    }
-    case 'htrig': {
-      return await interpHtrig(expression, state)
-    }
-    case 'round': {
-      return await interpRound(expression, state)
-    }
-    case 'single': {
-      return await interpSingle(expression, state)
-    }
-    case 'atan2': {
-      return await interpAtan2(expression, state)
-    }
-    case 'modulo': {
-      return await interpModulo(expression, state)
-    }
-    case 'constrain': {
-      return await interpConstrain(expression, state)
-    }
-    case 'randomfloat': {
-      return interpRandomfloat()
-    }
-    case 'randomint': {
-      return await interpRandomint(expression, state)
-    }
-    case 'setposxyz': {
-      return await interpSetposxyz(expression, state)
-    }
-    case 'setscalexyz': {
-      return await interpSetscalexyz(expression, state)
-    }
-    case 'setroteulerxyz': {
-      return await interpSetroteulerxyz(expression, state)
-    }
-    case 'rotatexyz': {
-      return await interpRotatexyz(expression, state)
-    }
-    case 'translatexyz': {
-      return await interpTranslatexyz(expression, state)
-    }
-    default:
-      throw new Error(`Unknown expression type: "${expression.type}"`)
+function setFunction(expression: Expression, state: ProgramState) {
+  const { args, value, children } = expression
+  const { functions } = state
+
+  if (value === undefined) throw Error('Function name is undefined')
+  const funcExpr: Expression = {
+    type: 'func',
+    children,
+    args
   }
+  functions.set(String(value), funcExpr)
 }
 
-export async function checkPoint(
-  runState: React.RefObject<RunState>
-): Promise<boolean> {
-  if (runState.current.shouldStop) return false
+export function initProgram(
+  expression: Expression,
+  state: ProgramState
+): Thread[] {
+  const threads: Thread[] = []
+  const { children } = expression
 
-  while (runState.current.shouldPause) {
-    if (runState.current.shouldStop) return false
-
-    if (runState.current.shouldStep) {
-      runState.current.shouldStep = false
-      break
+  if (!children) return []
+  for (const expr of children) {
+    if (expr.type === 'setfunc') setFunction(expr, state)
+    if (expr.type === 'runseq') {
+      threads.push({
+        stack: [{ expression: expr, stage: 0 }],
+        valueStack: [],
+        done: false
+      })
     }
-
-    await new Promise(res => requestAnimationFrame(res))
   }
 
-  return true
+  return threads
+}
+
+export function threadStep(thread: Thread, state: ProgramState) {
+  if (thread.done) return
+
+  if (thread.waitingUntil && Date.now() < thread.waitingUntil) return
+
+  const frame = thread.stack.pop()
+  if (!frame) {
+    thread.done = true
+    return
+  }
+
+  const type = frame.expression.type
+  if (!(type in handlers)) throw Error(`Non-runtime expression: ${type}`)
+  handlers[type as RegularExpressionT](frame, thread, state)
+}
+
+type RegularExpressionT = Exclude<ExpressionT, 'main' | 'setfunc' | 'func'>
+
+const handlers: Record<RegularExpressionT, Handler> = {
+  runseq: handleRunseq,
+  if: handleIf,
+  repeat: handleRepeat,
+  wait: handleWait,
+  setvar: handleSetvar,
+  changevar: handleChangevar,
+  literal: handleLiteral,
+  var: handleVar,
+  call: handleCall,
+  andor: handleAndor,
+  neg: handleNeg,
+  compare: handleCompare,
+  arithmetic: handleArithmetic,
+  map: handleMap,
+  trig: handleTrig,
+  htrig: handleHtrig,
+  round: handleRound,
+  single: handleSingle,
+  atan2: handleAtan2,
+  modulo: handleModulo,
+  constrain: handleConstrain,
+  randomfloat: handleRandomfloat,
+  randomint: handleRandomint,
+  setposxyz: handleSetposxyz,
+  translatexyz: handleTranslatexyz,
+  setscalexyz: handleSetscalexyz,
+  setroteulerxyz: handleSetroteulerxyz,
+  rotatexyz: handleRotatexyz
 }

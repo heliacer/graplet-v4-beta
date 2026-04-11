@@ -20,7 +20,6 @@ const geometries: SGeometryT[] = [
   'TorusKnotGeometry'
 ]
 
-/** @todo Move this to types if needed */
 type LightT = 'AmbientLight' | 'DirectionalLight'
 type CameraT = 'PerspectiveCamera' | 'OrthographicCamera'
 

@@ -24,15 +24,9 @@ declare class TransformControlsRoot extends Object3D {
 }
 
 /**
- * @todo Add all helpers to be ignored
- *
- * TransformControls get generated internally,
- * and Helpers are kind of a pain to implement with the current serialization system.
- *
- * (1) Adding helpers to the respective object userData seems like a better idea
- *
- * (2) Or even better, pass the helpersMap<Object3D, HelperObject3D>
- *     and register them here and just have them in the SObject props :D
+ * @todo (#65) ObjectView: Revamp helpers
+ * 
+ * Add all helpers to be ignored
  */
 export function isInternalObject(object: Object3D): boolean {
   return (

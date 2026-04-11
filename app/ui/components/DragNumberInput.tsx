@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useRef, useCallback, useId } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 
 interface DragNumberInputProps {
   value: number
@@ -15,8 +15,6 @@ interface DragNumberInputProps {
 
 /**
  * Draggable "Slider" number input (similar to three.js editor)
- *
- * @todo Support horizontal sliding
  */
 export function DragNumberInput({
   value,
@@ -31,17 +29,30 @@ export function DragNumberInput({
 }: DragNumberInputProps) {
   const startY = useRef(0)
   const startValue = useRef(0)
+  const lastValue = useRef(value)
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       const dy = (startY.current - e.clientY) * dragSpeed
+
       let newValue = startValue.current + dy * step
       newValue = Math.round(newValue / step) * step
       newValue = Math.max(min, Math.min(max, newValue))
-      onChange(newValue)
+
+      const factor = Math.pow(10, decimals)
+      const normalizedNew = Math.round(newValue * factor) / factor
+
+      if (normalizedNew !== lastValue.current) {
+        lastValue.current = normalizedNew
+        onChange(normalizedNew)
+      }
     },
-    [step, min, max, onChange, dragSpeed]
+    [step, min, max, onChange, dragSpeed, decimals]
   )
+
+  useEffect(() => {
+    lastValue.current = value
+  }, [value])
 
   const handleMouseUp = useCallback(() => {
     document.removeEventListener('mousemove', handleMouseMove)
@@ -58,11 +69,8 @@ export function DragNumberInput({
     [value, handleMouseMove, handleMouseUp]
   )
 
-  const id = useId()
-
   return (
     <input
-      id={id}
       type='number'
       title={title}
       className={clsx('cursor-n-resize', className)}

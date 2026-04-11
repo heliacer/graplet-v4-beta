@@ -1,14 +1,25 @@
 import { serialization } from 'blockly'
-import { useEditor } from '../EditorContext'
+import { useEditorRefs } from '../context'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
 import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
+import { useEditorStore } from '../state'
 
 export function useSceneActions() {
-  const { scene, workspace, orbitMap, controls, setSelectedItems } = useEditor()
+  const { scene, workspace, orbitMap, controls } = useEditorRefs()
   const { addObject, removeObject } = useObjectActions()
+  const setSelectedItems = useEditorStore(s => s.setSelectedItems)
+
+  /**
+   * @todo (#69) Save active item to project data and allow for silent object addition
+   * 
+   * for both loadDefaultScene and loadProjectData:
+   * - make addObject be slient about marking the added object as selectedItem
+   * - save the active item sharedId, so that we can select it back
+   * - in default load just don't set silent to true
+   */
 
   /**
    * Adds Ambient light, Directional light and a Camera
@@ -57,8 +68,8 @@ export function useSceneActions() {
         children?.forEach(child => addObject(child))
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
 
-        if (!workspace) throw Error('Missing workspace')
-        serialization.workspaces.load(project.workspace, workspace)
+        if (!workspace.current) throw Error('Missing workspace')
+        serialization.workspaces.load(project.workspace, workspace.current)
         console.info(
           '%cLoaded workspace state:',
           'color: salmon;',

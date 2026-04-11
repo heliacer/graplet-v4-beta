@@ -10,8 +10,6 @@ import '../styles/base.css'
 import '../styles/dvtheme.css'
 import { LeftControls, RightControls } from './ui/controls/tabControls'
 import { TabHeader } from './ui/tabHeader'
-import { useEditor } from '../lib/EditorContext'
-
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
 import ExplorerPanel from './panels/ExplorerPanel'
@@ -20,6 +18,7 @@ import PropertiesPanel from './panels/PropertiesPanel'
 import SettingsPanel from './panels/SettingsPanel'
 import KeybindsPanel from './panels/KeybindsPanel'
 import { useEffect } from 'react'
+import { useEditorStore } from '../lib/state'
 
 const panelComponents = {
   debug: DebugPanel,
@@ -119,7 +118,8 @@ const jsonLayout: SerializedDockview = {
 }
 
 export function GrapletDockview() {
-  const { dvApi, setDvApi } = useEditor()
+  const dvApi = useEditorStore(s => s.dvApi)
+  const setDvApi = useEditorStore(s => s.setDvApi)
 
   function mount(event: DockviewReadyEvent) {
     const { api } = event

@@ -1,14 +1,17 @@
 import clsx from 'clsx'
 import { EditMenu } from './menus/edit'
 import { FileMenu } from './menus/file'
-import { useEditor } from '../../lib/EditorContext'
+import { useEditorRefs } from '../../lib/context'
+import { useEditorStore } from '../../lib/state'
 
 const lorem = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 `
 
 export function NavMenu() {
-  const { notifications, setNotifications, workspace } = useEditor()
+  const { workspace } = useEditorRefs()
+  const notifications = useEditorStore(s => s.notifications)
+  const setNotifications = useEditorStore(s => s.setNotifications)
 
   return (
     <nav className='w-full h-full flex items-center gap-2'>
@@ -41,7 +44,7 @@ export function NavMenu() {
           'hover:bg-ui-750 bg-ui-800'
         )}
         onClick={() => {
-          const flyout = workspace?.getFlyout()
+          const flyout = workspace.current?.getFlyout()
           if (flyout) {
             flyout.autoClose = !flyout.autoClose
           }

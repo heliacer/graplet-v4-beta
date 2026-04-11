@@ -1,9 +1,7 @@
 import { useEffect } from 'react'
-import { useEditor } from '../EditorContext'
+import { useEditorStore } from '../state'
 
-/**
- * @todo display (e.g / instead of Shift+Key7 and a instead of Keya )
- */
+/** @todo (#36) Keyboard Shortcuts (keybinds) */
 function chordToDisplay(chord: string) {
   return chord + '(not implemented)'
 }
@@ -20,7 +18,7 @@ const modifiers = [
 ]
 
 export function useShortcuts() {
-  const { dvApi } = useEditor()
+  const dvApi = useEditorStore(s => s.dvApi)
 
   useEffect(() => {
     if (!dvApi) return

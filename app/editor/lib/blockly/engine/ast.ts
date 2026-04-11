@@ -1,24 +1,37 @@
 import { Object3D } from 'three'
 
-export type VarEnv = Map<string, Value> // all variables are global
+export type VarEnv = Map<string, Value> // all variables are global for some reason (blockly)
+/**
+ * @todo (#14) Graplet Procedures
+ * make a local var lookup table
+ */
 export type FuncEnv = Map<string, Expression>
-export type StackEnv = Map<string, Value>[] // only for function calls
 
 export interface ProgramState {
   objects: Map<string, Object3D>
   variables: VarEnv
   functions: FuncEnv
-  /** @todo Add functions stack */
-  stack?: StackEnv
-  runState: React.RefObject<RunState>
 }
 
-export interface RunState {
-  shouldRun: boolean
-  shouldPause: boolean
-  shouldStop: boolean
-  shouldStep: boolean
+export type Thread = {
+  stack: Frame[]
+  valueStack: Value[]
+  waitingUntil?: number
+  done: boolean
 }
+
+export type Frame = {
+  expression: Expression
+  stage: number
+}
+
+export type Handler = (
+  frame: Frame,
+  thread: Thread,
+  state: ProgramState
+) => void
+
+export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
 
 export interface Expression {
   type: ExpressionT
@@ -26,8 +39,6 @@ export interface Expression {
   value?: Value
   children?: Expression[]
 }
-
-export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
 
 export type ExpressionT =
   // Control Flow

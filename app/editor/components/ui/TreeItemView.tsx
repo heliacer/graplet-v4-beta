@@ -1,12 +1,13 @@
 import { ItemInstance, TreeInstance } from '@headless-tree/core'
 import { ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
-import { useEditor } from '../../lib/EditorContext'
+import { useEditorRefs } from '../../lib/context'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
 import { useId, useState } from 'react'
 import { Object3D } from 'three'
 import { isInternalObject } from '../../lib/utils/three'
 import { TreeItem } from '../../lib/types'
+import { useEditorStore } from '../../lib/state'
 
 interface RenamingItemViewProps {
   item: ItemInstance<TreeItem>
@@ -65,7 +66,7 @@ interface ItemViewContentProps {
 }
 
 function ItemViewContent({ item, object }: ItemViewContentProps) {
-  const { setObjectVersion } = useEditor()
+  const updateObject = useEditorStore(s => s.updateObject)
 
   return (
     <div
@@ -85,8 +86,7 @@ function ItemViewContent({ item, object }: ItemViewContentProps) {
         )}
         onClick={e => {
           e.stopPropagation()
-          object.visible = !object.visible
-          setObjectVersion(v => v + 1)
+          updateObject(object, o => (o.visible = !o.visible))
         }}
       >
         {object.visible ? <Eye size={12} /> : <EyeClosed size={12} />}
@@ -101,7 +101,8 @@ interface ItemViewProps {
 }
 
 export function TreeItemView({ tree, item }: ItemViewProps) {
-  const { objects, setContextMenu } = useEditor()
+  const { objects } = useEditorRefs()
+  const setContextMenu = useEditorStore(s => s.setContextMenu)
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
   const object = objects.current.get(item.getId())
@@ -109,11 +110,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
 
   if (item.isRenaming()) return <RenamingItemView item={item} />
 
-  /**
-   * @summary Custom implementation of the TreeItem onClick, since we want to exclude folder toggles (done separately by the Spacers)
-   * @todo F12 toggle doesn't work (just selects top-most item)
-   * @todo Shift selecting upwards does not work
-   */
+  /** @todo (#61) Treeitem: Fix F2 renaming & shift selecting upwards */
   function handleItemClick(e: React.MouseEvent) {
     if (tree.getSelectedItems().includes(item)) {
       tree.setSelectedItems([])

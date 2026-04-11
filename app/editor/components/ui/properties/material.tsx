@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { Color, Mesh, MeshStandardMaterial, Object3D } from 'three'
 
 /**
- * @todo Chosen approach: wildcard, include all materials, just like in three.js editor
- * (they have separate files for each mat/geometry props)
+ * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
+ * 
+ * Every piece of editing UI needs to have proper config path, 
+ * so that every single material type is supported with it's proper inputs.
  */
 
 function MeshStandardMaterialPane({

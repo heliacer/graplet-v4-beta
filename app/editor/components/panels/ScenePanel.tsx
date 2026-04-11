@@ -1,4 +1,4 @@
-import { useEditor } from '../../lib/EditorContext'
+import { useEditorRefs } from '../../lib/context'
 import { IDockviewPanelProps } from 'dockview-react'
 import { useProjectLoader } from '../../lib/hooks/useProjectLoader'
 import { useRenderer } from '../../lib/hooks/useRenderer'
@@ -6,9 +6,11 @@ import { ObjectControls } from '../ui/controls/objectControls'
 import { useTransformControls } from '../../lib/hooks/useTransformControls'
 import { useState } from 'react'
 import clsx from 'clsx'
+import { useEditorStore } from '../../lib/state'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
-  const { canvas, currentTool } = useEditor()
+  const { canvas } = useEditorRefs()
+  const currentTool = useEditorStore(s => s.currentTool)
   const [rightDown, setRightDown] = useState(false)
 
   useProjectLoader()

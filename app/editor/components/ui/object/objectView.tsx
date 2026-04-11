@@ -1,4 +1,4 @@
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/context'
 import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
 import { StateFunc } from '@/app/editor/lib/types'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
@@ -37,16 +37,13 @@ function toggleHelper(
 }
 
 export function ObjectView() {
-  const { scene } = useEditor()
+  const { scene } = useEditorRefs()
   const object = useCurrentObject()
 
   /** Helpers, some of them maps for helper n - object 1 */
   const [gridHelper, setGridHelper] = useState<boolean>(true)
 
-  /**
-   * @todo Revamp how objects are bound to its helpers, register them in one Map<Object, Helper>
-   * and set them global in context -> only gets the helper for the object needed, only one item handling it (Local Helper)
-   */
+  /** @todo (#65) ObjectView: Revamp helpers and bind them to object using sharedId */
   const [cameraHelpers, setCameraHelpers] = useState(new Map<number, boolean>())
   const [lightHelpers, setLightHelpers] = useState(new Map<number, boolean>())
 
@@ -103,7 +100,7 @@ export function ObjectView() {
   }
 
   /**
-   * @todo Add new categories:
+   * @todo (#65) Add new categories:
    *
    * Cameras > Enable all helpers | Disable all helpers
    * Lights > Enable all helpers | Disable all helpers

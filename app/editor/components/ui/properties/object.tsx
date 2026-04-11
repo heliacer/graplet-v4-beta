@@ -16,8 +16,9 @@ import {
   Vec3Property
 } from '../PropertyInput'
 import { Crosshair, SwitchCamera } from 'lucide-react'
-import { useEditor } from '@/app/editor/lib/EditorContext'
+import { useEditorRefs } from '@/app/editor/lib/context'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { useEditorStore } from '@/app/editor/lib/state'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
   return (
@@ -38,8 +39,9 @@ function BaseObjectProps({ object }: { object: Object3D }) {
 }
 
 export function ObjectPane({ object }: { object: Object3D }) {
-  const { canvas, setCamera, orbitMap } = useEditor()
-  const { setObjectVersion } = useEditor()
+  const { canvas, orbitMap } = useEditorRefs()
+  const invalidateObject = useEditorStore(s => s.invalidateObject)
+  const setCamera = useEditorStore(s => s.setCamera)
 
   if (object instanceof Group) {
     return <BaseObjectProps object={object} />
@@ -57,7 +59,10 @@ export function ObjectPane({ object }: { object: Object3D }) {
     const orbit = orbitMap.current.get(object.id)
 
     /**
-     * @todo This is shit, needs to be somewhere else
+     * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
+     *
+     * Generalise orbit attach / detach, refactor to an util,
+     * other one is in applyHelpers in useObjectActions 
      */
     const orbitAction = (checked: boolean) => {
       if (checked) {
@@ -76,7 +81,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
         orbit.disconnect()
         orbit.dispose()
       }
-      setObjectVersion(v => v + 1)
+      invalidateObject(object)
     }
 
     return (

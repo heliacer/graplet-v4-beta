@@ -1,7 +1,7 @@
 import { Block } from 'blockly'
-import { ExpressionGenerator, generateExprsFromInput } from '.'
-import { Expression } from '../ast'
-import { FunctionExtraState, OldExtraState } from '../../../types'
+import { ExpressionGenerator, generateExprsFromInput } from '..'
+import { Expression } from '../../ast'
+import { FunctionExtraState, OldExtraState } from '../../../../types'
 
 /** @deprecated legacy built-in functions */
 export function proceduresDefNoReturnGen(

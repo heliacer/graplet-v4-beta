@@ -49,6 +49,10 @@ export const theme: ITheme = {
     },
     functions_category: {
       colour: colors.FUNCTIONS
+    },
+    /** @deprecated */
+    procedure_category: {
+      colour: colors.FUNCTIONS
     }
   },
   blockStyles: {
@@ -68,6 +72,10 @@ export const theme: ITheme = {
       colourPrimary: colors.MATH
     },
     function_blocks: {
+      colourPrimary: colors.FUNCTIONS
+    },
+    /** @deprecated */
+    procedure_blocks: {
       colourPrimary: colors.FUNCTIONS
     }
   }

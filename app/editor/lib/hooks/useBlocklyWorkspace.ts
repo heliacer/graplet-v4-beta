@@ -1,41 +1,22 @@
-import { inject, Events, WorkspaceSvg } from 'blockly'
-import { useEffect, useRef } from 'react'
-import { useEditor } from '../EditorContext'
+import { inject, Events } from 'blockly'
+import { useEffect } from 'react'
+import { useEditorRefs } from '../context'
 import { blocklyOptions } from '../blockly/options'
-// import { variableCategory } from '../blockly/categories/variables'
-// import { procedureCategory } from '../blockly/categories/procedures'
 import { resize } from '../utils/blockly'
 import { exprGenerator } from '../blockly/engine/generator'
 import { useRuntime } from './useRuntime'
 
 export function useBlocklyWorkspace(
-  containerRef: React.RefObject<HTMLDivElement>
+  blocklyDiv: React.RefObject<HTMLDivElement>
 ) {
-  const workspaceRef = useRef<WorkspaceSvg | null>(null)
-  const { setWorkspace, objects, varEnv, funcEnv, runState, setIsRunning } =
-    useEditor()
-  const { execute } = useRuntime()
+  const { workspace } = useEditorRefs()
+  const { start } = useRuntime()
 
   useEffect(() => {
-    if (!containerRef.current || workspaceRef.current) return
+    if (workspace.current) return
 
-    const ws = inject(containerRef.current, blocklyOptions)
-    workspaceRef.current = ws
-    setWorkspace(ws)
-
-    ws.getVariableMap().createVariable('my variable')
-
-    /** @todo Completely revamp variable callback */
-    // ws.registerToolboxCategoryCallback('VARIABLE', variableCategory)
-    // ws.registerButtonCallback('CREATE_VARIABLE', (button) => {
-    //   Variables.createVariableButtonHandler(button.getTargetWorkspace())
-    // })
-
-    /**
-     * @todo Add custom Functions using the data model
-     * -> first make custom function blocks (not use built in, -> config.ts)
-     */
-    // ws.registerToolboxCategoryCallback('PROCEDURE', procedureCategory)
+    const ws = inject(blocklyDiv.current, blocklyOptions)
+    workspace.current = ws
 
     const variableListener = (event: Events.Abstract) => {
       if (
@@ -54,7 +35,7 @@ export function useBlocklyWorkspace(
           const block = event.getEventWorkspace_().getBlockById(event.blockId)
           if (block) {
             const expression = exprGenerator.blockToExpression(block)
-            await execute(expression)
+            start(expression, true)
           }
         }
       }
@@ -65,27 +46,16 @@ export function useBlocklyWorkspace(
     ws.getFlyout()?.getWorkspace().addChangeListener(blockListener)
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
-    resizeObserver.observe(containerRef.current)
+    resizeObserver.observe(blocklyDiv.current)
 
     function cleanup() {
       resizeObserver.disconnect()
       ws.removeChangeListener(variableListener)
       ws.removeChangeListener(blockListener)
       ws.dispose()
-      workspaceRef.current = null
-      setWorkspace(null)
+      workspace.current = null
     }
 
     return cleanup
-  }, [
-    containerRef,
-    setWorkspace,
-    setIsRunning,
-    execute,
-    funcEnv,
-    runState,
-    objects,
-    varEnv
-  ])
-  return workspaceRef.current
+  }, [blocklyDiv, workspace, start])
 }

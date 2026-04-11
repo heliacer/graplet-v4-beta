@@ -1,17 +1,20 @@
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
-import { useEditor } from '../../../lib/EditorContext'
+import { useEditorRefs } from '../../../lib/context'
+import { useEditorStore } from '@/app/editor/lib/state'
 import clsx from 'clsx'
 import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'
 import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator/index'
 
 export function RunControls() {
-  const { runState, isRunning, isPaused, workspace } = useEditor()
-  const { execute, stop, pauseOrResume } = useRuntime()
+  const { workspace } = useEditorRefs()
+  const { start, stop, step, pauseOrResume } = useRuntime()
+  const isRunning = useEditorStore(s => s.isRunning)
+  const isPaused = useEditorStore(s => s.isPaused)
 
   async function handleRun() {
-    if (!workspace) throw Error('Missing workspace')
-    const expression = exprGenerator.workspaceToExpression(workspace)
-    await execute(expression)
+    if (!workspace.current) throw Error('Missing workspace')
+    const expression = exprGenerator.workspaceToExpression(workspace.current)
+    start(expression)
   }
 
   return (
@@ -54,7 +57,7 @@ export function RunControls() {
           <Octagon size={16} />
         </button>
         <button
-          onClick={() => (runState.current.shouldStep = true)}
+          onClick={step}
           className={clsx(
             'p-1 rounded',
             isRunning && isPaused ? 'cursor-pointer bg-blue' : 'bg-ui-700'

@@ -1,6 +1,6 @@
 import { Block } from 'blockly'
-import { Expression } from '../ast'
-import { ExpressionGenerator } from '.'
+import { Expression } from '../../ast'
+import { ExpressionGenerator } from '..'
 
 export function objectGen(block: Block): Expression {
   const objectId = block.getFieldValue('VALUE')

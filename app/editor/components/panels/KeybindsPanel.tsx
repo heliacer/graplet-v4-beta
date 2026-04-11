@@ -16,9 +16,7 @@ interface Keybind {
   keys: string[] // e.g ['crtl', 'c']
 }
 
-/**
- * @todo work in progress, peak
- */
+/** @todo (#36) Keyboard Shortcuts (Keybinds), work in progress */
 export default function KeybindsPanel() {
   const sceneKeybinds: Keybind[] = [
     {
