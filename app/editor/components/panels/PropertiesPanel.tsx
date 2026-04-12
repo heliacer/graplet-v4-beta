@@ -61,7 +61,7 @@ export default function PropertiesPanel() {
   const selectedItems = useEditorStore(s => s.selectedItems)
   const objectVersion = useEditorStore(s => {
     if (selectedItems.length < 1) return
-    return s.objectVersions[selectedItems[0]]
+    return s.objectVersions[selectedItems[0]] ?? 0
   })
 
   /** @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect */
