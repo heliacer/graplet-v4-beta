@@ -57,6 +57,7 @@ export function RunControls() {
           <Octagon size={16} />
         </button>
         <button
+          disabled={!(isRunning && isPaused)}
           onClick={step}
           className={clsx(
             'p-1 rounded',

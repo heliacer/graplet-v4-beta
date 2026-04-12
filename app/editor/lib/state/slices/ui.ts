@@ -3,7 +3,7 @@ import { ContextMenuProps, NotificationItemProps, ToolItem } from '../../types'
 import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { DockviewApi } from 'dockview-react'
 
-export type UiSlice = {
+type State = {
   isRunning: boolean
   isPaused: boolean
   currentTheme: string
@@ -11,17 +11,21 @@ export type UiSlice = {
   notifications: NotificationItemProps[]
   dvApi: DockviewApi | null
   contextMenu: ContextMenuProps | null
+}
 
+type Actions = {
   setRunning: (bool: boolean) => void
   setPaused: (bool: boolean) => void
   setCurrentTheme: (theme: string) => void
   setCurrentTool: (tool: TransformControlsMode | ToolItem) => void
   setNotifications: (notifications: NotificationItemProps[]) => void
-  setDvApi: (api: DockviewApi) => void
+  setDvApi: (api: DockviewApi | null) => void
   setContextMenu: (contextMenu: ContextMenuProps | null) => void
 }
 
-export const createUiSlice: StateCreator<UiSlice> = set => ({
+export type UiSlice =  State & Actions
+
+export const uiInitialState: State = {
   isRunning: false,
   isPaused: false,
   currentTheme: '',
@@ -29,6 +33,10 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   notifications: [],
   dvApi: null,
   contextMenu: null,
+}
+
+export const createUiSlice: StateCreator<UiSlice> = set => ({
+  ...uiInitialState,
 
   setRunning: v => set({ isRunning: v }),
   setPaused: v => set({ isPaused: v }),
@@ -36,5 +44,5 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   setCurrentTool: v => set({ currentTool: v }),
   setNotifications: v => set({ notifications: v }),
   setDvApi: v => set({ dvApi: v }),
-  setContextMenu: v => set({ contextMenu: v })
+  setContextMenu: v => set({ contextMenu: v }),
 })

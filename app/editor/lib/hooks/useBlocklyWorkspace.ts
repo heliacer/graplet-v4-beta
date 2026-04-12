@@ -13,7 +13,7 @@ export function useBlocklyWorkspace(
   const { start } = useRuntime()
 
   useEffect(() => {
-    if (workspace.current) return
+    if (!blocklyDiv.current || workspace.current) return
 
     const ws = inject(blocklyDiv.current, blocklyOptions)
     workspace.current = ws

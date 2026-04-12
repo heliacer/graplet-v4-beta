@@ -4,7 +4,7 @@ import { StateCreator } from 'zustand'
 
 type Updater<T> = T | ((old: T) => T)
 
-export type ObjectSlice = {
+type State = {
   selectedItems: string[]
   objectVersions: Record<string, number>
   objectSnapping: {
@@ -13,7 +13,9 @@ export type ObjectSlice = {
     scale: number
   }
   camera: Camera | null
+}
 
+type Actions = {
   setSelectedItems: (updater: Updater<string[]>) => void
   updateObject: (object: Object3D, update: (draft: Object3D) => void) => void
   invalidateObject: (object: Object3D) => void
@@ -22,7 +24,9 @@ export type ObjectSlice = {
   setCamera: (camera: Camera | null) => void
 }
 
-export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
+export type ObjectSlice = State & Actions
+
+export const objectInitialState: State = {
   selectedItems: [],
   objectVersions: {},
   objectSnapping: {
@@ -30,7 +34,11 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
     rotate: 45,
     scale: 1
   },
-  camera: null,
+  camera: null
+}
+
+export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
+  ...objectInitialState,
 
   setSelectedItems: updater => {
     set(state => ({

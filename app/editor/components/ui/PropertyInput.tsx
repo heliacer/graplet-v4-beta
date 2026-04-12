@@ -22,7 +22,7 @@ interface Vec3AnglePropertyProps extends BasePropertyProps {
 }
 
 export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
-  const updateObject = useEditorStore(s => s.updateObject)
+  const invalidateObject = useEditorStore(s => s.invalidateObject)
 
   return (
     <div className='flex justify-between w-full'>
@@ -34,7 +34,10 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
               className='rounded border outline-none w-10 text-center hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number(object[property][axis])}
               onChange={newVal => {
-                updateObject(object, o => (o[property][axis] = newVal))
+                object[property][axis] = newVal
+              }}
+              onCommit={() => {
+                invalidateObject(object)
               }}
               step={0.1}
             />
@@ -50,7 +53,7 @@ export function Vec3AngleProperty({
   object,
   property
 }: Vec3AnglePropertyProps) {
-  const updateObject = useEditorStore(s => s.updateObject)
+  const invalidateObject = useEditorStore(s => s.invalidateObject)
 
   return (
     <div className='flex justify-between w-full'>
@@ -64,10 +67,10 @@ export function Vec3AngleProperty({
               step={1}
               decimals={0}
               onChange={newVal => {
-                updateObject(
-                  object,
-                  o => (o[property][axis] = (newVal * Math.PI) / 180)
-                )
+                object[property][axis] = (newVal * Math.PI) / 180
+              }}
+              onCommit={() => {
+                invalidateObject(object)
               }}
             />
             <span className='absolute right-1.5 top-0.5 text-xs select-none'>
