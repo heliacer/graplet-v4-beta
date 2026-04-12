@@ -9,8 +9,11 @@ import { EditorProvider } from './lib/context'
 import { useEditorStore } from './lib/state'
 
 export default function Editor() {
-  const reset = useEditorStore(s => s.reset)
-  useEffect(reset, [reset])
+  useEffect(() => {
+    useEditorStore.setState({
+      selectedItems: []
+    })
+  }, [])
 
   return (
     <div className='h-screen flex flex-col'>
