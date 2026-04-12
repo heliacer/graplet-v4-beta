@@ -24,6 +24,7 @@ export type IconT =
   | 'Lightbulb'
   | 'Camera'
   | 'SquareSquare'
+  | 'Settings'
   | 'Settings2'
   | 'Keyboard'
   | 'FileText'

@@ -10,6 +10,7 @@ import {
   LucideIcon,
   PenTool,
   Puzzle,
+  Settings,
   Settings2,
   SquareSquare,
   Sun,
@@ -29,6 +30,7 @@ const ItemIcons: Record<IconT, LucideIcon> = {
   Lightbulb,
   Camera,
   SquareSquare,
+  Settings,
   Settings2,
   Keyboard,
   FileText

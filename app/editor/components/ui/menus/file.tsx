@@ -6,7 +6,9 @@ import {
   FolderDown,
   FolderSync,
   FolderUp,
+  Keyboard,
   Save,
+  Settings,
   Settings2
 } from 'lucide-react'
 import { useRef } from 'react'
@@ -106,9 +108,20 @@ export function FileMenu() {
       onClick: handleStartFresh
     },
     {
-      label: 'Settings ...',
+      label: 'Preferences',
       Icon: Settings2,
-      onClick: () => upsertPanel(dvApi, 'settings', 'Settings', 'Settings2')
+      children: [
+        {
+          label: 'Settings',
+          Icon: Settings,
+          onClick: () => upsertPanel(dvApi, 'settings', 'Settings', 'Settings')
+        },
+        {
+          label: 'Keybinds',
+          Icon: Keyboard,
+          onClick: () => upsertPanel(dvApi, 'keybinds', 'Keybinds', 'Keyboard')
+        }
+      ]
     }
   ]
 
