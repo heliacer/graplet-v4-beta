@@ -50,10 +50,6 @@ export const theme: ITheme = {
     functions_category: {
       colour: colors.FUNCTIONS
     },
-    /** @deprecated */
-    procedure_category: {
-      colour: colors.FUNCTIONS
-    }
   },
   blockStyles: {
     motion_blocks: {
@@ -74,9 +70,5 @@ export const theme: ITheme = {
     function_blocks: {
       colourPrimary: colors.FUNCTIONS
     },
-    /** @deprecated */
-    procedure_blocks: {
-      colourPrimary: colors.FUNCTIONS
-    }
   }
 }

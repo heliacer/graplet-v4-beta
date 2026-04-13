@@ -491,12 +491,6 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
     {
       kind: 'category',
       name: 'Functions',
-      custom: 'PROCEDURE',
-      categorystyle: 'functions_category'
-    },
-    {
-      kind: 'category',
-      name: 'Shit-That-Doesnt-Work-Yet',
       custom: 'FUNCTIONS',
       categorystyle: 'functions_category'
     }
