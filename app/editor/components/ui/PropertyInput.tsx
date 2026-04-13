@@ -29,7 +29,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
       <p className='text-nowrap'>{label}</p>
       <div className='flex gap-1'>
         {(['x', 'y', 'z'] as const).map(axis => (
-          <div key={axis} className='relative'>
+          <label key={axis} className='relative'>
             <DragNumberInput
               className='rounded border outline-none w-10 text-center hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number(object[property][axis])}
@@ -41,7 +41,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
               }}
               step={0.1}
             />
-          </div>
+          </label>
         ))}
       </div>
     </div>
@@ -60,7 +60,7 @@ export function Vec3AngleProperty({
       <p className='text-nowrap'>{label}</p>
       <div className='flex gap-1'>
         {(['x', 'y', 'z'] as const).map(axis => (
-          <div key={axis} className='relative'>
+          <label key={axis} className='relative'>
             <DragNumberInput
               className='rounded border outline-none w-10 text-center pr-1 hover:bg-ui-750 focus:bg-ui-750 text-cyan'
               value={Number((object[property][axis] * 180) / Math.PI)}
@@ -76,7 +76,7 @@ export function Vec3AngleProperty({
             <span className='absolute right-1.5 top-0.5 text-xs select-none'>
               °
             </span>
-          </div>
+          </label>
         ))}
       </div>
     </div>
@@ -86,25 +86,26 @@ export function Vec3AngleProperty({
 export function TextProperty({ label, object, property }: TextPropertyProps) {
   const updateObject = useEditorStore(s => s.updateObject)
 
+  const update = (newValue: string) => {
+    if (object[property] !== newValue) {
+      updateObject(object, o => (o[property] = newValue))
+    }
+  }
+
   return (
-    <div className='flex justify-between'>
-      <p className='text-nowrap'>{label}</p>
+    <label className='flex justify-between'>
+      <span className='text-nowrap'>{label}</span>
       <input
-        id={`${label}-${object.uuid}`}
         type='text'
         className='rounded border outline-none px-1 w-32 hover:bg-ui-750 focus:bg-ui-750'
         key={object[property]}
         defaultValue={object[property]}
-        onBlur={e => {
-          updateObject(object, o => (o[property] = e.target.value))
-        }}
+        onBlur={e => update(e.target.value)}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            updateObject(object, o => (o[property] = e.currentTarget.value))
-          }
+          if (e.key === 'Enter') update(e.currentTarget.value)
         }}
       />
-    </div>
+    </label>
   )
 }
 

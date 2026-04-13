@@ -8,7 +8,7 @@ export function EditorHeader() {
   return (
     <nav className='h-9.5 flex items-center justify-between px-1.5'>
       <div className='w-full h-full flex items-center gap-3'>
-        <Link href='/'>
+        <Link href='/' aria-label='Home'>
           <Logo size={20} />
         </Link>
         <NavMenu />
