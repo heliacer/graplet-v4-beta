@@ -73,7 +73,8 @@ export function useObjectActions() {
    */
   function addObject(
     props: Optional<SObject3D, TransformProps>,
-    target: Object3D = scene.current
+    target: Object3D = scene.current,
+    silent?: boolean
   ): Object3D {
     const object = createObject(props)
     applyProps(object, props)
@@ -86,7 +87,7 @@ export function useObjectActions() {
     /** Add children */
     if (props.children) {
       for (const child of props.children) {
-        addObject(child, object)
+        addObject(child, object, true)
       }
     }
 
@@ -102,8 +103,8 @@ export function useObjectActions() {
     /** Add it to the registry */
     objects.current.set(object.sharedId, object)
 
+    if (!silent) setSelectedItems([object.sharedId])
     applyHelpers(object)
-    setSelectedItems([object.sharedId])
     invalidateObject(object)
     rebuildBlocklyUI()
     return object
@@ -143,6 +144,7 @@ export function useObjectActions() {
 
       /** If it's the selection, remove it */
       if (selectedItems.includes(object.sharedId)) {
+        if (parent.type === 'Scene') return
         const fallback = getFallbackObject(parent)
         setSelectedItems(prev => {
           const next = prev.filter(item => item !== object.sharedId)
@@ -206,7 +208,7 @@ export function useObjectActions() {
     const text = await navigator.clipboard.readText()
     try {
       const objects: SObject3D[] = JSON.parse(text)
-      objects.forEach(object => addObject(object, target))
+      objects.forEach(object => addObject(object, target, true))
     } catch (error) {
       if (error instanceof SyntaxError) {
         console.warn('invalid paste just happened')

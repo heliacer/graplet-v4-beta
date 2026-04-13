@@ -69,6 +69,7 @@ export default function Login() {
           type='email'
           value={email}
           setValue={setEmail}
+          disabled={isLoading}
         />
         <SubmitButton isLoading={isLoading} />
       </form>

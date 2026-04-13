@@ -19,23 +19,33 @@ import { useSceneActions } from '@/app/editor/lib/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/lib/utils/dockview'
 import { useEditorStore } from '@/app/editor/lib/state'
 
-function createProjectData(workspace: WorkspaceSvg, scene: Scene): ProjectData {
+function createProjectData(
+  workspace: WorkspaceSvg,
+  scene: Scene,
+  selectedItems: string[]
+): ProjectData {
   return {
     workspace: serialization.workspaces.save(workspace),
-    scene: serializeObject(scene, true) as SScene
+    scene: serializeObject(scene, true) as SScene,
+    selectedItems
   }
 }
 
 export function FileMenu() {
   const { workspace, scene } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
+  const selectedItems = useEditorStore(s => s.selectedItems)
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   function handleSave() {
     if (!workspace.current) throw Error('Missing workspace')
-    const projectData = createProjectData(workspace.current, scene.current)
+    const projectData = createProjectData(
+      workspace.current,
+      scene.current,
+      selectedItems
+    )
     localStorage.setItem('projectData', JSON.stringify(projectData))
     console.info(
       '%cSaved project to localStorage:',
@@ -46,7 +56,11 @@ export function FileMenu() {
 
   function handleSaveFile() {
     if (!workspace.current) throw Error('Missing workspace')
-    const projectData = createProjectData(workspace.current, scene.current)
+    const projectData = createProjectData(
+      workspace.current,
+      scene.current,
+      selectedItems
+    )
     const blob = new Blob([JSON.stringify(projectData, null, 2)], {
       type: 'application/json'
     })

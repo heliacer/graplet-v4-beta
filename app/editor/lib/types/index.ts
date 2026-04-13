@@ -5,6 +5,7 @@ export type StateFunc<T> = React.Dispatch<React.SetStateAction<T>>
 export interface ProjectData {
   workspace: Record<string, unknown>
   scene: SScene
+  selectedItems?: string[]
 }
 
 export * from './blockly'

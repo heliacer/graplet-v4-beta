@@ -102,6 +102,7 @@ export default function Password() {
           name='password'
           type={showPassword ? 'text' : 'password'}
           setValue={setPassword}
+          disabled={isLoading}
         />
         <button
           type='button'
