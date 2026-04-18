@@ -28,6 +28,7 @@ export function handleCall(frame: Frame, thread: Thread, state: ProgramState) {
 
   const { stack } = thread
 
+  /** setting parameters here (now stores them with the setvar globally, need to use a local VarEnv or something */
   if (stage < args.length) {
     stack.push({ ...frame, stage: stage + 1 })
     pushFrame(thread, args[stage])

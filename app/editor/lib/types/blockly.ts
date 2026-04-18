@@ -5,6 +5,7 @@ export declare class ProcedureBlock extends BlockSvg {
   model: ObservableProcedureModel | null
   getProcedureModel(): procedures.IProcedureModel
   doProcedureUpdate(): void
+  saveExtraState: (doFullSerialization?: boolean) => FunctionExtraState
   isProcedureDef(): boolean
 }
 
@@ -24,6 +25,4 @@ export interface FunctionExtraState {
     name: string
     id: string
   }[]
-  returnTypes?: string[] | null
-  createNewModel?: boolean
 }

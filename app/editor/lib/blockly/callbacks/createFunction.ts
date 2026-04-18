@@ -3,7 +3,7 @@ import { FlyoutButton } from 'blockly'
 
 export function createFunction(button: FlyoutButton) {
   const name = prompt('New function name:')?.trim()
-  if (!name) return
+  if (name === undefined) return
 
   const workspace = button.getTargetWorkspace()
   const procedureMap = workspace.getProcedureMap()
@@ -16,7 +16,8 @@ export function createFunction(button: FlyoutButton) {
   }
 
   const id = crypto.randomUUID()
-  procedureMap.add(new ObservableProcedureModel(workspace, name, id))
+  const model = new ObservableProcedureModel(workspace, name, id)
+  procedureMap.add(model)
   const block = workspace.newBlock('function_def')
 
   block.loadExtraState?.({

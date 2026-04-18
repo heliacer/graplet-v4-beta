@@ -33,14 +33,7 @@ import {
   mathTrigGen
 } from './blocks/math'
 import { variablesGetGen, variablesSetGen } from './blocks/variables'
-import {
-  functionCallGen,
-  functionDefGen,
-  proceduresCallNoReturnGen,
-  proceduresCallReturnGen,
-  proceduresDefNoReturnGen,
-  proceduresDefReturnGen
-} from './blocks/functions'
+import { functionCallGen, functionDefGen } from './blocks/functions'
 
 export class ExpressionGenerator {
   private generators: Record<
@@ -166,10 +159,6 @@ exprGenerator.forBlock('variables_get', variablesGetGen)
 exprGenerator.forBlock('variables_set', variablesSetGen)
 
 /** Functions */
-exprGenerator.forBlock('procedures_defnoreturn', proceduresDefNoReturnGen)
-exprGenerator.forBlock('procedures_defreturn', proceduresDefReturnGen)
-exprGenerator.forBlock('procedures_callnoreturn', proceduresCallNoReturnGen)
-exprGenerator.forBlock('procedures_callreturn', proceduresCallReturnGen)
 exprGenerator.forBlock('function_def', functionDefGen)
 exprGenerator.forBlock('function_call', functionCallGen)
 
