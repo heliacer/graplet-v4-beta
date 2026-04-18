@@ -50,7 +50,7 @@ export function NavMenu() {
           }
         }}
       >
-        flyout.autoclose!
+        lock / unlock Flyout
       </button>
     </nav>
   )

@@ -5,6 +5,7 @@ import { blocklyOptions } from '../blockly/options'
 import { resize } from '../utils/blockly'
 import { exprGenerator } from '../blockly/engine/generator'
 import { useRuntime } from './useRuntime'
+import { createFunction } from '../blockly/callbacks/createFunction'
 
 export function useBlocklyWorkspace(
   blocklyDiv: React.RefObject<HTMLDivElement>
@@ -44,6 +45,7 @@ export function useBlocklyWorkspace(
     ws.addChangeListener(variableListener)
     ws.addChangeListener(blockListener)
     ws.getFlyout()?.getWorkspace().addChangeListener(blockListener)
+    ws.registerButtonCallback('createFunction', createFunction)
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(blocklyDiv.current)

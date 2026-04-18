@@ -1,34 +1,8 @@
 import { Blocks, common } from 'blockly'
 import { FunctionExtraState, ProcedureBlock } from '../../types'
-import { FunctionEditorIcon } from '../extensions/functionEditorIcon'
+import { ObservableProcedureModel } from '@blockly/block-shareable-procedures'
 
 /** @todo (#14) Graplet Procedures */
-
-function createLogs(
-  block: ProcedureBlock,
-  functionName: string,
-  color: string = 'aliceblue',
-  extraState?: FunctionExtraState
-) {
-  const logs = {
-    id: block.id,
-    type: block.type,
-    isInFlyout: block.isInFlyout,
-    isShadow: block.isShadow(),
-    procedureMap: Array.from(block.workspace.getProcedureMap().values(), v =>
-      v.getId()
-    ),
-    extraState,
-    ...(block.model && {
-      model: {
-        id: block.model.getId(),
-        name: block.model.getName()
-      }
-    })
-  }
-
-  return [`%c[${block.type}:${functionName}]`, `color: ${color};`, logs]
-}
 
 const functionBlocks = common.createBlockDefinitionsFromJsonArray([
   {
@@ -50,16 +24,13 @@ common.defineBlocks(functionBlocks)
 Blocks['function_def'] = {
   init(this: ProcedureBlock) {
     const input = this.appendStatementInput('DEF')
-    input.appendField('function')
+    input.appendField('define')
     input.connection?.setShadowState({
       type: 'function_call'
     })
 
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
-    this.addIcon(new FunctionEditorIcon(this))
-
-    console.log(...createLogs(this, 'init', 'aquamarine'))
   },
 
   getProcedureModel(this: ProcedureBlock) {
@@ -75,30 +46,40 @@ Blocks['function_def'] = {
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'doProcedureUpdate'))
+    if (!this.model) return
   },
 
   saveExtraState(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'saveExtraState'))
+    return {
+      procedureId: this.model?.getId()
+    }
   },
 
   loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
-    console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
+    const { procedureId } = state
+
+    const workspace = this.workspace
+    const model = workspace.getProcedureMap().get(procedureId)
+    if (model) {
+      this.model = model as ObservableProcedureModel
+      const input = this.getInput('DEF')
+      const block = input?.connection?.targetBlock() as ProcedureBlock
+      block?.loadExtraState?.({ procedureId })
+      block.doProcedureUpdate()
+      this.doProcedureUpdate()
+    }
   },
 
-  destroy(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'destroy', 'crimson'))
-  }
+  destroy(this: ProcedureBlock) {}
 }
 
 Blocks['function_call'] = {
   init(this: ProcedureBlock) {
-    this.appendDummyInput().appendField('do something', 'NAME')
+    this.appendDummyInput().appendField('', 'NAME')
     this.setPreviousStatement(true, null)
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
-
-    console.log(...createLogs(this, 'init', 'aquamarine'))
+    this.model = null
   },
 
   getProcedureModel(this: ProcedureBlock) {
@@ -110,19 +91,26 @@ Blocks['function_call'] = {
   },
 
   getVarModels(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'getVarModels'))
     return []
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'doProcedureUpdate'))
+    if (!this.model) return
+    this.setFieldValue(this.model.getName(), 'NAME')
   },
 
   saveExtraState(this: ProcedureBlock) {
-    console.log(...createLogs(this, 'saveExtraState'))
+    return {
+      procedureId: this.model?.getId()
+    }
   },
 
   loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
-    console.log(...createLogs(this, 'loadExtraState', 'hotpink', state))
+    const workspace = this.workspace.targetWorkspace ?? this.workspace
+    const model = workspace.getProcedureMap().get(state.procedureId)
+    if (model) {
+      this.model = model as ObservableProcedureModel
+      this.doProcedureUpdate()
+    }
   }
 }

@@ -46,6 +46,7 @@ class CompactContinuousFlyout extends ContinuousFlyout {
   constructor(options: Options) {
     super(options)
     this.GAP_Y = 20
+    this.autoClose = true
   }
 }
 
