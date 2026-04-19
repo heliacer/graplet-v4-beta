@@ -88,8 +88,8 @@ export default function Password() {
           type='reset'
           onClick={() => router.push('/login')}
           className={clsx(
-            'absolute right-2 top-1.75 border px-2 py-1 rounded-full',
-            'transition bg-ui-800 border-ui-600',
+            'absolute right-1.5 top-1.5 border px-2 py-1 rounded-md',
+            'bg-ui-800 border-ui-600',
             'hover:border-ui-550 hover:bg-ui-750',
             !isLoading && 'cursor-pointer'
           )}
@@ -107,8 +107,8 @@ export default function Password() {
         <button
           type='button'
           className={clsx(
-            'absolute right-12.5 bottom-1.75 border px-2 py-1 rounded-full',
-            'transition bg-ui-800 border-ui-600',
+            'absolute right-11 bottom-1.5 border px-2 py-1 rounded-md',
+            'bg-ui-800 border-ui-600',
             'hover:border-ui-550 hover:bg-ui-750',
             !isLoading && 'cursor-pointer'
           )}

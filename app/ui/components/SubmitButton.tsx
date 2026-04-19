@@ -6,8 +6,8 @@ export function SubmitButton({ isLoading }: { isLoading: boolean }) {
     <button
       type='submit'
       className={clsx(
-        'absolute right-2 bottom-1.75 border px-2 py-1 rounded-full',
-        'transition bg-ui-800 border-ui-600',
+        'absolute right-1.5 bottom-1.5 border px-2 py-1 rounded-md',
+        'bg-ui-800 border-ui-600',
         'hover:border-ui-550 hover:bg-ui-750',
         !isLoading && 'cursor-pointer'
       )}
