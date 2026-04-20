@@ -16,7 +16,6 @@
 }
 
 .blocklyFlyout {
-  z-index: 60;
   border-radius: 5px 0 0 0;
   outline: 1px solid var(--color-ui-700);
 }
@@ -27,7 +26,6 @@
 }
 
 .blocklyToolbox {
-  z-index: 50;
   border-color: var(--color-ui-700);
   border-width: 1px 0px 0px 0px;
 }
@@ -87,10 +85,6 @@
 
 .blocklyTextarea {
   color: var(--color-ui-800);
-}
-
-.blocklyScrollbarHandle {
-  display: none;
 }
 
 .blocklyFlyoutButtonShadow {
@@ -164,7 +158,26 @@
   fill: var(--color-ui-200);
 }
 
-.blocklyToolbox[tabindex='0'], .blocklyToolbox.blocklyActiveFocus {
+.blocklyToolbox[tabindex='0'],
+.blocklyToolbox.blocklyActiveFocus {
   border-width: 1px 1px 0px 0px;
   border-radius: 0px 5px 0px 0px;
+}
+
+.blocklyScrollbarHandle {
+  fill: var(--color-ui-700);
+  x: 4;
+}
+
+.blocklyScrollbarHandle:hover,
+.blocklyScrollbarHandle:active {
+  fill: var(--color-ui-600);
+}
+
+.blocklyMainWorkspaceScrollbar {
+  display: none;
+}
+
+.blocklyFlyoutScrollbar[display='none'] .blocklyScrollbarHandle {
+  display: none;
 }

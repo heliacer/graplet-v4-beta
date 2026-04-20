@@ -3,7 +3,7 @@ import { useEditorRefs } from '../../../lib/context'
 import { useEditorStore } from '@/app/editor/lib/state'
 import clsx from 'clsx'
 import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'
-import { exprGenerator } from '@/app/editor/lib/blockly/engine/generator/index'
+import { exprGenerator } from '@/app/editor/lib/engine/generator/index'
 
 export function RunControls() {
   const { workspace } = useEditorRefs()

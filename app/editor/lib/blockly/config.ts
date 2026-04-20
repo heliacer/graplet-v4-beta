@@ -3,19 +3,10 @@ import {
   common,
   ContextMenuItems,
   Extensions,
-  Options,
-  registry,
+  Scrollbar,
   Toolbox,
-  ToolboxCategory,
   VerticalFlyout
 } from 'blockly'
-import {
-  ContinuousCategory,
-  ContinuousFlyout,
-  ContinuousMetrics,
-  ContinuousToolbox,
-  RecyclableBlockFlyoutInflater
-} from '@blockly/continuous-toolbox'
 import './blocks/'
 import {
   isDivisibleMutatorMixin,
@@ -28,55 +19,16 @@ import {
   registerProcedureSerializer
 } from '@blockly/block-shareable-procedures'
 import { functionsCategory } from './categories/functions'
+import { registerContinuousToolbox } from './utils/registerContinuousToolbox'
 
-/** @todo (#66) Blockly config: Refactor */
-
-class ContinuousIconCategory extends ContinuousCategory {
-  override createIconDom_(): Element {
-    const icon = document.createElement('div')
-    icon.classList.add('categoryBubble')
-    icon.classList.add(this.name_)
-    icon.style.backgroundColor = this.colour_
-    return icon
-  }
-}
-
-class CompactContinuousFlyout extends ContinuousFlyout {
-  GAP_Y: number
-  constructor(options: Options) {
-    super(options)
-    this.GAP_Y = 20
-    this.autoClose = true
-  }
-}
-
-export class ContinuousClosableMetrics extends ContinuousMetrics {
-  override getViewMetrics(getWorkspaceCoordinates = false) {
-    const metrics = super.getViewMetrics(getWorkspaceCoordinates)
-    const flyoutMetrics = this.getFlyoutMetrics(false)
-    const scale = getWorkspaceCoordinates ? this.workspace_.scale : 1
-    metrics.width += flyoutMetrics.width / scale
-    return metrics
-  }
-
-  override getAbsoluteMetrics() {
-    const abs = super.getAbsoluteMetrics()
-    const flyoutMetrics = this.getFlyoutMetrics(false)
-    abs.left -= flyoutMetrics.width
-    return abs
-  }
-}
-
-export function initializeBlockly() {
+export function initializeBlocklyConfig() {
   registerProcedureSerializer()
-
   Extensions.unregister('math_is_divisibleby_mutator')
   Extensions.registerMutator(
     'math_is_divisibleby_mutator',
     isDivisibleMutatorMixin,
     isDivisibleMutatorExtension
   )
-
   unregisterProcedureBlocks()
 
   /**
@@ -95,8 +47,7 @@ export function initializeBlockly() {
     )
     sourceToolboxInit.call(this)
   }
-
-  blockRendering.register('graplet', GrapletRenderer)
+  Scrollbar.scrollbarThickness = 12
   VerticalFlyout.prototype.getFlyoutScale = function () {
     if (common.getMainWorkspace()?.id === this.getTargetWorkspace().id) {
       return 0.8
@@ -104,41 +55,8 @@ export function initializeBlockly() {
       return this.getTargetWorkspace().scale
     }
   }
-
-  registry.register(
-    registry.Type.TOOLBOX_ITEM,
-    ToolboxCategory.registrationName,
-    ContinuousIconCategory,
-    true
-  )
-
-  registry.register(
-    registry.Type.METRICS_MANAGER,
-    'ContinuousMetrics',
-    ContinuousClosableMetrics,
-    true
-  )
-
-  registry.register(
-    registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
-    'ContinuousFlyout',
-    CompactContinuousFlyout,
-    true
-  )
-
-  registry.register(
-    registry.Type.TOOLBOX,
-    'ContinuousToolbox',
-    ContinuousToolbox,
-    true
-  )
-
-  registry.register(
-    registry.Type.FLYOUT_INFLATER,
-    'block',
-    RecyclableBlockFlyoutInflater,
-    true
-  )
-
+  
+  registerContinuousToolbox()
+  blockRendering.register('graplet', GrapletRenderer)
   ContextMenuItems.registerCommentOptions()
 }

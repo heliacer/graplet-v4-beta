@@ -3,9 +3,9 @@ import { useEffect } from 'react'
 import { useEditorRefs } from '../context'
 import { blocklyOptions } from '../blockly/options'
 import { resize } from '../utils/blockly'
-import { exprGenerator } from '../blockly/engine/generator'
+import { exprGenerator } from '../engine/generator'
 import { useRuntime } from './useRuntime'
-import { createFunction } from '../blockly/callbacks/createFunction'
+import { createFunction } from '../blockly/utils/createFunction'
 
 export function useBlocklyWorkspace(
   blocklyDiv: React.RefObject<HTMLDivElement>

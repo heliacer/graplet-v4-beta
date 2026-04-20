@@ -1,6 +1,6 @@
 import React, { createContext, RefObject, useContext, useRef } from 'react'
 import { WorkspaceSvg } from 'blockly'
-import { FuncEnv, VarEnv } from './blockly/engine/ast'
+import { FuncEnv, VarEnv } from './engine/ast'
 import { Object3D, Scene } from 'three'
 import { OrbitControls, TransformControls } from 'three/examples/jsm/Addons.js'
 

@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react'
-import { Expression, ProgramState, Thread } from '../blockly/engine/ast'
-import { initProgram, threadStep } from '../blockly/engine/interpreter'
+import { Expression, ProgramState, Thread } from '../engine/ast'
+import { initProgram, threadStep } from '../engine/interpreter'
 import { useEditorRefs } from '../context'
 import { useEditorStore } from '../state'
 
