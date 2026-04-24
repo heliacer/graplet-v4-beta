@@ -6,7 +6,6 @@ import {
   Orientation,
   SerializedDockview
 } from 'dockview-react'
-import '../styles/base.css'
 import '../styles/dvtheme.css'
 import { LeftControls, RightControls } from './ui/controls/tabControls'
 import { TabHeader } from './ui/tabHeader'
