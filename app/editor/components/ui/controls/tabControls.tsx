@@ -25,17 +25,20 @@ export function RightControls(props: IDockviewHeaderActionsProps) {
           <SquareArrowOutUpRight size={16} />
         )}
       </button>
-      <button
-        id='toggleMaximised'
-        className='p-0.5 border border-transparent hover:border-ui-700 hover:bg-ui-800 rounded cursor-pointer'
-        onClick={toggleMaximized}
-      >
-        {isMaximised ? <Minimize size={16} /> : <Maximize size={16} />}
-      </button>
+      {!isFloating && (
+        <button
+          id='toggleMaximised'
+          className='p-0.5 border border-transparent hover:border-ui-700 hover:bg-ui-800 rounded cursor-pointer'
+          onClick={toggleMaximized}
+        >
+          {isMaximised ? <Minimize size={16} /> : <Maximize size={16} />}
+        </button>
+      )}
     </nav>
   )
 }
 
+/** @deprecated not needed at the moment */
 export function LeftControls(props: IDockviewHeaderActionsProps) {
   function addNew() {
     props.containerApi.addPanel({

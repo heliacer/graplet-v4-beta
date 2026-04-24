@@ -1,36 +1,610 @@
-.dv-theme {
-  --dv-paneview-active-outline-color: dodgerblue;
-  --dv-tabs-and-actions-container-font-size: 13px;
-  --dv-tabs-and-actions-container-height: 35px;
-  --dv-drag-over-background-color: rgba(83, 89, 93, 0.5);
-  --dv-drag-over-border-color: transparent;
-  --dv-tabs-container-scrollbar-color: #888;
-  --dv-icon-hover-background-color: rgba(90, 93, 94, 0.31);
-  --dv-floating-box-shadow: 8px 8px 8px 0px rgba(83, 89, 93, 0.5);
-  --dv-overlay-z-index: 999;
-  --dv-tab-font-size: inherit;
-  --dv-border-radius: 0px;
-  --dv-tab-margin: 0;
-  --dv-sash-color: transparent;
-  --dv-active-sash-color: transparent;
-  --dv-active-sash-transition-duration: 0.1s;
-  --dv-active-sash-transition-delay: 0.5s;
-  --dv-group-view-background-color: var(--color-ui-900);
-  --dv-tabs-and-actions-container-background-color: var(--color-ui-900);
-  --dv-activegroup-visiblepanel-tab-background-color: #1e1e1e;
-  --dv-activegroup-hiddenpanel-tab-background-color: #2d2d2d;
-  --dv-inactivegroup-visiblepanel-tab-background-color: #1e1e1e;
-  --dv-inactivegroup-hiddenpanel-tab-background-color: #2d2d2d;
-  --dv-tab-divider-color: #1e1e1e;
-  --dv-activegroup-visiblepanel-tab-color: white;
-  --dv-activegroup-hiddenpanel-tab-color: #969696;
-  --dv-inactivegroup-visiblepanel-tab-color: #8f8f8f;
-  --dv-inactivegroup-hiddenpanel-tab-color: #626262;
-  --dv-separator-border: rgb(68, 68, 68);
-  --dv-paneview-header-border-color: rgba(204, 204, 204, 0.2);
+.dv-dockview,
+.dv-groupview {
+  background-color: var(--dv-group-view-background-color);
 }
-
-.dv-theme .dv-dockview {
-  border-width: 1px 0px;
-  border-color: red;
+.dv-resize-container .dv-resize-handle-bottom,
+.dv-resize-container .dv-resize-handle-top {
+  cursor: ns-resize;
+  left: 4px;
+  height: 4px;
+  width: calc(100% - 8px);
+  z-index: var(--dv-overlay-z-index);
+}
+.dv-tab,
+.dv-tabs-and-actions-container {
+  box-sizing: border-box;
+  font-size: var(--dv-tabs-and-actions-container-font-size);
+}
+.dv-theme {
+  --dv-tabs-and-actions-container-font-size: 15px;
+  --dv-tabs-and-actions-container-height: 30px;
+  --dv-overlay-z-index: 999;
+  --dv-scrollbar-height: 2px;
+  --dv-scrollbar-border-radius: 2px;
+  --dv-scrollbar-background-color: var(--color-teal);
+  --dv-group-view-background-color: var(--color-ui-850);
+  --dv-tabs-and-actions-container-background-color: var(--color-ui-900);
+  --dv-active-tab-background-color: var(--color-ui-850);
+  --dv-inactive-tab-background-color: transparent;
+  --dv-active-tab-color: var(--color-ui-200);
+  --dv-inactive-tab-color: var(--color-ui-400);
+  --dv-border-color: var(--color-ui-700);
+  --dv-accent-border-color: var(--color-teal);
+  --dv-hover-background-color: var(--color-ui-800);
+  --dv-focus-outline-color: var(--color-teal);
+  --dv-drag-over-border: 1px solid var(--color-teal);
+  --dv-drag-over-background-color: transparent;
+  --dv-floating-box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.dv-render-overlay,
+.dv-resize-container {
+  --dv-overlay-z-index: var(--dv-overlay-z-index, 999);
+}
+.dv-scrollable {
+  position: relative;
+  overflow: hidden;
+}
+.dv-scrollable .dv-scrollbar-horizontal {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: var(--dv-scrollbar-height);
+  border-radius: var(--dv-scrollbar-border-radius);
+  background-color: transparent;
+}
+.dv-scrollable.dv-scrollable-resizing .dv-scrollbar-horizontal,
+.dv-scrollable.dv-scrollable-scrolling .dv-scrollbar-horizontal,
+.dv-scrollable:hover .dv-scrollbar-horizontal {
+  background-color: var(--dv-scrollbar-background-color);
+}
+.dv-scrollable > .dv-tabs-container {
+  overflow: hidden;
+}
+.dv-view [tabindex='-1']:has([role='menu']) {
+  overflow: visible !important;
+}
+.dv-svg {
+  display: inline-block;
+  fill: currentcolor;
+  line-height: 1;
+  stroke: currentcolor;
+  stroke-width: 0;
+}
+.dv-drop-target-container {
+  position: absolute;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  --dv-transition-duration: 300ms;
+}
+.dv-drop-target-container .dv-drop-target-anchor {
+  position: relative;
+  border: var(--dv-drag-over-border);
+  background-color: var(--dv-drag-over-background-color);
+  opacity: 1;
+  transition:
+    opacity var(--dv-transition-duration) ease-in,
+    top var(--dv-transition-duration) ease-out,
+    left var(--dv-transition-duration) ease-out,
+    width var(--dv-transition-duration) ease-out,
+    height var(--dv-transition-duration) ease-out;
+}
+.dv-drop-target-container
+  .dv-drop-target-anchor.dv-drop-target-anchor-container-changed {
+  opacity: 0;
+  transition: none;
+}
+.dv-drop-target {
+  position: relative;
+  --dv-transition-duration: 70ms;
+}
+.dv-drop-target > .dv-drop-target-dropzone {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  pointer-events: none;
+}
+.dv-drop-target > .dv-drop-target-dropzone > .dv-drop-target-selection {
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  border: var(--dv-drag-over-border);
+  background-color: var(--dv-drag-over-background-color);
+  transition:
+    top var(--dv-transition-duration) ease-out,
+    left var(--dv-transition-duration) ease-out,
+    width var(--dv-transition-duration) ease-out,
+    height var(--dv-transition-duration) ease-out,
+    opacity var(--dv-transition-duration) ease-out;
+  will-change: transform;
+  pointer-events: none;
+}
+.dv-dockview,
+.dv-drop-target
+  > .dv-drop-target-dropzone
+  > .dv-drop-target-selection.dv-drop-target-top.dv-drop-target-small-vertical,
+.dv-pane-container .dv-view:not(:first-child) .dv-pane > .dv-pane-header,
+.dv-split-view-container.dv-vertical
+  > .dv-view-container
+  > .dv-view:not(:first-child).visible {
+  border-top: 1px solid var(--dv-border-color);
+}
+.dv-dockview,
+.dv-drop-target
+  > .dv-drop-target-dropzone
+  > .dv-drop-target-selection.dv-drop-target-bottom.dv-drop-target-small-vertical,
+.dv-inactive-tab,
+.dv-left-actions-container,
+.dv-right-actions-container,
+.dv-tabs-overflow-container .dv-tab:not(:last-child),
+.dv-void-container {
+  border-bottom: 1px solid var(--dv-border-color);
+}
+.dv-drop-target
+  > .dv-drop-target-dropzone
+  > .dv-drop-target-selection.dv-drop-target-left.dv-drop-target-small-horizontal,
+.dv-split-view-container.dv-horizontal
+  > .dv-view-container
+  > .dv-view:not(:first-child).visible {
+  border-left: 1px solid var(--dv-border-color);
+}
+.dv-drop-target
+  > .dv-drop-target-dropzone
+  > .dv-drop-target-selection.dv-drop-target-right.dv-drop-target-small-horizontal {
+  border-right: 1px solid var(--dv-border-color);
+}
+.dv-dockview {
+  position: relative;
+}
+.dv-dockview .dv-watermark-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+.dv-dockview .dv-overlay-render-container {
+  position: relative;
+}
+.dv-groupview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.dv-groupview:focus {
+  outline: 0;
+}
+.dv-groupview > .dv-content-container {
+  flex-grow: 1;
+  min-height: 0;
+  outline: 0;
+}
+.dv-groupview.dv-groupview-floating {
+  border-radius: 10px;
+}
+.dv-groupview
+  > .dv-tabs-and-actions-container
+  .dv-tabs-container
+  > .dv-tab.dv-active-tab,
+.dv-tab.dv-tab-dragging,
+.dv-tabs-overflow-container .dv-active-tab {
+  background-color: var(--dv-active-tab-background-color);
+  color: var(--dv-active-tab-color);
+}
+.dv-groupview
+  > .dv-tabs-and-actions-container
+  .dv-tabs-container
+  > .dv-tab.dv-inactive-tab,
+.dv-tabs-overflow-container .dv-inactive-tab {
+  background-color: var(--dv-inactive-tab-background-color);
+  color: var(--dv-inactive-tab-color);
+}
+.dv-groupview
+  > .dv-tabs-and-actions-container
+  .dv-tabs-container
+  > .dv-tab.dv-inactive-tab:hover {
+  background-color: var(--dv-active-tab-background-color);
+}
+.dv-groupview.dv-groupview-floating
+  > .dv-tabs-and-actions-container
+  .dv-tabs-container
+  > .dv-tab.dv-active-tab:first-child {
+  border-radius: 10px 0px 0px 0px;
+}
+.dv-active-group .dv-active-tab {
+  border-top: 1px solid var(--dv-accent-border-color);
+}
+.dv-branch-node,
+.dv-grid-view,
+.dv-pane-container,
+.dv-root-wrapper {
+  height: 100%;
+  width: 100%;
+}
+.dv-resize-container {
+  position: absolute;
+  z-index: calc(var(--dv-overlay-z-index) - 2);
+  border: 1px solid var(--dv-border-color);
+  box-shadow: var(--dv-floating-box-shadow);
+  border-radius: 10px;
+}
+.dv-resize-container.dv-hidden {
+  display: none;
+}
+.dv-resize-container.dv-resize-container-dragging {
+  opacity: 0.5;
+}
+.dv-resize-container .dv-resize-handle-top {
+  top: -2px;
+  position: absolute;
+}
+.dv-resize-container .dv-resize-handle-bottom {
+  bottom: -2px;
+  position: absolute;
+}
+.dv-resize-container .dv-resize-handle-left {
+  height: calc(100% - 8px);
+  width: 4px;
+  left: -2px;
+  top: 4px;
+  z-index: var(--dv-overlay-z-index);
+  position: absolute;
+  cursor: ew-resize;
+}
+.dv-resize-container .dv-resize-handle-right {
+  height: calc(100% - 8px);
+  width: 4px;
+  right: -2px;
+  top: 4px;
+  z-index: var(--dv-overlay-z-index);
+  position: absolute;
+  cursor: ew-resize;
+}
+.dv-resize-container .dv-resize-handle-bottomleft,
+.dv-resize-container .dv-resize-handle-bottomright,
+.dv-resize-container .dv-resize-handle-topleft,
+.dv-resize-container .dv-resize-handle-topright {
+  height: 4px;
+  z-index: var(--dv-overlay-z-index);
+  position: absolute;
+  width: 4px;
+}
+.dv-resize-container .dv-resize-handle-topleft {
+  top: -2px;
+  left: -2px;
+  cursor: nw-resize;
+}
+.dv-resize-container .dv-resize-handle-topright {
+  right: -2px;
+  top: -2px;
+  cursor: ne-resize;
+}
+.dv-resize-container .dv-resize-handle-bottomleft {
+  left: -2px;
+  bottom: -2px;
+  cursor: sw-resize;
+}
+.dv-resize-container .dv-resize-handle-bottomright {
+  right: -2px;
+  bottom: -2px;
+  cursor: se-resize;
+}
+.dv-render-overlay {
+  position: absolute;
+  z-index: 1;
+  height: 100%;
+}
+.dv-render-overlay.dv-render-overlay-float {
+  z-index: calc(var(--dv-overlay-z-index) - 1);
+}
+.dv-pane-container .dv-pane .dv-pane-body:focus-within::after,
+.dv-pane-container .dv-pane .dv-pane-body:focus::after,
+.dv-pane-container .dv-pane .dv-pane-header:focus-within::after,
+.dv-pane-container .dv-pane .dv-pane-header:focus::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  content: '';
+  pointer-events: none;
+  outline: 1px solid var(--dv-focus-outline-color);
+  outline-offset: -1px;
+}
+.dv-pane-container.dv-animated .dv-view,
+.dv-split-view-container.dv-animation .dv-sash,
+.dv-split-view-container.dv-animation .dv-view {
+  transition: 0.15s ease-out;
+}
+.dv-pane-container .dv-view {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+}
+.dv-pane-container .dv-view:not(:first-child)::before {
+  background-color: transparent !important;
+}
+.dv-pane-container .dv-view .dv-default-header {
+  background-color: var(--dv-group-view-background-color);
+  color: var(--dv-active-tab-color);
+  display: flex;
+  padding: 0 8px;
+  cursor: pointer;
+}
+.dv-pane-container .dv-view .dv-default-header .dv-pane-header-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dv-pane-container .dv-view .dv-default-header > span {
+  padding-left: 8px;
+  flex-grow: 1;
+}
+.dv-pane-container:first-of-type > .dv-pane > .dv-pane-header {
+  border-top: none !important;
+}
+.dv-pane-container .dv-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+.dv-pane-container .dv-pane .dv-pane-header {
+  box-sizing: border-box;
+  user-select: none;
+  position: relative;
+  outline: 0;
+}
+.dv-pane-container .dv-pane .dv-pane-header.dv-pane-draggable {
+  cursor: pointer;
+}
+.dv-pane-container .dv-pane .dv-pane-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-grow: 1;
+  position: relative;
+  outline: 0;
+}
+.dv-split-view-container {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+.dv-split-view-container.dv-splitview-disabled > .dv-sash-container > .dv-sash {
+  pointer-events: none;
+}
+.dv-split-view-container.dv-horizontal {
+  height: 100%;
+}
+.dv-split-view-container.dv-horizontal > .dv-sash-container > .dv-sash {
+  height: 100%;
+  width: 4px;
+}
+.dv-split-view-container.dv-horizontal
+  > .dv-sash-container
+  > .dv-sash.dv-enabled {
+  cursor: ew-resize;
+}
+.dv-split-view-container.dv-horizontal
+  > .dv-sash-container
+  > .dv-sash.dv-disabled,
+.dv-split-view-container.dv-vertical
+  > .dv-sash-container
+  > .dv-sash.dv-disabled {
+  cursor: default;
+}
+.dv-split-view-container.dv-horizontal
+  > .dv-sash-container
+  > .dv-sash.dv-maximum {
+  cursor: w-resize;
+}
+.dv-split-view-container.dv-horizontal
+  > .dv-sash-container
+  > .dv-sash.dv-minimum {
+  cursor: e-resize;
+}
+.dv-split-view-container.dv-vertical,
+.dv-split-view-container.dv-vertical > .dv-view-container > .dv-view {
+  width: 100%;
+}
+.dv-split-view-container.dv-vertical > .dv-sash-container > .dv-sash {
+  width: 100%;
+  height: 4px;
+}
+.dv-split-view-container.dv-vertical
+  > .dv-sash-container
+  > .dv-sash.dv-enabled {
+  cursor: ns-resize;
+}
+.dv-split-view-container.dv-vertical
+  > .dv-sash-container
+  > .dv-sash.dv-maximum {
+  cursor: n-resize;
+}
+.dv-split-view-container.dv-vertical
+  > .dv-sash-container
+  > .dv-sash.dv-minimum {
+  cursor: s-resize;
+}
+.dv-split-view-container .dv-sash-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+.dv-split-view-container .dv-sash-container .dv-sash {
+  position: absolute;
+  z-index: 99;
+  outline: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  touch-action: none;
+  background-color: transparent;
+}
+.dv-split-view-container .dv-view-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+.dv-split-view-container .dv-view-container .dv-view {
+  height: 100%;
+  box-sizing: border-box;
+  position: absolute;
+}
+.dv-split-view-container.dv-separator-border
+  .dv-view:not(:first-child)::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-color: var(--dv-border-color);
+}
+.dv-dragged {
+  transform: translate3d(0, 0, 0);
+}
+.dv-tab {
+  border-top: 1px solid transparent;
+  flex-shrink: 0;
+  -webkit-user-drag: element;
+  outline: 0;
+  cursor: pointer;
+  position: relative;
+}
+.dv-tab.dv-tab-dragging .dv-default-tab-action {
+  background-color: var(--dv-active-tab-color);
+}
+.dv-tab.dv-active-tab .dv-default-tab .dv-default-tab-action,
+.dv-tab.dv-inactive-tab .dv-default-tab:hover .dv-default-tab-action {
+  visibility: visible;
+}
+.dv-tab.dv-inactive-tab .dv-default-tab .dv-default-tab-action {
+  visibility: hidden;
+}
+.dv-tab .dv-default-tab {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dv-tab .dv-default-tab .dv-default-tab-content {
+  flex-grow: 1;
+  margin-right: 4px;
+}
+.dv-tab .dv-default-tab .dv-default-tab-action {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+.dv-tab .dv-default-tab .dv-default-tab-action:hover {
+  background-color: var(--dv-hover-background-color);
+  border-color: var(--dv-border-color);
+}
+.dv-inactive-tab .dv-default-tab .dv-default-tab-action:hover {
+  background-color: transparent;
+}
+.dv-tabs-container {
+  display: flex;
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  border-right: 1px solid var(--dv-border-color);
+}
+.dv-tabs-container.dv-horizontal .dv-tab:not(:first-child)::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-color: var(--dv-border-color);
+  width: 1px;
+  height: 100%;
+}
+.dv-tabs-container::-webkit-scrollbar {
+  height: 3px;
+}
+.dv-tabs-container::-webkit-scrollbar-track {
+  background: 0 0;
+}
+.dv-tabs-container::-webkit-scrollbar-thumb {
+  background: var(--dv-scrollbar-background-color);
+}
+.dv-tabs-overflow-dropdown-default {
+  height: 100%;
+  color: var(--dv-inactive-tab-color);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+.dv-tabs-overflow-dropdown-default > span {
+  padding-left: 0.25rem;
+}
+.dv-tabs-overflow-dropdown-default > svg {
+  transform: rotate(90deg);
+}
+.dv-tabs-overflow-container {
+  flex-direction: column;
+  height: unset;
+  border: 1px solid var(--dv-border-color);
+  background-color: var(--dv-group-view-background-color);
+  border-bottom: 0;
+}
+.dv-tabs-and-actions-container {
+  display: flex;
+  background-color: var(--dv-tabs-and-actions-container-background-color);
+  flex-shrink: 0;
+  height: var(--dv-tabs-and-actions-container-height);
+}
+.dv-tabs-and-actions-container.dv-single-tab.dv-full-width-single-tab
+  .dv-scrollable,
+.dv-tabs-and-actions-container.dv-single-tab.dv-full-width-single-tab
+  .dv-tabs-container {
+  flex-grow: 1;
+}
+.dv-tabs-and-actions-container.dv-single-tab.dv-full-width-single-tab
+  .dv-tabs-container
+  .dv-tab {
+  flex-grow: 1;
+  padding: 0;
+}
+.dv-tabs-and-actions-container.dv-single-tab.dv-full-width-single-tab
+  .dv-void-container {
+  flex-grow: 0;
+}
+.dv-tabs-and-actions-container .dv-void-container {
+  display: flex;
+  flex-grow: 1;
+  cursor: grab;
+}
+.dv-tabs-and-actions-container .dv-right-actions-container {
+  display: flex;
+}
+.dv-watermark {
+  display: flex;
+  height: 100%;
 }

@@ -7,7 +7,7 @@ import {
   SerializedDockview
 } from 'dockview-react'
 import '../styles/dvtheme.css'
-import { LeftControls, RightControls } from './ui/controls/tabControls'
+import { RightControls } from './ui/controls/tabControls'
 import { TabHeader } from './ui/tabHeader'
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
@@ -159,7 +159,6 @@ export function GrapletDockview() {
       onReady={mount}
       components={panelComponents}
       defaultTabComponent={TabHeader}
-      leftHeaderActionsComponent={LeftControls}
       rightHeaderActionsComponent={RightControls}
     />
   )
