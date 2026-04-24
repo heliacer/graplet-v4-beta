@@ -176,3 +176,31 @@
 .blocklyFlyoutScrollbar[display='none'] .blocklyScrollbarHandle {
   display: none;
 }
+
+.blocklyWidgetDiv .blocklyMenu.blocklyContextMenu {
+  border-color: var(--color-ui-700);
+  background-color: var(--color-ui-800);
+  box-sizing: content-box;
+  padding: 2px 0px;
+  box-shadow: none;
+}
+
+.blocklyMenu.blocklyContextMenu .blocklyMenuItem {
+  color: var(--color-ui-200);
+  margin: 0px 2px;
+  padding: 1px 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.blocklyMenu.blocklyContextMenu .blocklyMenuItem.blocklyMenuItemHighlight {
+  background-color:  var(--color-ui-700);
+  border-color: var(--color-ui-600);
+}
+
+
+.blocklyMenu.blocklyContextMenu .blocklyMenuItem.blocklyMenuItemDisabled {
+  color: var(--color-ui-400);
+}
+
+
