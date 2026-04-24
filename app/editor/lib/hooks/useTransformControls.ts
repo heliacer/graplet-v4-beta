@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { TransformControls } from 'three/examples/jsm/Addons.js'
 import { useEditorRefs } from '../context'
 import { isInternalObject, isTransformControlsMode } from '../utils/three'
 import { useCurrentObject } from './useCurrentObject'
 import { useEditorStore } from '../state'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 
 export function useTransformControls() {
   const { scene, canvas, orbitMap, controls } = useEditorRefs()

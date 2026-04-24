@@ -11,7 +11,7 @@ import {
 import { blocklyUI } from '../blockly/blocks'
 import { ParentError, SObject3D, TransformProps } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import {
   findTopLevelObject,
   getFallbackObject,

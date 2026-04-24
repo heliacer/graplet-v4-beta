@@ -2,7 +2,8 @@ import React, { createContext, RefObject, useContext, useRef } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { FuncEnv, VarEnv } from './engine/ast'
 import { Object3D, Scene } from 'three'
-import { OrbitControls, TransformControls } from 'three/examples/jsm/Addons.js'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 interface EditorContextType {
   funcEnv: RefObject<FuncEnv>

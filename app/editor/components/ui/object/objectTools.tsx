@@ -8,10 +8,10 @@ import {
 } from 'lucide-react'
 import { useEditorRefs } from '../../../lib/context'
 import clsx from 'clsx'
-import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { ToolItem } from '@/app/editor/lib/types'
 import { MOUSE } from 'three'
 import { useEditorStore } from '@/app/editor/lib/state'
+import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 
 interface ToolButtonProps {
   tool: TransformControlsMode | ToolItem

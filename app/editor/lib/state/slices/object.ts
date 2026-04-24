@@ -1,5 +1,5 @@
 import { Camera, Object3D } from 'three'
-import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
+import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
 
 type Updater<T> = T | ((old: T) => T)

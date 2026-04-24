@@ -7,8 +7,9 @@ import {
 import { useEditorRefs } from '../context'
 import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
-import { OrbitControls, ViewHelper } from 'three/examples/jsm/Addons.js'
 import { useEditorStore } from '../state'
+import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
   const { scene, canvas, orbitMap } = useEditorRefs()

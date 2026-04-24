@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand'
 import { ContextMenuProps, NotificationItemProps, ToolItem } from '../../types'
-import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
 import { DockviewApi } from 'dockview-react'
+import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 
 type State = {
   isRunning: boolean

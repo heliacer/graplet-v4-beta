@@ -17,8 +17,8 @@ import {
 } from '../PropertyInput'
 import { Crosshair, SwitchCamera } from 'lucide-react'
 import { useEditorRefs } from '@/app/editor/lib/context'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { useEditorStore } from '@/app/editor/lib/state'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
   return (

@@ -2,11 +2,11 @@ import { useEditorRefs } from '../../lib/context'
 import { IDockviewPanelProps } from 'dockview-react'
 import { useProjectLoader } from '../../lib/hooks/useProjectLoader'
 import { useRenderer } from '../../lib/hooks/useRenderer'
-import { ObjectControls } from '../ui/controls/objectControls'
 import { useTransformControls } from '../../lib/hooks/useTransformControls'
 import { useState } from 'react'
 import clsx from 'clsx'
 import { useEditorStore } from '../../lib/state'
+import { ObjectControls } from '../ui/controls/objectControls'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
   const { canvas } = useEditorRefs()

@@ -5,13 +5,13 @@ import {
   Object3D,
   Scene
 } from 'three'
+import { ParentError } from '../types'
 import {
   TransformControls,
   TransformControlsGizmo,
   TransformControlsMode,
   TransformControlsPlane
-} from 'three/examples/jsm/Addons.js'
-import { ParentError } from '../types'
+} from 'three/examples/jsm/controls/TransformControls.js'
 
 declare class TransformControlsRoot extends Object3D {
   readonly isTransformControlsRoot: true
