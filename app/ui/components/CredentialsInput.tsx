@@ -19,7 +19,8 @@ export function CredentialsInput({
     name: name || type,
     className: clsx(
       'w-full pr-12 border h-9 pl-3 rounded-lg truncate',
-      'focus:outline-none'
+      'focus:outline-none',
+      disabled && 'hover:border-ui-700'
     ),
     placeholder: placeholder || type,
     type,

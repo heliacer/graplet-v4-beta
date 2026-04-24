@@ -27,7 +27,8 @@
 
 .blocklyToolbox {
   border-color: var(--color-ui-700);
-  border-width: 1px 0px 0px 0px;
+  border-width: 1px 1px 0px 0px;
+  border-radius: 0px 3px 0px 0px;
 }
 
 .blocklyToolboxCategoryContainer {
@@ -156,12 +157,6 @@
 
 .graplet-renderer.graplet-theme .blocklyFlyoutButton .blocklyText {
   fill: var(--color-ui-200);
-}
-
-.blocklyToolbox[tabindex='0'],
-.blocklyToolbox.blocklyActiveFocus {
-  border-width: 1px 1px 0px 0px;
-  border-radius: 0px 5px 0px 0px;
 }
 
 .blocklyScrollbarHandle {
