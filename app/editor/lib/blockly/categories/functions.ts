@@ -6,7 +6,7 @@ export function functionsCategory(workspace: WorkspaceSvg) {
 
   blockList.push({
     kind: 'button',
-    text: '+ Create New',
+    text: 'Create function...',
     callbackKey: 'createFunction'
   })
 
@@ -18,7 +18,7 @@ export function functionsCategory(workspace: WorkspaceSvg) {
         procedureId: model.getId()
       },
       fields: {
-        NAME: model.getName() 
+        NAME: model.getName()
       }
     })
   }

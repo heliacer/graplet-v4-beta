@@ -62,7 +62,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
      * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
      *
      * Generalise orbit attach / detach, refactor to an util,
-     * other one is in applyHelpers in useObjectActions 
+     * other one is in applyHelpers in useObjectActions
      */
     const orbitAction = (checked: boolean) => {
       if (checked) {

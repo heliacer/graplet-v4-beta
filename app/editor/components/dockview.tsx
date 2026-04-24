@@ -137,7 +137,6 @@ export function GrapletDockview() {
       api.fromJSON(jsonLayout)
     }
     setDvApi(api)
-
   }
 
   useEffect(() => {

@@ -1,11 +1,13 @@
 @import 'tailwindcss';
 
+/** @todo (#77) fix: Remove unnecessary themes on load */
+
 @layer base {
   :root, div {
     scrollbar-color: var(--ui-650) var(--ui-900);
   }
 
-  /* Dark Theme (default) */
+  /* Default built-in theme (dark) */
   :root,
   .dark {
     --ui-50: oklch(98.5% 0 0);
@@ -27,7 +29,6 @@
     --ui-850: oklch(24.2% 0.006 285.959);
     --ui-900: oklch(21% 0.006 285.885);
     --ui-950: oklch(14.1% 0.005 285.823);
-    /* Color Palette */
     --blue: oklch(0.6163 0.1663 265.82);
     --orange: oklch(0.6623 0.1327 71.06);
     --teal: oklch(0.6292 0.1145 175.84);
@@ -41,6 +42,7 @@
     --mint: oklch(0.706 0.0935 210.72);
     --copper: oklch(0.6522 0.1175 57.54);
   }
+
   /* Light Theme */
   .light {
     --ui-50: oklch(14.1% 0.005 285.823);
@@ -131,7 +133,6 @@
 
 @theme {
   --color-*: initial;
-
   /* UI */
   --color-ui-50: var(--ui-50);
   --color-ui-100: var(--ui-100);
@@ -152,7 +153,6 @@
   --color-ui-850: var(--ui-850);
   --color-ui-900: var(--ui-900);
   --color-ui-950: var(--ui-950);
-
   /* Accent Colors */
   --color-blue: var(--blue);
   --color-orange: var(--orange);

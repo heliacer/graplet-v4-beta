@@ -23,7 +23,7 @@ type Actions = {
   setContextMenu: (contextMenu: ContextMenuProps | null) => void
 }
 
-export type UiSlice =  State & Actions
+export type UiSlice = State & Actions
 
 export const uiInitialState: State = {
   isRunning: false,
@@ -32,7 +32,7 @@ export const uiInitialState: State = {
   currentTool: 'translate',
   notifications: [],
   dvApi: null,
-  contextMenu: null,
+  contextMenu: null
 }
 
 export const createUiSlice: StateCreator<UiSlice> = set => ({
@@ -44,5 +44,5 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   setCurrentTool: v => set({ currentTool: v }),
   setNotifications: v => set({ notifications: v }),
   setDvApi: v => set({ dvApi: v }),
-  setContextMenu: v => set({ contextMenu: v }),
+  setContextMenu: v => set({ contextMenu: v })
 })

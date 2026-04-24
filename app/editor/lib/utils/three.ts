@@ -25,7 +25,7 @@ declare class TransformControlsRoot extends Object3D {
 
 /**
  * @todo (#65) ObjectView: Revamp helpers
- * 
+ *
  * Add all helpers to be ignored
  */
 export function isInternalObject(object: Object3D): boolean {

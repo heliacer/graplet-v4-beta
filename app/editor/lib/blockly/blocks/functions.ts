@@ -23,12 +23,7 @@ common.defineBlocks(functionBlocks)
 
 Blocks['function_def'] = {
   init(this: ProcedureBlock) {
-    const input = this.appendStatementInput('DEF')
-    input.appendField('define')
-    input.connection?.setShadowState({
-      type: 'function_call'
-    })
-
+    this.appendDummyInput().appendField('', 'NAME')
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
   },
@@ -46,6 +41,7 @@ Blocks['function_def'] = {
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
+    this.setFieldValue(this.model?.getName(), 'NAME')
     if (!this.model) return
   },
 
@@ -75,10 +71,6 @@ Blocks['function_def'] = {
 
     if (model) {
       this.model = model as ObservableProcedureModel
-      const input = this.getInput('DEF')
-      const block = input?.connection?.targetBlock() as ProcedureBlock
-      block?.loadExtraState?.({ procedureId })
-      block.doProcedureUpdate()
       this.doProcedureUpdate()
     }
   },
