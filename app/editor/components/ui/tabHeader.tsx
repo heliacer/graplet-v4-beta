@@ -1,7 +1,7 @@
 import { DockviewDefaultTab, IDockviewPanelHeaderProps } from 'dockview-react'
-import { ItemIcon } from '../../lib/utils/icons'
+import { ItemIcon } from '../../utils/icons'
 import { Star } from 'lucide-react'
-import { IconT } from '../../lib/types'
+import { IconT } from '../../types'
 
 type TabParams = { iconType?: IconT; closable: boolean }
 

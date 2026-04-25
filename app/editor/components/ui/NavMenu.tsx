@@ -1,13 +1,12 @@
-import clsx from 'clsx'
+import { useEditorRefs } from '../../context'
+import { useEditorStore } from '../../state'
 import { EditMenu } from './menus/edit'
 import { FileMenu } from './menus/file'
-import { useEditorRefs } from '../../lib/context'
-import { useEditorStore } from '../../lib/state'
+import clsx from 'clsx'
 
 const lorem = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 `
-
 export function NavMenu() {
   const { workspace } = useEditorRefs()
   const notifications = useEditorStore(s => s.notifications)

@@ -1,3 +1,5 @@
+import { useEditorRefs } from '@/app/editor/context'
+import { useEditorStore } from '@/app/editor/state'
 import {
   AmbientLight,
   DirectionalLight,
@@ -16,8 +18,6 @@ import {
   Vec3Property
 } from '../PropertyInput'
 import { Crosshair, SwitchCamera } from 'lucide-react'
-import { useEditorRefs } from '@/app/editor/lib/context'
-import { useEditorStore } from '@/app/editor/lib/state'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 function BaseObjectProps({ object }: { object: Object3D }) {

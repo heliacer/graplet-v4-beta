@@ -1,6 +1,5 @@
-import { useEditorRefs } from '@/app/editor/lib/context'
-import { serializeObject } from '@/app/editor/lib/utils/sobject'
-import { ProjectData, SScene } from '@/app/editor/lib/types'
+import { useRef } from 'react'
+import { useEditorRefs } from '@/app/editor/context'
 import {
   File,
   FolderDown,
@@ -11,13 +10,14 @@ import {
   Settings,
   Settings2
 } from 'lucide-react'
-import { useRef } from 'react'
-import { serialization, WorkspaceSvg } from 'blockly'
 import { Scene } from 'three'
+import { serializeObject } from '@/app/editor/utils/sobject'
+import { ProjectData, SScene } from '@/app/editor/types'
+import { serialization, WorkspaceSvg } from 'blockly'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
-import { useSceneActions } from '@/app/editor/lib/hooks/useSceneActions'
-import { upsertPanel } from '@/app/editor/lib/utils/dockview'
-import { useEditorStore } from '@/app/editor/lib/state'
+import { useSceneActions } from '@/app/editor/hooks/useSceneActions'
+import { upsertPanel } from '@/app/editor/utils/dockview'
+import { useEditorStore } from '@/app/editor/state'
 
 function createProjectData(
   workspace: WorkspaceSvg,

@@ -1,4 +1,4 @@
-import { useShortcuts } from '../../lib/hooks/useShortcuts'
+import { useShortcuts } from '../../hooks/useShortcuts'
 
 export function Footer() {
   useShortcuts()

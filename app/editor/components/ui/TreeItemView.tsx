@@ -1,13 +1,13 @@
-import { ItemInstance, TreeInstance } from '@headless-tree/core'
-import { ItemIcon } from '../../lib/utils/icons'
-import clsx from 'clsx'
-import { useEditorRefs } from '../../lib/context'
-import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
 import { useId, useState } from 'react'
+import { useEditorRefs } from '../../context'
+import { useEditorStore } from '../../state'
+import { ItemInstance, TreeInstance } from '@headless-tree/core'
+import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
+import { ItemIcon } from '../../utils/icons'
 import { Object3D } from 'three'
-import { isInternalObject } from '../../lib/utils/three'
-import { TreeItem } from '../../lib/types'
-import { useEditorStore } from '../../lib/state'
+import { isInternalObject } from '../../utils/three'
+import { TreeItem } from '../../types'
+import clsx from 'clsx'
 
 interface RenamingItemViewProps {
   item: ItemInstance<TreeItem>

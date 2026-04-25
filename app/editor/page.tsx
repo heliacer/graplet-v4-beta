@@ -1,12 +1,12 @@
 'use client'
 import { useEffect } from 'react'
+import { useEditorStore } from './state'
 import { EditorHeader } from './components/Header'
+import { EditorProvider } from './context'
 import { GrapletDockview } from './components/dockview'
 import { ContextMenu } from './components/ui/contextMenu'
 import { Footer } from './components/ui/footer'
 import { Notifications } from './components/ui/notifications'
-import { EditorProvider } from './lib/context'
-import { useEditorStore } from './lib/state'
 
 export default function Editor() {
   useEffect(() => {

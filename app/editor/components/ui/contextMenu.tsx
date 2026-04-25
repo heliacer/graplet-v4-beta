@@ -1,3 +1,6 @@
+import { useEditorRefs } from '../../context'
+import { useState } from 'react'
+import { useEditorStore } from '../../state'
 import {
   ClipboardCopy,
   ClipboardPaste,
@@ -7,18 +10,15 @@ import {
   Trash,
   Ungroup
 } from 'lucide-react'
-import { useEditorRefs } from '../../lib/context'
-import { useObjectActions } from '../../lib/hooks/useObjectActions'
-import { createAddItemsMenu } from '../../lib/utils/addItems'
+import { useObjectActions } from '../../hooks/useObjectActions'
+import { createAddItemsMenu } from '../../utils/addItems'
 import {
   DropdownContext,
   DropdownItemList,
   DropdownItemProps
 } from '@/app/ui/components/Dropdown'
-import { useState } from 'react'
 import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
 import { Object3D } from 'three'
-import { useEditorStore } from '../../lib/state'
 
 /** @todo (#35) Object Context Menu revamp + fix renaming */
 export function ContextMenu() {

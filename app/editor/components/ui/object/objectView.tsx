@@ -1,9 +1,9 @@
-import { useEditorRefs } from '@/app/editor/lib/context'
-import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
-import { StateFunc } from '@/app/editor/lib/types'
+import { useEditorRefs } from '@/app/editor/context'
+import { useState } from 'react'
+import { StateFunc } from '@/app/editor/types'
+import { useCurrentObject } from '@/app/editor/hooks/useCurrentObject'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { Rows2 } from 'lucide-react'
-import React, { useState } from 'react'
 import {
   Camera,
   CameraHelper,

@@ -1,9 +1,9 @@
+import { useEditorRefs } from '../../../context'
+import { useEditorStore } from '@/app/editor/state'
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
-import { useEditorRefs } from '../../../lib/context'
-import { useEditorStore } from '@/app/editor/lib/state'
+import { useRuntime } from '@/app/editor/hooks/useRuntime'
+import { exprGenerator } from '@/app/editor/engine/generator/index'
 import clsx from 'clsx'
-import { useRuntime } from '@/app/editor/lib/hooks/useRuntime'
-import { exprGenerator } from '@/app/editor/lib/engine/generator/index'
 
 export function RunControls() {
   const { workspace } = useEditorRefs()

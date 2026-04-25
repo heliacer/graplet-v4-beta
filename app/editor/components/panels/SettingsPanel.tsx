@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { MiniGraplet } from '@/app/ui/assets/MiniGraplet'
-import { useEditorStore } from '../../lib/state'
+import { useEditorStore } from '../../state'
 
 interface ThemeButtonProps {
   theme: string

@@ -1,10 +1,10 @@
-import { useCurrentObject } from '@/app/editor/lib/hooks/useCurrentObject'
-import { useEditorStore } from '@/app/editor/lib/state'
+import { useEditorStore } from '@/app/editor/state'
 import { ObjectActions } from '../object/objectActions'
 import { ObjectAdd } from '../object/objectAdd'
 import { ObjectSnap } from '../object/objectSnap'
 import { ObjectTools } from '../object/objectTools'
 import { ObjectView } from '../object/objectView'
+import { useCurrentObject } from '@/app/editor/hooks/useCurrentObject'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 
 export function ObjectControls() {

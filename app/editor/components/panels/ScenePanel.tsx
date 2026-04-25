@@ -1,11 +1,11 @@
-import { useEditorRefs } from '../../lib/context'
+import { useEditorRefs } from '../../context'
 import { IDockviewPanelProps } from 'dockview-react'
-import { useProjectLoader } from '../../lib/hooks/useProjectLoader'
-import { useRenderer } from '../../lib/hooks/useRenderer'
-import { useTransformControls } from '../../lib/hooks/useTransformControls'
+import { useProjectLoader } from '../../hooks/useProjectLoader'
+import { useRenderer } from '../../hooks/useRenderer'
+import { useTransformControls } from '../../hooks/useTransformControls'
 import { useState } from 'react'
 import clsx from 'clsx'
-import { useEditorStore } from '../../lib/state'
+import { useEditorStore } from '../../state'
 import { ObjectControls } from '../ui/controls/objectControls'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
