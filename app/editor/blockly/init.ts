@@ -6,6 +6,7 @@ import {
   Options,
   registry,
   Scrollbar,
+  serialization,
   Toolbox,
   ToolboxCategory,
   VerticalFlyout
@@ -67,21 +68,19 @@ class ContinuousClosableMetrics extends ContinuousMetrics {
 }
 
 export function initializeBlocklyConfig() {
-  registerProcedureSerializer()
+  serialization.registry.unregister('procedures')
+  /** @todo fix serialization */
   Extensions.unregister('math_is_divisibleby_mutator')
   Extensions.registerMutator(
     'math_is_divisibleby_mutator',
     isDivisibleMutatorMixin,
     isDivisibleMutatorExtension
   )
-  unregisterProcedureBlocks()
-
   /**
    * @todo (#14) Graplet Procedures
    *
    * For now use built in, but later the custom function blocks will be used.
    */
-  common.defineBlocks(defaultFunctionBlocks)
 
   /* register dynamic categories before injection */
   const sourceToolboxInit = Toolbox.prototype.init

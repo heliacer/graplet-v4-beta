@@ -77,6 +77,7 @@ Blocks['function_call'] = {
     this.setPreviousStatement(true, null)
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
+    this.setInputsInline(true)
     this.model = null
   },
 
@@ -98,11 +99,56 @@ Blocks['function_call'] = {
       this.removeInput(input.name)
     }
     const params = this.model.getParameters()
-    console.log(params)
-    for (const param of params) {
-      const [type] = param.getTypes()
-      const name = param.getName()
-      this.appendDummyInput().appendField(`${name} [${type}]`)
+
+    /** @todo needs improvement */
+    let labelList: string[] = []
+    for (let i = 0; i < params.length; i++) {
+      const [type] = params[i].getTypes()
+      const name = params[i].getName()
+      const inputName = `ARG${i}`
+      switch (type) {
+        case 'label': {
+          if (i === params.length - 1) {
+            this.appendDummyInput(inputName).appendField(name)
+          } else {
+            labelList.push(name)
+          }
+          break
+        }
+        case 'bool': {
+          const input = this.appendValueInput(inputName)
+          input.setCheck('Boolean')
+          if (labelList.length > 0) {
+            input.appendField(labelList.join(' '))
+            labelList = []
+          }
+          break
+        }
+        case 'number': {
+          const input = this.appendValueInput(inputName)
+          input.setCheck('Number')
+          input.connection?.setShadowState({
+            type: 'number'
+          })
+          if (labelList.length > 0) {
+            input.appendField(labelList.join(' '))
+            labelList = []
+          }
+          break
+        }
+        case 'text': {
+          const input = this.appendValueInput(inputName)
+          input.setCheck('String')
+          input.connection?.setShadowState({
+            type: 'text'
+          })
+          if (labelList.length > 0) {
+            input.appendField(labelList.join(' '))
+            labelList = []
+          }
+          break
+        }
+      }
     }
   },
 
