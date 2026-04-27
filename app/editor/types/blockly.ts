@@ -1,34 +1,25 @@
-import { ObservableProcedureModel } from '@blockly/block-shareable-procedures'
-import { Block, BlockSvg, procedures } from 'blockly'
+import { BlockSvg, procedures, serialization } from 'blockly'
+import { ProcedureModel } from '../blockly/models/procedure'
 
-/** @todo (#14) Procedures: create custom ProcedureModel with these inputs */
-export interface ProcedureInput {
-  type: 'text' | 'number' | 'bool' | 'label'
-  text: string
+export type ParameterType = 'text' | 'number' | 'bool'
+export type ProcedureInputType = ParameterType | 'label'
+
+export interface ParameterState
+  extends serialization.procedures.ParameterState {
+  types: ProcedureInputType[]
+}
+
+export interface ProcedureState extends serialization.procedures.State {
+  parameters: ParameterState[]
+  /** Should only hold one return type, but it's an array because blockly */
+  returnTypes: ParameterType[]
 }
 
 export declare class ProcedureBlock extends BlockSvg {
-  model: ObservableProcedureModel | null
+  model: ProcedureModel | null
   getProcedureModel(): procedures.IProcedureModel
   doProcedureUpdate(): void
-  saveExtraState: (doFullSerialization?: boolean) => FunctionExtraState
+  saveExtraState: () => ProcedureState
+  loadExtraState: (state: { id: string }) => void
   isProcedureDef(): boolean
-}
-
-export declare class ProcedureDefBlock extends ProcedureBlock {
-  block: Block
-}
-
-export type OldExtraState = {
-  name: string
-  params?: string[]
-}
-
-export interface FunctionExtraState {
-  procedureId: string
-  name?: string
-  parameters?: {
-    name: string
-    id: string
-  }[]
 }

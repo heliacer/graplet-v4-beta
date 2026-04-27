@@ -9,11 +9,6 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       categorystyle: 'motion_category',
       contents: [
         {
-          kind: 'button',
-          text: '🔒',
-          callbackkey: 'lockToolbox'
-        },
-        {
           kind: 'block',
           type: 'moveunitsxyz',
           inputs: {

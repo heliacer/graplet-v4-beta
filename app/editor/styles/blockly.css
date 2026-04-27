@@ -29,7 +29,7 @@
   border-color: var(--color-ui-700);
   border-width: 1px 1px 0px 0px;
   border-radius: 0px 3px 0px 0px;
-  padding: 2px 0px
+  padding: 2px 0px;
 }
 
 .blocklyToolboxCategoryContainer {
@@ -179,8 +179,9 @@
 }
 
 .blocklyWidgetDiv .blocklyMenu.blocklyContextMenu {
+  font-size: 12px;
   border-color: var(--color-ui-700);
-  background-color: var(--color-ui-800);
+  background-color: var(--color-ui-850);
   box-sizing: content-box;
   padding: 2px 0px;
   box-shadow: none;
@@ -195,10 +196,14 @@
 }
 
 .blocklyMenu.blocklyContextMenu .blocklyMenuItem.blocklyMenuItemHighlight {
-  background-color: var(--color-ui-700);
-  border-color: var(--color-ui-600);
+  background-color: var(--color-ui-750);
+  border-color: var(--color-ui-650);
 }
 
 .blocklyMenu.blocklyContextMenu .blocklyMenuItem.blocklyMenuItemDisabled {
   color: var(--color-ui-400);
+}
+
+.blocklyLockButton {
+  transform: translate(350px, 10px);
 }

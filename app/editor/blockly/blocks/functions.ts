@@ -1,6 +1,6 @@
 import { Blocks, common } from 'blockly'
-import { FunctionExtraState, ProcedureBlock } from '../../types'
-import { ObservableProcedureModel } from '@blockly/block-shareable-procedures'
+import { ProcedureBlock } from '../../types'
+import { ProcedureModel } from '../models/procedure'
 
 /** @todo (#14) Graplet Procedures */
 
@@ -41,36 +41,30 @@ Blocks['function_def'] = {
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
-    this.setFieldValue(this.model?.getName(), 'NAME')
     if (!this.model) return
+    this.setFieldValue(this.model.getId(), 'NAME')
+    /** @todo get all params here */
   },
 
-  saveExtraState(this: ProcedureBlock, doFullSerialization: boolean) {
+  saveExtraState(this: ProcedureBlock) {
     if (!this.model) return
 
-    const state: FunctionExtraState = {
-      procedureId: this.model.getId()
-    }
-
-    if (doFullSerialization) {
-      state.name = this.model.getName()
-      state.parameters = this.model.getParameters().map(p => ({
+    return {
+      id: this.model.getId(),
+      parameters: this.model.getParameters().map(p => ({
         name: p.getName(),
-        id: p.getId()
-      }))
+        id: p.getId(),
+        type: p.getTypes()[0]
+      })),
+      returnTypes: this.model.getReturnTypes()
     }
-
-    return state
   },
 
-  loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
-    const { procedureId } = state
-
+  loadExtraState(this: ProcedureBlock, state: { id: string }) {
     const workspace = this.workspace
-    const model = workspace.getProcedureMap().get(procedureId)
-
+    const model = workspace.getProcedureMap().get(state.id)
     if (model) {
-      this.model = model as ObservableProcedureModel
+      this.model = model as ProcedureModel
       this.doProcedureUpdate()
     }
   },
@@ -80,7 +74,6 @@ Blocks['function_def'] = {
 
 Blocks['function_call'] = {
   init(this: ProcedureBlock) {
-    this.appendDummyInput().appendField('', 'NAME')
     this.setPreviousStatement(true, null)
     this.setNextStatement(true, null)
     this.setStyle('function_blocks')
@@ -101,33 +94,38 @@ Blocks['function_call'] = {
 
   doProcedureUpdate(this: ProcedureBlock) {
     if (!this.model) return
-    this.setFieldValue(this.model.getName(), 'NAME')
+    for (const input of this.inputList) {
+      this.removeInput(input.name)
+    }
+    const params = this.model.getParameters()
+    console.log(params)
+    for (const param of params) {
+      const [type] = param.getTypes()
+      const name = param.getName()
+      this.appendDummyInput().appendField(`${name} [${type}]`)
+    }
   },
 
-  saveExtraState(this: ProcedureBlock, doFullSerialization: boolean) {
+  saveExtraState(this: ProcedureBlock) {
     if (!this.model) return
 
-    const state: FunctionExtraState = {
-      procedureId: this.model.getId()
-    }
-
-    if (doFullSerialization) {
-      state.name = this.model.getName()
-      state.parameters = this.model.getParameters().map(p => ({
+    return {
+      id: this.model.getId(),
+      parameters: this.model.getParameters().map(p => ({
         name: p.getName(),
-        id: p.getId()
-      }))
+        id: p.getId(),
+        type: p.getTypes()[0]
+      })),
+      returnTypes: this.model.getReturnTypes()
     }
-
-    return state
   },
 
-  loadExtraState(this: ProcedureBlock, state: FunctionExtraState) {
+  loadExtraState(this: ProcedureBlock, state: { id: string }) {
     const workspace = this.workspace.targetWorkspace ?? this.workspace
-    const model = workspace.getProcedureMap().get(state.procedureId)
+    const model = workspace.getProcedureMap().get(state.id)
 
     if (model) {
-      this.model = model as ObservableProcedureModel
+      this.model = model as ProcedureModel
       this.doProcedureUpdate()
     }
   }

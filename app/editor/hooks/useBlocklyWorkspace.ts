@@ -46,17 +46,9 @@ export function useBlocklyWorkspace(
     ws.addChangeListener(blockListener)
     ws.getFlyout()?.getWorkspace().addChangeListener(blockListener)
     ws.registerButtonCallback('createFunction', createFunction)
-    ws.registerButtonCallback('lockToolbox', button => {
-      const flyout = button.getTargetWorkspace().getFlyout()
-      if (!flyout) return
-      flyout.autoClose = !flyout.autoClose
-      const textEl = button.getSvgRoot().querySelector('text')
-      if (textEl) textEl.textContent = flyout.autoClose ? '🔒' : '🔓'
-    })
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(blocklyDiv.current)
-
     function cleanup() {
       resizeObserver.disconnect()
       ws.removeChangeListener(variableListener)

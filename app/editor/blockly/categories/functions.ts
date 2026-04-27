@@ -15,10 +15,7 @@ export function functionsCategory(workspace: WorkspaceSvg) {
       kind: 'block',
       type: 'function_call',
       extraState: {
-        procedureId: model.getId()
-      },
-      fields: {
-        NAME: model.getName()
+        id: model.getId()
       }
     })
   }
