@@ -1,4 +1,3 @@
-import { useEditorRefs } from '../../context'
 import { useEditorStore } from '../../state'
 import { EditMenu } from './menus/edit'
 import { FileMenu } from './menus/file'
@@ -8,7 +7,6 @@ const lorem = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 `
 export function NavMenu() {
-  const { workspace } = useEditorRefs()
   const notifications = useEditorStore(s => s.notifications)
   const setNotifications = useEditorStore(s => s.setNotifications)
 
@@ -34,22 +32,6 @@ export function NavMenu() {
         }}
       >
         notification!
-      </button>
-      <button
-        className={clsx(
-          'text-sm flex gap-1 px-1 items-center',
-          'border rounded-md',
-          'border-ui-700',
-          'hover:bg-ui-750 bg-ui-800'
-        )}
-        onClick={() => {
-          const flyout = workspace.current?.getFlyout()
-          if (flyout) {
-            flyout.autoClose = !flyout.autoClose
-          }
-        }}
-      >
-        lock / unlock Flyout
       </button>
     </nav>
   )
