@@ -6,7 +6,7 @@ import { triggerProceduresUpdate } from '@blockly/block-shareable-procedures'
 export class ProcedureModel implements procedures.IProcedureModel {
   private readonly id: string
   private parameters: ParameterModel[] = []
-  private returnTypes: ParameterType[] = []
+  private returnTypes: ParameterType[] | null = null
   private enabled = true
   private shouldTriggerUpdates = true
 
@@ -67,7 +67,7 @@ export class ProcedureModel implements procedures.IProcedureModel {
     return this.enabled
   }
   getReturnTypes(): ParameterType[] | null {
-    return this.returnTypes.length ? this.returnTypes : null
+    return this.returnTypes
   }
   getParameter(index: number): ParameterModel {
     return this.parameters[index]
@@ -82,7 +82,7 @@ export class ProcedureModel implements procedures.IProcedureModel {
 
   saveState(): ProcedureState {
     return {
-      name: this.id,
+      name: '',
       id: this.id,
       returnTypes: this.returnTypes,
       parameters: this.parameters.map(p => p.saveState())

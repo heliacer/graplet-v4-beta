@@ -1,7 +1,7 @@
 import { FlyoutButton } from 'blockly'
 import { ProcedureModel } from '../models/procedure'
 import { ParameterModel } from '../models/parameter'
-import { ProcedureBlock, ProcedureInputType } from '../../types'
+import { ProcedureInputType } from '../../types'
 
 function createInputs() {
   const inputs: ParameterModel[] = []
@@ -49,10 +49,4 @@ export function createFunction(button: FlyoutButton) {
   })
 
   procedureMap.add(model)
-
-  const block = workspace.newBlock('function_def') as ProcedureBlock
-  block.loadExtraState({ id: model.getId() })
-  block.initSvg()
-  block.render()
-  workspace.addTopBlock(block)
 }

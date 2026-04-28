@@ -46,9 +46,9 @@ Blocks['function_def'] = {
     /** @todo get all params here */
   },
 
-  saveExtraState(this: ProcedureBlock) {
+  saveExtraState(this: ProcedureBlock, doFullSerialization?: boolean) {
     if (!this.model) return
-
+    if (!doFullSerialization) return { id: this.model.getId() }
     return {
       id: this.model.getId(),
       parameters: this.model.getParameters().map(p => ({
@@ -152,9 +152,9 @@ Blocks['function_call'] = {
     }
   },
 
-  saveExtraState(this: ProcedureBlock) {
+  saveExtraState(this: ProcedureBlock, doFullSerialization?: boolean) {
     if (!this.model) return
-
+    if (!doFullSerialization) return { id: this.model.getId() }
     return {
       id: this.model.getId(),
       parameters: this.model.getParameters().map(p => ({

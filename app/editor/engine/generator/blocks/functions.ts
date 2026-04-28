@@ -6,7 +6,7 @@ export function functionDefGen(
   block: Block,
   generator: ExpressionGenerator
 ): Expression {
-  const state = block.saveExtraState?.()
+  const state = block.saveExtraState?.(true)
   const connectedExprs = generator.getConnectedExpressions(block)
 
   /**
@@ -22,7 +22,7 @@ export function functionDefGen(
 }
 
 export function functionCallGen(block: Block): Expression {
-  const state = block.saveExtraState?.()
+  const state = block.saveExtraState?.(true)
 
   /**
    * @todo get params, filter out labels

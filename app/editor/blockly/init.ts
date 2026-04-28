@@ -17,11 +17,6 @@ import {
   isDivisibleMutatorExtension
 } from './extensions/divisibleBy'
 import { GrapletRenderer } from './renderer'
-import {
-  blocks as defaultFunctionBlocks,
-  unregisterProcedureBlocks,
-  registerProcedureSerializer
-} from '@blockly/block-shareable-procedures'
 import { functionsCategory } from './categories/functions'
 import {
   ContinuousCategory,
@@ -30,6 +25,7 @@ import {
   ContinuousToolbox,
   RecyclableBlockFlyoutInflater
 } from '@blockly/continuous-toolbox'
+import { ProcedureSerializer } from './utils/procedureSerializer'
 
 class ContinuousIconCategory extends ContinuousCategory {
   override createIconDom_(): Element {
@@ -68,8 +64,11 @@ class ContinuousClosableMetrics extends ContinuousMetrics {
 }
 
 export function initializeBlocklyConfig() {
+  /** register procedure serializer */
   serialization.registry.unregister('procedures')
-  /** @todo fix serialization */
+  serialization.registry.register('procedures', new ProcedureSerializer())
+
+  /** register disible_by_mutator, with shadow values */
   Extensions.unregister('math_is_divisibleby_mutator')
   Extensions.registerMutator(
     'math_is_divisibleby_mutator',

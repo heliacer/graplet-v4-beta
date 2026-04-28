@@ -12,14 +12,14 @@ export interface ParameterState
 export interface ProcedureState extends serialization.procedures.State {
   parameters: ParameterState[]
   /** Should only hold one return type, but it's an array because blockly */
-  returnTypes: ParameterType[]
+  returnTypes: ParameterType[] | null
 }
 
 export declare class ProcedureBlock extends BlockSvg {
   model: ProcedureModel | null
   getProcedureModel(): procedures.IProcedureModel
   doProcedureUpdate(): void
-  saveExtraState: () => ProcedureState
+  saveExtraState: (doFullSerialization?: boolean) => ProcedureState
   loadExtraState: (state: { id: string }) => void
   isProcedureDef(): boolean
 }
