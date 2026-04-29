@@ -1,7 +1,7 @@
-import { FlyoutButton } from 'blockly'
+import { FlyoutButton, serialization } from 'blockly'
 import { ProcedureModel } from '../models/procedure'
 import { ParameterModel } from '../models/parameter'
-import { ProcedureInputType } from '../../types'
+import { ProcedureBlock, ProcedureInputType } from '../../types'
 
 function createInputs() {
   const inputs: ParameterModel[] = []
@@ -49,4 +49,13 @@ export function createFunction(button: FlyoutButton) {
   })
 
   procedureMap.add(model)
+  serialization.blocks.append(
+    {
+      type: 'function_def',
+      extraState: {
+        id: model.getId()
+      }
+    },
+    workspace
+  )
 }

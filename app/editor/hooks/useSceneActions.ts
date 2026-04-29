@@ -81,13 +81,15 @@ export function useSceneActions() {
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
         const { selectedItems } = project
         if (selectedItems !== undefined) setSelectedItems(selectedItems)
-        if (!workspace.current) throw Error('Missing workspace')
-        serialization.workspaces.load(project.workspace, workspace.current)
-        console.info(
-          '%cLoaded workspace state:',
-          'color: salmon;',
-          project.workspace
-        )
+        requestAnimationFrame(() => {
+          if (!workspace.current) throw Error('Missing workspace')
+          serialization.workspaces.load(project.workspace, workspace.current)
+          console.info(
+            '%cLoaded workspace state:',
+            'color: salmon;',
+            project.workspace
+          )
+        })
       }
     } catch (error) {
       console.error('Could not parse JSON data.', error)
