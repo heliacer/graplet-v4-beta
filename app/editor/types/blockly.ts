@@ -1,8 +1,8 @@
 import { BlockSvg, procedures, serialization } from 'blockly'
 import { ProcedureModel } from '../blockly/models/procedure'
 
-export type ParameterType = 'text' | 'number' | 'bool'
-export type ProcedureInputType = ParameterType | 'label'
+export type ParameterType = 'String' | 'Number' | 'Boolean'
+export type ProcedureInputType = ParameterType | 'Label'
 
 export interface ParameterState
   extends serialization.procedures.ParameterState {
@@ -22,4 +22,8 @@ export declare class ProcedureBlock extends BlockSvg {
   saveExtraState: (doFullSerialization?: boolean) => ProcedureState
   loadExtraState: (state: { id: string }) => void
   isProcedureDef(): boolean
+}
+
+export declare class ParameterBlock extends ProcedureBlock {
+  index: number
 }

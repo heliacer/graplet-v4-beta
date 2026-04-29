@@ -1,14 +1,14 @@
 import { FlyoutButton, serialization } from 'blockly'
 import { ProcedureModel } from '../models/procedure'
 import { ParameterModel } from '../models/parameter'
-import { ProcedureBlock, ProcedureInputType } from '../../types'
+import { ProcedureInputType } from '../../types'
 
 function createInputs() {
   const inputs: ParameterModel[] = []
   let shouldContinue = true
   while (shouldContinue) {
     const type = prompt(
-      'Provide input type (label, text, number, bool):'
+      'Provide input type (Label, String, Number, Boolean):'
     )?.trim()
 
     if (type === undefined) {
@@ -16,7 +16,7 @@ function createInputs() {
       break
     }
 
-    if (!['label', 'text', 'number', 'bool'].includes(type)) {
+    if (!['Label', 'String', 'Number', 'Boolean'].includes(type)) {
       alert(`${type} is not a valid input type.`)
       break
     }

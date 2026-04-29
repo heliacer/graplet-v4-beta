@@ -1,5 +1,5 @@
-import { Blocks, common } from 'blockly'
-import { ProcedureBlock } from '../../types'
+import { Blocks, common, serialization } from 'blockly'
+import { ParameterBlock, ProcedureBlock, ProcedureState } from '../../types'
 import { ProcedureModel } from '../models/procedure'
 
 /** @todo (#14) Graplet Procedures */
@@ -21,43 +21,78 @@ const functionBlocks = common.createBlockDefinitionsFromJsonArray([
 
 common.defineBlocks(functionBlocks)
 
+/** @todo cleanup */
+function rebuildParameters(block: ProcedureBlock, shadow?: boolean) {
+  if (!block.model) return
+  for (const input of [...block.inputList]) {
+    block.removeInput(input.name)
+  }
+  const params = block.model.getParameters()
+  for (let i = 0; i < params.length; i++) {
+    const [type] = params[i].getTypes()
+    const name = params[i].getName()
+    const inputName = `ARG${i}`
+    if (type === 'Label') {
+      block.appendDummyInput(inputName).appendField(name)
+    } else {
+      const input = block.appendValueInput(inputName)
+      input.setCheck(type)
+      if (shadow) {
+        const shadowBlockType =
+          type === 'String'
+            ? 'text'
+            : type === 'Number'
+              ? 'number'
+              : 'logic_boolean'
+        input.connection?.setShadowState({
+          type: shadowBlockType
+        })
+      } else {
+        /** @todo actually append the blocks */
+        serialization.blocks.append(
+          {
+            type: 'function_param',
+            extraState: {
+              id: block.model.getId(),
+              index: i
+            }
+          },
+          block.workspace
+        )
+      }
+    }
+  }
+}
+
+function getExtraState(model: ProcedureModel): ProcedureState {
+  return {
+    id: model.getId(),
+    name: '',
+    parameters: model.getParameters().map(p => ({
+      name: p.getName(),
+      id: p.getId(),
+      types: p.getTypes()
+    })),
+    returnTypes: model.getReturnTypes()
+  }
+}
+
 Blocks['function_def'] = {
   init(this: ProcedureBlock) {
-    this.appendDummyInput().appendField('', 'NAME')
     this.setNextStatement(true, null)
+    this.setInputsInline(true)
     this.setStyle('function_blocks')
-  },
-
-  getProcedureModel(this: ProcedureBlock) {
-    return this.model
-  },
-
-  isProcedureDef(this: ProcedureBlock) {
-    return true
-  },
-
-  getVarModels(this: ProcedureBlock) {
-    return []
+    this.model = null
   },
 
   doProcedureUpdate(this: ProcedureBlock) {
-    if (!this.model) return
-    this.setFieldValue(this.model.getId(), 'NAME')
-    /** @todo get all params here */
+    rebuildParameters(this)
   },
 
   saveExtraState(this: ProcedureBlock, doFullSerialization?: boolean) {
     if (!this.model) return
     if (!doFullSerialization) return { id: this.model.getId() }
-    return {
-      id: this.model.getId(),
-      parameters: this.model.getParameters().map(p => ({
-        name: p.getName(),
-        id: p.getId(),
-        type: p.getTypes()[0]
-      })),
-      returnTypes: this.model.getReturnTypes()
-    }
+    return getExtraState(this.model)
   },
 
   loadExtraState(this: ProcedureBlock, state: { id: string }) {
@@ -69,7 +104,17 @@ Blocks['function_def'] = {
     }
   },
 
-  destroy(this: ProcedureBlock) {}
+  destroy(this: ProcedureBlock) {
+    if (!this.model) return
+    this.workspace.getProcedureMap().delete(this.model.getId())
+    const blocks = this.workspace.getAllBlocks(false)
+    for (const block of blocks) {
+      const model = (block as ProcedureBlock).model
+      if (model && model.getId() === this.model.getId()) {
+        block.dispose()
+      }
+    }
+  }
 }
 
 Blocks['function_call'] = {
@@ -81,95 +126,55 @@ Blocks['function_call'] = {
     this.model = null
   },
 
-  getProcedureModel(this: ProcedureBlock) {
-    return this.model
-  },
-
-  isProcedureDef(this: ProcedureBlock) {
-    return false
-  },
-
-  getVarModels(this: ProcedureBlock) {
-    return []
-  },
-
   doProcedureUpdate(this: ProcedureBlock) {
     if (!this.model) return
-    for (const input of this.inputList) {
-      this.removeInput(input.name)
-    }
-    const params = this.model.getParameters()
-
-    /** @todo needs improvement */
-    let labelList: string[] = []
-    for (let i = 0; i < params.length; i++) {
-      const [type] = params[i].getTypes()
-      const name = params[i].getName()
-      const inputName = `ARG${i}`
-      switch (type) {
-        case 'label': {
-          if (i === params.length - 1) {
-            this.appendDummyInput(inputName).appendField(name)
-          } else {
-            labelList.push(name)
-          }
-          break
-        }
-        case 'bool': {
-          const input = this.appendValueInput(inputName)
-          input.setCheck('Boolean')
-          if (labelList.length > 0) {
-            input.appendField(labelList.join(' '))
-            labelList = []
-          }
-          break
-        }
-        case 'number': {
-          const input = this.appendValueInput(inputName)
-          input.setCheck('Number')
-          input.connection?.setShadowState({
-            type: 'number'
-          })
-          if (labelList.length > 0) {
-            input.appendField(labelList.join(' '))
-            labelList = []
-          }
-          break
-        }
-        case 'text': {
-          const input = this.appendValueInput(inputName)
-          input.setCheck('String')
-          input.connection?.setShadowState({
-            type: 'text'
-          })
-          if (labelList.length > 0) {
-            input.appendField(labelList.join(' '))
-            labelList = []
-          }
-          break
-        }
-      }
-    }
+    rebuildParameters(this, true)
   },
 
   saveExtraState(this: ProcedureBlock, doFullSerialization?: boolean) {
     if (!this.model) return
     if (!doFullSerialization) return { id: this.model.getId() }
-    return {
-      id: this.model.getId(),
-      parameters: this.model.getParameters().map(p => ({
-        name: p.getName(),
-        id: p.getId(),
-        type: p.getTypes()[0]
-      })),
-      returnTypes: this.model.getReturnTypes()
-    }
+    return getExtraState(this.model)
   },
 
   loadExtraState(this: ProcedureBlock, state: { id: string }) {
     const workspace = this.workspace.targetWorkspace ?? this.workspace
     const model = workspace.getProcedureMap().get(state.id)
+    if (model) {
+      this.model = model as ProcedureModel
+      this.doProcedureUpdate()
+    }
+  }
+}
 
+Blocks['function_param'] = {
+  init(this: ParameterBlock) {
+    this.appendDummyInput().appendField('', 'NAME')
+    this.setStyle('function_blocks')
+    this.setInputsInline(true)
+    this.setOutput(true)
+    this.model = null
+    this.index = 0
+  },
+
+  doProcedureUpdate(this: ParameterBlock) {
+    if (!this.model) return
+    const param = this.model.getParameter(this.index)
+    this.setFieldValue(param.getName(), 'NAME')
+    this.setOutput(true, param.getTypes()[0])
+    console.log(param)
+  },
+
+  saveExtraState(this: ParameterBlock, doFullSerialization?: boolean) {
+    if (!this.model) return
+    if (!doFullSerialization) return { id: this.model.getId() }
+    return getExtraState(this.model)
+  },
+
+  /** @todo create separate extrastate for params */
+  loadExtraState(this: ParameterBlock, state: { id: string; index: number }) {
+    const model = this.workspace.getProcedureMap().get(state.id)
+    this.index = state.index
     if (model) {
       this.model = model as ProcedureModel
       this.doProcedureUpdate()

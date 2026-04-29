@@ -61,7 +61,7 @@ export class ProcedureModel implements procedures.IProcedureModel {
     return this.id
   }
   getName(): string {
-    return this.id
+    return ''
   }
   getEnabled(): boolean {
     return this.enabled
@@ -77,7 +77,7 @@ export class ProcedureModel implements procedures.IProcedureModel {
   }
 
   getValueParameters(): ParameterModel[] {
-    return this.parameters.filter(p => p.getTypes()[0] !== 'label')
+    return this.parameters.filter(p => p.getTypes()[0] !== 'Label')
   }
 
   saveState(): ProcedureState {
