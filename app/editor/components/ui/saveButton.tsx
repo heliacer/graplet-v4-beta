@@ -2,7 +2,7 @@ import { Save } from 'lucide-react'
 import { useEditorRefs } from '../../context/editor'
 import { createProjectData } from '../../utils/createProjectData'
 import { useEditorStore } from '../../state'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useKeybinds } from '../../context/keybinds'
 
 export function SaveButton() {
@@ -10,7 +10,7 @@ export function SaveButton() {
   const selectedItems = useEditorStore(s => s.selectedItems)
   const { register, unregister } = useKeybinds()
 
-  function handleSave() {
+  const handleSave = useCallback(() => {
     if (!workspace.current) throw Error('Missing workspace')
     const projectData = createProjectData(
       workspace.current,
@@ -23,7 +23,7 @@ export function SaveButton() {
       'color: salmon;',
       projectData
     )
-  }
+  }, [selectedItems])
 
   useEffect(() => {
     register(
@@ -37,7 +37,7 @@ export function SaveButton() {
       }
     )
     return () => unregister({ key: 's', modifiers: ['Ctrl'] })
-  }, [])
+  }, [handleSave, register, unregister])
 
   return (
     <button

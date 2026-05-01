@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useEditorRefs } from '@/app/editor/context/editor'
 import {
   File,
@@ -6,19 +6,14 @@ import {
   FolderSync,
   FolderUp,
   Keyboard,
-  Save,
   Settings,
   Settings2
 } from 'lucide-react'
-import { Scene } from 'three'
-import { serializeObject } from '@/app/editor/utils/sobject'
-import { ProjectData, SScene } from '@/app/editor/types'
-import { serialization, WorkspaceSvg } from 'blockly'
+import { serialization } from 'blockly'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { useSceneActions } from '@/app/editor/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/utils/dockview'
 import { useEditorStore } from '@/app/editor/state'
-import { useKeybinds } from '@/app/editor/context/keybinds'
 import { createProjectData } from '@/app/editor/utils/createProjectData'
 
 export function FileMenu() {

@@ -1,4 +1,4 @@
-import { BlockSvg, procedures, serialization } from 'blockly'
+import { BlockSvg, serialization } from 'blockly'
 import { ProcedureModel } from '../blockly/models/procedure'
 
 export type ParameterType = 'String' | 'Number' | 'Boolean'
