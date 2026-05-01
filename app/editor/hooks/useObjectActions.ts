@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../context'
+import { useEditorRefs } from '../context/editor'
 import {
   Camera,
   CameraHelper,
@@ -79,10 +79,6 @@ export function useObjectActions() {
     const object = createObject(props)
     applyProps(object, props)
     target.add(object)
-    console.info(
-      `%c${object.name} was added to ${target.name || target.type}`,
-      'color: aquamarine;'
-    )
 
     /** Add children */
     if (props.children) {

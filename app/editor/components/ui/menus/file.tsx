@@ -1,5 +1,5 @@
-import { useRef } from 'react'
-import { useEditorRefs } from '@/app/editor/context'
+import { useEffect, useRef } from 'react'
+import { useEditorRefs } from '@/app/editor/context/editor'
 import {
   File,
   FolderDown,
@@ -18,18 +18,8 @@ import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { useSceneActions } from '@/app/editor/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/utils/dockview'
 import { useEditorStore } from '@/app/editor/state'
-
-function createProjectData(
-  workspace: WorkspaceSvg,
-  scene: Scene,
-  selectedItems: string[]
-): ProjectData {
-  return {
-    workspace: serialization.workspaces.save(workspace),
-    scene: serializeObject(scene, true) as SScene,
-    selectedItems
-  }
-}
+import { useKeybinds } from '@/app/editor/context/keybinds'
+import { createProjectData } from '@/app/editor/utils/createProjectData'
 
 export function FileMenu() {
   const { workspace, scene } = useEditorRefs()
@@ -38,21 +28,6 @@ export function FileMenu() {
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-
-  function handleSave() {
-    if (!workspace.current) throw Error('Missing workspace')
-    const projectData = createProjectData(
-      workspace.current,
-      scene.current,
-      selectedItems
-    )
-    localStorage.setItem('projectData', JSON.stringify(projectData))
-    console.info(
-      '%cSaved project to localStorage:',
-      'color: salmon;',
-      projectData
-    )
-  }
 
   function handleSaveFile() {
     if (!workspace.current) throw Error('Missing workspace')
@@ -101,11 +76,6 @@ export function FileMenu() {
   }
 
   const items: DropdownItemProps[] = [
-    {
-      label: 'Save Now',
-      Icon: Save,
-      onClick: handleSave
-    },
     {
       label: 'Export',
       Icon: FolderDown,

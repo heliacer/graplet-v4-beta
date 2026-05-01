@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/context'
+import { useEditorRefs } from '@/app/editor/context/editor'
 import { useState } from 'react'
 import { StateFunc } from '@/app/editor/types'
 import { useCurrentObject } from '@/app/editor/hooks/useCurrentObject'

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useEditorRefs } from '../context'
+import { useEditorRefs } from '../context/editor'
 import { isInternalObject, isTransformControlsMode } from '../utils/three'
 import { useCurrentObject } from './useCurrentObject'
 import { useEditorStore } from '../state'

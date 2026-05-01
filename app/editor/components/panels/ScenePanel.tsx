@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../../context'
+import { useEditorRefs } from '../../context/editor'
 import { IDockviewPanelProps } from 'dockview-react'
 import { useProjectLoader } from '../../hooks/useProjectLoader'
 import { useRenderer } from '../../hooks/useRenderer'

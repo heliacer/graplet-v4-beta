@@ -17,13 +17,16 @@ export interface ProcedureState extends serialization.procedures.State {
 
 export declare class ProcedureBlock extends BlockSvg {
   model: ProcedureModel | null
-  getProcedureModel(): procedures.IProcedureModel
   doProcedureUpdate(): void
   saveExtraState: (doFullSerialization?: boolean) => ProcedureState
   loadExtraState: (state: { id: string }) => void
-  isProcedureDef(): boolean
 }
 
-export declare class ParameterBlock extends ProcedureBlock {
+export declare class ParameterBlock extends BlockSvg {
   index: number
+  model: ProcedureModel | null
+  doProcedureUpdate(): void
+  /** may need its own state */
+  saveExtraState: (doFullSerialization?: boolean) => ProcedureState
+  loadExtraState: (state: { id: string; index: number }) => void
 }

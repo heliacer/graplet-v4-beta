@@ -6,7 +6,7 @@ import {
   syncDataLoaderFeature
 } from '@headless-tree/core'
 import { useEffect } from 'react'
-import { useEditorRefs } from '../../context'
+import { useEditorRefs } from '../../context/editor'
 import { useEditorStore } from '../../state'
 import { useTree } from '@headless-tree/react'
 import { TreeItemView } from '../ui/TreeItemView'

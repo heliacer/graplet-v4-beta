@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../../../context'
+import { useEditorRefs } from '../../../context/editor'
 import { useEditorStore } from '@/app/editor/state'
 import { Flag, Octagon, Pause, Play, StepForward } from 'lucide-react'
 import { useRuntime } from '@/app/editor/hooks/useRuntime'

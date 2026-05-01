@@ -1,6 +1,6 @@
 import { inject, Events } from 'blockly'
 import { useEffect } from 'react'
-import { useEditorRefs } from '../context'
+import { useEditorRefs } from '../context/editor'
 import { blocklyOptions } from '../blockly/options'
 import { resize } from '../utils/blockly'
 import { exprGenerator } from '../engine/generator'

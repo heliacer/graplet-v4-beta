@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { Expression, ProgramState, Thread } from '../engine/ast'
 import { initProgram, threadStep } from '../engine/interpreter'
-import { useEditorRefs } from '../context'
+import { useEditorRefs } from '../context/editor'
 import { useEditorStore } from '../state'
 
 const STEPS_PER_FRAME = 100 /** should make this globally tweakable, this is peak */

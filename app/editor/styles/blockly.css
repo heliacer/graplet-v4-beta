@@ -16,7 +16,6 @@
 }
 
 .blocklyFlyout {
-  border-radius: 5px 0 0 0;
   outline: 1px solid var(--color-ui-700);
 }
 
@@ -26,9 +25,8 @@
 }
 
 .blocklyToolbox {
-  border-color: var(--color-ui-700);
-  border-width: 1px 1px 0px 0px;
-  border-radius: 0px 3px 0px 0px;
+  outline: 1px solid var(--color-ui-700);
+  border-radius: 0 4px 4px 0;
   padding: 2px 0px;
 }
 

@@ -4,7 +4,7 @@ import {
   PerspectiveCamera,
   WebGLRenderer
 } from 'three'
-import { useEditorRefs } from '../context'
+import { useEditorRefs } from '../context/editor'
 import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
 import { useEditorStore } from '../state'

@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/context'
+import { useEditorRefs } from '@/app/editor/context/editor'
 import { useEditorStore } from '@/app/editor/state'
 import {
   AmbientLight,

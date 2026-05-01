@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { useEditorRefs } from '../../context'
+import { useEditorRefs } from '../../context/editor'
 import { useEditorStore } from '../../state'
 import { ItemInstance, TreeInstance } from '@headless-tree/core'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'

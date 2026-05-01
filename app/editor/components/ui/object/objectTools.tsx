@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../../../context'
+import { useEditorRefs } from '../../../context/editor'
 import { useEditorStore } from '@/app/editor/state'
 import {
   Hand,

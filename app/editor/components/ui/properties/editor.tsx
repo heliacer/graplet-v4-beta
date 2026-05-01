@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/context'
+import { useEditorRefs } from '@/app/editor/context/editor'
 import { CheckBoxProperty } from '../PropertyInput'
 import { useEditorStore } from '@/app/editor/state'
 import { Object3D } from 'three'

@@ -1,4 +1,4 @@
-import { Blocks, common, serialization } from 'blockly'
+import { Blocks, common } from 'blockly'
 import { ParameterBlock, ProcedureBlock, ProcedureState } from '../../types'
 import { ProcedureModel } from '../models/procedure'
 
@@ -21,10 +21,10 @@ const functionBlocks = common.createBlockDefinitionsFromJsonArray([
 
 common.defineBlocks(functionBlocks)
 
-/** @todo cleanup */
 function rebuildParameters(block: ProcedureBlock, shadow?: boolean) {
   if (!block.model) return
   for (const input of [...block.inputList]) {
+    console.log('has block:', input.connection?.targetBlock())
     block.removeInput(input.name)
   }
   const params = block.model.getParameters()
@@ -48,17 +48,16 @@ function rebuildParameters(block: ProcedureBlock, shadow?: boolean) {
           type: shadowBlockType
         })
       } else {
-        /** @todo actually append the blocks */
-        serialization.blocks.append(
-          {
-            type: 'function_param',
-            extraState: {
-              id: block.model.getId(),
-              index: i
-            }
-          },
-          block.workspace
-        )
+        const newBlock = block.workspace.newBlock(
+          'function_param'
+        ) as ParameterBlock
+        newBlock.loadExtraState({
+          id: block.model.getId(),
+          index: i
+        })
+        newBlock.initSvg()
+        newBlock.render()
+        input.connection?.connect(newBlock.outputConnection)
       }
     }
   }
@@ -160,14 +159,16 @@ Blocks['function_param'] = {
   doProcedureUpdate(this: ParameterBlock) {
     if (!this.model) return
     const param = this.model.getParameter(this.index)
+    if (!param) return
     this.setFieldValue(param.getName(), 'NAME')
     this.setOutput(true, param.getTypes()[0])
-    console.log(param)
   },
 
   saveExtraState(this: ParameterBlock, doFullSerialization?: boolean) {
     if (!this.model) return
-    if (!doFullSerialization) return { id: this.model.getId() }
+    if (!doFullSerialization) {
+      return { id: this.model.getId(), index: this.index }
+    }
     return getExtraState(this.model)
   },
 
@@ -175,6 +176,7 @@ Blocks['function_param'] = {
   loadExtraState(this: ParameterBlock, state: { id: string; index: number }) {
     const model = this.workspace.getProcedureMap().get(state.id)
     this.index = state.index
+
     if (model) {
       this.model = model as ProcedureModel
       this.doProcedureUpdate()

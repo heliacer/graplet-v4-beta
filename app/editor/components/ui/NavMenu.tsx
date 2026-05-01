@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../../context'
+import { useEditorRefs } from '../../context/editor'
 import { useEditorStore } from '../../state'
 import { EditMenu } from './menus/edit'
 import { FileMenu } from './menus/file'

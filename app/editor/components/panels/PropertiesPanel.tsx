@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useEditorStore } from '../../state'
-import { useEditorRefs } from '../../context'
+import { useEditorRefs } from '../../context/editor'
 import { NotFoundError, StateFunc } from '../../types'
 import { Cone, Cuboid, LucideIcon, Settings2, Wrench } from 'lucide-react'
 import { EditorPane } from '../ui/properties/editor'

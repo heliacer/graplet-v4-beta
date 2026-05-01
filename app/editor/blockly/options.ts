@@ -24,5 +24,6 @@ export const blocklyOptions: BlocklyOptions = {
     metricsManager: 'ContinuousMetrics',
     toolbox: 'ContinuousToolbox',
     flyoutsVerticalToolbox: 'ContinuousFlyout'
-  }
+  },
+  media: './blockly'
 }
