@@ -8,7 +8,7 @@ import React, {
   useState
 } from 'react'
 import { useClickOutside } from '../hooks/useClickOutside'
-import { StateFunc } from '@/app/editor/lib/types'
+import { StateFunc } from '@/app/editor/types'
 
 /** Helper func to check whether a folder path is in the active path or not */
 function isActiveFolder(fp: number[], ap: number[]) {

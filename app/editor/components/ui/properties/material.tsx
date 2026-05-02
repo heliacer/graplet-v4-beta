@@ -3,8 +3,8 @@ import { Color, Mesh, MeshStandardMaterial, Object3D } from 'three'
 
 /**
  * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
- * 
- * Every piece of editing UI needs to have proper config path, 
+ *
+ * Every piece of editing UI needs to have proper config path,
  * so that every single material type is supported with it's proper inputs.
  */
 

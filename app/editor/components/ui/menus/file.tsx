@@ -1,35 +1,21 @@
-import { useEditorRefs } from '@/app/editor/lib/context'
-import { serializeObject } from '@/app/editor/lib/utils/sobject'
-import { ProjectData, SScene } from '@/app/editor/lib/types'
+import { useRef } from 'react'
+import { useEditorRefs } from '@/app/editor/context/editor'
 import {
   File,
   FolderDown,
   FolderSync,
   FolderUp,
   Keyboard,
-  Save,
   Settings,
   Settings2
 } from 'lucide-react'
-import { useRef } from 'react'
-import { serialization, WorkspaceSvg } from 'blockly'
-import { Scene } from 'three'
+import { serialization } from 'blockly'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
-import { useSceneActions } from '@/app/editor/lib/hooks/useSceneActions'
-import { upsertPanel } from '@/app/editor/lib/utils/dockview'
-import { useEditorStore } from '@/app/editor/lib/state'
-
-function createProjectData(
-  workspace: WorkspaceSvg,
-  scene: Scene,
-  selectedItems: string[]
-): ProjectData {
-  return {
-    workspace: serialization.workspaces.save(workspace),
-    scene: serializeObject(scene, true) as SScene,
-    selectedItems
-  }
-}
+import { useSceneActions } from '@/app/editor/hooks/useSceneActions'
+import { upsertPanel } from '@/app/editor/utils/dockview'
+import { useEditorStore } from '@/app/editor/state'
+import { createProjectData } from '@/app/editor/utils/createProjectData'
+import { useKeybind } from '@/app/editor/context/keybinds'
 
 export function FileMenu() {
   const { workspace, scene } = useEditorRefs()
@@ -38,21 +24,6 @@ export function FileMenu() {
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-
-  function handleSave() {
-    if (!workspace.current) throw Error('Missing workspace')
-    const projectData = createProjectData(
-      workspace.current,
-      scene.current,
-      selectedItems
-    )
-    localStorage.setItem('projectData', JSON.stringify(projectData))
-    console.info(
-      '%cSaved project to localStorage:',
-      'color: salmon;',
-      projectData
-    )
-  }
 
   function handleSaveFile() {
     if (!workspace.current) throw Error('Missing workspace')
@@ -102,11 +73,6 @@ export function FileMenu() {
 
   const items: DropdownItemProps[] = [
     {
-      label: 'Save Now',
-      Icon: Save,
-      onClick: handleSave
-    },
-    {
       label: 'Export',
       Icon: FolderDown,
       onClick: handleSaveFile
@@ -138,6 +104,10 @@ export function FileMenu() {
       ]
     }
   ]
+
+  useKeybind({ key: '/', modifiers: ['Ctrl'] }, () =>
+    upsertPanel(dvApi, 'keybinds', 'Keybinds', 'Keyboard')
+  )
 
   return (
     <>

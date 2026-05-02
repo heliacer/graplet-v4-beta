@@ -16,8 +16,6 @@
 }
 
 .blocklyFlyout {
-  z-index: 60;
-  border-radius: 5px 0 0 0;
   outline: 1px solid var(--color-ui-700);
 }
 
@@ -27,7 +25,9 @@
 }
 
 .blocklyToolbox {
-  z-index: 50;
+  outline: 1px solid var(--color-ui-700);
+  border-radius: 0 4px 4px 0;
+  padding: 2px 0px;
 }
 
 .blocklyToolboxCategoryContainer {
@@ -87,16 +87,11 @@
   color: var(--color-ui-800);
 }
 
-.blocklyScrollbarHandle {
-  display: none;
-}
-
 .blocklyFlyoutButtonShadow {
   fill: none;
 }
 
 .blocklyFlyoutButtonBackground {
-
   stroke: var(--color-ui-600);
   rx: 6;
   ry: 6;
@@ -147,14 +142,66 @@
   background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1wYXJlbnRoZXNlcy1pY29uIGx1Y2lkZS1wYXJlbnRoZXNlcyI+PHBhdGggZD0iTTggMjFzLTQtMy00LTkgNC05IDQtOSIvPjxwYXRoIGQ9Ik0xNiAzczQgMyA0IDktNCA5LTQgOSIvPjwvc3ZnPg==');
 }
 
-.graplet-renderer.graplet-theme .blocklySelected>.blocklyPath.blocklyPathSelected{
+.graplet-renderer.graplet-theme
+  .blocklySelected
+  > .blocklyPath.blocklyPathSelected {
   filter: none;
 }
 
-.graplet-renderer.graplet-theme .blocklySelected:active>.blocklyPath.blocklyPathSelected{
+.graplet-renderer.graplet-theme
+  .blocklySelected:active
+  > .blocklyPath.blocklyPathSelected {
   filter: var(--blocklySelectedGlowFilter);
 }
 
-.graplet-renderer.graplet-theme .blocklyFlyoutButton .blocklyText{
+.graplet-renderer.graplet-theme .blocklyFlyoutButton .blocklyText {
   fill: var(--color-ui-200);
+}
+
+.blocklyScrollbarHandle {
+  fill: var(--color-ui-700);
+  x: 4;
+}
+
+.blocklyScrollbarHandle:hover,
+.blocklyScrollbarHandle:active {
+  fill: var(--color-ui-600);
+}
+
+.blocklyMainWorkspaceScrollbar {
+  display: none;
+}
+
+.blocklyFlyoutScrollbar[display='none'] .blocklyScrollbarHandle {
+  display: none;
+}
+
+.blocklyWidgetDiv .blocklyMenu.blocklyContextMenu {
+  font-size: 12px;
+  border-color: var(--color-ui-700);
+  background-color: var(--color-ui-850);
+  box-sizing: content-box;
+  padding: 2px 0px;
+  box-shadow: none;
+}
+
+.blocklyMenu.blocklyContextMenu .blocklyMenuItem {
+  color: var(--color-ui-200);
+  margin: 0px 2px;
+  padding: 0px 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.blocklyMenu.blocklyContextMenu .blocklyMenuItem.blocklyMenuItemHighlight {
+  background-color: var(--color-ui-750);
+  border-color: var(--color-ui-650);
+}
+
+.blocklyMenu.blocklyContextMenu .blocklyMenuItem.blocklyMenuItemDisabled {
+  color: var(--color-ui-400);
+}
+
+.blocklyLockButton {
+  transform: translate(350px, 10px);
 }

@@ -3,6 +3,7 @@ import { Logo } from '@/app/ui/assets/Logo'
 import { UserDropdown } from '@/app/ui/components/UserDropdown'
 import { NavMenu } from './ui/NavMenu'
 import { RunControls } from './ui/controls/runControls'
+import { SaveButton } from './ui/saveButton'
 
 export function EditorHeader() {
   return (
@@ -16,6 +17,7 @@ export function EditorHeader() {
       <RunControls />
       <div className='w-full h-full flex items-center justify-end'>
         <div className='flex gap-4'>
+          <SaveButton />
           <UserDropdown />
         </div>
       </div>

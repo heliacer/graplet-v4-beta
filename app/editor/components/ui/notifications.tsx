@@ -1,8 +1,8 @@
+import { useEditorStore } from '../../state'
+import { NotificationItemProps } from '../../types'
+import { ItemIcon } from '../../utils/icons'
 import { Info, X } from 'lucide-react'
-import { NotificationItemProps } from '../../lib/types'
-import { ItemIcon } from '../../lib/utils/icons'
 import clsx from 'clsx'
-import { useEditorStore } from '../../lib/state'
 
 function NotificationItem({ item }: { item: NotificationItemProps }) {
   const notifications = useEditorStore(s => s.notifications)

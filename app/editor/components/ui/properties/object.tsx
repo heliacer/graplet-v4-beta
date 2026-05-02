@@ -1,3 +1,5 @@
+import { useEditorRefs } from '@/app/editor/context/editor'
+import { useEditorStore } from '@/app/editor/state'
 import {
   AmbientLight,
   DirectionalLight,
@@ -16,9 +18,7 @@ import {
   Vec3Property
 } from '../PropertyInput'
 import { Crosshair, SwitchCamera } from 'lucide-react'
-import { useEditorRefs } from '@/app/editor/lib/context'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import { useEditorStore } from '@/app/editor/lib/state'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 function BaseObjectProps({ object }: { object: Object3D }) {
   return (
@@ -62,7 +62,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
      * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
      *
      * Generalise orbit attach / detach, refactor to an util,
-     * other one is in applyHelpers in useObjectActions 
+     * other one is in applyHelpers in useObjectActions
      */
     const orbitAction = (checked: boolean) => {
       if (checked) {

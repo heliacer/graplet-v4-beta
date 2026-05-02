@@ -1,3 +1,5 @@
+import { useEditorRefs } from '../../../context/editor'
+import { useEditorStore } from '@/app/editor/state'
 import {
   Hand,
   LucideIcon,
@@ -6,12 +8,10 @@ import {
   Scale3D,
   Spline
 } from 'lucide-react'
-import { useEditorRefs } from '../../../lib/context'
-import clsx from 'clsx'
-import { TransformControlsMode } from 'three/examples/jsm/Addons.js'
-import { ToolItem } from '@/app/editor/lib/types'
 import { MOUSE } from 'three'
-import { useEditorStore } from '@/app/editor/lib/state'
+import { ToolItem } from '@/app/editor/types'
+import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
+import clsx from 'clsx'
 
 interface ToolButtonProps {
   tool: TransformControlsMode | ToolItem

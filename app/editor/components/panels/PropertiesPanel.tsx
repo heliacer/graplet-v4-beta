@@ -1,13 +1,13 @@
 import { useState } from 'react'
+import { useEditorStore } from '../../state'
+import { useEditorRefs } from '../../context/editor'
+import { NotFoundError, StateFunc } from '../../types'
 import { Cone, Cuboid, LucideIcon, Settings2, Wrench } from 'lucide-react'
-import clsx from 'clsx'
 import { EditorPane } from '../ui/properties/editor'
 import { GeometryPane } from '../ui/properties/geometry'
 import { MaterialPane } from '../ui/properties/material'
 import { ObjectPane } from '../ui/properties/object'
-import { NotFoundError, StateFunc } from '../../lib/types'
-import { useEditorStore } from '../../lib/state'
-import { useEditorRefs } from '../../lib/context'
+import clsx from 'clsx'
 
 type Pane = 'editor' | 'object' | 'geometry' | 'material'
 

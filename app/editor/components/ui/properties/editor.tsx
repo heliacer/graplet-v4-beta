@@ -1,6 +1,6 @@
-import { useEditorRefs } from '@/app/editor/lib/context'
+import { useEditorRefs } from '@/app/editor/context/editor'
 import { CheckBoxProperty } from '../PropertyInput'
-import { useEditorStore } from '@/app/editor/lib/state'
+import { useEditorStore } from '@/app/editor/state'
 import { Object3D } from 'three'
 
 export function EditorPane({ object }: { object: Object3D }) {

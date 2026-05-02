@@ -1,9 +1,9 @@
-import '@/app/editor/styles/blockly.css'
 import { useRef } from 'react'
-import { useBlocklyWorkspace } from '../../lib/hooks/useBlocklyWorkspace'
-import { initializeBlockly } from '../../lib/blockly/config'
+import { initializeBlocklyConfig } from '../../blockly/init'
+import { useBlocklyWorkspace } from '../../hooks/useBlocklyWorkspace'
+import '../../styles/blockly.css'
 
-initializeBlockly()
+initializeBlocklyConfig()
 
 export default function CodePanel() {
   const blocklyDiv = useRef<HTMLDivElement>(null!)

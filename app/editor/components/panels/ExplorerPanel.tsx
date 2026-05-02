@@ -1,5 +1,3 @@
-import { useEditorRefs } from '@/app/editor/lib/context'
-import { getIconT } from '@/app/editor/lib/utils/icons'
 import {
   dragAndDropFeature,
   hotkeysCoreFeature,
@@ -7,12 +5,14 @@ import {
   selectionFeature,
   syncDataLoaderFeature
 } from '@headless-tree/core'
-import { useTree } from '@headless-tree/react'
 import { useEffect } from 'react'
+import { useEditorRefs } from '../../context/editor'
+import { useEditorStore } from '../../state'
+import { useTree } from '@headless-tree/react'
 import { TreeItemView } from '../ui/TreeItemView'
-import { moveObject, isInternalObject } from '../../lib/utils/three'
-import { NotFoundError, TreeItem } from '../../lib/types'
-import { useEditorStore } from '../../lib/state'
+import { isInternalObject, moveObject } from '../../utils/three'
+import { NotFoundError, TreeItem } from '../../types'
+import { getIconT } from '../../utils/icons'
 
 export default function ExplorerPanel() {
   const { objects, scene } = useEditorRefs()
