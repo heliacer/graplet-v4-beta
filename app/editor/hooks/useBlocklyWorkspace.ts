@@ -1,16 +1,18 @@
 import { inject, Events } from 'blockly'
-import { useEffect } from 'react'
+import { useEffect} from 'react'
 import { useEditorRefs } from '../context/editor'
 import { blocklyOptions } from '../blockly/options'
 import { resize } from '../utils/blockly'
 import { exprGenerator } from '../engine/generator'
 import { useRuntime } from './useRuntime'
 import { createFunction } from '../blockly/utils/createFunction'
+import { useEditorStore } from '../state'
 
 export function useBlocklyWorkspace(
   blocklyDiv: React.RefObject<HTMLDivElement>
 ) {
   const { workspace } = useEditorRefs()
+  const setHasChanges = useEditorStore(s => s.setHasChanges)
   const { start } = useRuntime()
 
   useEffect(() => {
@@ -19,7 +21,20 @@ export function useBlocklyWorkspace(
     const ws = inject(blocklyDiv.current, blocklyOptions)
     workspace.current = ws
 
-    const variableListener = (event: Events.Abstract) => {
+    function listener(event: Events.Abstract) {
+      if (
+        !(
+          event instanceof Events.ViewportChange ||
+          event instanceof Events.FinishedLoading || 
+          event instanceof Events.ToolboxItemSelect ||
+          event instanceof Events.Selected ||
+          event instanceof Events.BlockDrag ||
+          event instanceof Events.CommentDrag
+        )
+      ) {
+        setHasChanges(true)
+      }
+
       if (
         event instanceof Events.VarCreate ||
         event instanceof Events.VarDelete ||
@@ -29,8 +44,7 @@ export function useBlocklyWorkspace(
       }
     }
 
-    /** listen to instant block clicks and run them */
-    const blockListener = async (event: Events.Abstract) => {
+    function blockListener(event: Events.Abstract) {
       if (event instanceof Events.Click && event.targetType === 'block') {
         if (event.blockId) {
           const block = event.getEventWorkspace_().getBlockById(event.blockId)
@@ -42,7 +56,7 @@ export function useBlocklyWorkspace(
       }
     }
 
-    ws.addChangeListener(variableListener)
+    ws.addChangeListener(listener)
     ws.addChangeListener(blockListener)
     ws.getFlyout()?.getWorkspace().addChangeListener(blockListener)
     ws.registerButtonCallback('createFunction', createFunction)
@@ -51,12 +65,13 @@ export function useBlocklyWorkspace(
     resizeObserver.observe(blocklyDiv.current)
     function cleanup() {
       resizeObserver.disconnect()
-      ws.removeChangeListener(variableListener)
+      ws.removeChangeListener(listener)
       ws.removeChangeListener(blockListener)
+      ws.getFlyout()?.getWorkspace().removeChangeListener(blockListener)
       ws.dispose()
       workspace.current = null
     }
 
     return cleanup
-  }, [blocklyDiv, workspace, start])
+  }, [blocklyDiv, workspace, start, setHasChanges])
 }

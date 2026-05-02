@@ -99,9 +99,12 @@ export function useObjectActions() {
     /** Add it to the registry */
     objects.current.set(object.sharedId, object)
 
-    if (!silent) setSelectedItems([object.sharedId])
+    if (!silent) {
+      setSelectedItems([object.sharedId])
+      invalidateObject(object)
+    }
+
     applyHelpers(object)
-    invalidateObject(object)
     rebuildBlocklyUI()
     return object
   }

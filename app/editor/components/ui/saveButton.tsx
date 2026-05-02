@@ -1,16 +1,27 @@
-import { Save } from 'lucide-react'
 import { useEditorRefs } from '../../context/editor'
 import { createProjectData } from '../../utils/createProjectData'
 import { useEditorStore } from '../../state'
-import { useCallback, useEffect } from 'react'
-import { useKeybinds } from '../../context/keybinds'
+import { useKeybind } from '../../context/keybinds'
+import { useEffect, useRef } from 'react'
+import clsx from 'clsx'
 
 export function SaveButton() {
   const { workspace, scene } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
-  const { register, unregister } = useKeybinds()
+  const objectVersions = useEditorStore(s => s.objectVersions)
+  const hasChanges = useEditorStore(s => s.hasChanges)
+  const setHasChanges = useEditorStore(s => s.setHasChanges)
+  const mounted = useRef(false)
 
-  const handleSave = useCallback(() => {
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true
+      return
+    }
+    setHasChanges(true)
+  }, [setHasChanges, objectVersions])
+
+  function handleSave() {
     if (!workspace.current) throw Error('Missing workspace')
     const projectData = createProjectData(
       workspace.current,
@@ -23,28 +34,29 @@ export function SaveButton() {
       'color: salmon;',
       projectData
     )
-  }, [selectedItems])
+    setHasChanges(false)
+  }
 
-  useEffect(() => {
-    register(
-      {
-        key: 's',
-        modifiers: ['Ctrl']
-      },
-      e => {
-        e.preventDefault()
-        handleSave()
-      }
-    )
-    return () => unregister({ key: 's', modifiers: ['Ctrl'] })
-  }, [handleSave, register, unregister])
+  useKeybind(
+    {
+      key: 's',
+      modifiers: ['Ctrl']
+    },
+    e => {
+      e.preventDefault()
+      handleSave()
+    }
+  )
 
   return (
     <button
-      onClick={() => handleSave}
-      className='text-sm flex items-center gap-1 cursor-pointer'
+      onClick={handleSave}
+      className={clsx(
+        'text-sm flex items-center gap-1',
+        hasChanges ? 'cursor-pointer' : 'text-ui-400'
+      )}
+      disabled={!hasChanges}
     >
-      <Save size={14} />
       <p>Save now</p>
     </button>
   )

@@ -1,4 +1,4 @@
-import { serialization } from 'blockly'
+import { Events, serialization } from 'blockly'
 import { useEditorRefs } from '../context/editor'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
@@ -26,17 +26,21 @@ export function useSceneActions() {
    */
   function loadDefaultScene() {
     clearScene()
-    addObject({
-      type: 'Mesh',
-      name: 'Box',
-      geometry: {
-        type: 'BoxGeometry',
-        args: [1, 1, 1]
+    addObject(
+      {
+        type: 'Mesh',
+        name: 'Box',
+        geometry: {
+          type: 'BoxGeometry',
+          args: [1, 1, 1]
+        },
+        material: {
+          type: 'MeshStandardMaterial'
+        }
       },
-      material: {
-        type: 'MeshStandardMaterial'
-      }
-    })
+      undefined,
+      true
+    )
     addObject(
       {
         type: 'PerspectiveCamera',
@@ -83,7 +87,9 @@ export function useSceneActions() {
         if (selectedItems !== undefined) setSelectedItems(selectedItems)
         requestAnimationFrame(() => {
           if (!workspace.current) throw Error('Missing workspace')
+          Events.disable()
           serialization.workspaces.load(project.workspace, workspace.current)
+          Events.enable()
           console.info(
             '%cLoaded workspace state:',
             'color: salmon;',

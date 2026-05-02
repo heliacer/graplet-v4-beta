@@ -11,6 +11,7 @@ type State = {
   notifications: NotificationItemProps[]
   dvApi: DockviewApi | null
   contextMenu: ContextMenuProps | null
+  hasChanges: boolean
 }
 
 type Actions = {
@@ -21,6 +22,7 @@ type Actions = {
   setNotifications: (notifications: NotificationItemProps[]) => void
   setDvApi: (api: DockviewApi | null) => void
   setContextMenu: (contextMenu: ContextMenuProps | null) => void
+  setHasChanges: (hasChanges: boolean) => void
 }
 
 export type UiSlice = State & Actions
@@ -32,7 +34,8 @@ export const uiInitialState: State = {
   currentTool: 'translate',
   notifications: [],
   dvApi: null,
-  contextMenu: null
+  contextMenu: null,
+  hasChanges: false
 }
 
 export const createUiSlice: StateCreator<UiSlice> = set => ({
@@ -44,5 +47,6 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   setCurrentTool: v => set({ currentTool: v }),
   setNotifications: v => set({ notifications: v }),
   setDvApi: v => set({ dvApi: v }),
-  setContextMenu: v => set({ contextMenu: v })
+  setContextMenu: v => set({ contextMenu: v }),
+  setHasChanges: v => set({ hasChanges: v })
 })

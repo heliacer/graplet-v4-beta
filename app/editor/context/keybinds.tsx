@@ -29,8 +29,18 @@ const KeybindsContext = createContext<KeybindsContextType>({
   unregister: () => {}
 })
 
-export function useKeybinds() {
-  return useContext(KeybindsContext)
+export function useKeybind(keybind: Keybind, fn: (e: KeyboardEvent) => void) {
+  const { register, unregister } = useContext(KeybindsContext)
+  const callback = useRef(fn)
+
+  useEffect(() => {
+    callback.current = fn
+  }, [fn])
+
+  useEffect(() => {
+    register(keybind, e => callback.current(e))
+    return () => unregister(keybind)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
 function normalizeKeybind(keybind: Keybind): string {

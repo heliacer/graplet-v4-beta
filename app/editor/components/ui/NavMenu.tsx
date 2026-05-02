@@ -16,6 +16,7 @@ export function NavMenu() {
     <nav className='w-full h-full flex items-center gap-2'>
       <FileMenu />
       <EditMenu />
+      <p className='text-sm italic'>devtools:</p>
       <button
         className={clsx(
           'text-sm flex gap-1 px-1 items-center',
