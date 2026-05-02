@@ -15,6 +15,7 @@ import { useSceneActions } from '@/app/editor/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/utils/dockview'
 import { useEditorStore } from '@/app/editor/state'
 import { createProjectData } from '@/app/editor/utils/createProjectData'
+import { useKeybind } from '@/app/editor/context/keybinds'
 
 export function FileMenu() {
   const { workspace, scene } = useEditorRefs()
@@ -103,6 +104,10 @@ export function FileMenu() {
       ]
     }
   ]
+
+  useKeybind({ key: '/', modifiers: ['Ctrl'] }, () =>
+    upsertPanel(dvApi, 'keybinds', 'Keybinds', 'Keyboard')
+  )
 
   return (
     <>
