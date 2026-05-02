@@ -48,7 +48,9 @@ function rebuildParameters(
               ? 'text'
               : type === 'Number'
                 ? 'number'
-                : 'logic_boolean'
+                : type === 'Object'
+                  ? 'object'
+                  : 'logic_boolean'
           input.connection?.setShadowState({
             type: shadowBlockType
           })

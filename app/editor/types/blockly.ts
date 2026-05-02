@@ -1,7 +1,7 @@
 import { BlockSvg, serialization } from 'blockly'
 import { ProcedureModel } from '../blockly/models/procedure'
 
-export type ParameterType = 'String' | 'Number' | 'Boolean'
+export type ParameterType = 'String' | 'Number' | 'Boolean' | 'Object'
 export type ProcedureInputType = ParameterType | 'Label'
 
 export interface ParameterState

@@ -6,7 +6,11 @@ export class GrapletConnectionChecker extends ConnectionChecker {
   }
 
   doTypeChecks(a: Connection, b: Connection) {
-    if (b.getSourceBlock().type === 'function_def') return false
+    if (
+      a.getSourceBlock().type === 'function_param' &&
+      b.getSourceBlock().type === 'function_def'
+    )
+      return false
     return super.doTypeChecks(a, b)
   }
 }

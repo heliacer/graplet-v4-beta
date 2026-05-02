@@ -51,7 +51,11 @@ export function handleCall(frame: Frame, thread: Thread, state: ProgramState) {
   }
 
   if (stage === args.length + 1) {
+    if (func.args === undefined) return
     console.log('locals to clear:', thread.locals)
+    for (let i = 0; i < func.args.length; i++) {
+      console.log('clearing', func.args[i])
+    }
     return
   }
 

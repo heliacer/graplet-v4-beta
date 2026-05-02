@@ -25,5 +25,5 @@ export const blocklyOptions: BlocklyOptions = {
     toolbox: 'ContinuousToolbox',
     flyoutsVerticalToolbox: 'ContinuousFlyout'
   },
-  media: './blockly'
+  media: 'public/blockly'
 }

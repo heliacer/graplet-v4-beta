@@ -8,7 +8,7 @@ function createInputs() {
   let shouldContinue = true
   while (shouldContinue) {
     const type = prompt(
-      'Provide input type (Label, String, Number, Boolean):'
+      'Provide input type (Label, String, Number, Boolean, Object):'
     )?.trim()
 
     if (type === undefined) {
@@ -16,7 +16,7 @@ function createInputs() {
       break
     }
 
-    if (!['Label', 'String', 'Number', 'Boolean'].includes(type)) {
+    if (!['Label', 'String', 'Number', 'Boolean', 'Object'].includes(type)) {
       alert(`${type} is not a valid input type.`)
       break
     }
