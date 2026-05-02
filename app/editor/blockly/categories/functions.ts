@@ -15,7 +15,8 @@ export function functionsCategory(workspace: WorkspaceSvg) {
       kind: 'block',
       type: 'function_call',
       extraState: {
-        id: model.getId()
+        id: model.getId(),
+        params: true
       }
     })
   }

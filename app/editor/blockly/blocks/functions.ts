@@ -21,7 +21,11 @@ const functionBlocks = common.createBlockDefinitionsFromJsonArray([
 
 common.defineBlocks(functionBlocks)
 
-function rebuildParameters(block: ProcedureBlock, shadow?: boolean) {
+function rebuildParameters(
+  block: ProcedureBlock,
+  fillParams?: boolean,
+  shadow?: boolean
+) {
   if (!block.model) return
   for (const input of [...block.inputList]) {
     console.log('has block:', input.connection?.targetBlock())
@@ -37,27 +41,29 @@ function rebuildParameters(block: ProcedureBlock, shadow?: boolean) {
     } else {
       const input = block.appendValueInput(inputName)
       input.setCheck(type)
-      if (shadow) {
-        const shadowBlockType =
-          type === 'String'
-            ? 'text'
-            : type === 'Number'
-              ? 'number'
-              : 'logic_boolean'
-        input.connection?.setShadowState({
-          type: shadowBlockType
-        })
-      } else {
-        const newBlock = block.workspace.newBlock(
-          'function_param'
-        ) as ParameterBlock
-        newBlock.loadExtraState({
-          id: block.model.getId(),
-          index: i
-        })
-        newBlock.initSvg()
-        newBlock.render()
-        input.connection?.connect(newBlock.outputConnection)
+      if (fillParams) {
+        if (shadow) {
+          const shadowBlockType =
+            type === 'String'
+              ? 'text'
+              : type === 'Number'
+                ? 'number'
+                : 'logic_boolean'
+          input.connection?.setShadowState({
+            type: shadowBlockType
+          })
+        } else {
+          const newBlock = block.workspace.newBlock(
+            'function_param'
+          ) as ParameterBlock
+          newBlock.loadExtraState({
+            id: block.model.getId(),
+            index: i
+          })
+          newBlock.initSvg()
+          newBlock.render()
+          input.connection?.connect(newBlock.outputConnection)
+        }
       }
     }
   }
@@ -84,8 +90,8 @@ Blocks['function_def'] = {
     this.model = null
   },
 
-  doProcedureUpdate(this: ProcedureBlock) {
-    rebuildParameters(this)
+  doProcedureUpdate(this: ProcedureBlock, fillParams?: boolean) {
+    rebuildParameters(this, fillParams)
   },
 
   saveExtraState(this: ProcedureBlock, doFullSerialization?: boolean) {
@@ -94,12 +100,15 @@ Blocks['function_def'] = {
     return getExtraState(this.model)
   },
 
-  loadExtraState(this: ProcedureBlock, state: { id: string }) {
+  loadExtraState(
+    this: ProcedureBlock,
+    state: { id: string; params?: boolean }
+  ) {
     const workspace = this.workspace
     const model = workspace.getProcedureMap().get(state.id)
     if (model) {
       this.model = model as ProcedureModel
-      this.doProcedureUpdate()
+      this.doProcedureUpdate(state.params)
     }
   },
 
@@ -125,9 +134,9 @@ Blocks['function_call'] = {
     this.model = null
   },
 
-  doProcedureUpdate(this: ProcedureBlock) {
+  doProcedureUpdate(this: ProcedureBlock, fillParams?: boolean) {
     if (!this.model) return
-    rebuildParameters(this, true)
+    rebuildParameters(this, fillParams, true)
   },
 
   saveExtraState(this: ProcedureBlock, doFullSerialization?: boolean) {
@@ -136,12 +145,15 @@ Blocks['function_call'] = {
     return getExtraState(this.model)
   },
 
-  loadExtraState(this: ProcedureBlock, state: { id: string }) {
+  loadExtraState(
+    this: ProcedureBlock,
+    state: { id: string; params?: boolean }
+  ) {
     const workspace = this.workspace.targetWorkspace ?? this.workspace
     const model = workspace.getProcedureMap().get(state.id)
     if (model) {
       this.model = model as ProcedureModel
-      this.doProcedureUpdate()
+      this.doProcedureUpdate(state.params)
     }
   }
 }

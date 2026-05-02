@@ -53,7 +53,8 @@ export function createFunction(button: FlyoutButton) {
     {
       type: 'function_def',
       extraState: {
-        id: model.getId()
+        id: model.getId(),
+        params: true
       }
     },
     workspace
