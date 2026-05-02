@@ -1,4 +1,4 @@
-import { Blocks, common } from 'blockly'
+import { Blocks, common, Events } from 'blockly'
 import { ParameterBlock, ProcedureBlock, ProcedureState } from '../../types'
 import { ProcedureModel } from '../models/procedure'
 
@@ -88,6 +88,35 @@ Blocks['function_def'] = {
     this.setInputsInline(true)
     this.setStyle('function_blocks')
     this.model = null
+  },
+
+  onchange(this: ProcedureBlock, event: Events.Abstract) {
+    if (event instanceof Events.BlockMove) {
+      if (event.blockId === undefined) return
+      if (event.oldParentId !== this.id) return
+      if (event.oldInputName === undefined) return
+      const block = this.workspace.getBlockById(event.blockId) as ParameterBlock
+      if (!block || !block.model) return
+      const input = this.getInput(event.oldInputName)
+      if (!input) return
+      if (input.connection?.isConnected()) {
+        if (!event.newParentId) return
+        const block = this.workspace.getBlockById(event.newParentId)
+        if (!block) return
+        console.log(block.type)
+        return
+      }
+      const newBlock = this.workspace.newBlock(
+        'function_param'
+      ) as ParameterBlock
+      newBlock.loadExtraState({
+        id: block.model.getId(),
+        index: block.index
+      })
+      newBlock.initSvg()
+      newBlock.render()
+      input.connection?.connect(newBlock.outputConnection)
+    }
   },
 
   doProcedureUpdate(this: ProcedureBlock, fillParams?: boolean) {
@@ -181,7 +210,7 @@ Blocks['function_param'] = {
     if (!doFullSerialization) {
       return { id: this.model.getId(), index: this.index }
     }
-    return getExtraState(this.model)
+    return { ...getExtraState(this.model), index: this.index }
   },
 
   /** @todo create separate extrastate for params */

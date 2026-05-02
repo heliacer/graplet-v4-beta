@@ -24,6 +24,12 @@ export function handleSetvar(
   variables.set(String(value), varValue)
 }
 
+export function handleSetParam(frame: Frame, thread: Thread) {
+  const { expression } = frame
+  const { value, args = [] } = expression
+  thread.locals[String(value)] = args[0]
+}
+
 export function handleChangevar(
   frame: Frame,
   thread: Thread,

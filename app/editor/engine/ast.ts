@@ -16,6 +16,7 @@ export interface ProgramState {
 export type Thread = {
   stack: Frame[]
   valueStack: Value[]
+  locals: Record<string, Expression>,
   waitingUntil?: number
   done: boolean
 }
@@ -31,7 +32,7 @@ export type Handler = (
   state: ProgramState
 ) => void
 
-export type Value = string | number | boolean // More in future, such as Mesh, Vector3, etc...
+export type Value = string | number | boolean | null // More in future, such as Mesh, Vector3, etc...
 
 export interface Expression {
   type: ExpressionT
@@ -52,12 +53,14 @@ export type ExpressionT =
   | 'setfunc'
   | 'setvar'
   | 'changevar'
+  | 'setparam'
 
   // Values
   | 'literal' // Value (string, number, boolean ...)
   | 'func'
   | 'var'
   | 'call'
+  | 'param'
 
   // Operators
   | 'andor'

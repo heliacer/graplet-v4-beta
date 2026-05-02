@@ -9,12 +9,6 @@ export function functionDefGen(
 ): Expression {
   const state = block.saveExtraState?.(true) as ProcedureState
   const connectedExprs = generator.getConnectedExpressions(block)
-  console.log(state, connectedExprs)
-
-  /**
-   * @todo get params, filter out labels
-   * - do not use state.name
-   */
 
   return {
     type: 'setfunc',
@@ -23,17 +17,43 @@ export function functionDefGen(
   }
 }
 
-export function functionCallGen(block: Block): Expression {
+export function functionCallGen(
+  block: Block,
+  generator: ExpressionGenerator
+): Expression {
   const state = block.saveExtraState?.(true) as ProcedureState
-  console.log(state)
+  const args: Expression[] = []
 
-  /**
-   * @todo get params, filter out labels
-   * - do not use state.name
-   */
+  for (let i = 0; i < state.parameters.length; i++) {
+    const param = state.parameters[i]
+    const type = param.types[0]
+    if (type === 'Label') continue
+    const defaultValue = type === 'String' ? '?' : type === 'Number' ? 0 : false
+    const arg = generator.getInputValue(block, `ARG${i}`, defaultValue)
+    args.push({
+      type: 'setparam',
+      value: `${param.name}-${type}`,
+      args: [arg]
+    })
+  }
 
   return {
     type: 'call',
+    args,
     value: state.id
+  }
+}
+
+export function functionParamGen(block: Block): Expression {
+  const state = block.saveExtraState?.(true) as ProcedureState & {
+    index: number
+  }
+  
+  const param = state.parameters[state.index]
+  const type = param.types[0]
+
+  return {
+    type: 'param',
+    value: `${param.name}-${type}`
   }
 }

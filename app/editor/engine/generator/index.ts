@@ -33,7 +33,11 @@ import {
   mathTrigGen
 } from './blocks/math'
 import { variablesGetGen, variablesSetGen } from './blocks/variables'
-import { functionCallGen, functionDefGen } from './blocks/functions'
+import {
+  functionCallGen,
+  functionDefGen,
+  functionParamGen
+} from './blocks/functions'
 
 export class ExpressionGenerator {
   private generators: Record<
@@ -161,6 +165,7 @@ exprGenerator.forBlock('variables_set', variablesSetGen)
 /** Functions */
 exprGenerator.forBlock('function_def', functionDefGen)
 exprGenerator.forBlock('function_call', functionCallGen)
+exprGenerator.forBlock('function_param', functionParamGen)
 
 export function generateExprsFromInput(
   input: Input | null,

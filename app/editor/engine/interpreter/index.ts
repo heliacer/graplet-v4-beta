@@ -5,7 +5,7 @@ import {
   handleRunseq,
   handleWait
 } from './handlers/control'
-import { handleChangevar, handleSetvar } from './handlers/effects'
+import { handleChangevar, handleSetParam, handleSetvar } from './handlers/effects'
 import {
   handleAndor,
   handleArithmetic,
@@ -29,7 +29,7 @@ import {
   handleSetscalexyz,
   handleTranslatexyz
 } from './handlers/statements'
-import { handleCall, handleLiteral, handleVar } from './handlers/values'
+import { handleCall, handleLiteral, handleParam, handleVar } from './handlers/values'
 
 function setFunction(expression: Expression, state: ProgramState) {
   const { args, value, children } = expression
@@ -58,6 +58,7 @@ export function initProgram(
       threads.push({
         stack: [{ expression: expr, stage: 0 }],
         valueStack: [],
+        locals: {},
         done: false
       })
     }
@@ -93,7 +94,9 @@ const handlers: Record<RegularExpressionT, Handler> = {
   changevar: handleChangevar,
   literal: handleLiteral,
   var: handleVar,
+  param: handleParam,
   call: handleCall,
+  setparam: handleSetParam,
   andor: handleAndor,
   neg: handleNeg,
   compare: handleCompare,

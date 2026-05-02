@@ -24,7 +24,7 @@ export function useRuntime() {
   }, [setPaused, setRunning, invalidateAllObjects])
 
   const start = useCallback(
-    (expression: Expression, single?: boolean) => {
+    (expression: Expression, single?: boolean, callback?: (threads: Thread[]) => void) => {
       if (running.current) return
 
       const state = {
@@ -41,6 +41,7 @@ export function useRuntime() {
         threads.current = [
           {
             stack: [{ expression, stage: 0 }],
+            locals: {},
             valueStack: [],
             done: false
           }
@@ -64,15 +65,16 @@ export function useRuntime() {
               }
               if (allDone) {
                 running.current = false
-                console.log('Done.')
+                console.info('Done.')
                 finalize()
+                callback?.(threads.current)
                 return
               }
             }
           } catch (error) {
             console.error(error)
             running.current = false
-            console.log('Crashed.')
+            console.info('Crashed.')
             finalize()
             return
           }
@@ -105,7 +107,7 @@ export function useRuntime() {
     if (!running.current) return
     running.current = false
     paused.current = false
-    console.log('Stopped.')
+    console.info('Stopped.')
     finalize()
   }
 

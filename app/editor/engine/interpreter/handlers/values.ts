@@ -14,6 +14,12 @@ export function handleVar(frame: Frame, thread: Thread, state: ProgramState) {
   pushValue(thread, value)
 }
 
+export function handleParam(frame: Frame, thread: Thread) {
+  const { expression } = frame
+  const expr = thread.locals[String(expression.value)]
+  pushFrame(thread, expr || { type: 'literal', value: null })
+}
+
 export function handleCall(frame: Frame, thread: Thread, state: ProgramState) {
   const { expression, stage } = frame
   const { value, args = [] } = expression
@@ -28,7 +34,6 @@ export function handleCall(frame: Frame, thread: Thread, state: ProgramState) {
 
   const { stack } = thread
 
-  /** setting parameters here (now stores them with the setvar globally, need to use a local VarEnv or something */
   if (stage < args.length) {
     stack.push({ ...frame, stage: stage + 1 })
     pushFrame(thread, args[stage])
@@ -36,8 +41,7 @@ export function handleCall(frame: Frame, thread: Thread, state: ProgramState) {
   }
 
   if (stage === args.length) {
-    const nextStage = stage + 1
-    stack.push({ ...frame, stage: nextStage })
+    stack.push({ ...frame, stage: stage + 1 })
 
     const { children = [] } = func
     for (let i = children.length - 1; i >= 0; i--) {
@@ -47,15 +51,9 @@ export function handleCall(frame: Frame, thread: Thread, state: ProgramState) {
   }
 
   if (stage === args.length + 1) {
-    if (func.args && func.args.length > 0) {
-      stack.push({ ...frame, stage: stage + 1 })
-      pushFrame(thread, func.args[0])
-      return
-    }
+    console.log('locals to clear:', thread.locals)
     return
   }
-
-  if (stage === args.length + 2) return
 
   throw Error(`Invalid stage for "call": ${stage}`)
 }

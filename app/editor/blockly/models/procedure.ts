@@ -75,11 +75,6 @@ export class ProcedureModel implements procedures.IProcedureModel {
   getParameters(): ParameterModel[] {
     return [...this.parameters]
   }
-
-  getValueParameters(): ParameterModel[] {
-    return this.parameters.filter(p => p.getTypes()[0] !== 'Label')
-  }
-
   saveState(): ProcedureState {
     return {
       name: '',
