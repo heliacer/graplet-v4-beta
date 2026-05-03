@@ -61,6 +61,7 @@ export type ExpressionT =
   | 'var'
   | 'call'
   | 'param'
+  | 'objectvec3prop'
 
   // Operators
   | 'andor'

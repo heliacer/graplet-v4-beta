@@ -29,7 +29,7 @@ import {
   handleSetscalexyz,
   handleTranslatexyz
 } from './handlers/statements'
-import { handleCall, handleLiteral, handleParam, handleVar } from './handlers/values'
+import { handleCall, handleLiteral, handleObjectvec3prop, handleParam, handleVar } from './handlers/values'
 
 function setFunction(expression: Expression, state: ProgramState) {
   const { args, value, children } = expression
@@ -92,6 +92,7 @@ const handlers: Record<RegularExpressionT, Handler> = {
   wait: handleWait,
   setvar: handleSetvar,
   changevar: handleChangevar,
+  objectvec3prop: handleObjectvec3prop,
   literal: handleLiteral,
   var: handleVar,
   param: handleParam,

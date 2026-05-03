@@ -84,15 +84,3 @@ export function findTopLevelObject(
   }
   throw Error('How did we get there?')
 }
-
-export function getFallbackObject(object: Object3D) {
-  if (object.children.length > 0) {
-    const child = [...object.children].reverse().find(c => !isInternalObject(c))
-    if (child) {
-      return child
-    }
-  }
-  const parent = object.parent
-  if (!parent) throw new ParentError(object)
-  return parent
-}

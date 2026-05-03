@@ -3,6 +3,7 @@ import { Object3D } from 'three'
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 import { useId } from 'react'
 import { useEditorStore } from '../../state'
+import clsx from 'clsx'
 
 interface BasePropertyProps {
   label: string
@@ -31,7 +32,7 @@ export function Vec3Property({ label, object, property }: Vec3PropertyProps) {
         {(['x', 'y', 'z'] as const).map(axis => (
           <label key={axis} className='relative'>
             <DragNumberInput
-              className='rounded border outline-none w-10 text-center hover:bg-ui-750 focus:bg-ui-750 text-cyan'
+              className='rounded border outline-none w-10 text-center text-cyan'
               value={Number(object[property][axis])}
               onChange={newVal => {
                 object[property][axis] = newVal
@@ -62,7 +63,7 @@ export function Vec3AngleProperty({
         {(['x', 'y', 'z'] as const).map(axis => (
           <label key={axis} className='relative'>
             <DragNumberInput
-              className='rounded border outline-none w-10 text-center pr-1 hover:bg-ui-750 focus:bg-ui-750 text-cyan'
+              className='rounded border outline-none w-10 text-center pr-1 text-cyan'
               value={Number((object[property][axis] * 180) / Math.PI)}
               step={1}
               decimals={0}
@@ -97,7 +98,7 @@ export function TextProperty({ label, object, property }: TextPropertyProps) {
       <span className='text-nowrap'>{label}</span>
       <input
         type='text'
-        className='rounded border outline-none px-1 w-32 hover:bg-ui-750 focus:bg-ui-750'
+        className='rounded border outline-none px-1 w-32'
         key={object[property]}
         defaultValue={object[property]}
         onBlur={e => update(e.target.value)}
@@ -118,11 +119,16 @@ interface PropButtonProps {
 export function PropButton({ label, Icon, action }: PropButtonProps) {
   return (
     <button
-      className='flex gap-1 items-center cursor-pointer p-1 rounded bg-ui-750 hover:bg-ui-650'
+      className={clsx(
+        'flex gap-1 px-1 items-center',
+        'border rounded-md',
+        'border-ui-700',
+        'hover:bg-ui-750 bg-ui-800'
+      )}
       onClick={action}
     >
       <Icon size={12} />
-      <p className='leading-0'>{label}</p>
+      <p>{label}</p>
     </button>
   )
 }
@@ -140,10 +146,7 @@ export function CheckBoxProperty({
 }: CheckBoxPropertyProps) {
   const uuid = useId()
   return (
-    <div className='flex gap-2'>
-      <label className='cursor-pointer select-none' htmlFor={uuid}>
-        {label}
-      </label>
+    <label className='flex gap-2 cursor-pointer select-none'>
       <input
         id={uuid}
         className='cursor-pointer accent-teal'
@@ -151,6 +154,7 @@ export function CheckBoxProperty({
         checked={checked}
         onChange={e => action(e.target.checked)}
       />
-    </div>
+      <p>{label}</p>
+    </label>
   )
 }

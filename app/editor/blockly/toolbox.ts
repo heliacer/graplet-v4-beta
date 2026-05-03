@@ -183,6 +183,17 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
         {
           kind: 'block',
           type: 'object'
+        },
+        {
+          kind: 'block',
+          type: 'objectvec3prop',
+          inputs: {
+            OBJECT: {
+              shadow: {
+                type: 'object'
+              }
+            }
+          }
         }
       ]
     },

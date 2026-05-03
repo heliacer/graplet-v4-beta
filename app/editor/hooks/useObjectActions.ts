@@ -12,11 +12,7 @@ import { blocklyUI } from '../blockly/blocks'
 import { ParentError, SObject3D, TransformProps } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import {
-  findTopLevelObject,
-  getFallbackObject,
-  moveObject
-} from '../utils/three'
+import { findTopLevelObject, moveObject } from '../utils/three'
 import { Optional } from '@/app/lib/types'
 import { useEditorStore } from '../state'
 
@@ -117,6 +113,17 @@ export function useObjectActions() {
   function removeObject(object: Object3D) {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
+
+    if (object.sharedId) {
+      /** Remove it from the registry */
+      objects.current.delete(object.sharedId)
+
+      /** If it's the selection, remove it */
+      if (selectedItems.includes(object.sharedId)) {
+        setSelectedItems(prev => prev.filter(item => item !== object.sharedId))
+      }
+    }
+
     parent.remove(object)
 
     if (object instanceof Camera) {
@@ -134,23 +141,6 @@ export function useObjectActions() {
         orbit.disconnect()
         orbit.dispose()
         orbitMap.current.delete(object.id)
-      }
-    }
-
-    if (object.sharedId) {
-      /** Remove it from the registry */
-      objects.current.delete(object.sharedId)
-
-      /** If it's the selection, remove it */
-      if (selectedItems.includes(object.sharedId)) {
-        if (parent.type === 'Scene') return
-        const fallback = getFallbackObject(parent)
-        setSelectedItems(prev => {
-          const next = prev.filter(item => item !== object.sharedId)
-          return next.length === 0 && fallback.sharedId
-            ? [fallback.sharedId]
-            : next
-        })
       }
     }
 
@@ -207,7 +197,13 @@ export function useObjectActions() {
     const text = await navigator.clipboard.readText()
     try {
       const objects: SObject3D[] = JSON.parse(text)
-      objects.forEach(object => addObject(object, target, true))
+      console.log(typeof objects)
+      for (let i = 0; i < objects.length; i++) {
+        const object = addObject(objects[i], target, true)
+        if (i + 1 === objects.length) {
+          invalidateObject(object)
+        }
+      }
     } catch (error) {
       if (error instanceof SyntaxError) {
         console.warn('invalid paste just happened')

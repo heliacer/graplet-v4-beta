@@ -13,5 +13,12 @@ export function ObjectActions({ object }: { object: Object3D }) {
     }
   ]
 
-  return <Dropdown Icon={Hammer} label='Actions' items={items} />
+  return (
+    <Dropdown
+      Icon={Hammer}
+      label='Actions'
+      items={items}
+      iconStyle='text-purple'
+    />
+  )
 }

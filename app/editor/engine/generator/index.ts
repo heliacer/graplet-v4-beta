@@ -4,6 +4,7 @@ import { onflagclickGen } from './blocks/events'
 import {
   moveunitsxyzGen,
   objectGen,
+  objectvec3propGen,
   rotatexyzGen,
   translatexyzGen
 } from './blocks/motion'
@@ -128,6 +129,7 @@ exprGenerator.forBlock('onflagclick', onflagclickGen)
 
 /** Motion */
 exprGenerator.forBlock('object', objectGen)
+exprGenerator.forBlock('objectvec3prop', objectvec3propGen)
 exprGenerator.forBlock('moveunitsxyz', moveunitsxyzGen)
 exprGenerator.forBlock('setposxyz', createXYZExpr('setposxyz'))
 exprGenerator.forBlock('setscalexyz', createXYZExpr('setscalexyz'))

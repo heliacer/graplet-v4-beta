@@ -17,7 +17,7 @@ export default function Editor() {
   }, [])
 
   return (
-    <div className='h-screen flex flex-col overflow-hidden'>
+    <div className='h-screen flex flex-col'>
       <KeybindProvider>
         <EditorProvider>
           <EditorHeader />

@@ -44,6 +44,7 @@ export interface DropdownProps {
   items?: DropdownItemProps[]
   Icon?: LucideIcon
   size?: number
+  iconStyle?: string
 }
 
 interface DropdownItemListProps {
@@ -134,7 +135,7 @@ function DropdownItem({
   )
 }
 
-export function Dropdown({ label, items, Icon }: DropdownProps) {
+export function Dropdown({ label, items, Icon, iconStyle: iconStyle }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [activePath, setActivePath] = useState<number[]>([])
 
@@ -156,7 +157,7 @@ export function Dropdown({ label, items, Icon }: DropdownProps) {
             'hover:bg-ui-750 bg-ui-800'
           )}
         >
-          {Icon && <Icon size={14} />}
+          {Icon && <Icon size={14} className={iconStyle} />}
           {label}
           <ChevronDown size={14} />
         </button>

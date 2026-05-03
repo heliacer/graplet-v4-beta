@@ -29,34 +29,54 @@ export function DragNumberInput({
   title
 }: DragNumberInputProps) {
   const [localText, setLocalText] = useState(() => value.toFixed(decimals))
-  const [isEditing, setIsEditing] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
   const isDragging = useRef(false)
+  const isEditing = useRef(false)
   const startY = useRef(0)
   const startValue = useRef(0)
   const lastValue = useRef(value)
+  const currentValue = useRef(value)
 
   useEffect(() => {
-    if (!isEditing && !isDragging.current) {
+    currentValue.current = value
+    if (!isEditing.current && !isDragging.current) {
       setLocalText(value.toFixed(decimals))
       lastValue.current = value
     }
-  }, [value, decimals, isEditing])
+  }, [value, decimals])
+
+  const clampNormalise = (v: number) => {
+    const factor = Math.pow(10, decimals)
+    return Math.round(Math.max(min, Math.min(max, v)) * factor) / factor
+  }
+
+  const update = (v: number) => {
+    const normalised = clampNormalise(v)
+    onChange(normalised)
+    setLocalText(normalised.toFixed(decimals))
+    lastValue.current = normalised
+    currentValue.current = normalised
+  }
+
+  const commit = (v: number) => {
+    update(v)
+    onCommit?.()
+  }
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       const dy = (startY.current - e.clientY) * dragSpeed
-      let newValue = startValue.current + dy * step
-      newValue = Math.round(newValue / step) * step
-      newValue = Math.max(min, Math.min(max, newValue))
-      const factor = Math.pow(10, decimals)
-      const normalised = Math.round(newValue * factor) / factor
+      const normalised = clampNormalise(
+        Math.round((startValue.current + dy * step) / step) * step
+      )
       if (normalised !== lastValue.current) {
         lastValue.current = normalised
+        currentValue.current = normalised
         onChange(normalised)
         setLocalText(normalised.toFixed(decimals))
       }
     },
-    [step, min, max, onChange, dragSpeed, decimals]
+    [step, min, max, onChange, clampNormalise, dragSpeed, decimals]
   )
 
   const handleMouseUp = useCallback(() => {
@@ -65,56 +85,41 @@ export function DragNumberInput({
     document.body.style.userSelect = ''
     if (isDragging.current) {
       isDragging.current = false
+      inputRef.current?.blur()
       onCommit?.()
     }
   }, [handleMouseMove, onCommit])
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {
-      if (isEditing) return
-
+      if (isEditing.current) return
       startY.current = e.clientY
-      startValue.current = value
+      startValue.current = currentValue.current
 
-      const onThresholdMove = (moveEvent: MouseEvent) => {
+      const onMove = (moveEvent: MouseEvent) => {
         if (Math.abs(moveEvent.clientY - startY.current) > DRAG_THRESHOLD) {
           isDragging.current = true
           document.body.style.userSelect = 'none'
-          document.removeEventListener('mousemove', onThresholdMove)
-          document.removeEventListener('mouseup', onThresholdCancel)
+          document.removeEventListener('mousemove', onMove)
+          document.removeEventListener('mouseup', onCancel)
           document.addEventListener('mousemove', handleMouseMove)
           document.addEventListener('mouseup', handleMouseUp)
         }
       }
-
-      const onThresholdCancel = () => {
-        document.removeEventListener('mousemove', onThresholdMove)
-        document.removeEventListener('mouseup', onThresholdCancel)
+      const onCancel = () => {
+        document.removeEventListener('mousemove', onMove)
+        document.removeEventListener('mouseup', onCancel)
       }
 
-      document.addEventListener('mousemove', onThresholdMove)
-      document.addEventListener('mouseup', onThresholdCancel)
+      document.addEventListener('mousemove', onMove)
+      document.addEventListener('mouseup', onCancel)
     },
-    [value, handleMouseMove, handleMouseUp, isEditing]
+    [handleMouseMove, handleMouseUp]
   )
-
-  const tryCommitText = useCallback(() => {
-    const parsed = parseFloat(localText)
-    if (!isNaN(parsed)) {
-      const clamped = Math.max(min, Math.min(max, parsed))
-      const factor = Math.pow(10, decimals)
-      const normalised = Math.round(clamped * factor) / factor
-      onChange(normalised)
-      onCommit?.()
-      setLocalText(normalised.toFixed(decimals))
-    } else {
-      setLocalText(value.toFixed(decimals))
-    }
-    setIsEditing(false)
-  }, [localText, min, max, decimals, onChange, onCommit, value])
 
   return (
     <input
+      ref={inputRef}
       type='text'
       inputMode='numeric'
       title={title}
@@ -122,17 +127,25 @@ export function DragNumberInput({
       value={localText}
       onMouseDown={handleMouseDown}
       onFocus={() => {
-        setIsEditing(true)
-        setLocalText(value.toFixed(decimals))
+        isEditing.current = true
+        setLocalText(currentValue.current.toFixed(decimals))
       }}
       onChange={e => setLocalText(e.target.value)}
-      onBlur={tryCommitText}
+      onBlur={() => {
+        const parsed = parseFloat(localText)
+        commit(!isNaN(parsed) ? parsed : currentValue.current)
+        isEditing.current = false
+      }}
       onKeyDown={e => {
         if (e.key === 'Enter') e.currentTarget.blur()
         if (e.key === 'Escape') {
-          setLocalText(value.toFixed(decimals))
-          setIsEditing(false)
+          setLocalText(currentValue.current.toFixed(decimals))
+          isEditing.current = false
           e.currentTarget.blur()
+        }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault()
+          update(currentValue.current + (e.key === 'ArrowUp' ? step : -step))
         }
       }}
     />

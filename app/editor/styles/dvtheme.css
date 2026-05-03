@@ -1,24 +1,11 @@
-.dv-dockview,
-.dv-groupview {
-  background-color: var(--dv-group-view-background-color);
-}
-.dv-resize-container .dv-resize-handle-bottom,
-.dv-resize-container .dv-resize-handle-top {
-  cursor: ns-resize;
-  left: 4px;
-  height: 4px;
-  width: calc(100% - 8px);
-  z-index: var(--dv-overlay-z-index);
-}
-.dv-tab,
-.dv-tabs-and-actions-container {
-  box-sizing: border-box;
-  font-size: var(--dv-tabs-and-actions-container-font-size);
-}
+/* I hate this file the most, it is pure pain and agony. */
+
 .dv-theme {
   --dv-tabs-and-actions-container-font-size: 15px;
   --dv-tabs-and-actions-container-height: 30px;
   --dv-overlay-z-index: 999;
+
+  /* internal aliases */
   --dv-scrollbar-height: 2px;
   --dv-scrollbar-border-radius: 2px;
   --dv-scrollbar-background-color: var(--color-teal);
@@ -32,14 +19,18 @@
   --dv-accent-border-color: var(--color-teal);
   --dv-hover-background-color: var(--color-ui-800);
   --dv-drag-over-border: 1px solid var(--color-teal);
-  --dv-drag-over-background-color: rgba(100, 100, 100, 20%);
+  --dv-drag-over-background-color: rgba(100, 100, 100, 0.2);
   --dv-floating-box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-.dv-render-overlay,
-.dv-resize-container {
-  --dv-overlay-z-index: var(--dv-overlay-z-index, 999);
+
+/* --- Backgrounds --- */
+.dv-dockview,
+.dv-groupview {
+  background-color: var(--dv-group-view-background-color);
 }
+
+/* --- Scrollbar --- */
 .dv-scrollable {
   position: relative;
   overflow: hidden;
@@ -52,24 +43,16 @@
   border-radius: var(--dv-scrollbar-border-radius);
   background-color: transparent;
 }
+.dv-scrollable:hover .dv-scrollbar-horizontal,
 .dv-scrollable.dv-scrollable-resizing .dv-scrollbar-horizontal,
-.dv-scrollable.dv-scrollable-scrolling .dv-scrollbar-horizontal,
-.dv-scrollable:hover .dv-scrollbar-horizontal {
+.dv-scrollable.dv-scrollable-scrolling .dv-scrollbar-horizontal {
   background-color: var(--dv-scrollbar-background-color);
 }
 .dv-scrollable > .dv-tabs-container {
   overflow: hidden;
 }
-.dv-view [tabindex='-1']:has([role='menu']) {
-  overflow: visible !important;
-}
-.dv-svg {
-  display: inline-block;
-  fill: currentcolor;
-  line-height: 1;
-  stroke: currentcolor;
-  stroke-width: 0;
-}
+
+/* --- Drop target --- */
 .dv-drop-target-container {
   position: absolute;
   z-index: 9999;
@@ -79,7 +62,6 @@
   width: 100%;
   pointer-events: none;
   overflow: hidden;
-  --dv-transition-duration: 300ms;
 }
 .dv-drop-target-container .dv-drop-target-anchor {
   position: relative;
@@ -87,11 +69,11 @@
   background-color: var(--dv-drag-over-background-color);
   opacity: 1;
   transition:
-    opacity var(--dv-transition-duration) ease-in,
-    top var(--dv-transition-duration) ease-out,
-    left var(--dv-transition-duration) ease-out,
-    width var(--dv-transition-duration) ease-out,
-    height var(--dv-transition-duration) ease-out;
+    opacity 300ms ease-in,
+    top 300ms ease-out,
+    left 300ms ease-out,
+    width 300ms ease-out,
+    height 300ms ease-out;
 }
 .dv-drop-target-container
   .dv-drop-target-anchor.dv-drop-target-anchor-container-changed {
@@ -100,14 +82,10 @@
 }
 .dv-drop-target {
   position: relative;
-  --dv-transition-duration: 70ms;
 }
 .dv-drop-target > .dv-drop-target-dropzone {
   position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
+  inset: 0;
   z-index: 1000;
   pointer-events: none;
 }
@@ -117,63 +95,41 @@
   height: 100%;
   width: 100%;
   background-color: var(--dv-drag-over-background-color);
-  transition:
-    top var(--dv-transition-duration) ease-out,
-    left var(--dv-transition-duration) ease-out,
-    width var(--dv-transition-duration) ease-out,
-    height var(--dv-transition-duration) ease-out,
-    opacity var(--dv-transition-duration) ease-out;
-  will-change: transform;
   pointer-events: none;
+  transition:
+    top 70ms ease-out,
+    left 70ms ease-out,
+    width 70ms ease-out,
+    height 70ms ease-out,
+    opacity 70ms ease-out;
 }
-.dv-dockview,
-.dv-drop-target
-  > .dv-drop-target-dropzone
-  > .dv-drop-target-selection.dv-drop-target-top.dv-drop-target-small-vertical,
-.dv-pane-container .dv-view:not(:first-child) .dv-pane > .dv-pane-header,
-.dv-split-view-container.dv-vertical
-  > .dv-view-container
-  > .dv-view:not(:first-child).visible {
+.dv-drop-target-selection.dv-drop-target-top.dv-drop-target-small-vertical {
   border-top: 1px solid var(--dv-border-color);
 }
-.dv-dockview,
-.dv-drop-target
-  > .dv-drop-target-dropzone
-  > .dv-drop-target-selection.dv-drop-target-bottom.dv-drop-target-small-vertical,
-.dv-inactive-tab,
-.dv-left-actions-container,
-.dv-right-actions-container,
-.dv-tabs-overflow-container .dv-tab:not(:last-child),
-.dv-void-container {
+.dv-drop-target-selection.dv-drop-target-bottom.dv-drop-target-small-vertical {
   border-bottom: 1px solid var(--dv-border-color);
 }
-.dv-drop-target
-  > .dv-drop-target-dropzone
-  > .dv-drop-target-selection.dv-drop-target-left.dv-drop-target-small-horizontal,
-.dv-split-view-container.dv-horizontal
-  > .dv-view-container
-  > .dv-view:not(:first-child).visible {
+.dv-drop-target-selection.dv-drop-target-left.dv-drop-target-small-horizontal {
   border-left: 1px solid var(--dv-border-color);
 }
-.dv-drop-target
-  > .dv-drop-target-dropzone
-  > .dv-drop-target-selection.dv-drop-target-right.dv-drop-target-small-horizontal {
+.dv-drop-target-selection.dv-drop-target-right.dv-drop-target-small-horizontal {
   border-right: 1px solid var(--dv-border-color);
 }
+
+/* --- Dockview container --- */
 .dv-dockview {
   position: relative;
 }
 .dv-dockview .dv-watermark-container {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  inset: 0;
   z-index: 1;
 }
 .dv-dockview .dv-overlay-render-container {
   position: relative;
 }
+
+/* --- Groupview --- */
 .dv-groupview {
   display: flex;
   flex-direction: column;
@@ -181,16 +137,15 @@
   overflow: hidden;
 }
 .dv-groupview:focus {
-  outline: 0;
+  outline: none;
 }
 .dv-groupview > .dv-content-container {
   flex-grow: 1;
   min-height: 0;
-  outline: 0;
+  outline: none;
 }
-.dv-groupview.dv-groupview-floating {
-  border-radius: 10px;
-}
+
+/* active/inactive tab colours */
 .dv-groupview
   > .dv-tabs-and-actions-container
   .dv-tabs-container
@@ -214,24 +169,41 @@
   > .dv-tab.dv-inactive-tab:hover {
   background-color: var(--dv-active-tab-background-color);
 }
+.dv-active-group .dv-active-tab {
+  border-top: 1px solid var(--dv-accent-border-color);
+}
+
+/* floating groupview rounding */
+.dv-groupview.dv-groupview-floating {
+  border-radius: 10px;
+}
 .dv-groupview.dv-groupview-floating
   > .dv-tabs-and-actions-container
   .dv-tabs-container
   > .dv-tab.dv-active-tab:first-child {
-  border-radius: 10px 0px 0px 0px;
+  border-radius: 10px 0 0 0;
 }
-.dv-active-group .dv-active-tab {
-  border-top: 1px solid var(--dv-accent-border-color);
+
+/* --- Floating overlay host --- */
+.dv-floating-overlay-host {
+  position: absolute;
+  pointer-events: none;
 }
-.dv-branch-node,
-.dv-grid-view,
-.dv-pane-container,
-.dv-root-wrapper {
-  height: 100%;
-  width: 100%;
+
+/* dark backdrop whenever at least one floating panel is open */
+.dv-floating-overlay-host:has(.dv-default-tab-action)::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 40%);
+  z-index: calc(var(--dv-overlay-z-index) - 3);
+  pointer-events: none;
 }
+
+/* --- Floating resize container --- */
 .dv-resize-container {
   position: absolute;
+  pointer-events: auto;
   z-index: calc(var(--dv-overlay-z-index) - 2);
   border: 1px solid var(--dv-border-color);
   box-shadow: var(--dv-floating-box-shadow);
@@ -243,43 +215,46 @@
 .dv-resize-container.dv-resize-container-dragging {
   opacity: 1;
 }
+
+/* resize handles */
+.dv-resize-container .dv-resize-handle-top,
+.dv-resize-container .dv-resize-handle-bottom {
+  height: 4px;
+  width: calc(100% - 8px);
+  left: 4px;
+  z-index: var(--dv-overlay-z-index);
+  position: absolute;
+  cursor: ns-resize;
+}
 .dv-resize-container .dv-resize-handle-top {
   top: -2px;
-  position: absolute;
 }
 .dv-resize-container .dv-resize-handle-bottom {
   bottom: -2px;
-  position: absolute;
 }
-.dv-resize-container .dv-resize-handle-left {
-  height: calc(100% - 8px);
-  width: 4px;
-  left: -2px;
-  top: 4px;
-  z-index: var(--dv-overlay-z-index);
-  position: absolute;
-  cursor: ew-resize;
-}
+.dv-resize-container .dv-resize-handle-left,
 .dv-resize-container .dv-resize-handle-right {
   height: calc(100% - 8px);
   width: 4px;
-  right: -2px;
   top: 4px;
   z-index: var(--dv-overlay-z-index);
   position: absolute;
   cursor: ew-resize;
 }
-.dv-resize-container .dv-resize-handle-bottomleft,
-.dv-resize-container .dv-resize-handle-bottomright,
+.dv-resize-container .dv-resize-handle-left {
+  left: -2px;
+}
+.dv-resize-container .dv-resize-handle-right {
+  right: -2px;
+}
 .dv-resize-container .dv-resize-handle-topleft,
-.dv-resize-container .dv-resize-handle-topright {
+.dv-resize-container .dv-resize-handle-topright,
+.dv-resize-container .dv-resize-handle-bottomleft,
+.dv-resize-container .dv-resize-handle-bottomright {
   height: 4px;
+  width: 4px;
   z-index: var(--dv-overlay-z-index);
   position: absolute;
-  width: 4px;
-}
-.dv-resize-container:has(div.dv-default-tab-action) {
-  box-shadow: 0px 0px 100px 5000px rgb(0 0 0 / 40%);
 }
 .dv-resize-container .dv-resize-handle-topleft {
   top: -2px;
@@ -287,20 +262,22 @@
   cursor: nw-resize;
 }
 .dv-resize-container .dv-resize-handle-topright {
-  right: -2px;
   top: -2px;
+  right: -2px;
   cursor: ne-resize;
 }
 .dv-resize-container .dv-resize-handle-bottomleft {
-  left: -2px;
   bottom: -2px;
+  left: -2px;
   cursor: sw-resize;
 }
 .dv-resize-container .dv-resize-handle-bottomright {
-  right: -2px;
   bottom: -2px;
+  right: -2px;
   cursor: se-resize;
 }
+
+/* --- Render overlay --- */
 .dv-render-overlay {
   position: absolute;
   z-index: 1;
@@ -309,25 +286,17 @@
 .dv-render-overlay.dv-render-overlay-float {
   z-index: calc(var(--dv-overlay-z-index) - 1);
 }
-.dv-pane-container .dv-pane .dv-pane-body:focus-within::after,
-.dv-pane-container .dv-pane .dv-pane-body:focus::after,
-.dv-pane-container .dv-pane .dv-pane-header:focus-within::after,
-.dv-pane-container .dv-pane .dv-pane-header:focus::after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+
+/* --- Layout roots --- */
+.dv-root-wrapper,
+.dv-grid-view,
+.dv-branch-node,
+.dv-pane-container {
   height: 100%;
-  z-index: 5;
-  content: '';
-  pointer-events: none;
-  outline-offset: -1px;
+  width: 100%;
 }
-.dv-pane-container.dv-animated .dv-view,
-.dv-split-view-container.dv-animation .dv-sash,
-.dv-split-view-container.dv-animation .dv-view {
-  transition: 0.15s ease-out;
-}
+
+/* --- Pane container --- */
 .dv-pane-container .dv-view {
   overflow: hidden;
   display: flex;
@@ -336,6 +305,12 @@
 }
 .dv-pane-container .dv-view:not(:first-child)::before {
   background-color: transparent !important;
+}
+.dv-pane-container .dv-view:not(:first-child) .dv-pane > .dv-pane-header {
+  border-top: 1px solid var(--dv-border-color);
+}
+.dv-pane-container:first-of-type > .dv-pane > .dv-pane-header {
+  border-top: none !important;
 }
 .dv-pane-container .dv-view .dv-default-header {
   background-color: var(--dv-group-view-background-color);
@@ -353,9 +328,6 @@
   padding-left: 8px;
   flex-grow: 1;
 }
-.dv-pane-container:first-of-type > .dv-pane > .dv-pane-header {
-  border-top: none !important;
-}
 .dv-pane-container .dv-pane {
   display: flex;
   flex-direction: column;
@@ -366,7 +338,7 @@
   box-sizing: border-box;
   user-select: none;
   position: relative;
-  outline: 0;
+  outline: none;
 }
 .dv-pane-container .dv-pane .dv-pane-header.dv-pane-draggable {
   cursor: pointer;
@@ -376,8 +348,10 @@
   overflow-x: hidden;
   flex-grow: 1;
   position: relative;
-  outline: 0;
+  outline: none;
 }
+
+/* --- Split view --- */
 .dv-split-view-container {
   position: relative;
   overflow: hidden;
@@ -398,14 +372,6 @@
   > .dv-sash-container
   > .dv-sash.dv-enabled {
   cursor: ew-resize;
-}
-.dv-split-view-container.dv-horizontal
-  > .dv-sash-container
-  > .dv-sash.dv-disabled,
-.dv-split-view-container.dv-vertical
-  > .dv-sash-container
-  > .dv-sash.dv-disabled {
-  cursor: default;
 }
 .dv-split-view-container.dv-horizontal
   > .dv-sash-container
@@ -440,6 +406,15 @@
   > .dv-sash.dv-minimum {
   cursor: s-resize;
 }
+/* shared disabled cursor */
+.dv-split-view-container.dv-horizontal
+  > .dv-sash-container
+  > .dv-sash.dv-disabled,
+.dv-split-view-container.dv-vertical
+  > .dv-sash-container
+  > .dv-sash.dv-disabled {
+  cursor: default;
+}
 .dv-split-view-container .dv-sash-container {
   height: 100%;
   width: 100%;
@@ -448,11 +423,9 @@
 .dv-split-view-container .dv-sash-container .dv-sash {
   position: absolute;
   z-index: 99;
-  outline: 0;
+  outline: none;
   user-select: none;
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   touch-action: none;
   background-color: transparent;
 }
@@ -466,6 +439,7 @@
   box-sizing: border-box;
   position: absolute;
 }
+/* panel separators */
 .dv-split-view-container.dv-separator-border
   .dv-view:not(:first-child)::before {
   content: ' ';
@@ -476,17 +450,32 @@
   pointer-events: none;
   background-color: var(--dv-border-color);
 }
+.dv-split-view-container.dv-horizontal
+  > .dv-view-container
+  > .dv-view:not(:first-child).visible {
+  border-left: 1px solid var(--dv-border-color);
+}
+.dv-split-view-container.dv-vertical
+  > .dv-view-container
+  > .dv-view:not(:first-child).visible {
+  border-top: 1px solid var(--dv-border-color);
+}
+
+/* --- Tabs --- */
 .dv-dragged {
   transform: translate3d(0, 0, 0);
 }
+
 .dv-tab {
   border-right: 1px solid var(--dv-border-color);
   border-top: 1px solid transparent;
   flex-shrink: 0;
   -webkit-user-drag: element;
-  outline: 0;
+  outline: none;
   cursor: pointer;
   position: relative;
+  box-sizing: border-box;
+  font-size: var(--dv-tabs-and-actions-container-font-size);
 }
 .dv-tab.dv-tab-dragging .dv-default-tab-action {
   background-color: var(--dv-active-tab-color);
@@ -526,6 +515,8 @@
 .dv-inactive-tab .dv-default-tab .dv-default-tab-action:hover {
   background-color: transparent;
 }
+
+/* --- Tabs container --- */
 .dv-tabs-container {
   display: flex;
   height: 100%;
@@ -547,11 +538,13 @@
   height: 3px;
 }
 .dv-tabs-container::-webkit-scrollbar-track {
-  background: 0 0;
+  background: transparent;
 }
 .dv-tabs-container::-webkit-scrollbar-thumb {
   background: var(--dv-scrollbar-background-color);
 }
+
+/* --- Tabs overflow --- */
 .dv-tabs-overflow-dropdown-default {
   height: 100%;
   color: var(--dv-inactive-tab-color);
@@ -572,13 +565,25 @@
   height: unset;
   border: 1px solid var(--dv-border-color);
   background-color: var(--dv-group-view-background-color);
-  border-bottom: 0;
+  border-bottom: none;
 }
+.dv-tabs-overflow-container .dv-tab:not(:last-child) {
+  border-bottom: 1px solid var(--dv-border-color);
+}
+
+/* menu overflow fix */
+.dv-view [tabindex='-1']:has([role='menu']) {
+  overflow: visible !important;
+}
+
+/* --- Tabs and actions bar --- */
 .dv-tabs-and-actions-container {
   display: flex;
   background-color: var(--dv-tabs-and-actions-container-background-color);
   flex-shrink: 0;
   height: var(--dv-tabs-and-actions-container-height);
+  box-sizing: border-box;
+  font-size: var(--dv-tabs-and-actions-container-font-size);
 }
 .dv-tabs-and-actions-container.dv-single-tab.dv-full-width-single-tab
   .dv-scrollable,
@@ -599,16 +604,22 @@
 .dv-tabs-and-actions-container .dv-void-container {
   display: flex;
   flex-grow: 1;
+  border-bottom: 1px solid var(--dv-border-color);
   cursor: grab;
 }
 .dv-tabs-and-actions-container .dv-void-container:active {
   cursor: grabbing;
 }
-
-.dv-tabs-and-actions-container .dv-right-actions-container {
+.dv-tabs-and-actions-container .dv-right-actions-container,
+.dv-tabs-and-actions-container .dv-left-actions-container {
   display: flex;
+  border-bottom: 1px solid var(--dv-border-color);
 }
-.dv-watermark {
-  display: flex;
-  height: 100%;
+.dv-inactive-tab {
+  border-bottom: 1px solid var(--dv-border-color);
+}
+
+/* --- Svg --- */
+.dv-svg {
+  fill: currentcolor;
 }

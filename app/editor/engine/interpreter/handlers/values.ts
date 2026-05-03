@@ -1,5 +1,5 @@
 import { Frame, ProgramState, Thread } from '../../ast'
-import { pushFrame, pushValue } from './utils'
+import { popValue, pushFrame, pushValue } from './utils'
 
 export function handleLiteral(frame: Frame, thread: Thread) {
   const value = frame.expression.value
@@ -12,6 +12,58 @@ export function handleVar(frame: Frame, thread: Thread, state: ProgramState) {
   const value = state.variables.get(name)
   if (value === undefined) throw new Error(`Variable ${name} not found`)
   pushValue(thread, value)
+}
+
+export function handleObjectvec3prop(
+  frame: Frame,
+  thread: Thread,
+  state: ProgramState
+) {
+  const { expression, stage } = frame
+  const { args = [] } = expression
+
+  if (args.length !== 3) throw Error('Invalid args for "objectvec3prop"')
+
+  const { stack } = thread
+  if (stage === 0) {
+    stack.push({ ...frame, stage: 1 })
+    pushFrame(thread, args[0])
+    return
+  }
+
+  if (stage === 1) {
+    stack.push({ ...frame, stage: 2 })
+    pushFrame(thread, args[1])
+    return
+  }
+
+  if (stage === 2) {
+    stack.push({ ...frame, stage: 3 })
+    pushFrame(thread, args[2])
+    return
+  }
+
+  if (stage === 3) {
+    const PROPS = ['position', 'rotation', 'scale'] as const
+    const AXES = ['x', 'y', 'z'] as const
+    type Prop = (typeof PROPS)[number]
+    type Axis = (typeof AXES)[number]
+
+    const objectId = String(popValue(thread))
+    const axis = String(popValue(thread)) as Axis
+    const property = String(popValue(thread)) as Prop
+    
+    const object = state.objects.get(objectId)
+    if (!object) throw Error(`object with id "${objectId}" does not exist.`)
+      
+    if (!PROPS.includes(property)) {
+      throw Error(`Invalid property for object ${object.name}: ${property}`)
+    }
+    if (!AXES.includes(axis)) {
+      throw Error(`Invalid axis for object ${object.name}: ${axis}`)
+    }
+    pushValue(thread, object[property][axis])
+  }
 }
 
 export function handleParam(frame: Frame, thread: Thread) {

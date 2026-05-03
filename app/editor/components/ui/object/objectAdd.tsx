@@ -7,5 +7,12 @@ export function ObjectAdd() {
   const { addObject } = useObjectActions()
   const items = createAddItemsMenu(addObject)
 
-  return <Dropdown label='Add' Icon={DiamondPlus} items={items} />
+  return (
+    <Dropdown
+      label='Add'
+      Icon={DiamondPlus}
+      items={items}
+      iconStyle='text-teal'
+    />
+  )
 }

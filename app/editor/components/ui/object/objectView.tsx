@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { StateFunc } from '@/app/editor/types'
 import { useCurrentObject } from '@/app/editor/hooks/useCurrentObject'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
-import { Rows2 } from 'lucide-react'
+import { View } from 'lucide-react'
 import {
   Camera,
   CameraHelper,
@@ -108,5 +108,7 @@ export function ObjectView() {
    * Local Helper (Camera | DirectionalLight)
    */
 
-  return <Dropdown Icon={Rows2} label='View' items={items} />
+  return (
+    <Dropdown Icon={View} label='View' items={items} iconStyle='text-mint' />
+  )
 }

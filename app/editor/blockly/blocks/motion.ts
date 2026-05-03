@@ -23,6 +23,37 @@ const motionBlocks = common.createBlockDefinitionsFromJsonArray([
     style: 'motion_blocks'
   },
   {
+    type: 'objectvec3prop',
+    message0: '%1 on axis %2 of %3',
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'PROP',
+        options: [
+          ['position', 'position'],
+          ['rotation', 'rotation'],
+          ['scale', 'scale']
+        ]
+      },
+      {
+        type: 'field_dropdown',
+        name: 'AXIS',
+        options: [
+          ['x', 'x'],
+          ['y', 'y'],
+          ['z', 'z']
+        ]
+      },
+      {
+        type: 'input_value',
+        name: 'OBJECT',
+        check: 'Object'
+      }
+    ],
+    output: 'Number',
+    style: 'motion_blocks'
+  },
+  {
     type: 'moveunitsxyz',
     message0: 'move %1 %2 units %3',
     args0: [

@@ -95,7 +95,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
           />
           {orbit && (
             <PropButton
-              label='Reset origin'
+              label='Orbit to center'
               Icon={Crosshair}
               action={() => orbit.target.set(0, 0, 0)}
             />

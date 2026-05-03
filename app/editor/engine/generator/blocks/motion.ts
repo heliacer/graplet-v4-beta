@@ -10,6 +10,23 @@ export function objectGen(block: Block): Expression {
   }
 }
 
+export function objectvec3propGen(
+  block: Block,
+  generator: ExpressionGenerator
+): Expression {
+  const property = block.getFieldValue('PROP') as string
+  const axis = block.getFieldValue('AXIS') as string
+  const objectExpr = generator.getInputValue(block, 'OBJECT', '')
+  return {
+    type: 'objectvec3prop',
+    args: [
+      { type: 'literal', value: property },
+      { type: 'literal', value: axis },
+      objectExpr
+    ]
+  }
+}
+
 export function moveunitsxyzGen(
   block: Block,
   generator: ExpressionGenerator
