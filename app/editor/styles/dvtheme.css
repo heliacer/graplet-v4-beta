@@ -119,7 +119,8 @@
 /* --- Dockview container --- */
 .dv-dockview {
   position: relative;
-  outline: 1px solid var(--dv-border-color);
+  border-width: 1px 0px;
+  border-color: var(--dv-border-color);
 }
 .dv-dockview .dv-watermark-container {
   position: absolute;
