@@ -45,10 +45,10 @@ export function DragNumberInput({
     }
   }, [value, decimals])
 
-  const clampNormalise = (v: number) => {
+  const clampNormalise = useCallback((v: number) => {
     const factor = Math.pow(10, decimals)
     return Math.round(Math.max(min, Math.min(max, v)) * factor) / factor
-  }
+  }, [min, max, decimals])
 
   const update = (v: number) => {
     const normalised = clampNormalise(v)
@@ -76,7 +76,7 @@ export function DragNumberInput({
         setLocalText(normalised.toFixed(decimals))
       }
     },
-    [step, min, max, onChange, clampNormalise, dragSpeed, decimals]
+    [step, onChange, clampNormalise, dragSpeed, decimals]
   )
 
   const handleMouseUp = useCallback(() => {
