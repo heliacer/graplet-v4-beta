@@ -62,7 +62,7 @@ export function GrapletDockview() {
     <DockviewReact
       theme={{
         name: 'graplet',
-        className: 'dv-theme',
+        className: 'dv-theme'
       }}
       className='w-full h-full'
       onReady={mount}

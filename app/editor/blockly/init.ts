@@ -65,7 +65,6 @@ class ContinuousClosableMetrics extends ContinuousMetrics {
 
 export function initializeBlocklyConfig() {
   /** register procedure serializer */
-  serialization.registry.unregister('procedures')
   serialization.registry.register('procedures', new ProcedureSerializer())
 
   /** register disible_by_mutator, with shadow values */

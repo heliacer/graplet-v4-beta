@@ -45,7 +45,7 @@ function rebuildParameters(
         if (shadow) {
           const shadowBlockType =
             type === 'String'
-              ? 'text'
+              ? 'string'
               : type === 'Number'
                 ? 'number'
                 : type === 'Object'
@@ -122,6 +122,7 @@ Blocks['function_def'] = {
   },
 
   doProcedureUpdate(this: ProcedureBlock, fillParams?: boolean) {
+    if (this.isInsertionMarker()) return
     rebuildParameters(this, fillParams)
   },
 
@@ -144,13 +145,14 @@ Blocks['function_def'] = {
   },
 
   destroy(this: ProcedureBlock) {
+    if (this.isInsertionMarker()) return
     if (!this.model) return
     this.workspace.getProcedureMap().delete(this.model.getId())
     const blocks = this.workspace.getAllBlocks(false)
     for (const block of blocks) {
       const model = (block as ProcedureBlock).model
       if (model && model.getId() === this.model.getId()) {
-        block.dispose()
+        console.log(block)
       }
     }
   }
@@ -166,6 +168,7 @@ Blocks['function_call'] = {
   },
 
   doProcedureUpdate(this: ProcedureBlock, fillParams?: boolean) {
+    if (this.isInsertionMarker()) return
     if (!this.model) return
     rebuildParameters(this, fillParams, true)
   },

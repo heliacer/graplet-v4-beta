@@ -7,13 +7,13 @@ import { exprGenerator } from '../engine/generator'
 import { useRuntime } from './useRuntime'
 import { createFunction } from '../blockly/utils/createFunction'
 import { useEditorStore } from '../state'
-import { GrapletConnectionChecker } from '../blockly/utils/connectionChecker'
 
 export function useBlocklyWorkspace(
   blocklyDiv: React.RefObject<HTMLDivElement>
 ) {
   const { workspace } = useEditorRefs()
   const setHasChanges = useEditorStore(s => s.setHasChanges)
+  const setAutoClose = useEditorStore(s => s.setAutoClose)
   const { start } = useRuntime()
 
   useEffect(() => {
@@ -21,7 +21,6 @@ export function useBlocklyWorkspace(
 
     const ws = inject(blocklyDiv.current, blocklyOptions)
     workspace.current = ws
-    ws.connectionChecker = new GrapletConnectionChecker()
 
     function listener(event: Events.Abstract) {
       if (
@@ -63,7 +62,11 @@ export function useBlocklyWorkspace(
 
     ws.addChangeListener(listener)
     ws.addChangeListener(blockListener)
-    ws.getFlyout()?.getWorkspace().addChangeListener(blockListener)
+    const flyout = ws.getFlyout()
+    if (flyout) {
+      flyout.getWorkspace().addChangeListener(blockListener)
+      setAutoClose(flyout.autoClose)
+    }
     ws.registerButtonCallback('createFunction', createFunction)
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
@@ -78,5 +81,5 @@ export function useBlocklyWorkspace(
     }
 
     return cleanup
-  }, [blocklyDiv, workspace, start, setHasChanges])
+  }, [blocklyDiv, setAutoClose, workspace, start, setHasChanges])
 }

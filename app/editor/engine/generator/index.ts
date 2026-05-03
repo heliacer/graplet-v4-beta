@@ -113,7 +113,7 @@ exprGenerator.forBlock('number', function (block: Block): Expression {
   }
 })
 
-exprGenerator.forBlock('text', function (block: Block): Expression {
+exprGenerator.forBlock('string', function (block: Block): Expression {
   const value = block.getFieldValue('VALUE') as Value
 
   const resolved = Number.isNaN(Number(value)) ? value : Number(value)

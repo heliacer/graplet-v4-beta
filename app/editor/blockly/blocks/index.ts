@@ -9,7 +9,7 @@ export const blocklyUI: { objectMenu: string[][] } = { objectMenu: [] }
 
 const commonBlocks = common.createBlockDefinitionsFromJsonArray([
   {
-    type: 'text',
+    type: 'string',
     message0: '%1',
     args0: [
       {

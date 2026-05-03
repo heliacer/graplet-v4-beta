@@ -208,12 +208,12 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
           inputs: {
             A: {
               shadow: {
-                type: 'text'
+                type: 'string'
               }
             },
             B: {
               shadow: {
-                type: 'text'
+                type: 'string'
               }
             }
           }

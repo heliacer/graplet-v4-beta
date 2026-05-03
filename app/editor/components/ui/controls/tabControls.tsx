@@ -5,12 +5,17 @@ import {
   Minimize,
   Plus,
   SquareArrowOutDownLeft,
-  SquareArrowOutUpRight
+  SquareArrowOutUpRight,
+  X
 } from 'lucide-react'
 
 export function RightControls(props: IDockviewHeaderActionsProps) {
   const { isMaximised, isFloating, toggleMaximized, toggleFloating } =
     useHeaderControls(props)
+
+  const hasUnClosable = props.group.panels.some(
+    panel => panel.params?.closable !== true
+  )
 
   return (
     <nav className='flex items-center gap-1 px-1 h-full'>
@@ -25,6 +30,15 @@ export function RightControls(props: IDockviewHeaderActionsProps) {
           <SquareArrowOutUpRight size={16} />
         )}
       </button>
+      {isFloating && !hasUnClosable && (
+        <button
+          onClick={() => props.api.close()}
+          id='closeFloating'
+          className='border border-transparent hover:border-ui-700 hover:bg-ui-800 rounded cursor-pointer'
+        >
+          <X size={18} />
+        </button>
+      )}
       {!isFloating && (
         <button
           id='toggleMaximised'

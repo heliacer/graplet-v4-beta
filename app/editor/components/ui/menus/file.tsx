@@ -106,7 +106,10 @@ export function FileMenu() {
   ]
 
   useKeybind({ key: '/', modifiers: ['Ctrl'] }, () =>
-    upsertPanel(dvApi, 'keybinds', 'Keybinds', 'Keyboard')
+    upsertPanel(dvApi, 'keybinds', 'Keybinds', 'Keyboard', true)
+  )
+  useKeybind({ key: 'i', modifiers: ['Ctrl'] }, () =>
+    upsertPanel(dvApi, 'settings', 'Settings', 'Settings', true)
   )
 
   return (

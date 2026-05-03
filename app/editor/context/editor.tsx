@@ -15,6 +15,7 @@ interface EditorContextType {
   controls: RefObject<TransformControls | null>
   orbitMap: RefObject<Map<number, OrbitControls | null>>
   workspace: RefObject<WorkspaceSvg | null>
+  stepsPerFrame: RefObject<number>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -35,6 +36,7 @@ export function EditorProvider({
   const controls = useRef<TransformControls | null>(null)
   const orbitMap = useRef(new Map())
   const workspace = useRef<WorkspaceSvg | null>(null)
+  const stepsPerFrame = useRef<number>(100)
 
   return (
     <EditorContext.Provider
@@ -47,7 +49,8 @@ export function EditorProvider({
         canvas,
         modelScene,
         controls,
-        workspace
+        workspace,
+        stepsPerFrame
       }}
     >
       {children}

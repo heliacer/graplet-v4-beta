@@ -1,6 +1,7 @@
 import { BlocklyOptions } from 'blockly'
 import { toolbox } from './toolbox'
 import { theme } from './theme'
+import { GrapletConnectionChecker } from './utils/connectionChecker'
 
 export const blocklyOptions: BlocklyOptions = {
   toolbox: toolbox,
@@ -23,7 +24,8 @@ export const blocklyOptions: BlocklyOptions = {
   plugins: {
     metricsManager: 'ContinuousMetrics',
     toolbox: 'ContinuousToolbox',
-    flyoutsVerticalToolbox: 'ContinuousFlyout'
+    flyoutsVerticalToolbox: 'ContinuousFlyout',
+    connectionChecker: GrapletConnectionChecker
   },
-  media: 'public/blockly'
+  media: './blockly'
 }

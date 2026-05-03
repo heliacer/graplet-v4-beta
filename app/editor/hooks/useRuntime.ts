@@ -4,10 +4,8 @@ import { initProgram, threadStep } from '../engine/interpreter'
 import { useEditorRefs } from '../context/editor'
 import { useEditorStore } from '../state'
 
-const STEPS_PER_FRAME = 100 /** should make this globally tweakable, this is peak */
-
 export function useRuntime() {
-  const { objects, varEnv, funcEnv } = useEditorRefs()
+  const { objects, varEnv, funcEnv, stepsPerFrame } = useEditorRefs()
   const setRunning = useEditorStore(s => s.setRunning)
   const setPaused = useEditorStore(s => s.setPaused)
   const invalidateAllObjects = useEditorStore(s => s.invalidateObjectsAll)
@@ -24,7 +22,11 @@ export function useRuntime() {
   }, [setPaused, setRunning, invalidateAllObjects])
 
   const start = useCallback(
-    (expression: Expression, single?: boolean, callback?: (threads: Thread[]) => void) => {
+    (
+      expression: Expression,
+      single?: boolean,
+      callback?: (threads: Thread[]) => void
+    ) => {
       if (running.current) return
 
       const state = {
@@ -52,11 +54,11 @@ export function useRuntime() {
 
       running.current = true
 
-      function loop(state: ProgramState) {
+      function loop(state: ProgramState, spf: number) {
         if (!running.current) return
         if (!paused.current) {
           try {
-            for (let i = 0; i < STEPS_PER_FRAME; i++) {
+            for (let i = 0; i < spf; i++) {
               let allDone = true
               if (paused.current) break
               for (const thread of threads.current) {
@@ -79,12 +81,12 @@ export function useRuntime() {
             return
           }
         }
-        requestAnimationFrame(() => loop(state))
+        requestAnimationFrame(() => loop(state, spf))
       }
 
-      loop(state)
+      loop(state, stepsPerFrame.current)
     },
-    [objects, varEnv, funcEnv, setRunning, finalize]
+    [objects, varEnv, funcEnv, stepsPerFrame, setRunning, finalize]
   )
 
   function pauseOrResume() {

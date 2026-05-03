@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { MiniGraplet } from '@/app/ui/assets/MiniGraplet'
 import { useEditorStore } from '../../state'
+import { useEditorRefs } from '../../context/editor'
 
 interface ThemeButtonProps {
   theme: string
@@ -37,16 +38,33 @@ function ThemeButton({ theme }: ThemeButtonProps) {
 }
 
 export default function SettingsPanel() {
+  const { workspace } = useEditorRefs()
+  const autoClose = useEditorStore(s => s.autoClose)
+  const setAutoClose = useEditorStore(s => s.setAutoClose)
   const builtInThemes = ['dark', 'light', 'arctic', 'lime', 'red']
 
   return (
-    <div className='flex flex-col gap-1 m-4 text-sm'>
+    <div className='flex flex-col gap-2 m-4 text-sm'>
       <p>Theme</p>
-      <div className='flex gap-2'>
+      <div className='flex flex-wrap gap-2'>
         {builtInThemes.map((theme, key) => (
           <ThemeButton key={key} theme={theme} />
         ))}
       </div>
+      <label className='flex gap-2 select-none cursor-pointer'>
+        <input
+          type='checkbox'
+          checked={autoClose}
+          onChange={e => {
+            setAutoClose(e.target.checked)
+            const flyout = workspace.current?.getFlyout()
+            if (flyout) {
+              flyout.autoClose = e.target.checked
+            }
+          }}
+        />
+        <p>Autoclose the toolbox</p>
+      </label>
     </div>
   )
 }

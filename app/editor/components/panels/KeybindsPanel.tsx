@@ -3,12 +3,37 @@ export default function KeybindsPanel() {
     <div className='text-sm m-4'>
       <p className='mb-1'>Work in progress</p>
       <p>
-        <code>Ctrl + s</code>
+        <code>Ctrl + S</code>
         <label className='ml-5'>Save Project</label>
       </p>
       <p>
         <code>Ctrl + /</code>
         <label className='ml-5'>Open Keybinds</label>
+      </p>
+      <p>
+        <code>Ctrl + I</code>
+        <label className='ml-5'>Open Settings</label>
+      </p>
+      <p>
+        <code>Ctrl + Y</code>
+        <label className='ml-5'>Toggle toolbox autoclose</label>
+      </p>
+      <br />
+      <p>
+        <code>Numpad 0</code>
+        <label className='ml-5'>Orbit to center</label>
+      </p>
+      <p>
+        <code>Numpad 1</code>
+        <label className='ml-5'>Orbit to front view</label>
+      </p>
+      <p>
+        <code>Numpad 2</code>
+        <label className='ml-5'>Orbit to top view</label>
+      </p>
+      <p>
+        <code>Numpad 3</code>
+        <label className='ml-5'>Orbit to side view</label>
       </p>
     </div>
   )

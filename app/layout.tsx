@@ -20,7 +20,7 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const store = await cookies()
   return (
-    <html lang='en' className={`overflow-hidden ${store.get('theme')?.value}`}>
+    <html lang='en' className={store.get('theme')?.value}>
       <body className={`${nunito.className} bg-ui-900 text-ui-200`}>
         <SessionProvider>{children}</SessionProvider>
         <Analytics />

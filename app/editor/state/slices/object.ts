@@ -13,6 +13,7 @@ type State = {
     scale: number
   }
   camera: Camera | null
+  autoClose: boolean
 }
 
 type Actions = {
@@ -22,6 +23,7 @@ type Actions = {
   invalidateObjectsAll: () => void
   setObjectSnapping: (tool: TransformControlsMode, value: number) => void
   setCamera: (camera: Camera | null) => void
+  setAutoClose: (autoClose: boolean) => void
 }
 
 export type ObjectSlice = State & Actions
@@ -34,7 +36,8 @@ export const objectInitialState: State = {
     rotate: 45,
     scale: 1
   },
-  camera: null
+  camera: null,
+  autoClose: false
 }
 
 export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
@@ -83,5 +86,6 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
       }
     })),
 
-  setCamera: v => set({ camera: v })
+  setCamera: v => set({ camera: v }),
+  setAutoClose: v => set({ autoClose: v })
 })

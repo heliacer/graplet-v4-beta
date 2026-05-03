@@ -6,11 +6,9 @@ import React, {
   useRef
 } from 'react'
 
-type Modifier = string
-type Key = string
-
 interface Keybind {
-  key: Key
+  key?: string // character intent, e.g. 'z', 'y'
+  code?: string // physical key, e.g. 'Numpad0', 'ArrowUp'
   modifiers?: string[]
 }
 
@@ -45,8 +43,8 @@ export function useKeybind(keybind: Keybind, fn: (e: KeyboardEvent) => void) {
 
 function normalizeKeybind(keybind: Keybind): string {
   const mods = keybind.modifiers?.slice().sort() || []
-  const key = keybind.key.toUpperCase()
-  return [...mods, key].join('+')
+  const id = keybind.code ?? keybind.key!
+  return [...mods, id].join('+')
 }
 
 export function KeybindProvider({ children }: { children: React.ReactNode }) {
@@ -79,18 +77,16 @@ export function KeybindProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    const modifiers: Modifier[] = []
-
+    const modifiers: string[] = []
     if (event.ctrlKey) modifiers.push('Ctrl')
     if (event.altKey) modifiers.push('Alt')
     if (event.shiftKey) modifiers.push('Shift')
     if (event.metaKey) modifiers.push('Meta')
 
-    const key = event.key.toUpperCase()
-    const normalizedKey = [...modifiers.sort(), key].join('+')
+    const byCode = [...modifiers.sort(), event.code].join('+')
+    const byKey = [...modifiers.sort(), event.key].join('+')
 
-    const handler = keybinds.current.get(normalizedKey)
-
+    const handler = keybinds.current.get(byCode) ?? keybinds.current.get(byKey)
     if (handler) {
       event.preventDefault()
       handler(event)
