@@ -35,6 +35,11 @@ export default function KeybindsPanel() {
         <code>Numpad 3</code>
         <label className='ml-5'>Orbit to side view</label>
       </p>
+      <br/>
+      <p>
+        <code>Shiftclick (on tab)</code>
+        <label className='ml-5'>Float panel</label>
+      </p>
     </div>
   )
 }

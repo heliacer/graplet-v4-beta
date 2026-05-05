@@ -149,7 +149,7 @@ export function CheckBoxProperty({
     <label className='flex gap-2 cursor-pointer select-none'>
       <input
         id={uuid}
-        className='cursor-pointer accent-teal'
+        className='cursor-pointer'
         type='checkbox'
         checked={checked}
         onChange={e => action(e.target.checked)}

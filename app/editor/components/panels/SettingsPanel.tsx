@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { MiniGraplet } from '@/app/ui/assets/MiniGraplet'
 import { useEditorStore } from '../../state'
 import { useEditorRefs } from '../../context/editor'
+import { defaultLayout } from '../defaultDockview'
 
 interface ThemeButtonProps {
   theme: string
@@ -40,17 +41,23 @@ function ThemeButton({ theme }: ThemeButtonProps) {
 export default function SettingsPanel() {
   const { workspace } = useEditorRefs()
   const autoClose = useEditorStore(s => s.autoClose)
+  const dvApi = useEditorStore(s => s.dvApi)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
-  const builtInThemes = ['dark', 'light', 'arctic', 'lime', 'red']
+
+  function handleLoadDefaultDockview() {
+    if (!dvApi) return
+    dvApi.fromJSON(defaultLayout)
+  }
 
   return (
-    <div className='flex flex-col gap-2 m-4 text-sm'>
+    <div className='flex items-start flex-col gap-2 m-4 text-sm'>
       <p>Theme</p>
+      <p className='italic text-ui-400'>More themes are coming soon!</p>
       <div className='flex flex-wrap gap-2'>
-        {builtInThemes.map((theme, key) => (
-          <ThemeButton key={key} theme={theme} />
-        ))}
+        <ThemeButton theme='dark' />
+        <ThemeButton theme='light' />
       </div>
+      <p>Toolbox</p>
       <label className='flex gap-2 select-none cursor-pointer'>
         <input
           type='checkbox'
@@ -65,6 +72,18 @@ export default function SettingsPanel() {
         />
         <p>Autoclose the toolbox</p>
       </label>
+      <p>Actions</p>
+      <button
+        className={clsx(
+          'flex gap-1 px-1 items-center',
+          'border rounded-md',
+          'border-ui-700',
+          'hover:bg-ui-750 bg-ui-800'
+        )}
+        onClick={handleLoadDefaultDockview}
+      >
+        <p>Reset dockview layout</p>
+      </button>
     </div>
   )
 }

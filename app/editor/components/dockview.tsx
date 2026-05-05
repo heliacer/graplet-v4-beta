@@ -13,7 +13,7 @@ import SettingsPanel from './panels/SettingsPanel'
 import KeybindsPanel from './panels/KeybindsPanel'
 import { useEffect } from 'react'
 import { useEditorStore } from '../state'
-import { dvLayout } from './dvLayout'
+import { defaultLayout } from './defaultDockview'
 
 const panelComponents = {
   debug: DebugPanel,
@@ -42,7 +42,7 @@ export function GrapletDockview() {
         console.error('Could not parse JSON data', error)
       }
     } else {
-      api.fromJSON(dvLayout)
+      api.fromJSON(defaultLayout)
     }
     setDvApi(api)
   }

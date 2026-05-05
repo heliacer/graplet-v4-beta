@@ -3,7 +3,7 @@ import { Orientation, SerializedDockview } from 'dockview-react'
 /**
  * The default dockview layout
  */
-export const dvLayout: SerializedDockview = {
+export const defaultLayout: SerializedDockview = {
   grid: {
     root: {
       type: 'branch',
@@ -68,7 +68,6 @@ export const dvLayout: SerializedDockview = {
     scene: {
       id: 'scene',
       contentComponent: 'scene',
-      tabComponent: 'props.defaultTabComponent',
       params: { iconType: 'Airplay' },
       title: 'Scene'
     },
