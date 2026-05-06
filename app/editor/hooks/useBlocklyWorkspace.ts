@@ -94,5 +94,5 @@ export function useBlocklyWorkspace(
     }
 
     return cleanup
-  }, [blocklyDiv, setAutoClose, workspace, start, setHasChanges])
+  }, [blocklyDiv, setAutoClose, workspace, dvApi, start, setHasChanges])
 }

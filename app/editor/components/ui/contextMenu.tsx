@@ -22,7 +22,7 @@ import { Object3D } from 'three'
 
 /** @todo (#35) Object Context Menu revamp + fix renaming */
 export function ContextMenu() {
-  const { scene, objects } = useEditorRefs()
+  const { objects } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const contextMenu = useEditorStore(s => s.contextMenu)
   const setContextMenu = useEditorStore(s => s.setContextMenu)
