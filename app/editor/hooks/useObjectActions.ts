@@ -191,13 +191,10 @@ export function useObjectActions() {
     navigator.clipboard.writeText(data)
   }
 
-  async function pasteObjects(target: Object3D) {
-    /** @todo (#68) useObjectActions: check clipboard values so it's safer */
-
-    const text = await navigator.clipboard.readText()
+  async function pasteObjects(target: Object3D = scene.current) {
+    const text = await navigator.clipboard.readText()    
     try {
       const objects: SObject3D[] = JSON.parse(text)
-      console.log(typeof objects)
       for (let i = 0; i < objects.length; i++) {
         const object = addObject(objects[i], target, true)
         if (i + 1 === objects.length) {
@@ -206,8 +203,8 @@ export function useObjectActions() {
       }
     } catch (error) {
       if (error instanceof SyntaxError) {
-        console.warn('invalid paste just happened')
-      } else {
+        console.warn(`"${text}" isn't valid object(s) to paste`)
+      } else { 
         console.error(error)
       }
     }

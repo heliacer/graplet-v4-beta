@@ -7,11 +7,13 @@ import { exprGenerator } from '../engine/generator'
 import { useRuntime } from './useRuntime'
 import { createFunction } from '../blockly/utils/createFunction'
 import { useEditorStore } from '../state'
+import { upsertPanel } from '../utils/dockview'
 
 export function useBlocklyWorkspace(
   blocklyDiv: React.RefObject<HTMLDivElement>
 ) {
   const { workspace } = useEditorRefs()
+  const dvApi = useEditorStore(s => s.dvApi)
   const setHasChanges = useEditorStore(s => s.setHasChanges)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
   const { start } = useRuntime()
@@ -68,6 +70,17 @@ export function useBlocklyWorkspace(
       setAutoClose(flyout.autoClose)
     }
     ws.registerButtonCallback('createFunction', createFunction)
+    ws.registerButtonCallback('wipCreateFunction', () =>
+      upsertPanel(
+        dvApi,
+        'createFunction',
+        'Create function',
+        'Wrench',
+        true,
+        500,
+        300
+      )
+    )
 
     const resizeObserver = new ResizeObserver(() => resize(ws))
     resizeObserver.observe(blocklyDiv.current)

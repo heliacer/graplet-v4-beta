@@ -1,6 +1,6 @@
 'use client'
 
-import '../styles/dvtheme.css' 
+import '../styles/dvtheme.css'
 import { DockviewReact, DockviewReadyEvent } from 'dockview-react'
 import { RightControls } from './ui/controls/tabControls'
 import { TabHeader } from './ui/tabHeader'
@@ -14,6 +14,12 @@ import KeybindsPanel from './panels/KeybindsPanel'
 import { useEffect } from 'react'
 import { useEditorStore } from '../state'
 import { defaultLayout } from './defaultDockview'
+import { useKeybind } from '../context/keybinds'
+import { useObjectActions } from '../hooks/useObjectActions'
+import { Object3D } from 'three'
+import { useEditorRefs } from '../context/editor'
+import { NotFoundError } from '../types'
+import CreateFunctionPanel from './panels/CreateFunctionPanel'
 
 const panelComponents = {
   debug: DebugPanel,
@@ -22,12 +28,62 @@ const panelComponents = {
   explorer: ExplorerPanel,
   properties: PropertiesPanel,
   settings: SettingsPanel,
-  keybinds: KeybindsPanel
+  keybinds: KeybindsPanel,
+  createFunction: CreateFunctionPanel
 }
 
 export function GrapletDockview() {
+  const { objects } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
+  const selectedItems = useEditorStore(s => s.selectedItems)
+  const { pasteObjects, copyObjects } = useObjectActions()
   const setDvApi = useEditorStore(s => s.setDvApi)
+
+  /**
+   * @todo (#82) Move global effects out of specific panels and place them here
+   * - could have a generic keybind handler here in a hook useGenericKeybinds
+   */
+  useKeybind(
+    {
+      key: 'c',
+      modifiers: ['Ctrl']
+    },
+    () => {
+      if (!dvApi || !dvApi.activePanel) return
+      if (dvApi.activePanel.id === 'explorer' && selectedItems.length) {
+        const objectsToCopy: Object3D[] = selectedItems.map(item => {
+          const object = objects.current.get(item)
+          if (object === undefined) throw new NotFoundError(item)
+          return object
+        })
+        copyObjects(objectsToCopy)
+      }
+    }
+  )
+  useKeybind(
+    {
+      key: 'v',
+      modifiers: ['Ctrl']
+    },
+    () => {
+      if (!dvApi || !dvApi.activePanel) return
+      if (dvApi.activePanel.id === 'explorer') pasteObjects()
+    }
+  )
+  useKeybind(
+    {
+      key: 'Escape'
+    },
+    () => {
+      if (!dvApi || !dvApi.activePanel) return
+      const hasUnClosable = dvApi.activePanel.group.panels.some(
+        panel => panel.params?.closable !== true
+      )
+      if (!hasUnClosable) {
+        dvApi.activePanel.api.close()
+      }
+    }
+  )
 
   function mount(event: DockviewReadyEvent) {
     const { api } = event

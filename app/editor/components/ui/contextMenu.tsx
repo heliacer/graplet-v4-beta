@@ -121,7 +121,7 @@ export function ContextMenu() {
       {
         label: 'Paste',
         Icon: ClipboardPaste,
-        onClick: () => pasteObjects(scene.current)
+        onClick: () => pasteObjects()
       },
       {
         label: 'Add to Scene',

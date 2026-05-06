@@ -10,6 +10,12 @@ export function functionsCategory(workspace: WorkspaceSvg) {
     callbackKey: 'createFunction'
   })
 
+  blockList.push({
+    kind: 'button',
+    text: '(wip) Create function...',
+    callbackKey: 'wipCreateFunction'
+  })
+
   for (const model of procedures) {
     blockList.push({
       kind: 'block',

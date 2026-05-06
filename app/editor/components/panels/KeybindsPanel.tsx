@@ -35,10 +35,16 @@ export default function KeybindsPanel() {
         <code>Numpad 3</code>
         <label className='ml-5'>Orbit to side view</label>
       </p>
-      <br/>
+      <br />
       <p>
-        <code>Shiftclick (on tab)</code>
+        <code>Shiftclick</code>
+        <span className='italic ml-2'>on tab header</span>
         <label className='ml-5'>Float panel</label>
+      </p>
+      <p>
+        <code>Escape</code>
+        <span className='italic ml-2'>on active tab</span>
+        <label className='ml-5'>Close panel</label>
       </p>
     </div>
   )

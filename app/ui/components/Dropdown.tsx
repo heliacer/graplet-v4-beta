@@ -124,7 +124,7 @@ function DropdownItem({
           {children ? (
             <ChevronRight className='ml-auto' size={14} />
           ) : (
-            <div className='w-3.5' />
+            <div className='w-3.5 ml-auto' />
           )}
         </button>
       </div>
