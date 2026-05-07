@@ -77,8 +77,8 @@ export function useBlocklyWorkspace(
         'Create function',
         'Wrench',
         true,
-        500,
-        300
+        450,
+        280
       )
     )
 

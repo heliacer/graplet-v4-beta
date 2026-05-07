@@ -160,16 +160,11 @@
 
 .blocklyScrollbarHandle {
   fill: var(--color-ui-700);
-  x: 4;
 }
 
 .blocklyScrollbarHandle:hover,
 .blocklyScrollbarHandle:active {
   fill: var(--color-ui-600);
-}
-
-.blocklyMainWorkspaceScrollbar {
-  display: none;
 }
 
 .blocklyFlyoutScrollbar[display='none'] .blocklyScrollbarHandle {
