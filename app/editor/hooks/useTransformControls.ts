@@ -6,7 +6,7 @@ import { useEditorStore } from '../state'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 
 export function useTransformControls() {
-  const { scene, canvas, orbitMap, controls } = useEditorRefs()
+  const { sceneRef, canvasRef, orbitMapRef, controlsRef } = useEditorRefs()
 
   const isRunning = useEditorStore(s => s.isRunning)
   const currentTool = useEditorStore(s => s.currentTool)
@@ -23,25 +23,25 @@ export function useTransformControls() {
   }, [object])
 
   useEffect(() => {
-    if (!controls.current) return
-    controls.current.setTranslationSnap(objectSnapping.translate)
-    controls.current.setScaleSnap(objectSnapping.scale)
-    controls.current.setRotationSnap((objectSnapping.rotate * Math.PI) / 180)
-  }, [objectSnapping, controls])
+    if (!controlsRef.current) return
+    controlsRef.current.setTranslationSnap(objectSnapping.translate)
+    controlsRef.current.setScaleSnap(objectSnapping.scale)
+    controlsRef.current.setRotationSnap((objectSnapping.rotate * Math.PI) / 180)
+  }, [objectSnapping, controlsRef])
 
   useEffect(() => {
-    if (!camera || !canvas.current) return
-    if (!controls.current) {
-      controls.current = new TransformControls(camera, canvas.current)
-      controls.current.setTranslationSnap(0.5)
-      controls.current.setRotationSnap((45 * Math.PI) / 180)
-      controls.current.setScaleSnap(1)
+    if (!camera || !canvasRef.current) return
+    if (!controlsRef.current) {
+      controlsRef.current = new TransformControls(camera, canvasRef.current)
+      controlsRef.current.setTranslationSnap(0.5)
+      controlsRef.current.setRotationSnap((45 * Math.PI) / 180)
+      controlsRef.current.setScaleSnap(1)
       setObjectSnapping('translate', 0.5)
       setObjectSnapping('rotate', 45)
       setObjectSnapping('scale', 1)
 
       const onDraggingChanged = (e: { value: unknown }) => {
-        const orbit = orbitMap.current.get(camera.id)
+        const orbit = orbitMapRef.current.get(camera.id)
         if (orbit) orbit.enabled = !e.value
       }
 
@@ -50,10 +50,13 @@ export function useTransformControls() {
         if (obj) invalidateObject(obj)
       }
 
-      controls.current.addEventListener('dragging-changed', onDraggingChanged)
-      controls.current.addEventListener('mouseUp', onChange)
+      controlsRef.current.addEventListener(
+        'dragging-changed',
+        onDraggingChanged
+      )
+      controlsRef.current.addEventListener('mouseUp', onChange)
 
-      scene.current.add(controls.current.getHelper())
+      sceneRef.current.add(controlsRef.current.getHelper())
     }
 
     const shouldAttach =
@@ -63,24 +66,24 @@ export function useTransformControls() {
       isTransformControlsMode(currentTool)
 
     if (shouldAttach) {
-      controls.current.attach(object)
-      controls.current.setMode(currentTool)
+      controlsRef.current.attach(object)
+      controlsRef.current.setMode(currentTool)
     } else {
-      controls.current.detach()
+      controlsRef.current.detach()
     }
 
     return () => {
-      controls.current?.detach()
+      controlsRef.current?.detach()
     }
   }, [
     camera,
     currentTool,
     isRunning,
     object,
-    canvas,
-    controls,
-    orbitMap,
-    scene,
+    canvasRef,
+    controlsRef,
+    orbitMapRef,
+    sceneRef,
     invalidateObject,
     setObjectSnapping
   ])

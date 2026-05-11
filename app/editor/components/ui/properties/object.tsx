@@ -39,7 +39,7 @@ function BaseObjectProps({ object }: { object: Object3D }) {
 }
 
 export function ObjectPane({ object }: { object: Object3D }) {
-  const { canvas, orbitMap } = useEditorRefs()
+  const { canvasRef, orbitMapRef } = useEditorRefs()
   const invalidateObject = useEditorStore(s => s.invalidateObject)
   const setCamera = useEditorStore(s => s.setCamera)
 
@@ -56,7 +56,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
     return <BaseObjectProps object={object} />
   }
   if (object instanceof PerspectiveCamera) {
-    const orbit = orbitMap.current.get(object.id)
+    const orbit = orbitMapRef.current.get(object.id)
 
     /**
      * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
@@ -68,16 +68,16 @@ export function ObjectPane({ object }: { object: Object3D }) {
       if (checked) {
         if (orbit)
           throw Error(`There already exists an OrbitControls for ${object.id}`)
-        const controls = new OrbitControls(object, canvas.current)
+        const controls = new OrbitControls(object, canvasRef.current)
         controls.mouseButtons = {
           MIDDLE: MOUSE.PAN,
           RIGHT: MOUSE.ROTATE
         }
-        orbitMap.current.set(object.id, controls)
+        orbitMapRef.current.set(object.id, controls)
       } else {
         if (!orbit)
           throw Error(`There's no OrbitControls for object ${object.id}`)
-        orbitMap.current.delete(object.id)
+        orbitMapRef.current.delete(object.id)
         orbit.disconnect()
         orbit.dispose()
       }
@@ -103,7 +103,7 @@ export function ObjectPane({ object }: { object: Object3D }) {
         </div>
         <CheckBoxProperty
           label='Enable OrbitControls'
-          checked={!!orbitMap.current.get(object.id)}
+          checked={!!orbitMapRef.current.get(object.id)}
           action={orbitAction}
         />
       </>

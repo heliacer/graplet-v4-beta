@@ -11,7 +11,7 @@ import { useKeybind } from '../../context/keybinds'
 import { Vector3 } from 'three'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
-  const { workspace, canvas, orbitMap } = useEditorRefs()
+  const { workspaceRef, canvasRef, orbitMapRef } = useEditorRefs()
   const currentTool = useEditorStore(s => s.currentTool)
   const autoClose = useEditorStore(s => s.autoClose)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
@@ -24,7 +24,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
 
   const snapCamera = (direction: Vector3) => {
     if (!camera) return
-    const orbit = orbitMap.current.get(camera.id)
+    const orbit = orbitMapRef.current.get(camera.id)
     if (!orbit) return
 
     const distance = camera.position.distanceTo(orbit.target)
@@ -34,7 +34,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
 
   useKeybind({ code: 'Numpad0', modifiers: [] }, () => {
     if (!camera) return
-    const orbit = orbitMap.current.get(camera.id)
+    const orbit = orbitMapRef.current.get(camera.id)
     orbit?.target.set(0, 0, 0)
   })
 
@@ -55,7 +55,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
     },
     () => {
       setAutoClose(!autoClose)
-      const flyout = workspace.current?.getFlyout()
+      const flyout = workspaceRef.current?.getFlyout()
       console.log(flyout)
       if (flyout) {
         flyout.autoClose = !autoClose
@@ -67,7 +67,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
     <div className='relative h-full'>
       <ObjectControls />
       <canvas
-        ref={canvas}
+        ref={canvasRef}
         onMouseDown={e => {
           if (e.button === 2) setRightDown(true)
         }}

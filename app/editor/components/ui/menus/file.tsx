@@ -18,7 +18,7 @@ import { createProjectData } from '@/app/editor/utils/createProjectData'
 import { useKeybind } from '@/app/editor/context/keybinds'
 
 export function FileMenu() {
-  const { workspace, scene } = useEditorRefs()
+  const { workspaceRef, sceneRef } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
   const selectedItems = useEditorStore(s => s.selectedItems)
   const { loadProjectData, loadDefaultScene } = useSceneActions()
@@ -26,10 +26,10 @@ export function FileMenu() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   function handleSaveFile() {
-    if (!workspace.current) throw Error('Missing workspace')
+    if (!workspaceRef.current) throw Error('Missing workspace')
     const projectData = createProjectData(
-      workspace.current,
-      scene.current,
+      workspaceRef.current,
+      sceneRef.current,
       selectedItems
     )
     const blob = new Blob([JSON.stringify(projectData, null, 2)], {
@@ -61,12 +61,12 @@ export function FileMenu() {
   }
 
   function handleStartFresh() {
-    if (!workspace.current) throw Error('Missing workspace')
+    if (!workspaceRef.current) throw Error('Missing workspace')
     const isConfirmed = confirm(
       'This will remove any existing progress. Are you sure?'
     )
     if (isConfirmed) {
-      serialization.workspaces.load({}, workspace.current)
+      serialization.workspaces.load({}, workspaceRef.current)
       loadDefaultScene()
     }
   }

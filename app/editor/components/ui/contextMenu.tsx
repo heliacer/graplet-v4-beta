@@ -22,7 +22,7 @@ import { Object3D } from 'three'
 
 /** @todo (#35) Object Context Menu revamp + fix renaming */
 export function ContextMenu() {
-  const { objects } = useEditorRefs()
+  const { objectsRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const contextMenu = useEditorStore(s => s.contextMenu)
   const setContextMenu = useEditorStore(s => s.setContextMenu)
@@ -51,7 +51,7 @@ export function ContextMenu() {
       : [targetId]
     const selection: Object3D[] = []
     for (const itemId of itemIds) {
-      const obj = objects.current.get(itemId)
+      const obj = objectsRef.current.get(itemId)
       if (obj) selection.push(obj)
     }
     const groups = selection.filter(obj => obj.type === 'Group')

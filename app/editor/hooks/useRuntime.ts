@@ -5,7 +5,8 @@ import { useEditorRefs } from '../context/editor'
 import { useEditorStore } from '../state'
 
 export function useRuntime() {
-  const { objects, varEnv, funcEnv, stepsPerFrame } = useEditorRefs()
+  const { objectsRef, varEnvRef, funcEnvRef, stepsPerFrameRef } =
+    useEditorRefs()
   const setRunning = useEditorStore(s => s.setRunning)
   const setPaused = useEditorStore(s => s.setPaused)
   const invalidateAllObjects = useEditorStore(s => s.invalidateObjectsAll)
@@ -30,9 +31,9 @@ export function useRuntime() {
       if (running.current) return
 
       const state = {
-        objects: objects.current,
-        variables: varEnv.current,
-        functions: funcEnv.current
+        objects: objectsRef.current,
+        variables: varEnvRef.current,
+        functions: funcEnvRef.current
       }
 
       setRunning(true)
@@ -84,9 +85,9 @@ export function useRuntime() {
         requestAnimationFrame(() => loop(state, spf))
       }
 
-      loop(state, stepsPerFrame.current)
+      loop(state, stepsPerFrameRef.current)
     },
-    [objects, varEnv, funcEnv, stepsPerFrame, setRunning, finalize]
+    [objectsRef, varEnvRef, funcEnvRef, stepsPerFrameRef, setRunning, finalize]
   )
 
   function pauseOrResume() {
@@ -96,9 +97,9 @@ export function useRuntime() {
   }
   function step() {
     const state = {
-      objects: objects.current,
-      variables: varEnv.current,
-      functions: funcEnv.current
+      objects: objectsRef.current,
+      variables: varEnvRef.current,
+      functions: funcEnvRef.current
     }
     for (const thread of threads.current) {
       threadStep(thread, state)

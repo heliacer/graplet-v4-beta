@@ -135,7 +135,12 @@ function DropdownItem({
   )
 }
 
-export function Dropdown({ label, items, Icon, iconStyle: iconStyle }: DropdownProps) {
+export function Dropdown({
+  label,
+  items,
+  Icon,
+  iconStyle: iconStyle
+}: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [activePath, setActivePath] = useState<number[]>([])
 

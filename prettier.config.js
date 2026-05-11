@@ -1,5 +1,6 @@
 /** @type {import("prettier").Config} */
-export default {
+
+const config = {
   trailingComma: 'none',
   tabWidth: 2,
   semi: false,
@@ -7,3 +8,5 @@ export default {
   jsxSingleQuote: true,
   arrowParens: 'avoid'
 }
+
+export default config

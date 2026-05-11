@@ -3,7 +3,8 @@ import {
   SObject3D,
   SMaterial,
   SBase,
-  TransformProps
+  TransformProps,
+  Optional
 } from '../types'
 import {
   AmbientLight,
@@ -35,7 +36,6 @@ import {
   TorusKnotGeometry
 } from 'three'
 import { isInternalObject } from './three'
-import { Optional } from '@/app/lib/types'
 
 /**
  * creates a Object3D from serialization

@@ -1,11 +1,15 @@
 import { PrismaClient } from '@prisma/client'
-import { UserT } from './types'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { genSalt, hash } from 'bcrypt'
 
+interface User {
+  email: string
+  name: string
+  password: string
+}
+
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
 const prisma = new PrismaClient({ adapter })
-
 const saltRounds = 10
 
 export async function getUserByEmail(email: string) {
@@ -14,7 +18,7 @@ export async function getUserByEmail(email: string) {
   })
 }
 
-export async function createUser(user: Omit<UserT, 'id'>) {
+export async function createUser(user: User) {
   const salt = await genSalt(saltRounds)
   const hashedPassword = await hash(user.password, salt)
   return await prisma.user.create({

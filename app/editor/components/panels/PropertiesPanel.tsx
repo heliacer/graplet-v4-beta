@@ -56,7 +56,7 @@ function PaneButton({
 }
 
 export default function PropertiesPanel() {
-  const { objects } = useEditorRefs()
+  const { objectsRef } = useEditorRefs()
   const [activePane, setActivePane] = useState<Pane>('object')
   const selectedItems = useEditorStore(s => s.selectedItems)
   const objectVersion = useEditorStore(s => {
@@ -69,7 +69,7 @@ export default function PropertiesPanel() {
   if (objectVersion === undefined) return /* no object selected */
   const sharedId = selectedItems[0]
 
-  const object = objects.current.get(sharedId)
+  const object = objectsRef.current.get(sharedId)
   if (!object) throw new NotFoundError(sharedId)
 
   return (

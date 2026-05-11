@@ -39,7 +39,7 @@ function ThemeButton({ theme }: ThemeButtonProps) {
 }
 
 export default function SettingsPanel() {
-  const { workspace } = useEditorRefs()
+  const { workspaceRef } = useEditorRefs()
   const autoClose = useEditorStore(s => s.autoClose)
   const dvApi = useEditorStore(s => s.dvApi)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
@@ -64,7 +64,7 @@ export default function SettingsPanel() {
           checked={autoClose}
           onChange={e => {
             setAutoClose(e.target.checked)
-            const flyout = workspace.current?.getFlyout()
+            const flyout = workspaceRef.current?.getFlyout()
             if (flyout) {
               flyout.autoClose = e.target.checked
             }

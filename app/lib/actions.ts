@@ -2,11 +2,16 @@
 
 import { credentialsSchema, emailSchema } from './zod'
 import { createUser, getUserByEmail } from './data'
-import { UserT } from './types'
 
 interface AuthResponse {
   message: string
   status: 'ok' | 'error'
+}
+
+interface User {
+  email: string
+  name: string
+  password: string
 }
 
 export async function checkEmail(email: string): Promise<AuthResponse> {
@@ -29,7 +34,7 @@ export async function checkEmail(email: string): Promise<AuthResponse> {
   }
 }
 
-export async function signUp(data: Omit<UserT, 'id'>): Promise<AuthResponse> {
+export async function signUp(data: User): Promise<AuthResponse> {
   const result = credentialsSchema.safeParse(data)
   if (result.error) {
     return { status: 'error', message: 'Invalid Credentials.' }

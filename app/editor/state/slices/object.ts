@@ -1,12 +1,15 @@
 import { Camera, Object3D } from 'three'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
+import { ObjectSnapshot } from '../../types'
 
 type Updater<T> = T | ((old: T) => T)
 
 type State = {
   selectedItems: string[]
   objectVersions: Record<string, number>
+  /** @todo wip */
+  objectSnapshots: Record<string, ObjectSnapshot>
   objectSnapping: {
     translate: number
     rotate: number /* degrees */
@@ -31,6 +34,8 @@ export type ObjectSlice = State & Actions
 export const objectInitialState: State = {
   selectedItems: [],
   objectVersions: {},
+  /** @todo wip */
+  objectSnapshots: {},
   objectSnapping: {
     translate: 0.5,
     rotate: 45,

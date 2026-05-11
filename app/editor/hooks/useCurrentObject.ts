@@ -9,13 +9,13 @@ import { NotFoundError } from '../types'
  * I'm afraid we're keeping this longer than I anticipated.
  */
 export function useCurrentObject() {
-  const { objects } = useEditorRefs()
+  const { objectsRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
 
   if (selectedItems.length !== 1) return
 
   const id = selectedItems[0]
-  const object = objects.current.get(id)
+  const object = objectsRef.current.get(id)
   if (!object) throw new NotFoundError(id)
 
   return object

@@ -52,10 +52,10 @@ export function handleObjectvec3prop(
     const objectId = String(popValue(thread))
     const axis = String(popValue(thread)) as Axis
     const property = String(popValue(thread)) as Prop
-    
+
     const object = state.objects.get(objectId)
     if (!object) throw Error(`object with id "${objectId}" does not exist.`)
-      
+
     if (!PROPS.includes(property)) {
       throw Error(`Invalid property for object ${object.name}: ${property}`)
     }

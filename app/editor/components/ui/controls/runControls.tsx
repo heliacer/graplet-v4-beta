@@ -6,7 +6,7 @@ import { exprGenerator } from '@/app/editor/engine/generator/index'
 import clsx from 'clsx'
 
 export function RunControls() {
-  const { workspace } = useEditorRefs()
+  const { workspaceRef: workspace } = useEditorRefs()
   const { start, stop, step, pauseOrResume } = useRuntime()
   const isRunning = useEditorStore(s => s.isRunning)
   const isPaused = useEditorStore(s => s.isPaused)

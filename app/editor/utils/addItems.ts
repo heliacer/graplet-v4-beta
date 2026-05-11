@@ -1,8 +1,7 @@
 import { DropdownItemProps } from '@/app/ui/components/Dropdown'
-import { SGeometryT, SObject3D, TransformProps } from '../types'
+import { Optional, SGeometryT, SObject3D, TransformProps } from '../types'
 import { Box, Camera, Component, Lightbulb } from 'lucide-react'
 import { Object3D } from 'three'
-import { Optional } from '@/app/lib/types'
 
 const geometries: SGeometryT[] = [
   'BoxGeometry',

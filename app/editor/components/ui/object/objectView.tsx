@@ -37,7 +37,7 @@ function toggleHelper(
 }
 
 export function ObjectView() {
-  const { scene } = useEditorRefs()
+  const { sceneRef } = useEditorRefs()
   const object = useCurrentObject()
 
   /** Helpers, some of them maps for helper n - object 1 */
@@ -52,7 +52,10 @@ export function ObjectView() {
       label: 'Grid Helper',
       checked: gridHelper,
       onClick: () => {
-        const helper = scene.current.getObjectByProperty('type', 'GridHelper')
+        const helper = sceneRef.current.getObjectByProperty(
+          'type',
+          'GridHelper'
+        )
         if (!helper) throw Error('Grid Helper does not exist')
         helper.visible = !gridHelper
         setGridHelper(prev => !prev)
@@ -65,14 +68,14 @@ export function ObjectView() {
       label: 'Camera Helper',
       checked:
         cameraHelpers.get(object.id) ??
-        scene.current
+        sceneRef.current
           .getObjectsByProperty('type', 'CameraHelper')
           .some(helper => (helper as CameraHelper).camera === object),
       onClick: () =>
         toggleHelper(
           'CameraHelper',
           object,
-          scene.current,
+          sceneRef.current,
           camera => new CameraHelper(camera as Camera),
           (helper, camera) => (helper as CameraHelper).camera === camera,
           setCameraHelpers
@@ -84,14 +87,14 @@ export function ObjectView() {
       label: 'Light Helper',
       checked:
         lightHelpers.get(object.id) ??
-        scene.current
+        sceneRef.current
           .getObjectsByProperty('type', 'DirectionalLightHelper')
           .some(helper => (helper as DirectionalLightHelper).light === object),
       onClick: () =>
         toggleHelper(
           'DirectionalLightHelper',
           object,
-          scene.current,
+          sceneRef.current,
           light => new DirectionalLightHelper(light as DirectionalLight),
           (helper, light) => (helper as DirectionalLightHelper).light === light,
           setLightHelpers

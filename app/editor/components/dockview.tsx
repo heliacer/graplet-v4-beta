@@ -33,7 +33,7 @@ const panelComponents = {
 }
 
 export function GrapletDockview() {
-  const { objects } = useEditorRefs()
+  const { objectsRef } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
   const selectedItems = useEditorStore(s => s.selectedItems)
   const { pasteObjects, copyObjects } = useObjectActions()
@@ -52,7 +52,7 @@ export function GrapletDockview() {
       if (!dvApi || !dvApi.activePanel) return
       if (dvApi.activePanel.id === 'explorer' && selectedItems.length) {
         const objectsToCopy: Object3D[] = selectedItems.map(item => {
-          const object = objects.current.get(item)
+          const object = objectsRef.current.get(item)
           if (object === undefined) throw new NotFoundError(item)
           return object
         })

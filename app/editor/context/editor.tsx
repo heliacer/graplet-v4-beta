@@ -6,16 +6,15 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 interface EditorContextType {
-  funcEnv: RefObject<FuncEnv>
-  varEnv: RefObject<VarEnv>
-  scene: RefObject<Scene>
-  objects: RefObject<Map<string, Object3D>>
-  modelScene: RefObject<Scene>
-  canvas: RefObject<HTMLCanvasElement>
-  controls: RefObject<TransformControls | null>
-  orbitMap: RefObject<Map<number, OrbitControls | null>>
-  workspace: RefObject<WorkspaceSvg | null>
-  stepsPerFrame: RefObject<number>
+  funcEnvRef: RefObject<FuncEnv>
+  varEnvRef: RefObject<VarEnv>
+  sceneRef: RefObject<Scene>
+  objectsRef: RefObject<Map<string, Object3D>>
+  canvasRef: RefObject<HTMLCanvasElement>
+  controlsRef: RefObject<TransformControls | null>
+  orbitMapRef: RefObject<Map<number, OrbitControls | null>>
+  workspaceRef: RefObject<WorkspaceSvg | null>
+  stepsPerFrameRef: RefObject<number>
 }
 
 const EditorContext = createContext<EditorContextType>(null!)
@@ -27,30 +26,28 @@ export function useEditorRefs() {
 export function EditorProvider({
   children
 }: Readonly<{ children: React.ReactNode }>) {
-  const varEnv = useRef<VarEnv>(new Map())
-  const funcEnv = useRef<FuncEnv>(new Map())
-  const scene = useRef(new Scene())
-  const objects = useRef(new Map())
-  const modelScene = useRef(new Scene())
-  const canvas = useRef<HTMLCanvasElement>(null!)
-  const controls = useRef<TransformControls | null>(null)
-  const orbitMap = useRef(new Map())
-  const workspace = useRef<WorkspaceSvg | null>(null)
-  const stepsPerFrame = useRef<number>(100)
+  const varEnvRef = useRef<VarEnv>(new Map())
+  const funcEnvRef = useRef<FuncEnv>(new Map())
+  const sceneRef = useRef(new Scene())
+  const objectsRef = useRef(new Map())
+  const canvasRef = useRef<HTMLCanvasElement>(null!)
+  const controlsRef = useRef<TransformControls | null>(null)
+  const orbitMapRef = useRef(new Map())
+  const workspaceRef = useRef<WorkspaceSvg | null>(null)
+  const stepsPerFrameRef = useRef<number>(100)
 
   return (
     <EditorContext.Provider
       value={{
-        funcEnv,
-        varEnv,
-        scene,
-        objects,
-        orbitMap,
-        canvas,
-        modelScene,
-        controls,
-        workspace,
-        stepsPerFrame
+        funcEnvRef,
+        varEnvRef,
+        sceneRef,
+        objectsRef,
+        orbitMapRef,
+        canvasRef,
+        controlsRef,
+        workspaceRef,
+        stepsPerFrameRef
       }}
     >
       {children}

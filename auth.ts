@@ -1,10 +1,9 @@
 import { compare } from 'bcrypt'
-import NextAuth from 'next-auth'
+import NextAuth, { User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { CredentialsSignin } from 'next-auth'
 import { credentialsSchema } from './app/lib/zod'
 import { getUserByEmail } from './app/lib/data'
-import { UserT } from './app/lib/types'
 
 class InvalidCredentialsError extends CredentialsSignin {
   code = 'invalid_credentials'
@@ -18,8 +17,23 @@ class IncorrectPasswordError extends CredentialsSignin {
   code = 'incorrect_password'
 }
 
+interface SessionUser extends User {
+  createdAt: Date
+}
+
 declare module 'next-auth' {
-  interface User extends Omit<UserT, 'password'> {}
+  interface Session {
+    user: SessionUser
+  }
+}
+
+function omit<T extends object, K extends keyof T>(
+  obj: T,
+  ...keys: K[]
+): Omit<T, K> {
+  const result = { ...obj }
+  for (const key of keys) delete result[key]
+  return result
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -47,24 +61,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new IncorrectPasswordError()
         }
 
-        const { password: _, ...userWithoutPassword } = user
-        return userWithoutPassword
+        return omit(user, 'password')
       }
     })
   ],
   callbacks: {
-    jwt({ token, user }) {
-      if (user) {
-        // This Ensures password never gets into JWT
-        const { password, ...safeUser } = user as any
-        token.user = safeUser
-      }
+    jwt({ token }) {
       return token
     },
     session({ session, token }) {
-      // This Ensures password never gets into session
       if (token.user) {
-        session.user = token.user as any
+        session.user = token.user as typeof session.user
       }
       return session
     }

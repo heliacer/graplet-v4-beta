@@ -48,7 +48,7 @@ export function functionParamGen(block: Block): Expression {
   const state = block.saveExtraState?.(true) as ProcedureState & {
     index: number
   }
-  
+
   const param = state.parameters[state.index]
   const type = param.types[0]
 

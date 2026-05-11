@@ -16,7 +16,7 @@ export interface ProgramState {
 export type Thread = {
   stack: Frame[]
   valueStack: Value[]
-  locals: Record<string, Expression>,
+  locals: Record<string, Expression>
   waitingUntil?: number
   done: boolean
 }

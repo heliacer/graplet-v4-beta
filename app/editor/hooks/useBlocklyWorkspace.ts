@@ -12,17 +12,17 @@ import { upsertPanel } from '../utils/dockview'
 export function useBlocklyWorkspace(
   blocklyDiv: React.RefObject<HTMLDivElement>
 ) {
-  const { workspace } = useEditorRefs()
+  const { workspaceRef } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
   const setHasChanges = useEditorStore(s => s.setHasChanges)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
   const { start } = useRuntime()
 
   useEffect(() => {
-    if (!blocklyDiv.current || workspace.current) return
+    if (!blocklyDiv.current || workspaceRef.current) return
 
     const ws = inject(blocklyDiv.current, blocklyOptions)
-    workspace.current = ws
+    workspaceRef.current = ws
 
     function listener(event: Events.Abstract) {
       if (
@@ -90,9 +90,9 @@ export function useBlocklyWorkspace(
       ws.removeChangeListener(blockListener)
       ws.getFlyout()?.getWorkspace().removeChangeListener(blockListener)
       ws.dispose()
-      workspace.current = null
+      workspaceRef.current = null
     }
 
     return cleanup
-  }, [blocklyDiv, setAutoClose, workspace, dvApi, start, setHasChanges])
+  }, [blocklyDiv, setAutoClose, workspaceRef, dvApi, start, setHasChanges])
 }

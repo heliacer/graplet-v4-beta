@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 import clsx from 'clsx'
 
 export function SaveButton() {
-  const { workspace, scene } = useEditorRefs()
+  const { workspaceRef, sceneRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const objectVersions = useEditorStore(s => s.objectVersions)
   const hasChanges = useEditorStore(s => s.hasChanges)
@@ -22,10 +22,10 @@ export function SaveButton() {
   }, [setHasChanges, objectVersions])
 
   function handleSave() {
-    if (!workspace.current) throw Error('Missing workspace')
+    if (!workspaceRef.current) throw Error('Missing workspace')
     const projectData = createProjectData(
-      workspace.current,
-      scene.current,
+      workspaceRef.current,
+      sceneRef.current,
       selectedItems
     )
     localStorage.setItem('projectData', JSON.stringify(projectData))

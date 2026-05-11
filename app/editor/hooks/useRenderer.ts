@@ -12,7 +12,7 @@ import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { scene, canvas, orbitMap } = useEditorRefs()
+  const { sceneRef, canvasRef, orbitMapRef } = useEditorRefs()
   const isRunning = useEditorStore(s => s.isRunning)
   const camera = useEditorStore(s => s.camera)
   const rendererRef = useRef<WebGLRenderer | null>(null)
@@ -21,7 +21,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     if (!camera) return
 
     const renderer = new WebGLRenderer({
-      canvas: canvas.current,
+      canvas: canvasRef.current,
       antialias: true,
       alpha: true
     })
@@ -33,7 +33,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     const helper = new ViewHelper(camera, renderer.domElement)
 
     const resize = () => {
-      const { clientWidth: w, clientHeight: h } = canvas.current
+      const { clientWidth: w, clientHeight: h } = canvasRef.current
       renderer.setSize(w, h, false)
       const aspect = w / h
 
@@ -61,10 +61,10 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       orbit?.update()
       renderer.clear()
       helper.render(renderer)
-      renderer.render(scene.current, camera)
+      renderer.render(sceneRef.current, camera)
     }
 
-    const orbit = orbitMap.current.get(camera.id)
+    const orbit = orbitMapRef.current.get(camera.id)
     if (isRunning) {
       helper.visible = false
       renderer.setAnimationLoop(() => render(camera, orbit))
@@ -83,5 +83,5 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     }
 
     return cleanup
-  }, [canvas, scene, camera, panelApi, orbitMap, isRunning])
+  }, [canvasRef, sceneRef, camera, panelApi, orbitMapRef, isRunning])
 }

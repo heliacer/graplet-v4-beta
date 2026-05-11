@@ -5,7 +5,11 @@ import {
   handleRunseq,
   handleWait
 } from './handlers/control'
-import { handleChangevar, handleSetParam, handleSetvar } from './handlers/effects'
+import {
+  handleChangevar,
+  handleSetParam,
+  handleSetvar
+} from './handlers/effects'
 import {
   handleAndor,
   handleArithmetic,
@@ -29,7 +33,13 @@ import {
   handleSetscalexyz,
   handleTranslatexyz
 } from './handlers/statements'
-import { handleCall, handleLiteral, handleObjectvec3prop, handleParam, handleVar } from './handlers/values'
+import {
+  handleCall,
+  handleLiteral,
+  handleObjectvec3prop,
+  handleParam,
+  handleVar
+} from './handlers/values'
 
 function setFunction(expression: Expression, state: ProgramState) {
   const { args, value, children } = expression

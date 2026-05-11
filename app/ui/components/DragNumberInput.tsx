@@ -36,6 +36,7 @@ export function DragNumberInput({
   const startValue = useRef(0)
   const lastValue = useRef(value)
   const currentValue = useRef(value)
+  const handleMouseUpRef = useRef<(e: MouseEvent) => void>(() => {})
 
   useEffect(() => {
     currentValue.current = value
@@ -45,10 +46,13 @@ export function DragNumberInput({
     }
   }, [value, decimals])
 
-  const clampNormalise = useCallback((v: number) => {
-    const factor = Math.pow(10, decimals)
-    return Math.round(Math.max(min, Math.min(max, v)) * factor) / factor
-  }, [min, max, decimals])
+  const clampNormalise = useCallback(
+    (v: number) => {
+      const factor = Math.pow(10, decimals)
+      return Math.round(Math.max(min, Math.min(max, v)) * factor) / factor
+    },
+    [min, max, decimals]
+  )
 
   const update = (v: number) => {
     const normalised = clampNormalise(v)
@@ -81,7 +85,7 @@ export function DragNumberInput({
 
   const handleMouseUp = useCallback(() => {
     document.removeEventListener('mousemove', handleMouseMove)
-    document.removeEventListener('mouseup', handleMouseUp)
+    document.removeEventListener('mouseup', handleMouseUpRef.current)
     document.body.style.userSelect = ''
     if (isDragging.current) {
       isDragging.current = false
@@ -89,6 +93,10 @@ export function DragNumberInput({
       onCommit?.()
     }
   }, [handleMouseMove, onCommit])
+
+  useEffect(() => {
+    handleMouseUpRef.current = handleMouseUp
+  }, [handleMouseUp])
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {

@@ -1,3 +1,5 @@
+'use no memo'
+
 import {
   dragAndDropFeature,
   hotkeysCoreFeature,
@@ -15,7 +17,7 @@ import { NotFoundError, TreeItem } from '../../types'
 import { getIconT } from '../../utils/icons'
 
 export default function ExplorerPanel() {
-  const { objects, scene } = useEditorRefs()
+  const { objectsRef, sceneRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setContextMenu = useEditorStore(s => s.setContextMenu)
@@ -30,24 +32,26 @@ export default function ExplorerPanel() {
     getItemName: item => item.getItemData()?.name ?? 'Unnamed',
     isItemFolder: item => item.getItemData().type === 'Component',
     canRename: item => {
-      const object = objects.current.get(item.getId())
+      const object = objectsRef.current.get(item.getId())
       if (!object) return false
       return !isInternalObject(object)
     },
     onRename: (item, value) => {
-      const object = objects.current.get(item.getId())
+      const object = objectsRef.current.get(item.getId())
       if (object) updateObject(object, o => (o.name = value))
     },
     /** @todo (#60) Add reordering for improved UX */
     onDrop: (items, target) => {
       for (const item of items) {
         const id = item.getId()
-        const object = objects.current.get(id)
+        const object = objectsRef.current.get(id)
         if (!object) throw new NotFoundError(id)
 
         const targetId = target.item.getId()
         const targetObj =
-          targetId === 'scene' ? scene.current : objects.current.get(targetId)
+          targetId === 'scene'
+            ? sceneRef.current
+            : objectsRef.current.get(targetId)
         if (!targetObj) throw new NotFoundError(targetId)
 
         moveObject(object, targetObj)
@@ -58,7 +62,7 @@ export default function ExplorerPanel() {
     dataLoader: {
       getItem: (itemId): TreeItem => {
         const object =
-          itemId === 'scene' ? scene.current : objects.current.get(itemId)
+          itemId === 'scene' ? sceneRef.current : objectsRef.current.get(itemId)
         if (!object) return { name: '', type: 'Component', hasChildren: false }
 
         return {
@@ -70,7 +74,7 @@ export default function ExplorerPanel() {
       },
       getChildren: itemId => {
         const object =
-          itemId === 'scene' ? scene.current : objects.current.get(itemId)
+          itemId === 'scene' ? sceneRef.current : objectsRef.current.get(itemId)
         if (!object) return []
         return object.children
           .filter(object => !isInternalObject(object))

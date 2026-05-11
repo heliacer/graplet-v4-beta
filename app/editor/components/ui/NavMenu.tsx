@@ -2,18 +2,22 @@ import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 import { useEditorStore } from '../../state'
 import { EditMenu } from './menus/edit'
 import { FileMenu } from './menus/file'
-import clsx from 'clsx'
 import { useEditorRefs } from '../../context/editor'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import clsx from 'clsx'
 
 const lorem = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 `
 export function NavMenu() {
-  const { stepsPerFrame } = useEditorRefs()
+  const { stepsPerFrameRef } = useEditorRefs()
   const notifications = useEditorStore(s => s.notifications)
   const setNotifications = useEditorStore(s => s.setNotifications)
-  const [spf, setSpf] = useState<number>(stepsPerFrame.current)
+  const [spf, setSpf] = useState<number>(100)
+
+  useEffect(() => {
+    setSpf(stepsPerFrameRef.current)
+  }, [setSpf, stepsPerFrameRef])
 
   return (
     <nav className='w-full h-full flex items-center gap-2'>
@@ -48,7 +52,7 @@ export function NavMenu() {
         value={spf}
         onChange={v => {
           setSpf(v)
-          stepsPerFrame.current = v
+          stepsPerFrameRef.current = v
         }}
       />
     </nav>

@@ -8,7 +8,7 @@ import { GridHelper } from 'three'
 import { useEditorStore } from '../state'
 
 export function useSceneActions() {
-  const { scene, workspace, orbitMap, controls } = useEditorRefs()
+  const { sceneRef, workspaceRef, orbitMapRef, controlsRef } = useEditorRefs()
   const { addObject, removeObject } = useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
 
@@ -71,15 +71,15 @@ export function useSceneActions() {
 
       if (project.scene) {
         const { children } = project.scene
-        applyProps(scene.current, project.scene)
+        applyProps(sceneRef.current, project.scene)
         children?.forEach(child => addObject(child, undefined, true))
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
         const { selectedItems } = project
         if (selectedItems !== undefined) setSelectedItems(selectedItems)
         requestAnimationFrame(() => {
-          if (!workspace.current) throw Error('Missing workspace')
+          if (!workspaceRef.current) throw Error('Missing workspace')
           Events.disable()
-          serialization.workspaces.load(project.workspace, workspace.current)
+          serialization.workspaces.load(project.workspace, workspaceRef.current)
           Events.enable()
           console.info(
             '%cLoaded workspace state:',
@@ -94,19 +94,19 @@ export function useSceneActions() {
   }
 
   function clearScene() {
-    for (let i = scene.current.children.length - 1; i >= 0; i--) {
-      const child = scene.current.children[i]
+    for (let i = sceneRef.current.children.length - 1; i >= 0; i--) {
+      const child = sceneRef.current.children[i]
       removeObject(child)
     }
     setSelectedItems([])
     blocklyUI.objectMenu = []
-    orbitMap.current.clear()
-    controls.current?.dispose()
-    controls.current = null
+    orbitMapRef.current.clear()
+    controlsRef.current?.dispose()
+    controlsRef.current = null
 
     /** @test initialize scene (I have my doubts if this is a good init place) */
     const gridHelper = new GridHelper()
-    scene.current.add(gridHelper)
+    sceneRef.current.add(gridHelper)
   }
 
   return {

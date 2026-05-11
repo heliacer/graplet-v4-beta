@@ -19,7 +19,7 @@ interface ToolButtonProps {
 }
 
 function ToolButton({ tool, Icon }: ToolButtonProps) {
-  const { orbitMap } = useEditorRefs()
+  const { orbitMapRef } = useEditorRefs()
   const currentTool = useEditorStore(s => s.currentTool)
   const setCurrentTool = useEditorStore(s => s.setCurrentTool)
   const camera = useEditorStore(s => s.camera)
@@ -29,7 +29,7 @@ function ToolButton({ tool, Icon }: ToolButtonProps) {
       title={tool}
       onClick={() => {
         if (camera) {
-          const orbit = orbitMap.current.get(camera.id)
+          const orbit = orbitMapRef.current.get(camera.id)
           if (orbit) {
             if (currentTool === 'move') {
               orbit.mouseButtons.LEFT = null

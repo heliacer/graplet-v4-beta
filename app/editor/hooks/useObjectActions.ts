@@ -9,17 +9,17 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
-import { ParentError, SObject3D, TransformProps } from '../types'
+import { Optional, ParentError, SObject3D, TransformProps } from '../types'
 import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { findTopLevelObject, moveObject } from '../utils/three'
-import { Optional } from '@/app/lib/types'
 import { useEditorStore } from '../state'
 
 let nextSharedId = 0
 
 export function useObjectActions() {
-  const { scene, objects, workspace, orbitMap, canvas } = useEditorRefs()
+  const { sceneRef, objectsRef, workspaceRef, orbitMapRef, canvasRef } =
+    useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setCamera = useEditorStore(s => s.setCamera)
@@ -30,9 +30,11 @@ export function useObjectActions() {
    * @private
    */
   function rebuildBlocklyUI() {
-    const entries = Array.from(objects.current.entries())
+    const entries = Array.from(objectsRef.current.entries())
     blocklyUI.objectMenu = entries.map(([id, object]) => [object.name, id])
-    workspace.current?.updateToolbox(workspace.current.options.languageTree)
+    workspaceRef.current?.updateToolbox(
+      workspaceRef.current.options.languageTree
+    )
   }
 
   /**
@@ -43,22 +45,25 @@ export function useObjectActions() {
     if (object instanceof Camera) {
       const helper = new CameraHelper(object)
       helper.name = 'CameraHelper'
-      if (object instanceof PerspectiveCamera && orbitMap.current.size === 0) {
+      if (
+        object instanceof PerspectiveCamera &&
+        orbitMapRef.current.size === 0
+      ) {
         setCamera(object)
-        const controls = new OrbitControls(object, canvas.current)
+        const controls = new OrbitControls(object, canvasRef.current)
         controls.mouseButtons = {
           MIDDLE: MOUSE.PAN,
           RIGHT: MOUSE.ROTATE
         }
-        orbitMap.current.set(object.id, controls)
+        orbitMapRef.current.set(object.id, controls)
         helper.visible = false
       }
-      scene.current.add(helper)
+      sceneRef.current.add(helper)
     }
     if (object instanceof DirectionalLight) {
       const helper = new DirectionalLightHelper(object)
       helper.name = 'DirectionalLightHelper'
-      scene.current.add(helper)
+      sceneRef.current.add(helper)
     }
   }
 
@@ -69,7 +74,7 @@ export function useObjectActions() {
    */
   function addObject(
     props: Optional<SObject3D, TransformProps>,
-    target: Object3D = scene.current,
+    target: Object3D = sceneRef.current,
     silent?: boolean
   ): Object3D {
     const object = createObject(props)
@@ -93,7 +98,7 @@ export function useObjectActions() {
     }
 
     /** Add it to the registry */
-    objects.current.set(object.sharedId, object)
+    objectsRef.current.set(object.sharedId, object)
 
     if (!silent) {
       setSelectedItems([object.sharedId])
@@ -116,7 +121,7 @@ export function useObjectActions() {
 
     if (object.sharedId) {
       /** Remove it from the registry */
-      objects.current.delete(object.sharedId)
+      objectsRef.current.delete(object.sharedId)
 
       /** If it's the selection, remove it */
       if (selectedItems.includes(object.sharedId)) {
@@ -129,18 +134,18 @@ export function useObjectActions() {
     if (object instanceof Camera) {
       /** If it's the active camera, set another one active instead */
       if (object === camera) {
-        const nextCamera = scene.current.getObjectByProperty(
+        const nextCamera = sceneRef.current.getObjectByProperty(
           'isCamera',
           true
         ) as Camera
         setCamera(nextCamera || null)
       }
       /** If the camera has orbit controls, dispose of them */
-      const orbit = orbitMap.current.get(object.id)
+      const orbit = orbitMapRef.current.get(object.id)
       if (orbit) {
         orbit.disconnect()
         orbit.dispose()
-        orbitMap.current.delete(object.id)
+        orbitMapRef.current.delete(object.id)
       }
     }
 
@@ -164,7 +169,7 @@ export function useObjectActions() {
     const parent =
       objects.length === 1
         ? firstParent
-        : findTopLevelObject(objects, scene.current)
+        : findTopLevelObject(objects, sceneRef.current)
     const target = addObject({ type: 'Group', name: 'Group' }, parent)
     for (const object of objects) {
       moveObject(object, target)
@@ -191,8 +196,8 @@ export function useObjectActions() {
     navigator.clipboard.writeText(data)
   }
 
-  async function pasteObjects(target: Object3D = scene.current) {
-    const text = await navigator.clipboard.readText()    
+  async function pasteObjects(target: Object3D = sceneRef.current) {
+    const text = await navigator.clipboard.readText()
     try {
       const objects: SObject3D[] = JSON.parse(text)
       for (let i = 0; i < objects.length; i++) {
@@ -204,7 +209,7 @@ export function useObjectActions() {
     } catch (error) {
       if (error instanceof SyntaxError) {
         console.warn(`"${text}" isn't valid object(s) to paste`)
-      } else { 
+      } else {
         console.error(error)
       }
     }
