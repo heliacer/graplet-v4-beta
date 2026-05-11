@@ -2,7 +2,7 @@
 
 import '../styles/dvtheme.css'
 import { DockviewReact, DockviewReadyEvent } from 'dockview-react'
-import { RightControls } from './ui/controls/tabControls'
+import { LeftControls, RightControls } from './ui/controls/tabControls'
 import { TabHeader } from './ui/tabHeader'
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
@@ -125,6 +125,7 @@ export function GrapletDockview() {
       components={panelComponents}
       defaultTabComponent={TabHeader}
       rightHeaderActionsComponent={RightControls}
+      leftHeaderActionsComponent={LeftControls}
     />
   )
 }

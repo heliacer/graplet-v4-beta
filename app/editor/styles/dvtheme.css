@@ -469,7 +469,6 @@
 }
 
 .dv-tab {
-  border-right: 1px solid var(--dv-border-color);
   border-top: 1px solid transparent;
   flex-shrink: 0;
   -webkit-user-drag: element;
@@ -478,6 +477,10 @@
   position: relative;
   box-sizing: border-box;
   font-size: var(--dv-tabs-and-actions-container-font-size);
+}
+
+.dv-tab:last-child{
+  border-right: 1px solid var(--dv-border-color);
 }
 .dv-tab.dv-tab-dragging .dv-default-tab-action {
   background-color: var(--dv-active-tab-color);

@@ -5,13 +5,14 @@ import {
   Object3D,
   Scene
 } from 'three'
-import { ParentError } from '../types'
+import { NotFoundError, ParentError } from '../types'
 import {
   TransformControls,
   TransformControlsGizmo,
   TransformControlsMode,
   TransformControlsPlane
 } from 'three/examples/jsm/controls/TransformControls.js'
+import { RefObject } from 'react'
 
 declare class TransformControlsRoot extends Object3D {
   readonly isTransformControlsRoot: true
@@ -83,4 +84,13 @@ export function findTopLevelObject(
     }
   }
   throw Error('How did we get there?')
+}
+
+export function getObject(
+  objectsRef: RefObject<Map<string, Object3D>>,
+  sharedId: string
+): Object3D {
+  const object = objectsRef.current.get(sharedId)
+  if (object === undefined) throw new NotFoundError(sharedId)
+  return object
 }

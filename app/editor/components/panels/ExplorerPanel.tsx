@@ -12,7 +12,7 @@ import { useEditorRefs } from '../../context/editor'
 import { useEditorStore } from '../../state'
 import { useTree } from '@headless-tree/react'
 import { TreeItemView } from '../ui/TreeItemView'
-import { isInternalObject, moveObject } from '../../utils/three'
+import { getObject, isInternalObject, moveObject } from '../../utils/three'
 import { NotFoundError, TreeItem } from '../../types'
 import { getIconT } from '../../utils/icons'
 
@@ -21,8 +21,8 @@ export default function ExplorerPanel() {
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setContextMenu = useEditorStore(s => s.setContextMenu)
-  const updateObject = useEditorStore(s => s.updateObject)
   const invalidateObject = useEditorStore(s => s.invalidateObject)
+  const updateSnapshot = useEditorStore(s => s.updateSnapshot)
   const objectVersions = useEditorStore(s => s.objectVersions)
 
   const tree = useTree<TreeItem>({
@@ -32,13 +32,18 @@ export default function ExplorerPanel() {
     getItemName: item => item.getItemData()?.name ?? 'Unnamed',
     isItemFolder: item => item.getItemData().type === 'Component',
     canRename: item => {
-      const object = objectsRef.current.get(item.getId())
+      const object = getObject(objectsRef, item.getId())
       if (!object) return false
       return !isInternalObject(object)
     },
     onRename: (item, value) => {
-      const object = objectsRef.current.get(item.getId())
-      if (object) updateObject(object, o => (o.name = value))
+      const sharedId = item.getId()
+      const object = getObject(objectsRef, sharedId)
+      object.name = value
+      updateSnapshot(sharedId, {
+        name: value
+      })
+      invalidateObject(object)
     },
     /** @todo (#60) Add reordering for improved UX */
     onDrop: (items, target) => {

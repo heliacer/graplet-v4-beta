@@ -66,7 +66,7 @@ interface ItemViewContentProps {
 }
 
 function ItemViewContent({ item, object }: ItemViewContentProps) {
-  const updateObject = useEditorStore(s => s.updateObject)
+  const updateObject = useEditorStore(s => s.updateObjectOld)
 
   return (
     <div

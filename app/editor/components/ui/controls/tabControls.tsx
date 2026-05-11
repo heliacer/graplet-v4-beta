@@ -52,7 +52,6 @@ export function RightControls(props: IDockviewHeaderActionsProps) {
   )
 }
 
-/** @deprecated not needed at the moment */
 export function LeftControls(props: IDockviewHeaderActionsProps) {
   function addNew() {
     props.containerApi.addPanel({

@@ -10,7 +10,12 @@ import {
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
 import { Optional, ParentError, SObject3D, TransformProps } from '../types'
-import { applyProps, createObject, serializeObject } from '../utils/sobject'
+import {
+  applyProps,
+  createObject,
+  serializeObject,
+  snapshotObject
+} from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { findTopLevelObject, moveObject } from '../utils/three'
 import { useEditorStore } from '../state'
@@ -25,6 +30,7 @@ export function useObjectActions() {
   const setCamera = useEditorStore(s => s.setCamera)
   const camera = useEditorStore(s => s.camera)
   const invalidateObject = useEditorStore(s => s.invalidateObject)
+  const setSnapshots = useEditorStore(s => s.setSnapshots)
 
   /**
    * @private
@@ -89,16 +95,23 @@ export function useObjectActions() {
     }
 
     /** Apply sharedId */
+    const sharedId = props.sharedId ?? (nextSharedId++).toString()
+    object.sharedId = sharedId
     if (props.sharedId) {
-      object.sharedId = props.sharedId
-      const sharedId = Number(props.sharedId)
-      if (sharedId >= nextSharedId) nextSharedId = sharedId + 1
-    } else {
-      object.sharedId = (nextSharedId++).toString()
+      const numeric = Number(sharedId)
+      if (numeric >= nextSharedId) nextSharedId = numeric + 1
     }
 
     /** Add it to the registry */
     objectsRef.current.set(object.sharedId, object)
+
+    /** Create snapshot */
+    const snapshot = snapshotObject(object)
+    console.log('setting snapshot for', snapshot.name)
+    setSnapshots(prev => ({
+      ...prev,
+      [sharedId]: snapshot
+    }))
 
     if (!silent) {
       setSelectedItems([object.sharedId])
@@ -119,14 +132,21 @@ export function useObjectActions() {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
 
-    if (object.sharedId) {
+    const sharedId = object.sharedId
+    if (sharedId) {
       /** Remove it from the registry */
-      objectsRef.current.delete(object.sharedId)
+      objectsRef.current.delete(sharedId)
 
       /** If it's the selection, remove it */
-      if (selectedItems.includes(object.sharedId)) {
+      if (selectedItems.includes(sharedId)) {
         setSelectedItems(prev => prev.filter(item => item !== object.sharedId))
       }
+
+      /** Remove it from the snapshots */
+      setSnapshots(prev => {
+        const { [sharedId]: _, ...rest } = prev
+        return rest
+      })
     }
 
     parent.remove(object)

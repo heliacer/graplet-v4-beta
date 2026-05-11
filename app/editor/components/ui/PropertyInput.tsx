@@ -85,7 +85,7 @@ export function Vec3AngleProperty({
 }
 
 export function TextProperty({ label, object, property }: TextPropertyProps) {
-  const updateObject = useEditorStore(s => s.updateObject)
+  const updateObject = useEditorStore(s => s.updateObjectOld)
 
   const update = (newValue: string) => {
     if (object[property] !== newValue) {
