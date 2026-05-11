@@ -21,7 +21,10 @@ export interface SBase {
   rotation: Vec3
   scale: Vec3
   sharedId?: string
+  /** used when serializing objects */
   children?: readonly SObject3D[]
+  /** used when snapshotting objects */
+  childIds?: readonly string[]
 }
 
 /** Serialized Scene */

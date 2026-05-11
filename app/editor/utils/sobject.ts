@@ -4,7 +4,8 @@ import {
   SMaterial,
   SBase,
   TransformProps,
-  Optional
+  Optional,
+  ObjectError
 } from '../types'
 import {
   AmbientLight,
@@ -141,32 +142,16 @@ function createMaterial(material: SMaterial): Material {
 }
 
 /**
- * Serializes an object with its metadata
+ * Saves an objects core state
  */
-export function serializeObject(
-  object: Object3D,
-  includeId?: boolean
-): SObject3D {
-  /** Common Props */
+function saveState(object: Object3D): SObject3D {
+  /** Common props */
   const { name, position, rotation, scale } = object
-  const children = object.children
-    .filter(child => !isInternalObject(child))
-    .map(object => serializeObject(object, includeId)) as readonly SObject3D[]
-
   const base: SBase = {
     name,
     position: [position.x, position.y, position.z],
     rotation: [rotation.x, rotation.y, rotation.z],
-    scale: [scale.x, scale.y, scale.z],
-    ...(children.length > 0 && { children })
-  }
-
-  /**
-   * @example the sharedId is included when saving state,
-   * but when duplicating objects, identity should never be copied.
-   */
-  if (includeId) {
-    base.sharedId = object.sharedId
+    scale: [scale.x, scale.y, scale.z]
   }
 
   /** Specific Props */
@@ -235,4 +220,47 @@ export function serializeObject(
   throw new Error(
     `Unsupported Object3D: ${object.constructor.name} ${object.type}`
   )
+}
+
+/**
+ * Serializes an object with its state
+ */
+export function serializeObject(
+  object: Object3D,
+  includeId?: boolean
+): SObject3D {
+  const sobject = saveState(object)
+  const children = object.children
+    .filter(child => !isInternalObject(child))
+    .map(object => serializeObject(object, includeId))
+
+  if (children.length > 0) {
+    sobject.children = children
+  }
+  if (includeId) {
+    sobject.sharedId = object.sharedId
+  }
+
+  return sobject
+}
+
+/**
+ * Snapshots and object with its state
+ */
+export function snapshotObject(object: Object3D): SObject3D {
+  const sobject = saveState(object)
+  const childIds = object.children
+    .filter(child => !isInternalObject(child))
+    .map(object => {
+      if (object.sharedId === undefined) {
+        throw new ObjectError(object, 'does not have a sharedId')
+      }
+      return object.sharedId
+    })
+
+  if (childIds.length > 0) {
+    sobject.childIds = childIds
+  }
+
+  return sobject
 }

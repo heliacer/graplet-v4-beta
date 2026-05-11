@@ -1,12 +1,15 @@
 import { Camera, Object3D } from 'three'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
+import { SObject3D } from '../../types'
 
 type Updater<T> = T | ((old: T) => T)
 
 type State = {
   selectedItems: string[]
+  /** @deprecated */
   objectVersions: Record<string, number>
+  objectSnapshots: Record<string, SObject3D>
   objectSnapping: {
     translate: number
     rotate: number /* degrees */
@@ -18,8 +21,12 @@ type State = {
 
 type Actions = {
   setSelectedItems: (updater: Updater<string[]>) => void
+  updateSnapshot: (sharedId: string, update: Partial<SObject3D>) => void
+  /** @deprecated needs to update to snapshots */
   updateObject: (object: Object3D, update: (draft: Object3D) => void) => void
+  /** @deprecated */
   invalidateObject: (object: Object3D) => void
+  /** @deprecated */
   invalidateObjectsAll: () => void
   setObjectSnapping: (tool: TransformControlsMode, value: number) => void
   setCamera: (camera: Camera | null) => void
@@ -31,6 +38,7 @@ export type ObjectSlice = State & Actions
 export const objectInitialState: State = {
   selectedItems: [],
   objectVersions: {},
+  objectSnapshots: {},
   objectSnapping: {
     translate: 0.5,
     rotate: 45,
@@ -49,6 +57,17 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
         typeof updater === 'function' ? updater(state.selectedItems) : updater
     }))
   },
+
+  updateSnapshot: (sharedId: string, update: Partial<SObject3D>) =>
+    set(state => ({
+      objectSnapshots: {
+        ...state.objectSnapshots,
+        [sharedId]: {
+          ...state.objectSnapshots[sharedId],
+          ...update
+        } as SObject3D
+      }
+    })),
 
   updateObject: (object, update) => {
     update(object)

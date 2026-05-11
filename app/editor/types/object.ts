@@ -1,6 +1,6 @@
 import { Object3D } from 'three'
 
-class ObjectError extends Error {
+export class ObjectError extends Error {
   constructor(object: Object3D, message: string) {
     super(`${object.name || 'unnamed'} (${object.type}) ${message}`)
   }
