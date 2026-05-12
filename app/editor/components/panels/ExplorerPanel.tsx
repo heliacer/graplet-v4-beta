@@ -15,6 +15,8 @@ import { TreeItemView } from '../ui/TreeItemView'
 import { getObject, isInternalObject, moveObject } from '../../utils/three'
 import { NotFoundError, TreeItem } from '../../types'
 import { getIconT } from '../../utils/icons'
+import { useShallow } from 'zustand/react/shallow'
+
 
 export default function ExplorerPanel() {
   const { objectsRef, sceneRef } = useEditorRefs()
@@ -24,6 +26,7 @@ export default function ExplorerPanel() {
   const invalidateObject = useEditorStore(s => s.invalidateObject)
   const updateSnapshot = useEditorStore(s => s.updateSnapshot)
   const objectVersions = useEditorStore(s => s.objectVersions)
+  const objectSnapshots = useEditorStore(useShallow(s => s.objectSnapshots))
 
   const tree = useTree<TreeItem>({
     state: { selectedItems },

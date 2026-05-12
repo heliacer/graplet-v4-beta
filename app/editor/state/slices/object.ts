@@ -9,7 +9,7 @@ type State = {
   selectedItems: string[]
   /** @deprecated */
   objectVersions: Record<string, number>
-  snapshots: Record<string, SObject3D>
+  objectSnapshots: Record<string, SObject3D>
   objectSnapping: {
     translate: number
     rotate: number /* degrees */
@@ -39,7 +39,7 @@ export type ObjectSlice = State & Actions
 export const objectInitialState: State = {
   selectedItems: [],
   objectVersions: {},
-  snapshots: {},
+  objectSnapshots: {},
   objectSnapping: {
     translate: 0.5,
     rotate: 45,
@@ -61,16 +61,16 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
 
   setSnapshots: (updater: Updater<Record<string, SObject3D>>) =>
     set(state => ({
-      snapshots:
-        typeof updater === 'function' ? updater(state.snapshots) : updater
+      objectSnapshots:
+        typeof updater === 'function' ? updater(state.objectSnapshots) : updater
     })),
 
   updateSnapshot: (sharedId: string, update: Partial<SObject3D>) =>
     set(state => ({
-      snapshots: {
-        ...state.snapshots,
+      objectSnapshots: {
+        ...state.objectSnapshots,
         [sharedId]: {
-          ...state.snapshots[sharedId],
+          ...state.objectSnapshots[sharedId],
           ...update
         } as SObject3D
       }
