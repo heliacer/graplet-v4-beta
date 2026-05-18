@@ -22,7 +22,7 @@ type State = {
 type Actions = {
   setSelectedItems: (updater: Updater<string[]>) => void
   setSnapshots: (updater: Updater<Record<string, SObject3D>>) => void
-  updateSnapshot: (sharedId: string, update: Partial<SObject3D>) => void
+  updateSnapshot: (sharedId: string, updater: Updater<Partial<SObject3D>>) => void
   /** @deprecated needs to update to snapshots */
   updateObjectOld: (object: Object3D, update: (draft: Object3D) => void) => void
   /** @deprecated */
@@ -65,16 +65,23 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
         typeof updater === 'function' ? updater(state.objectSnapshots) : updater
     })),
 
-  updateSnapshot: (sharedId: string, update: Partial<SObject3D>) =>
-    set(state => ({
-      objectSnapshots: {
-        ...state.objectSnapshots,
-        [sharedId]: {
-          ...state.objectSnapshots[sharedId],
-          ...update
-        } as SObject3D
+  updateSnapshot: (
+    sharedId: string,
+    updater: Updater<Partial<SObject3D>>
+  ) =>
+    set(state => {
+      const update =
+        typeof updater === 'function' ? updater(state.objectSnapshots[sharedId]) : updater
+      return {
+        objectSnapshots: {
+          ...state.objectSnapshots,
+          [sharedId]: {
+            ...state.objectSnapshots[sharedId],
+            ...update
+          } as SObject3D
+        }
       }
-    })),
+    }),
 
   updateObjectOld: (object, update) => {
     update(object)

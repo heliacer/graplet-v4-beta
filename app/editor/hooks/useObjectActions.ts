@@ -9,7 +9,13 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
-import { Optional, ParentError, SObject3D, TransformProps } from '../types'
+import {
+  ObjectError,
+  Optional,
+  ParentError,
+  SObject3D,
+  TransformProps
+} from '../types'
 import {
   applyProps,
   createObject,
@@ -107,11 +113,24 @@ export function useObjectActions() {
 
     /** Create snapshot */
     const snapshot = snapshotObject(object)
-    console.log('setting snapshot for', snapshot.name)
-    setSnapshots(prev => ({
-      ...prev,
-      [sharedId]: snapshot
-    }))
+    setSnapshots(prev => {
+      const targetId = target.sharedId
+      if (targetId === undefined) {
+        throw new ObjectError(target, 'does not have a sharedId')
+      }
+
+      const sobject = prev[targetId]
+      const childIds = [...((sobject && sobject.childIds) || []), sharedId]
+
+      return {
+        ...prev,
+        [sharedId]: snapshot,
+        [targetId]: {
+          ...sobject,
+          childIds
+        }
+      }
+    })
 
     if (!silent) {
       setSelectedItems([object.sharedId])
@@ -144,7 +163,8 @@ export function useObjectActions() {
 
       /** Remove it from the snapshots */
       setSnapshots(prev => {
-        const { [sharedId]: _, ...rest } = prev
+        const rest = { ...prev }
+        delete rest[sharedId]
         return rest
       })
     }

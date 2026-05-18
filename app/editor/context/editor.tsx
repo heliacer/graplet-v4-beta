@@ -26,9 +26,12 @@ export function useEditorRefs() {
 export function EditorProvider({
   children
 }: Readonly<{ children: React.ReactNode }>) {
+  const scene = new Scene()
+  scene.sharedId = 'scene'
+
   const varEnvRef = useRef<VarEnv>(new Map())
   const funcEnvRef = useRef<FuncEnv>(new Map())
-  const sceneRef = useRef(new Scene())
+  const sceneRef = useRef(scene)
   const objectsRef = useRef(new Map())
   const canvasRef = useRef<HTMLCanvasElement>(null!)
   const controlsRef = useRef<TransformControls | null>(null)
