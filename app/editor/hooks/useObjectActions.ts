@@ -116,6 +116,7 @@ export function useObjectActions() {
     setSnapshots(prev => {
       const targetId = target.sharedId
       if (targetId === undefined) {
+        console.log(target.name, 'does not have a sharedid')
         throw new ObjectError(target, 'does not have a sharedId')
       }
 

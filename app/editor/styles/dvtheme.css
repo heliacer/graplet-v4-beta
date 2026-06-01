@@ -482,6 +482,10 @@
 .dv-tab:last-child{
   border-right: 1px solid var(--dv-border-color);
 }
+.dv-tab:not(:first-child){
+ border-left: 1px solid var(--dv-border-color);
+}
+
 .dv-tab.dv-tab-dragging .dv-default-tab-action {
   background-color: var(--dv-active-tab-color);
 }

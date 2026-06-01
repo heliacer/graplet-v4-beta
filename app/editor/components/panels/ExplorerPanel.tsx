@@ -63,45 +63,8 @@ export default function ExplorerPanel() {
         /** snapshot update */
 
         // add item id to new target childids
-        updateSnapshot(targetId, prev => {
-          return {
-            ...prev,
-            childIds: [...(prev.childIds || []), itemId]
-          }
-        })
-
+       
         // remove item id from parent childids
-
-        /**
-         * @note that the item id (e.g parentItem.getId())
-         * return that linked objects sharedId, as that is being used
-         * as the tree item id, making it easy to look up objects
-         *
-         * so it is the equivalent of getting the parent object and getting
-         * its sharedId instead of the .getId() of the parent Item
-         */
-        const parentItem = item.getParent()
-        if (parentItem === undefined)
-          throw Error(`${object.name} does not have a parent item`)
-        const parentId = parentItem.getId()
-
-        updateSnapshot(parentId, prev => {
-          if (prev && prev.childIds) {
-            return {
-              ...prev,
-              childIds: [...prev.childIds.filter(id => id === itemId)]
-            }
-          } else {
-            /**
-             * expected to throw when an object is moved from scene and dropped somewhere else,
-             * as the scene isn't registered in the snapshots.
-             */
-            console.warn(
-              `${parentId} does not have ${object.name} in their childIds`
-            )
-            return prev
-          }
-        })
 
         invalidateObject(object)
       }
