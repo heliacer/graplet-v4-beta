@@ -6,7 +6,8 @@ import {
   DirectionalLightHelper,
   MOUSE,
   Object3D,
-  PerspectiveCamera
+  PerspectiveCamera,
+  Scene
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
 import {
@@ -120,14 +121,17 @@ export function useObjectActions() {
         throw new ObjectError(target, 'does not have a sharedId')
       }
 
-      const sobject = prev[targetId]
-      const childIds = [...((sobject && sobject.childIds) || []), sharedId]
+      const targetSObject = prev[targetId]
+      const childIds = [
+        ...((targetSObject && targetSObject.childIds) || []),
+        sharedId
+      ]
 
       return {
         ...prev,
         [sharedId]: snapshot,
         [targetId]: {
-          ...sobject,
+          ...targetSObject,
           childIds
         }
       }
@@ -217,6 +221,16 @@ export function useObjectActions() {
     }
   }
 
+  /**
+   * Removes an object from the previous parent and adds it to the new target
+   * and updates the snapshots with relative sharedIds
+   *
+   * @todo (#84)
+   */
+  function moveObjects(object: Object3D, target: Object3D | Scene) {
+    throw Error('not implemented')
+  }
+
   function unGroupObject(object: Object3D) {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
@@ -260,6 +274,7 @@ export function useObjectActions() {
     addObject,
     removeObject,
     cloneObject,
+    moveObjects,
     groupObjects,
     unGroupObject,
     copyObjects,

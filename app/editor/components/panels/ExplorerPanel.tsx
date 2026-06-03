@@ -47,8 +47,12 @@ export default function ExplorerPanel() {
     },
     /** @todo (#60) Add reordering for improved UX */
     onDrop: (items, target) => {
+      /**
+       * @deprecated (#84) this is the part where the object gets moved in scene, but
+       * not relatively in the snapshots (index location) and this needs to be fixed
+       * with a general moveObjects in useObjectActions
+       */
       for (const item of items) {
-        /** part where object gets actually moved */
         const itemId = item.getId()
         const object = getObject(objectsRef, itemId)
 
@@ -59,12 +63,6 @@ export default function ExplorerPanel() {
             : getObject(objectsRef, itemId)
 
         moveObject(object, targetObj)
-
-        /** snapshot update */
-
-        // add item id to new target childids
-       
-        // remove item id from parent childids
 
         invalidateObject(object)
       }

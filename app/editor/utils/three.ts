@@ -42,6 +42,8 @@ export function isInternalObject(object: Object3D): boolean {
 
 /**
  * Removes the object from its parent object and adds it to the target group
+ *
+ * @deprecated, should be unified in objectactions and update the relative snapshots
  */
 export function moveObject(object: Object3D, target: Object3D | Scene) {
   const parent = object.parent
