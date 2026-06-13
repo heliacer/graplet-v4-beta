@@ -1,6 +1,7 @@
 'use no memo'
 
 import {
+  createOnDropHandler,
   dragAndDropFeature,
   hotkeysCoreFeature,
   renamingFeature,
@@ -12,12 +13,14 @@ import { useEditorRefs } from '../../context/editor'
 import { useEditorStore } from '../../state'
 import { useTree } from '@headless-tree/react'
 import { TreeItemView } from '../ui/TreeItemView'
-import { getObject, isInternalObject, moveObject } from '../../utils/three'
+import { getObject, isInternalObject } from '../../utils/three'
 import { TreeItem } from '../../types'
 import { getIconT } from '../../utils/icons'
+import { useObjectActions } from '../../hooks/useObjectActions'
 
 export default function ExplorerPanel() {
   const { objectsRef, sceneRef } = useEditorRefs()
+  const { moveObjects } = useObjectActions()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setContextMenu = useEditorStore(s => s.setContextMenu)
@@ -45,28 +48,19 @@ export default function ExplorerPanel() {
       })
       invalidateObject(object)
     },
-    /** @todo (#60) Add reordering for improved UX */
-    onDrop: (items, target) => {
-      /**
-       * @deprecated (#84) this is the part where the object gets moved in scene, but
-       * not relatively in the snapshots (index location) and this needs to be fixed
-       * with a general moveObjects in useObjectActions
-       */
-      for (const item of items) {
-        const itemId = item.getId()
-        const object = getObject(objectsRef, itemId)
-
-        const targetId = target.item.getId()
-        const targetObj =
-          targetId === 'scene'
-            ? sceneRef.current
-            : getObject(objectsRef, itemId)
-
-        moveObject(object, targetObj)
-
-        invalidateObject(object)
-      }
-    },
+    /**
+     *  @todo (#60) Add reordering for improved UX
+     *  @todo  (#84) moveItems indexing: make a drop handler with items
+     * that can be reordered. (wip, this does not work)
+     */
+    onDrop: (items, target) =>
+      createOnDropHandler<TreeItem>((targetItem, newChildren) => {
+        moveObjects(
+          items.map(item => item.getId()),
+          targetItem.getId(),
+          newChildren
+        )
+      })(items, target),
     canReorder: true,
     dataLoader: {
       getItem: (itemId): TreeItem => {
@@ -123,9 +117,9 @@ export default function ExplorerPanel() {
       </div>
       <div
         /** @todo (#60) upgrade looks */
-        style={tree.getDragLineStyle()}
-        className='border border-teal'
+        style={tree.getDragLineStyle(29)}
+        className='border border-dashed border-teal'
       />
     </div>
-  )
+  ) 
 }

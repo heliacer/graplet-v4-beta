@@ -6,8 +6,7 @@ import {
   DirectionalLightHelper,
   MOUSE,
   Object3D,
-  PerspectiveCamera,
-  Scene
+  PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
 import {
@@ -24,7 +23,7 @@ import {
   snapshotObject
 } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { findTopLevelObject, moveObject } from '../utils/three'
+import { findTopLevelObject, getObject, moveObject } from '../utils/three'
 import { useEditorStore } from '../state'
 
 let nextSharedId = 0
@@ -223,12 +222,42 @@ export function useObjectActions() {
 
   /**
    * Removes an object from the previous parent and adds it to the new target
-   * and updates the snapshots with relative sharedIds
+   * and updates the snapshots with relative sharedIds (newChildren)
    *
    * @todo (#84)
    */
-  function moveObjects(object: Object3D, target: Object3D | Scene) {
-    throw Error('not implemented')
+  function moveObjects(
+    itemIds: string[],
+    targetId: string,
+    newChildren: string[]
+  ) {
+    /*     
+    setSnapshots(prev => ({
+      ...prev,
+      [targetId]: { ...prev[targetId], childIds: newChildren }
+    }))
+
+    wip: list before: [A,B,C,D] as ids
+    -> if A gets dragged between B and C:
+    first output: [B,C,D] 
+    second output (why?): [B,A,C,D,A] (what is the A at the end doing?!)
+    */
+    console.log(itemIds, targetId, newChildren)
+
+    for (const itemId of itemIds) {
+      const object = getObject(objectsRef, itemId)
+      const targetObj =
+        targetId === 'scene'
+          ? sceneRef.current
+          : getObject(objectsRef, targetId)
+
+      const parent = object.parent
+      if (!parent) throw new ParentError(object)
+      parent.remove(object)
+      targetObj.add(object)
+
+      invalidateObject(object)
+    }
   }
 
   function unGroupObject(object: Object3D) {
