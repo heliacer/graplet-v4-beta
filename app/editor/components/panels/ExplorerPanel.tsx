@@ -14,7 +14,7 @@ import { useEditorStore } from '../../state'
 import { useTree } from '@headless-tree/react'
 import { TreeItemView } from '../ui/TreeItemView'
 import { getObject, isInternalObject } from '../../utils/three'
-import { TreeItem } from '../../types'
+import { ObjectError, TreeItem } from '../../types'
 import { getIconT } from '../../utils/icons'
 import { useObjectActions } from '../../hooks/useObjectActions'
 
@@ -55,6 +55,9 @@ export default function ExplorerPanel() {
      */
     onDrop: (items, target) =>
       createOnDropHandler<TreeItem>((targetItem, newChildren) => {
+        console.log(
+          `calling moveobjects, items: ${items} target: ${target}, targetItem: ${targetItem}, newChildren: ${newChildren}`
+        )
         moveObjects(
           items.map(item => item.getId()),
           targetItem.getId(),
@@ -64,6 +67,7 @@ export default function ExplorerPanel() {
     canReorder: true,
     dataLoader: {
       getItem: (itemId): TreeItem => {
+        /** @deprecated, will use snapshot scene, is stored by default */
         const object =
           itemId === 'scene' ? sceneRef.current : objectsRef.current.get(itemId)
         if (!object) return { name: '', type: 'Component', hasChildren: false }
@@ -83,7 +87,7 @@ export default function ExplorerPanel() {
           .filter(object => !isInternalObject(object))
           .map(object => {
             const id = object.sharedId
-            if (!id) throw Error(`${object.name} does not have a sharedId`)
+            if (!id) throw new ObjectError(object, 'does not have a sharedId')
             return id
           })
       }
@@ -121,5 +125,5 @@ export default function ExplorerPanel() {
         className='border border-dashed border-teal'
       />
     </div>
-  ) 
+  )
 }

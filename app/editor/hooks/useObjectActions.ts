@@ -156,7 +156,7 @@ export function useObjectActions() {
     if (!parent) throw new ParentError(object)
 
     const sharedId = object.sharedId
-    if (sharedId) {
+    if (sharedId !== undefined) {
       /** Remove it from the registry */
       objectsRef.current.delete(sharedId)
 
@@ -165,11 +165,23 @@ export function useObjectActions() {
         setSelectedItems(prev => prev.filter(item => item !== object.sharedId))
       }
 
-      /** Remove it from the snapshots */
+      const parentId = parent.sharedId
+      if (parentId === undefined) {
+        throw new ObjectError(parent, 'does not have a sharedId')
+      }
+
+      /** Remove it from the snapshots and update parent childIds */
       setSnapshots(prev => {
         const rest = { ...prev }
+        const sobject = rest[parentId]
         delete rest[sharedId]
-        return rest
+        return {
+          ...rest,
+          [parentId]: {
+            ...sobject,
+            childIds: sobject.childIds?.filter(id => id !== sharedId)
+          }
+        }
       })
     }
 
