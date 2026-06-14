@@ -60,7 +60,6 @@ export default function ExplorerPanel() {
     dataLoader: {
       getItem: itemId => itemId,
       getChildren: itemId => {
-        console.log(itemId)
         const item = objectSnapshots[itemId]
         return item !== undefined ? item.childIds : []
       }

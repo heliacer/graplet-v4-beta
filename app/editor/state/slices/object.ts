@@ -1,9 +1,7 @@
 import { Camera, Object3D } from 'three'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
-import { SObject3D } from '../../types'
-
-type Updater<T> = T | ((old: T) => T)
+import { SObject3D, Updater } from '../../types'
 
 type State = {
   selectedItems: string[]
@@ -20,8 +18,8 @@ type State = {
 }
 
 type Actions = {
-  setSelectedItems: (updater: Updater<string[]>) => void
-  setSnapshots: (updater: Updater<Record<string, SObject3D>>) => void
+  setSelectedItems: (items: Updater<string[]>) => void
+  setSnapshots: (snapshots: Updater<Record<string, SObject3D>>) => void
   updateSnapshot: (
     sharedId: string,
     updater: Updater<Partial<SObject3D>>
@@ -55,17 +53,17 @@ export const objectInitialState: State = {
 export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
   ...objectInitialState,
 
-  setSelectedItems: updater => {
+  setSelectedItems: items => {
     set(state => ({
       selectedItems:
-        typeof updater === 'function' ? updater(state.selectedItems) : updater
+        typeof items === 'function' ? items(state.selectedItems) : items
     }))
   },
 
-  setSnapshots: (updater: Updater<Record<string, SObject3D>>) =>
+  setSnapshots: (snapshots: Updater<Record<string, SObject3D>>) =>
     set(state => ({
       objectSnapshots:
-        typeof updater === 'function' ? updater(state.objectSnapshots) : updater
+        typeof snapshots === 'function' ? snapshots(state.objectSnapshots) : snapshots
     })),
 
   updateSnapshot: (sharedId: string, updater: Updater<Partial<SObject3D>>) =>

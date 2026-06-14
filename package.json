@@ -13,21 +13,22 @@
     "postinstall": "prisma generate",
     "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
+  "overrides": {
+    "postcss": "^8.5.10"
+  },
   "dependencies": {
     "@blockly/block-shareable-procedures": "^6.0.9",
-    "@blockly/continuous-toolbox": "^7.0.2",
+    "@blockly/continuous-toolbox": "^7.0.9",
     "@headless-tree/core": "^1.5.1",
     "@headless-tree/react": "^1.5.1",
-    "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "^7.2.0",
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "bcrypt": "^6.0.0",
     "blockly": "^12.2.0",
     "clsx": "^2.1.1",
     "dockview-react": "^6.0.0",
     "lucide-react": "^1.11.0",
-    "next": "^16.2.6",
+    "next": "^16.2.9",
     "next-auth": "5.0.0-beta.30",
     "pg": "^8.16.3",
     "react": "^19.2.4",
@@ -49,9 +50,15 @@
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.6.2",
-    "prisma": "^7.2.0",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5.9.2"
   },
-  "allowScripts": {}
+  "allowScripts": {
+    "@prisma/engines": true,
+    "bcrypt": true,
+    "prisma": true,
+    "sharp": true,
+    "unrs-resolver": true
+  }
 }

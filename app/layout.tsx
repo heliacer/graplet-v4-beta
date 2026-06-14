@@ -2,8 +2,6 @@ import type { Metadata } from 'next'
 import { nunito } from './ui/fonts'
 import { SessionProvider } from 'next-auth/react'
 import { cookies } from 'next/headers'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Suspense } from 'react'
 import './ui/globals.css'
 
@@ -22,8 +20,6 @@ async function Layout({ children }: { children: Readonly<React.ReactNode> }) {
   return (
     <body className={`${theme} ${nunito.className} bg-ui-900 text-ui-200`}>
       <SessionProvider>{children}</SessionProvider>
-      <Analytics />
-      <SpeedInsights />
     </body>
   )
 }

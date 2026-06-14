@@ -56,7 +56,6 @@ export default function ScenePanel(props: IDockviewPanelProps) {
     () => {
       setAutoClose(!autoClose)
       const flyout = workspaceRef.current?.getFlyout()
-      console.log(flyout)
       if (flyout) {
         flyout.autoClose = !autoClose
       }

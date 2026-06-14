@@ -1,5 +1,10 @@
 import { StateCreator } from 'zustand'
-import { ContextMenuProps, NotificationItemProps, ToolItem } from '../../types'
+import {
+  ContextMenuProps,
+  NotificationItemProps,
+  ToolItem,
+  Updater
+} from '../../types'
 import { DockviewApi } from 'dockview-react'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 
@@ -24,7 +29,7 @@ type Actions = {
   setDvApi: (api: DockviewApi | null) => void
   setContextMenu: (contextMenu: ContextMenuProps | null) => void
   setHasProjectChanges: (hasProjectChanges: boolean) => void
-  setTreeVersion: (version: number) => void
+  setTreeVersion: (version: Updater<number>) => void
 }
 
 export type UiSlice = State & Actions
@@ -52,5 +57,10 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   setDvApi: v => set({ dvApi: v }),
   setContextMenu: v => set({ contextMenu: v }),
   setHasProjectChanges: v => set({ hasProjectChanges: v }),
-  setTreeVersion: v => set({ treeVersion: v })
+  
+  setTreeVersion: version =>
+    set(state => ({
+      treeVersion:
+        typeof version === 'function' ? version(state.treeVersion) : version
+    }))
 })

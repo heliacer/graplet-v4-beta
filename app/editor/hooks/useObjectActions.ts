@@ -27,10 +27,11 @@ export function useObjectActions() {
     useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
-  const setCamera = useEditorStore(s => s.setCamera)
   const camera = useEditorStore(s => s.camera)
+  const setCamera = useEditorStore(s => s.setCamera)
   const invalidateObject = useEditorStore(s => s.invalidateObject)
   const setSnapshots = useEditorStore(s => s.setSnapshots)
+  const setTreeVersion = useEditorStore(s => s.setTreeVersion)
 
   /**
    * @private
@@ -110,7 +111,6 @@ export function useObjectActions() {
     setSnapshots(prev => {
       const targetId = target.sharedId
       if (targetId === undefined) {
-        console.log(target.name, 'does not have a sharedid')
         throw new ObjectError(target, 'does not have a sharedId')
       }
 
@@ -130,14 +130,18 @@ export function useObjectActions() {
       }
     })
 
+    applyHelpers(object)
+
+    /** Update version and visuals */
     if (!silent) {
-      setSelectedItems([object.sharedId])
-      // gonna update tree version here
+      /** @deprecated */
       invalidateObject(object)
+
+      setSelectedItems([object.sharedId])
+      rebuildBlocklyUI()
+      setTreeVersion(v => v + 1)
     }
 
-    applyHelpers(object)
-    rebuildBlocklyUI()
     return object
   }
 
@@ -145,8 +149,6 @@ export function useObjectActions() {
    * Removes an object from its parent and disposes of everything associated with it
    *
    * @todo (#67) ObjectActions: dispose of geometry, material and remove helpers
-   *
-   * -> also add silent option just like in addObject
    */
   function removeObject(object: Object3D) {
     const parent = object.parent
@@ -202,7 +204,10 @@ export function useObjectActions() {
       }
     }
 
+    /** @deprecated */
     invalidateObject(object)
+
+    setTreeVersion(v => v + 1)
     rebuildBlocklyUI()
   }
 
@@ -244,8 +249,6 @@ export function useObjectActions() {
       ...prev,
       [targetId]: { ...prev[targetId], childIds: newChildren }
     }))
-
-    console.log(itemIds, targetId, newChildren)
 
     for (const itemId of itemIds) {
       const object = getObject(objectsRef, itemId)
