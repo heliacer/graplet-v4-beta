@@ -70,33 +70,50 @@ export function useObjectActions() {
     )
   }
 
+  function loadSnapshot(snapshot: Record<string, SObject3D>) {
+    /** @todo: iterate through sscene and add the objects  */
+    const sscene = snapshot['scene']
+    if (sscene === undefined) {
+      throw Error(`scene is missing in snapshot: ${Object.entries(snapshot)}`)
+    }
+
+    applyProps(sceneRef.current, sscene)
+    for (const childId of sscene.childIds){
+      const sobject = snapshot[childId]
+      if (sobject === undefined ) {
+        // ... maybe add an iterative recursive function that has the parent and childId
+      } 
+    }
+
+    // only do this in the end, use snapshots from prop as local registry
+    setSnapshots(snapshot)
+  }
+
   /**
    * Adds an object to a desired target and returns its reference
    *
    * @param target Object3D to add it to, scene by default
    */
   function addObject(
-    props: SObjectConfig,
-    target: Object3D = sceneRef.current,
-    silent = false
+    config: SObjectConfig,
+    target: Object3D = sceneRef.current
   ): Object3D {
-
-    console.log(props)
-    const object = createObject(props)
-    applyProps(object, props)
+    console.log(config)
+    const object = createObject(config)
+    applyProps(object, config)
     target.add(object)
 
     /** Add children */
-    if (props.children) {
-      for (const child of props.children) {
-        addObject(child, object, silent)
+    if (config.children) {
+      for (const child of config.children) {
+        addObject(child, object)
       }
     }
 
     /** Apply sharedId */
-    const sharedId = props.sharedId ?? (nextSharedId++).toString()
+    const sharedId = config.sharedId ?? (nextSharedId++).toString()
     object.sharedId = sharedId
-    if (props.sharedId) {
+    if (config.sharedId) {
       const numeric = Number(sharedId)
       if (numeric >= nextSharedId) nextSharedId = numeric + 1
     }
@@ -131,20 +148,12 @@ export function useObjectActions() {
 
     applyHelpers(object)
 
-    /** 
-     * If the SObjectConfig is a fully serialized SObject, 
-     * no visual updates are fired, as they are
-     * added in bulk and do a batch update when complete.
-     */
-    if (!silent) {
-      /** @deprecated */
-      invalidateObject(object)
+    /** @deprecated, to be removed */
+    invalidateObject(object)
 
-      setSelectedItems([object.sharedId])
-      rebuildBlocklyUI()
-      setTreeVersion(v => v + 1)
-    }
-
+    setSelectedItems([object.sharedId])
+    rebuildBlocklyUI()
+    setTreeVersion(v => v + 1)
     return object
   }
 
@@ -310,6 +319,7 @@ export function useObjectActions() {
 
   return {
     addObject,
+    loadObject: loadSnapshot,
     removeObject,
     cloneObject,
     moveObjects,

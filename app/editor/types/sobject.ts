@@ -25,9 +25,6 @@ export interface SBase {
   scale: Vec3
   visible: boolean
   sharedId: string
-  /** used when serializing objects */
-  children: SObject3D[]
-  /** used when snapshotting objects */
   childIds: string[]
 }
 
@@ -122,7 +119,9 @@ export type SObjectConfig =
   | SPerspectiveCameraConfig
   | SOrthographicCameraConfig
 
-type SBaseConfig = Partial<SBase> & Pick<SBase, 'name'>
+type SBaseConfig = Partial<SBase> &
+  Omit<SBase, 'childIds'> &
+  Pick<SBase, 'name'> & { children?: SObject3D[] }
 
 export type SSceneConfig = SBaseConfig & Partial<SScene> & Pick<SScene, 'type'>
 
