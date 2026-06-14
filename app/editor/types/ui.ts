@@ -4,7 +4,7 @@ import { ItemInstance } from '@headless-tree/core'
  * Context Menu Props
  */
 export interface ContextMenuProps {
-  item?: ItemInstance<TreeItem>
+  item?: ItemInstance<string>
   x: number
   y: number
 }
@@ -28,15 +28,6 @@ export type IconT =
   | 'Settings2'
   | 'Keyboard'
   | 'FileText'
-
-/**
- * TreeItem: Representation of an Object in the Explorer Panel
- */
-export interface TreeItem {
-  name: string
-  type: IconT
-  hasChildren: boolean
-}
 
 export interface NotificationItemProps {
   title: string

@@ -8,10 +8,6 @@ export interface ProjectData {
   selectedItems?: string[]
 }
 
-export type Optional<T, K extends keyof T> = T extends unknown
-  ? Omit<T, K> & Partial<Pick<T, K>>
-  : never
-
 export * from './blockly'
 export * from './object'
 export * from './sobject'

@@ -3,9 +3,8 @@ import {
   SObject3D,
   SMaterial,
   SBase,
-  TransformProps,
-  Optional,
-  ObjectError
+  ObjectError,
+  SObjectConfig
 } from '../types'
 import {
   AmbientLight,
@@ -52,7 +51,7 @@ import { isInternalObject } from './three'
  *   }
  * })
  */
-export function createObject(props: Optional<SObject3D, TransformProps>) {
+export function createObject(props: SObjectConfig) {
   switch (props.type) {
     case 'Scene': {
       return new Scene()
@@ -85,19 +84,17 @@ export function createObject(props: Optional<SObject3D, TransformProps>) {
   }
 }
 
-export function applyProps(
-  object: Object3D,
-  props: Optional<SObject3D, TransformProps>
-) {
-  const { type, name, rotation, scale, position } = props
+export function applyProps(object: Object3D, props: SObjectConfig) {
+  const { type, name, visible, rotation, scale, position } = props
 
   /** Ensure Object and Serialized Props are of same type */
   if (object.type !== type) throw Error('Object must be of same type as props')
 
-  if (name) object.name = name
-  if (rotation) object.rotation.set(...rotation)
-  if (scale) object.scale.set(...scale)
-  if (position) object.position.set(...position)
+  object.name = name
+  if (visible !== undefined) object.visible = visible
+  if (rotation !== undefined) object.rotation.set(...rotation)
+  if (scale !== undefined) object.scale.set(...scale)
+  if (position !== undefined) object.position.set(...position)
 }
 
 /** @todo (#70) Specific args instead of args array in geometry args */
@@ -149,9 +146,13 @@ function saveState(object: Object3D): SObject3D {
   const { name, position, rotation, scale } = object
   const base: SBase = {
     name,
+    sharedId: '',
+    children: [],
+    childIds: [],
     position: [position.x, position.y, position.z],
     rotation: [rotation.x, rotation.y, rotation.z],
-    scale: [scale.x, scale.y, scale.z]
+    scale: [scale.x, scale.y, scale.z],
+    visible: object.visible
   }
 
   /** Specific Props */
@@ -195,6 +196,7 @@ function saveState(object: Object3D): SObject3D {
     return {
       type: 'DirectionalLight',
       intensity: object.intensity,
+      color: `#${object.color.getHexString()}`,
       ...base
     }
   }
@@ -237,7 +239,11 @@ export function serializeObject(
   if (children.length > 0) {
     sobject.children = children
   }
+
   if (includeId) {
+    if (object.sharedId === undefined) {
+      throw new ObjectError(object, 'does not have a sharedId')
+    }
     sobject.sharedId = object.sharedId
   }
 

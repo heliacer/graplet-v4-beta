@@ -11,7 +11,8 @@ type State = {
   notifications: NotificationItemProps[]
   dvApi: DockviewApi | null
   contextMenu: ContextMenuProps | null
-  hasChanges: boolean
+  hasProjectChanges: boolean
+  treeVersion: number
 }
 
 type Actions = {
@@ -22,7 +23,8 @@ type Actions = {
   setNotifications: (notifications: NotificationItemProps[]) => void
   setDvApi: (api: DockviewApi | null) => void
   setContextMenu: (contextMenu: ContextMenuProps | null) => void
-  setHasChanges: (hasChanges: boolean) => void
+  setHasProjectChanges: (hasProjectChanges: boolean) => void
+  setTreeVersion: (version: number) => void
 }
 
 export type UiSlice = State & Actions
@@ -35,7 +37,8 @@ export const uiInitialState: State = {
   notifications: [],
   dvApi: null,
   contextMenu: null,
-  hasChanges: false
+  hasProjectChanges: false,
+  treeVersion: 0
 }
 
 export const createUiSlice: StateCreator<UiSlice> = set => ({
@@ -48,5 +51,6 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   setNotifications: v => set({ notifications: v }),
   setDvApi: v => set({ dvApi: v }),
   setContextMenu: v => set({ contextMenu: v }),
-  setHasChanges: v => set({ hasChanges: v })
+  setHasProjectChanges: v => set({ hasProjectChanges: v }),
+  setTreeVersion: v => set({ treeVersion: v })
 })

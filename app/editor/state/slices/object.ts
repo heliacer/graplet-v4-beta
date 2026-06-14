@@ -7,7 +7,7 @@ type Updater<T> = T | ((old: T) => T)
 
 type State = {
   selectedItems: string[]
-  /** @deprecated */
+  /** @deprecated, use snapshots */
   objectVersions: Record<string, number>
   objectSnapshots: Record<string, SObject3D>
   objectSnapping: {
@@ -26,11 +26,11 @@ type Actions = {
     sharedId: string,
     updater: Updater<Partial<SObject3D>>
   ) => void
-  /** @deprecated needs to update to snapshots */
+  /** @deprecated, needs to update to snapshots */
   updateObjectOld: (object: Object3D, update: (draft: Object3D) => void) => void
-  /** @deprecated */
+  /** @deprecated, use snapshots */
   invalidateObject: (object: Object3D) => void
-  /** @deprecated */
+  /** @deprecated, use snapshots */
   invalidateObjectsAll: () => void
   setObjectSnapping: (tool: TransformControlsMode, value: number) => void
   setCamera: (camera: Camera | null) => void

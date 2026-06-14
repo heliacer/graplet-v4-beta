@@ -1,25 +1,29 @@
+'use no memo'
+
 import { useId, useState } from 'react'
-import { useEditorRefs } from '../../context/editor'
 import { useEditorStore } from '../../state'
 import { ItemInstance, TreeInstance } from '@headless-tree/core'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
-import { ItemIcon } from '../../utils/icons'
-import { Object3D } from 'three'
-import { isInternalObject } from '../../utils/three'
-import { TreeItem } from '../../types'
+import { getIconT, ItemIcon } from '../../utils/icons'
+import { useEditorRefs } from '../../context/editor'
+import { getObject } from '../../utils/three'
 import clsx from 'clsx'
 
-interface RenamingItemViewProps {
-  item: ItemInstance<TreeItem>
+interface RenamingItemProps {
+  item: ItemInstance<string>
 }
 
-function RenamingItemView({ item }: RenamingItemViewProps) {
+function RenamingItem({ item }: RenamingItemProps) {
+  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
+
   const uuid = useId()
+  const iconType = getIconT(objectSnapshots[item.getId()].type)
+
   return (
     <div className='flex w-full'>
       <div style={{ marginLeft: `${item.getItemMeta().level * 8 + 12}px` }} />
       <div className='flex items-center w-full px-1 gap-1 rounded-l-md border border-teal bg-ui-800'>
-        <ItemIcon size={14} iconType={item.getItemData().type} />
+        <ItemIcon size={14} iconType={iconType} />
         <input
           id={uuid}
           className='outline-0'
@@ -30,12 +34,12 @@ function RenamingItemView({ item }: RenamingItemViewProps) {
   )
 }
 
-interface ItemViewSpacerProps {
-  item: ItemInstance<TreeItem>
+interface ItemSpacerProps {
+  item: ItemInstance<string>
   handleItemClick: React.MouseEventHandler
 }
 
-function ItemViewSpacer({ item, handleItemClick }: ItemViewSpacerProps) {
+function ItemSpacer({ item, handleItemClick }: ItemSpacerProps) {
   if (item.isFolder() && item.getChildren().length > 0)
     return (
       <div
@@ -60,56 +64,59 @@ function ItemViewSpacer({ item, handleItemClick }: ItemViewSpacerProps) {
   )
 }
 
-interface ItemViewContentProps {
-  item: ItemInstance<TreeItem>
-  object: Object3D
+interface ItemContentProps {
+  item: ItemInstance<string>
 }
 
-function ItemViewContent({ item, object }: ItemViewContentProps) {
-  const updateObject = useEditorStore(s => s.updateObjectOld)
+function ItemContent({ item }: ItemContentProps) {
+  const { objectsRef } = useEditorRefs()
+  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
+  const sobject = objectSnapshots[item.getId()]
+  const iconType = getIconT(sobject.type)
+  const updateSnapshot = useEditorStore(s => s.updateSnapshot)
 
   return (
     <div
       className={clsx(
-        !object.visible && 'opacity-70',
+        !sobject.visible && 'opacity-70',
         'flex w-full justify-between'
       )}
     >
       <div className='flex items-center gap-1'>
-        <ItemIcon size={14} iconType={item.getItemData().type} />
+        <ItemIcon size={14} iconType={iconType} />
         {item.getItemName()}
       </div>
       <button
         className={clsx(
-          item.isSelected() || !object.visible ? 'block' : 'hidden',
+          item.isSelected() || !sobject.visible ? 'block' : 'hidden',
           'cursor-pointer'
         )}
         onClick={e => {
           e.stopPropagation()
-          updateObject(object, o => (o.visible = !o.visible))
+          const object = getObject(objectsRef, sobject.sharedId)
+          object.visible = !object.visible
+          updateSnapshot(sobject.sharedId, prev => ({
+            ...prev,
+            visible: !prev.visible
+          }))
         }}
       >
-        {object.visible ? <Eye size={12} /> : <EyeClosed size={12} />}
+        {sobject.visible ? <Eye size={12} /> : <EyeClosed size={12} />}
       </button>
     </div>
   )
 }
 
-interface ItemViewProps {
-  tree: TreeInstance<TreeItem>
-  item: ItemInstance<TreeItem>
+interface ItemProps {
+  tree: TreeInstance<string>
+  item: ItemInstance<string>
 }
 
-export function TreeItemView({ tree, item }: ItemViewProps) {
-  const { objectsRef } = useEditorRefs()
+export function TreeItem({ tree, item }: ItemProps) {
   const setContextMenu = useEditorStore(s => s.setContextMenu)
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
-  const object = objectsRef.current.get(item.getId())
-
-  if (!object) return
-
-  if (item.isRenaming()) return <RenamingItemView item={item} />
+  if (item.isRenaming()) return <RenamingItem item={item} />
 
   /** @todo (#61) Treeitem: Fix F2 renaming & shift selecting upwards */
   function handleItemClick(e: React.MouseEvent) {
@@ -136,7 +143,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
       onMouseLeave={() => setIsHovered(false)}
       className='flex w-full items-center'
     >
-      <ItemViewSpacer item={item} handleItemClick={handleItemClick} />
+      <ItemSpacer item={item} handleItemClick={handleItemClick} />
       <div
         {...item.getProps()}
         onClick={handleItemClick}
@@ -146,7 +153,6 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
         onContextMenu={e => {
           e.preventDefault()
           e.stopPropagation()
-          if (isInternalObject(object)) return
           setContextMenu({ item, x: e.clientX, y: e.clientY })
         }}
         className={clsx(
@@ -154,7 +160,7 @@ export function TreeItemView({ tree, item }: ItemViewProps) {
           'border focus:border-teal/50 border-transparent w-full rounded-l-md px-1'
         )}
       >
-        <ItemViewContent item={item} object={object} />
+        <ItemContent item={item} />
       </div>
     </div>
   )

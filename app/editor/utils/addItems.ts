@@ -1,5 +1,5 @@
 import { DropdownItemProps } from '@/app/ui/components/Dropdown'
-import { Optional, SGeometryT, SObject3D, TransformProps } from '../types'
+import { SGeometryT, SObjectConfig } from '../types'
 import { Box, Camera, Component, Lightbulb } from 'lucide-react'
 import { Object3D } from 'three'
 
@@ -30,10 +30,7 @@ const cameras: CameraT[] = ['PerspectiveCamera', 'OrthographicCamera']
  * @returns a list of dropdown items with all common object add options
  */
 export function createAddItemsMenu(
-  addObject: (
-    props: Optional<SObject3D, TransformProps>,
-    target?: Object3D
-  ) => Object3D,
+  addObject: (props: SObjectConfig, target?: Object3D) => Object3D,
   target?: Object3D
 ) {
   const meshChildren: DropdownItemProps[] = geometries.map(geo => ({

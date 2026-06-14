@@ -9,13 +9,7 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
-import {
-  ObjectError,
-  Optional,
-  ParentError,
-  SObject3D,
-  TransformProps
-} from '../types'
+import { ObjectError, ParentError, SObject3D, SObjectConfig } from '../types'
 import {
   applyProps,
   createObject,
@@ -85,7 +79,7 @@ export function useObjectActions() {
    * @param target Object3D to add it to, scene by default
    */
   function addObject(
-    props: Optional<SObject3D, TransformProps>,
+    props: SObjectConfig,
     target: Object3D = sceneRef.current,
     silent?: boolean
   ): Object3D {
@@ -138,6 +132,7 @@ export function useObjectActions() {
 
     if (!silent) {
       setSelectedItems([object.sharedId])
+      // gonna update tree version here
       invalidateObject(object)
     }
 
@@ -150,6 +145,8 @@ export function useObjectActions() {
    * Removes an object from its parent and disposes of everything associated with it
    *
    * @todo (#67) ObjectActions: dispose of geometry, material and remove helpers
+   *
+   * -> also add silent option just like in addObject
    */
   function removeObject(object: Object3D) {
     const parent = object.parent
@@ -243,17 +240,11 @@ export function useObjectActions() {
     targetId: string,
     newChildren: string[]
   ) {
-    /*     
     setSnapshots(prev => ({
       ...prev,
       [targetId]: { ...prev[targetId], childIds: newChildren }
     }))
 
-    wip: list before: [A,B,C,D] as ids
-    -> if A gets dragged between B and C:
-    first output: [B,C,D] 
-    second output (why?): [B,A,C,D,A] (what is the A at the end doing?!)
-    */
     console.log(itemIds, targetId, newChildren)
 
     for (const itemId of itemIds) {
@@ -275,7 +266,7 @@ export function useObjectActions() {
   function unGroupObject(object: Object3D) {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
-    const children = [...object.children]
+    const children = object.children
     for (const child of children) {
       parent.add(child)
     }

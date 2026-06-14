@@ -2,6 +2,9 @@ type Vec3 = readonly [number, number, number]
 
 /**
  * Serialized Object3D
+ *
+ * This is the state that snapshots
+ * and serialized objects are found with
  */
 export type SObject3D =
   | SScene
@@ -20,11 +23,12 @@ export interface SBase {
   position: Vec3
   rotation: Vec3
   scale: Vec3
-  sharedId?: string
+  visible: boolean
+  sharedId: string
   /** used when serializing objects */
-  children?: readonly SObject3D[]
+  children: SObject3D[]
   /** used when snapshotting objects */
-  childIds?: readonly string[]
+  childIds: string[]
 }
 
 /** Serialized Scene */
@@ -47,30 +51,30 @@ export interface SMesh extends SBase {
 /** Serialized DirectionalLight */
 export interface SDirectionalLight extends SBase {
   type: 'DirectionalLight'
-  color?: string
-  intensity?: number
+  color: string
+  intensity: number
 }
 
 /** Serialized AmbientLight */
 export interface SAmbientLight extends SBase {
   type: 'AmbientLight'
-  color?: string
-  intensity?: number
+  color: string
+  intensity: number
 }
 
 /** Serialized PerspectiveCamera */
 export interface SPerspectiveCamera extends SBase {
   type: 'PerspectiveCamera'
-  fov?: number
-  near?: number
-  far?: number
+  fov: number
+  near: number
+  far: number
 }
 
 /** Serialized PerspectiveCamera */
 export interface SOrthographicCamera extends SBase {
   type: 'OrthographicCamera'
-  near?: number
-  far?: number
+  near: number
+  far: number
 }
 
 /** Serialized Geometry type */
@@ -103,4 +107,43 @@ export interface SMaterial {
   color?: string
 }
 
-export type TransformProps = 'position' | 'rotation' | 'scale'
+/**
+ * SObject Config
+ *
+ * This is used when constructing an object
+ * where some properties can be undefined
+ */
+export type SObjectConfig =
+  | SSceneConfig
+  | SGroupConfig
+  | SMeshConfig
+  | SDirectionalLightConfig
+  | SAmbientLightConfig
+  | SPerspectiveCameraConfig
+  | SOrthographicCameraConfig
+
+type SBaseConfig = Partial<SBase> & Pick<SBase, 'name'>
+
+export type SSceneConfig = SBaseConfig & Partial<SScene> & Pick<SScene, 'type'>
+
+export type SGroupConfig = SBaseConfig & Partial<SGroup> & Pick<SGroup, 'type'>
+
+export type SMeshConfig = SBaseConfig &
+  Partial<SMesh> &
+  Pick<SMesh, 'type' | 'geometry' | 'material'>
+
+export type SDirectionalLightConfig = SBaseConfig &
+  Partial<SDirectionalLight> &
+  Pick<SDirectionalLight, 'type'>
+
+export type SAmbientLightConfig = SBaseConfig &
+  Partial<SAmbientLight> &
+  Pick<SAmbientLight, 'type'>
+
+export type SPerspectiveCameraConfig = SBaseConfig &
+  Partial<SPerspectiveCamera> &
+  Pick<SPerspectiveCamera, 'type'>
+
+export type SOrthographicCameraConfig = SBaseConfig &
+  Partial<SOrthographicCamera> &
+  Pick<SOrthographicCamera, 'type'>

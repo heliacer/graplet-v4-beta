@@ -14,7 +14,7 @@ export function useBlocklyWorkspace(
 ) {
   const { workspaceRef } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
-  const setHasChanges = useEditorStore(s => s.setHasChanges)
+  const setHasProjectChanges = useEditorStore(s => s.setHasProjectChanges)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
   const { start } = useRuntime()
 
@@ -35,7 +35,7 @@ export function useBlocklyWorkspace(
           event instanceof Events.CommentDrag
         )
       ) {
-        setHasChanges(true)
+        setHasProjectChanges(true)
       }
       if (
         event instanceof Events.VarCreate ||
@@ -94,5 +94,12 @@ export function useBlocklyWorkspace(
     }
 
     return cleanup
-  }, [blocklyDiv, setAutoClose, workspaceRef, dvApi, start, setHasChanges])
+  }, [
+    blocklyDiv,
+    setAutoClose,
+    workspaceRef,
+    dvApi,
+    start,
+    setHasProjectChanges
+  ])
 }

@@ -9,8 +9,8 @@ export function SaveButton() {
   const { workspaceRef, sceneRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const objectVersions = useEditorStore(s => s.objectVersions)
-  const hasChanges = useEditorStore(s => s.hasChanges)
-  const setHasChanges = useEditorStore(s => s.setHasChanges)
+  const hasProjectChanges = useEditorStore(s => s.hasProjectChanges)
+  const setHasProjectChanges = useEditorStore(s => s.setHasProjectChanges)
   const mounted = useRef(false)
 
   useEffect(() => {
@@ -18,8 +18,8 @@ export function SaveButton() {
       mounted.current = true
       return
     }
-    setHasChanges(true)
-  }, [setHasChanges, objectVersions])
+    setHasProjectChanges(true)
+  }, [setHasProjectChanges, objectVersions])
 
   function handleSave() {
     if (!workspaceRef.current) throw Error('Missing workspace')
@@ -34,7 +34,7 @@ export function SaveButton() {
       'color: salmon;',
       projectData
     )
-    setHasChanges(false)
+    setHasProjectChanges(false)
   }
 
   useKeybind(
@@ -53,9 +53,9 @@ export function SaveButton() {
       onClick={handleSave}
       className={clsx(
         'text-sm flex items-center gap-1',
-        hasChanges ? 'cursor-pointer' : 'text-ui-400'
+        hasProjectChanges ? 'cursor-pointer' : 'text-ui-400'
       )}
-      disabled={!hasChanges}
+      disabled={!hasProjectChanges}
     >
       <p>Save now</p>
     </button>
