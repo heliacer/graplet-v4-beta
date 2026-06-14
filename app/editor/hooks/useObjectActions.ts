@@ -10,12 +10,7 @@ import {
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
 import { ObjectError, ParentError, SObject3D, SObjectConfig } from '../types'
-import {
-  applyProps,
-  createObject,
-  serializeObject,
-  snapshotObject
-} from '../utils/sobject'
+import { applyProps, createObject, serializeObject } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { findTopLevelObject, getObject, moveObject } from '../utils/three'
 import { useEditorStore } from '../state'
@@ -31,18 +26,8 @@ export function useObjectActions() {
   const setCamera = useEditorStore(s => s.setCamera)
   const invalidateObject = useEditorStore(s => s.invalidateObject)
   const setSnapshots = useEditorStore(s => s.setSnapshots)
+  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
   const setTreeVersion = useEditorStore(s => s.setTreeVersion)
-
-  /**
-   * @private
-   */
-  function rebuildBlocklyUI() {
-    const entries = Array.from(objectsRef.current.entries())
-    blocklyUI.objectMenu = entries.map(([id, object]) => [object.name, id])
-    workspaceRef.current?.updateToolbox(
-      workspaceRef.current.options.languageTree
-    )
-  }
 
   /**
    * @private
@@ -75,6 +60,17 @@ export function useObjectActions() {
   }
 
   /**
+   * @todo use snapshots!
+   */
+  function rebuildBlocklyUI() {
+    const entries = Object.entries(objectSnapshots)
+    blocklyUI.objectMenu = entries.map(([key, obj]) => [obj.name, key])
+    workspaceRef.current?.updateToolbox(
+      workspaceRef.current.options.languageTree
+    )
+  }
+
+  /**
    * Adds an object to a desired target and returns its reference
    *
    * @param target Object3D to add it to, scene by default
@@ -82,8 +78,10 @@ export function useObjectActions() {
   function addObject(
     props: SObjectConfig,
     target: Object3D = sceneRef.current,
-    silent?: boolean
+    silent = false
   ): Object3D {
+
+    console.log(props)
     const object = createObject(props)
     applyProps(object, props)
     target.add(object)
@@ -91,7 +89,7 @@ export function useObjectActions() {
     /** Add children */
     if (props.children) {
       for (const child of props.children) {
-        addObject(child, object, true)
+        addObject(child, object, silent)
       }
     }
 
@@ -103,11 +101,12 @@ export function useObjectActions() {
       if (numeric >= nextSharedId) nextSharedId = numeric + 1
     }
 
-    /** Add it to the registry */
+    /** Add the object to the reference registry */
     objectsRef.current.set(object.sharedId, object)
 
-    /** Create snapshot */
-    const snapshot = snapshotObject(object)
+    /** Add the serialized object to the snapshot registry */
+    const snapshot = serializeObject(object, true, false)
+
     setSnapshots(prev => {
       const targetId = target.sharedId
       if (targetId === undefined) {
@@ -132,7 +131,11 @@ export function useObjectActions() {
 
     applyHelpers(object)
 
-    /** Update version and visuals */
+    /** 
+     * If the SObjectConfig is a fully serialized SObject, 
+     * no visual updates are fired, as they are
+     * added in bulk and do a batch update when complete.
+     */
     if (!silent) {
       /** @deprecated */
       invalidateObject(object)
@@ -313,6 +316,7 @@ export function useObjectActions() {
     groupObjects,
     unGroupObject,
     copyObjects,
-    pasteObjects
+    pasteObjects,
+    rebuildBlocklyUI
   }
 }

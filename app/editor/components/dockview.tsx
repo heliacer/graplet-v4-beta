@@ -77,7 +77,7 @@ export function GrapletDockview() {
     () => {
       if (!dvApi || !dvApi.activePanel) return
       const hasUnClosable = dvApi.activePanel.group.panels.some(
-        panel => panel.params?.closable !== true
+        panel => !panel.params?.closable
       )
       if (!hasUnClosable) {
         dvApi.activePanel.api.close()

@@ -9,6 +9,11 @@ export function createProjectData(
   selectedItems: string[]
 ): ProjectData {
   return {
+
+    /** 
+     * @todo revamp serialization, ditch children: entirely, 
+     * just save a copy of the snapshot registry which holds everything
+     */
     workspace: serialization.workspaces.save(workspace),
     scene: serializeObject(scene, true) as SScene,
     selectedItems

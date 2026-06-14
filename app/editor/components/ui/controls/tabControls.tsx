@@ -14,7 +14,7 @@ export function RightControls(props: IDockviewHeaderActionsProps) {
     useHeaderControls(props)
 
   const hasUnClosable = props.group.panels.some(
-    panel => panel.params?.closable !== true
+    panel => !panel.params?.closable
   )
 
   return (

@@ -9,59 +9,44 @@ import { useEditorStore } from '../state'
 
 export function useSceneActions() {
   const { sceneRef, workspaceRef, orbitMapRef, controlsRef } = useEditorRefs()
-  const { addObject, removeObject } = useObjectActions()
+  const { addObject, removeObject, rebuildBlocklyUI } = useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
+  const setTreeVersion = useEditorStore(s => s.setTreeVersion)
 
   /**
    * Adds Ambient light, Directional light and a Camera
    */
   function loadDefaultScene() {
     clearScene()
-    addObject(
-      {
-        type: 'Mesh',
-        name: 'Box',
-        geometry: {
-          type: 'BoxGeometry',
-          args: [1, 1, 1]
-        },
-        material: {
-          type: 'MeshStandardMaterial'
-        }
+    addObject({
+      type: 'Mesh',
+      name: 'Box',
+      geometry: {
+        type: 'BoxGeometry',
+        args: [1, 1, 1]
       },
-      undefined,
-      true
-    )
-    addObject(
-      {
-        type: 'PerspectiveCamera',
-        name: 'Main Camera',
-        position: [0, 8, 14],
-        rotation: [0, 0, 0],
-        far: 5000
-      },
-      undefined,
-      true
-    )
-    addObject(
-      {
-        name: 'Ambient Light',
-        type: 'AmbientLight',
-        intensity: 1
-      },
-      undefined,
-      true
-    )
-    addObject(
-      {
-        name: 'Directional Light',
-        type: 'DirectionalLight',
-        position: [0, 5, 0],
-        intensity: 2
-      },
-      undefined,
-      true
-    )
+      material: {
+        type: 'MeshStandardMaterial'
+      }
+    })
+    addObject({
+      type: 'PerspectiveCamera',
+      name: 'Main Camera',
+      position: [0, 8, 14],
+      rotation: [0, 0, 0],
+      far: 5000
+    })
+    addObject({
+      name: 'Ambient Light',
+      type: 'AmbientLight',
+      intensity: 1
+    })
+    addObject({
+      name: 'Directional Light',
+      type: 'DirectionalLight',
+      position: [0, 5, 0],
+      intensity: 2
+    })
   }
 
   function loadProjectData(data: string) {
@@ -73,6 +58,8 @@ export function useSceneActions() {
         const { children } = project.scene
         applyProps(sceneRef.current, project.scene)
         children?.forEach(child => addObject(child, undefined, true))
+        rebuildBlocklyUI()
+        setTreeVersion(v => v + 1)
         console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
         const { selectedItems } = project
         if (selectedItems !== undefined) setSelectedItems(selectedItems)

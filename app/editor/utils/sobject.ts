@@ -229,15 +229,18 @@ function saveState(object: Object3D): SObject3D {
  */
 export function serializeObject(
   object: Object3D,
-  includeId?: boolean
+  includeId: boolean = false,
+  includeChildren: boolean = true
 ): SObject3D {
   const sobject = saveState(object)
-  const children = object.children
-    .filter(child => !isInternalObject(child))
-    .map(object => serializeObject(object, includeId))
+  const children = object.children.filter(child => !isInternalObject(child))
 
-  if (children.length > 0) {
-    sobject.children = children
+  if (includeChildren) {
+    if (children.length > 0) {
+      sobject.children = children.map(object =>
+        serializeObject(object, includeId)
+      )
+    }
   }
 
   if (includeId) {
@@ -245,27 +248,6 @@ export function serializeObject(
       throw new ObjectError(object, 'does not have a sharedId')
     }
     sobject.sharedId = object.sharedId
-  }
-
-  return sobject
-}
-
-/**
- * Snapshots and object with its state
- */
-export function snapshotObject(object: Object3D): SObject3D {
-  const sobject = saveState(object)
-  const childIds = object.children
-    .filter(child => !isInternalObject(child))
-    .map(object => {
-      if (object.sharedId === undefined) {
-        throw new ObjectError(object, 'does not have a sharedId')
-      }
-      return object.sharedId
-    })
-
-  if (childIds.length > 0) {
-    sobject.childIds = childIds
   }
 
   return sobject
