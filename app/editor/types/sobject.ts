@@ -3,8 +3,8 @@ type Vec3 = readonly [number, number, number]
 /**
  * Serialized Object3D
  *
- * This is the state that snapshots
- * and serialized objects are found with
+ * This is the base state that snapshots
+ * and configs are serialized with
  */
 export type SObject3D =
   | SScene
@@ -24,8 +24,6 @@ export interface SBase {
   rotation: Vec3
   scale: Vec3
   visible: boolean
-  sharedId: string
-  childIds: string[]
 }
 
 /** Serialized Scene */
@@ -105,10 +103,29 @@ export interface SMaterial {
 }
 
 /**
- * SObject Config
+ * Serialized Object Snapshot
+ *
+ * This is used when saving an object to state
+ * where relative childIds are needed
+ *
+ * @prop sharedId is the shared identifier of an Object and Serialized Object
+ *
+ * @prop childIds are a collection of sharedId,
+ * which are linked to an existing Serialized Object
+ * in the current snapshot registry
+ */
+export type SObjectSnapshot = SObject3D & {
+  sharedId: string
+  childIds: string[]
+}
+
+/**
+ * Serialized Object Config
  *
  * This is used when constructing an object
  * where some properties can be undefined
+ *
+ * @prop children are Serialized Objects
  */
 export type SObjectConfig =
   | SSceneConfig
@@ -120,8 +137,7 @@ export type SObjectConfig =
   | SOrthographicCameraConfig
 
 type SBaseConfig = Partial<SBase> &
-  Omit<SBase, 'childIds'> &
-  Pick<SBase, 'name'> & { children?: SObject3D[] }
+  Pick<SBase, 'name'> & { children?: SObjectConfig[] }
 
 export type SSceneConfig = SBaseConfig & Partial<SScene> & Pick<SScene, 'type'>
 

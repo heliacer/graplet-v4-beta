@@ -1,13 +1,13 @@
 import { Camera, Object3D } from 'three'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
-import { SObject3D, Updater } from '../../types'
+import { SObject3D, SObjectSnapshot, Updater } from '../../types'
 
 type State = {
   selectedItems: string[]
   /** @deprecated, use snapshots */
   objectVersions: Record<string, number>
-  objectSnapshots: Record<string, SObject3D>
+  objectSnapshots: Record<string, SObjectSnapshot>
   objectSnapping: {
     translate: number
     rotate: number /* degrees */
@@ -19,10 +19,10 @@ type State = {
 
 type Actions = {
   setSelectedItems: (items: Updater<string[]>) => void
-  setSnapshots: (snapshots: Updater<Record<string, SObject3D>>) => void
+  setSnapshots: (snapshots: Updater<Record<string, SObjectSnapshot>>) => void
   updateSnapshot: (
     sharedId: string,
-    updater: Updater<Partial<SObject3D>>
+    updater: Updater<Partial<Omit<SObject3D, 'type'>>>
   ) => void
   /** @deprecated, needs to update to snapshots */
   updateObjectOld: (object: Object3D, update: (draft: Object3D) => void) => void
@@ -60,13 +60,18 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
     }))
   },
 
-  setSnapshots: (snapshots: Updater<Record<string, SObject3D>>) =>
+  setSnapshots: (snapshots: Updater<Record<string, SObjectSnapshot>>) =>
     set(state => ({
       objectSnapshots:
-        typeof snapshots === 'function' ? snapshots(state.objectSnapshots) : snapshots
+        typeof snapshots === 'function'
+          ? snapshots(state.objectSnapshots)
+          : snapshots
     })),
 
-  updateSnapshot: (sharedId: string, updater: Updater<Partial<SObject3D>>) =>
+  updateSnapshot: (
+    sharedId: string,
+    updater: Updater<Partial<Omit<SObject3D, 'type'>>>
+  ) =>
     set(state => {
       const update =
         typeof updater === 'function'
@@ -78,7 +83,7 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
           [sharedId]: {
             ...state.objectSnapshots[sharedId],
             ...update
-          } as SObject3D
+          }
         }
       }
     }),

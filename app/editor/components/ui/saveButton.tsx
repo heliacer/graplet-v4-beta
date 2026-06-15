@@ -6,10 +6,11 @@ import { useEffect, useRef } from 'react'
 import clsx from 'clsx'
 
 export function SaveButton() {
-  const { workspaceRef, sceneRef } = useEditorRefs()
+  const { workspaceRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const objectVersions = useEditorStore(s => s.objectVersions)
   const hasProjectChanges = useEditorStore(s => s.hasProjectChanges)
+  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
   const setHasProjectChanges = useEditorStore(s => s.setHasProjectChanges)
   const mounted = useRef(false)
 
@@ -25,7 +26,7 @@ export function SaveButton() {
     if (!workspaceRef.current) throw Error('Missing workspace')
     const projectData = createProjectData(
       workspaceRef.current,
-      sceneRef.current,
+      objectSnapshots,
       selectedItems
     )
     localStorage.setItem('projectData', JSON.stringify(projectData))

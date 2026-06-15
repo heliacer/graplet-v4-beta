@@ -1,21 +1,14 @@
 import { serialization, WorkspaceSvg } from 'blockly'
-import { Scene } from 'three'
-import { ProjectData, SScene } from '../types'
-import { serializeObject } from './sobject'
+import { ProjectData, SObject3D } from '../types'
 
 export function createProjectData(
   workspace: WorkspaceSvg,
-  scene: Scene,
+  snapshots: Record<string, SObject3D>,
   selectedItems: string[]
 ): ProjectData {
   return {
-
-    /** 
-     * @todo revamp serialization, ditch children: entirely, 
-     * just save a copy of the snapshot registry which holds everything
-     */
     workspace: serialization.workspaces.save(workspace),
-    scene: serializeObject(scene, true) as SScene,
+    snapshots,
     selectedItems
   }
 }

@@ -1,11 +1,4 @@
-import {
-  SGeometry,
-  SObject3D,
-  SMaterial,
-  SBase,
-  ObjectError,
-  SObjectConfig
-} from '../types'
+import { SGeometry, SObject3D, SMaterial, SBase, SObjectConfig } from '../types'
 import {
   AmbientLight,
   BoxGeometry,
@@ -35,7 +28,6 @@ import {
   TorusGeometry,
   TorusKnotGeometry
 } from 'three'
-import { isInternalObject } from './three'
 
 /**
  * creates a Object3D from serialization
@@ -90,7 +82,7 @@ export function applyProps(object: Object3D, props: SObjectConfig) {
   /** Ensure Object and Serialized Props are of same type */
   if (object.type !== type) throw Error('Object must be of same type as props')
 
-  object.name = name
+  if (name) object.name = name
   if (visible !== undefined) object.visible = visible
   if (rotation !== undefined) object.rotation.set(...rotation)
   if (scale !== undefined) object.scale.set(...scale)
@@ -138,17 +130,11 @@ function createMaterial(material: SMaterial): Material {
   }
 }
 
-/**
- * Saves an objects core state
- */
-function saveState(object: Object3D): SObject3D {
+export function serializeObject(object: Object3D): SObject3D {
   /** Common props */
   const { name, position, rotation, scale } = object
   const base: SBase = {
     name,
-    sharedId: '',
-    children: [],
-    childIds: [],
     position: [position.x, position.y, position.z],
     rotation: [rotation.x, rotation.y, rotation.z],
     scale: [scale.x, scale.y, scale.z],
@@ -224,31 +210,15 @@ function saveState(object: Object3D): SObject3D {
   )
 }
 
-/**
- * Serializes an object with its state
- */
-export function serializeObject(
-  object: Object3D,
-  includeId: boolean = false,
-  includeChildren: boolean = true
-): SObject3D {
-  const sobject = saveState(object)
-  const children = object.children.filter(child => !isInternalObject(child))
-
-  if (includeChildren) {
-    if (children.length > 0) {
-      sobject.children = children.map(object =>
-        serializeObject(object, includeId)
-      )
-    }
+export function serializeObjectConfig(
+  object: Object3D
+): Required<SObjectConfig> {
+  const sobject: Required<SObjectConfig> = {
+    ...serializeObject(object),
+    children: []
   }
-
-  if (includeId) {
-    if (object.sharedId === undefined) {
-      throw new ObjectError(object, 'does not have a sharedId')
-    }
-    sobject.sharedId = object.sharedId
+  for (const child of object.children) {
+    sobject.children.push(serializeObjectConfig(child))
   }
-
   return sobject
 }

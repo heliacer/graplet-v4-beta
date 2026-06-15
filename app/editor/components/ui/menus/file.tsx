@@ -21,6 +21,7 @@ export function FileMenu() {
   const { workspaceRef, sceneRef } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
   const selectedItems = useEditorStore(s => s.selectedItems)
+  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
   const { loadProjectData, loadDefaultScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -29,7 +30,7 @@ export function FileMenu() {
     if (!workspaceRef.current) throw Error('Missing workspace')
     const projectData = createProjectData(
       workspaceRef.current,
-      sceneRef.current,
+      objectSnapshots,
       selectedItems
     )
     const blob = new Blob([JSON.stringify(projectData, null, 2)], {

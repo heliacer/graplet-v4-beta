@@ -9,8 +9,14 @@ import {
   PerspectiveCamera
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
-import { ObjectError, ParentError, SObject3D, SObjectConfig } from '../types'
-import { applyProps, createObject, serializeObject } from '../utils/sobject'
+import {
+  ObjectError,
+  ParentError,
+  SObject3D,
+  SObjectConfig,
+  SObjectSnapshot
+} from '../types'
+import { applyProps, createObject, serializeObject, serializeObjectConfig } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { findTopLevelObject, getObject, moveObject } from '../utils/three'
 import { useEditorStore } from '../state'
@@ -31,7 +37,6 @@ export function useObjectActions() {
 
   /**
    * @private
-   * Adds Helpers for specific objects
    */
   function applyHelpers(object: Object3D) {
     if (object instanceof Camera) {
@@ -59,9 +64,6 @@ export function useObjectActions() {
     }
   }
 
-  /**
-   * @todo use snapshots!
-   */
   function rebuildBlocklyUI() {
     const entries = Object.entries(objectSnapshots)
     blocklyUI.objectMenu = entries.map(([key, obj]) => [obj.name, key])
@@ -70,90 +72,98 @@ export function useObjectActions() {
     )
   }
 
-  function loadSnapshot(snapshot: Record<string, SObject3D>) {
-    /** @todo: iterate through sscene and add the objects  */
-    const sscene = snapshot['scene']
-    if (sscene === undefined) {
-      throw Error(`scene is missing in snapshot: ${Object.entries(snapshot)}`)
+  /**
+   * This is used in the project loading,
+   * loading snapshots saved to state
+   * into the scene
+   */
+  function loadSnapshots(
+    snapshots: Record<string, SObjectSnapshot>,
+    sharedId: string
+  ): Object3D {
+    const snapshot = snapshots[sharedId]
+    const { type, childIds } = snapshot
+
+    const object = type === 'Scene' ? sceneRef.current : createObject(snapshot)
+    object.sharedId = sharedId
+    objectsRef.current.set(sharedId, object)
+
+    applyProps(object, snapshot)
+    applyHelpers(object)
+
+    for (const childId of childIds) {
+      const child = loadSnapshots(snapshots, childId)
+      object.add(child)
     }
 
-    applyProps(sceneRef.current, sscene)
-    for (const childId of sscene.childIds){
-      const sobject = snapshot[childId]
-      if (sobject === undefined ) {
-        // ... maybe add an iterative recursive function that has the parent and childId
-      } 
-    }
-
-    // only do this in the end, use snapshots from prop as local registry
-    setSnapshots(snapshot)
+    return object
   }
 
   /**
-   * Adds an object to a desired target and returns its reference
-   *
-   * @param target Object3D to add it to, scene by default
+   * @private
+   * 
+   * Build the object tree for new objects
+   * and fully serialize them to snapshot state
+   */
+  function buildObjectTree(
+    config: SObjectConfig,
+    target: Object3D,
+    snapshots: Record<string, SObjectSnapshot>
+  ): Object3D {
+    const { children } = config
+
+    const object = createObject(config)
+    applyProps(object, config)
+    applyHelpers(object)
+    target.add(object)
+
+    if (children) {
+      for (const child of children) {
+        buildObjectTree(child, object, snapshots)
+      }
+    }
+
+    const sharedId = (nextSharedId++).toString()
+    object.sharedId = sharedId
+
+    const childIds = object.children.map(child => {
+      if (child.sharedId === undefined)
+        throw new ObjectError(child, 'does not have a sharedId')
+      return child.sharedId
+    })
+
+    snapshots[sharedId] = { sharedId, ...serializeObject(object), childIds }
+    objectsRef.current.set(sharedId, object)
+
+    return object
+  }
+
+  /**
+   * Add new objects via object config which dont't
+   * require sharedId relativeness as snapshots do
    */
   function addObject(
     config: SObjectConfig,
     target: Object3D = sceneRef.current
   ): Object3D {
-    console.log(config)
-    const object = createObject(config)
-    applyProps(object, config)
-    target.add(object)
-
-    /** Add children */
-    if (config.children) {
-      for (const child of config.children) {
-        addObject(child, object)
-      }
-    }
-
-    /** Apply sharedId */
-    const sharedId = config.sharedId ?? (nextSharedId++).toString()
-    object.sharedId = sharedId
-    if (config.sharedId) {
-      const numeric = Number(sharedId)
-      if (numeric >= nextSharedId) nextSharedId = numeric + 1
-    }
-
-    /** Add the object to the reference registry */
-    objectsRef.current.set(object.sharedId, object)
-
-    /** Add the serialized object to the snapshot registry */
-    const snapshot = serializeObject(object, true, false)
+    const newSnapshots: Record<string, SObjectSnapshot> = {}
+    const object = buildObjectTree(config, target, newSnapshots)
 
     setSnapshots(prev => {
       const targetId = target.sharedId
-      if (targetId === undefined) {
+      if (targetId === undefined)
         throw new ObjectError(target, 'does not have a sharedId')
-      }
-
-      const targetSObject = prev[targetId]
-      const childIds = [
-        ...((targetSObject && targetSObject.childIds) || []),
-        sharedId
-      ]
 
       return {
         ...prev,
-        [sharedId]: snapshot,
+        ...newSnapshots,
         [targetId]: {
-          ...targetSObject,
-          childIds
+          ...prev[targetId],
+          childIds: [...prev[targetId].childIds, object.sharedId!]
         }
       }
     })
 
-    applyHelpers(object)
-
-    /** @deprecated, to be removed */
-    invalidateObject(object)
-
-    setSelectedItems([object.sharedId])
-    rebuildBlocklyUI()
-    setTreeVersion(v => v + 1)
     return object
   }
 
@@ -227,8 +237,8 @@ export function useObjectActions() {
     const parent = object.parent
     if (!parent) throw new ParentError(object)
 
-    const sObject = serializeObject(object)
-    const clone = addObject(sObject, parent)
+    const sobject = serializeObjectConfig(object)
+    const clone = addObject(sobject, parent)
     clone.position.x += 2
   }
 
@@ -293,7 +303,7 @@ export function useObjectActions() {
   }
 
   function copyObjects(objects: Object3D[]) {
-    const sobjects = objects.map(object => serializeObject(object))
+    const sobjects = objects.map(object => serializeObjectConfig(object))
     const data = JSON.stringify(sobjects)
     navigator.clipboard.writeText(data)
   }
@@ -303,7 +313,7 @@ export function useObjectActions() {
     try {
       const objects: SObject3D[] = JSON.parse(text)
       for (let i = 0; i < objects.length; i++) {
-        const object = addObject(objects[i], target, true)
+        const object = addObject(objects[i], target)
         if (i + 1 === objects.length) {
           invalidateObject(object)
         }
@@ -319,7 +329,7 @@ export function useObjectActions() {
 
   return {
     addObject,
-    loadObject: loadSnapshot,
+    loadSnapshot: loadSnapshots,
     removeObject,
     cloneObject,
     moveObjects,
