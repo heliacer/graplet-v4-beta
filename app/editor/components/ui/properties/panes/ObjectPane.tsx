@@ -40,7 +40,7 @@ function BaseObjectProps({ object }: { object: Object3D }) {
 
 export function ObjectPane() {
   const { canvasRef, orbitMapRef } = useEditorRefs()
-  
+
   const setCamera = useEditorStore(s => s.setCamera)
 
   if (object instanceof Group) {

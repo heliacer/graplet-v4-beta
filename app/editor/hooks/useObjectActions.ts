@@ -16,7 +16,12 @@ import {
   SObjectConfig,
   SObjectSnapshot
 } from '../types'
-import { applyProps, createObject, serializeObject, serializeObjectConfig } from '../utils/sobject'
+import {
+  applyProps,
+  createObject,
+  serializeObject,
+  serializeObjectConfig
+} from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { findTopLevelObject, getObject, moveObject } from '../utils/three'
 import { useEditorStore } from '../state'
@@ -101,7 +106,7 @@ export function useObjectActions() {
 
   /**
    * @private
-   * 
+   *
    * Build the object tree for new objects
    * and fully serialize them to snapshot state
    */

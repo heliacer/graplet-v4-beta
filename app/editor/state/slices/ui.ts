@@ -57,7 +57,7 @@ export const createUiSlice: StateCreator<UiSlice> = set => ({
   setDvApi: v => set({ dvApi: v }),
   setContextMenu: v => set({ contextMenu: v }),
   setHasProjectChanges: v => set({ hasProjectChanges: v }),
-  
+
   setTreeVersion: version =>
     set(state => ({
       treeVersion:

@@ -7,7 +7,7 @@ export type Updater<T> = T | ((old: T) => T)
 export interface ProjectData {
   workspace: Record<string, unknown>
   /** @todo convert all saved state to snapshots, load from snapshots */
-  snapshots: Record<string, SObject3D>,
+  snapshots: Record<string, SObject3D>
   selectedItems?: string[]
 }
 
