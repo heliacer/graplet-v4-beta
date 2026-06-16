@@ -24,8 +24,6 @@ type Actions = {
     sharedId: string,
     updater: Updater<Partial<Omit<SObject3D, 'type'>>>
   ) => void
-  /** @deprecated, needs to update to snapshots */
-  updateObjectOld: (object: Object3D, update: (draft: Object3D) => void) => void
   /** @deprecated, use snapshots */
   invalidateObject: (object: Object3D) => void
   /** @deprecated, use snapshots */
@@ -50,7 +48,7 @@ export const objectInitialState: State = {
   autoClose: false
 }
 
-export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
+export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
   ...objectInitialState,
 
   setSelectedItems: items => {
@@ -87,13 +85,6 @@ export const createObjectSlice: StateCreator<ObjectSlice> = (set, get) => ({
         }
       }
     }),
-
-  updateObjectOld: (object, update) => {
-    update(object)
-    if (object.sharedId) {
-      get().invalidateObject(object)
-    }
-  },
 
   invalidateObject: object => {
     const sharedId = object.sharedId

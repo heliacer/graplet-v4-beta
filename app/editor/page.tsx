@@ -2,12 +2,12 @@
 import { useEffect } from 'react'
 import { useEditorStore } from './state'
 import { EditorHeader } from './components/Header'
-import { EditorProvider } from './context/editor'
-import { GrapletDockview } from './components/dockview'
-import { ContextMenu } from './components/ui/contextMenu'
-import { Footer } from './components/ui/footer'
-import { Notifications } from './components/ui/notifications'
-import { KeybindProvider } from './context/keybinds'
+import { EditorProvider } from './context/EditorContext'
+import { GrapletDockview } from './components/Dockview'
+import { ContextMenu } from './components/ui/ContextMenu'
+import { Footer } from './components/ui/Footer'
+import { Notifications } from './components/ui/Notifications'
+import { KeybindProvider } from './context/KeybindsContext'
 
 export default function Editor() {
   useEffect(() => {

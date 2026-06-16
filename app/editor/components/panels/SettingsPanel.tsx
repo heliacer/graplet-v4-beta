@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { MiniGraplet } from '@/app/ui/assets/MiniGraplet'
 import { useEditorStore } from '../../state'
-import { useEditorRefs } from '../../context/editor'
+import { useEditorRefs } from '../../context/EditorContext'
 import { defaultLayout } from '../defaultDockview'
 
 interface ThemeButtonProps {

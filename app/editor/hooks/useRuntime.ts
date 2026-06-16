@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { Expression, ProgramState, Thread } from '../engine/ast'
 import { initProgram, threadStep } from '../engine/interpreter'
-import { useEditorRefs } from '../context/editor'
+import { useEditorRefs } from '../context/EditorContext'
 import { useEditorStore } from '../state'
 
 export function useRuntime() {

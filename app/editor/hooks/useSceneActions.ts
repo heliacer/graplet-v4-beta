@@ -1,5 +1,5 @@
 import { Events, serialization } from 'blockly'
-import { useEditorRefs } from '../context/editor'
+import { useEditorRefs } from '../context/EditorContext'
 import { ProjectData } from '../types'
 import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'

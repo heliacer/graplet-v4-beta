@@ -1,8 +1,8 @@
 import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
 import { useEditorStore } from '../../state'
-import { EditMenu } from './menus/edit'
-import { FileMenu } from './menus/file'
-import { useEditorRefs } from '../../context/editor'
+import { EditMenu } from './menus/EditMenu'
+import { FileMenu } from './menus/FileMenu'
+import { useEditorRefs } from '../../context/EditorContext'
 import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 

@@ -1,4 +1,4 @@
-import { useEditorRefs } from '@/app/editor/context/editor'
+import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import { useEditorStore } from '@/app/editor/state'
 import {
   AmbientLight,
@@ -16,7 +16,7 @@ import {
   TextProperty,
   Vec3AngleProperty,
   Vec3Property
-} from '../PropertyInput'
+} from '../PaneItem'
 import { Crosshair, SwitchCamera } from 'lucide-react'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
@@ -38,9 +38,9 @@ function BaseObjectProps({ object }: { object: Object3D }) {
   )
 }
 
-export function ObjectPane({ object }: { object: Object3D }) {
+export function ObjectPane() {
   const { canvasRef, orbitMapRef } = useEditorRefs()
-  const invalidateObject = useEditorStore(s => s.invalidateObject)
+  
   const setCamera = useEditorStore(s => s.setCamera)
 
   if (object instanceof Group) {
@@ -91,20 +91,20 @@ export function ObjectPane({ object }: { object: Object3D }) {
           <PropButton
             label='Set Active'
             Icon={SwitchCamera}
-            action={() => setCamera(object)}
+            onClick={() => setCamera(object)}
           />
           {orbit && (
             <PropButton
               label='Orbit to center'
               Icon={Crosshair}
-              action={() => orbit.target.set(0, 0, 0)}
+              onClick={() => orbit.target.set(0, 0, 0)}
             />
           )}
         </div>
         <CheckBoxProperty
           label='Enable OrbitControls'
           checked={!!orbitMapRef.current.get(object.id)}
-          action={orbitAction}
+          onClick={orbitAction}
         />
       </>
     )

@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../context/editor'
+import { useEditorRefs } from '../context/EditorContext'
 import { useEditorStore } from '../state'
 import { NotFoundError } from '../types'
 

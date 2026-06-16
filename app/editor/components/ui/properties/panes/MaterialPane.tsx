@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Color, Mesh, MeshStandardMaterial, Object3D } from 'three'
+import { Color, Mesh, MeshStandardMaterial } from 'three'
 
 /**
  * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
@@ -47,7 +47,7 @@ function MeshMaterialPane({ mesh }: { mesh: Mesh }) {
   return <p>Unsupported Mesh Material type: {mesh.material.type}</p>
 }
 
-export function MaterialPane({ object }: { object: Object3D }) {
+export function MaterialPane() {
   if (object instanceof Mesh) {
     return <MeshMaterialPane mesh={object} />
   }

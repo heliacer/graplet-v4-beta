@@ -1,7 +1,7 @@
-import { useEditorRefs } from '../../context/editor'
+import { useEditorRefs } from '../../context/EditorContext'
 import { createProjectData } from '../../utils/createProjectData'
 import { useEditorStore } from '../../state'
-import { useKeybind } from '../../context/keybinds'
+import { useKeybind } from '../../context/KeybindsContext'
 import { useEffect, useRef } from 'react'
 import clsx from 'clsx'
 

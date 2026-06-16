@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../../context/editor'
+import { useEditorRefs } from '../../context/EditorContext'
 import { useState } from 'react'
 import { useEditorStore } from '../../state'
 import {

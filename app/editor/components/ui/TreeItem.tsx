@@ -5,7 +5,7 @@ import { useEditorStore } from '../../state'
 import { ItemInstance, TreeInstance } from '@headless-tree/core'
 import { ChevronDown, ChevronRight, Eye, EyeClosed } from 'lucide-react'
 import { getIconT, ItemIcon } from '../../utils/icons'
-import { useEditorRefs } from '../../context/editor'
+import { useEditorRefs } from '../../context/EditorContext'
 import { getObject } from '../../utils/three'
 import clsx from 'clsx'
 

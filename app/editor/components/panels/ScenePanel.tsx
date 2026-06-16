@@ -1,4 +1,4 @@
-import { useEditorRefs } from '../../context/editor'
+import { useEditorRefs } from '../../context/EditorContext'
 import { IDockviewPanelProps } from 'dockview-react'
 import { useProjectLoader } from '../../hooks/useProjectLoader'
 import { useRenderer } from '../../hooks/useRenderer'
@@ -6,8 +6,8 @@ import { useTransformControls } from '../../hooks/useTransformControls'
 import { useState } from 'react'
 import clsx from 'clsx'
 import { useEditorStore } from '../../state'
-import { ObjectControls } from '../ui/controls/objectControls'
-import { useKeybind } from '../../context/keybinds'
+import { ObjectControls } from '../ui/controls/ObjectControls'
+import { useKeybind } from '../../context/KeybindsContext'
 import { Vector3 } from 'three'
 
 export default function ScenePanel(props: IDockviewPanelProps) {

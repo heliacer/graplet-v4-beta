@@ -1,12 +1,9 @@
-import { useEditorRefs } from '@/app/editor/context/editor'
-import { CheckBoxProperty } from '../PropertyInput'
-import { useEditorStore } from '@/app/editor/state'
-import { Object3D } from 'three'
+import { useEditorRefs } from '@/app/editor/context/EditorContext'
+import { CheckBoxProperty } from '../PaneItem'
 import { useEffect, useState } from 'react'
 
-export function EditorPane({ object }: { object: Object3D }) {
+export function EditorPane() {
   const { controlsRef } = useEditorRefs()
-  const invalidateObject = useEditorStore(s => s.invalidateObject)
   const [isLocal, setIsLocal] = useState(false)
 
   useEffect(() => {
@@ -18,13 +15,12 @@ export function EditorPane({ object }: { object: Object3D }) {
       <CheckBoxProperty
         label='Local Transforms'
         checked={isLocal}
-        action={checked => {
+        onClick={checked => {
           if (checked) {
             controlsRef.current?.setSpace('local')
           } else {
             controlsRef.current?.setSpace('world')
           }
-          invalidateObject(object)
         }}
       />
     </>

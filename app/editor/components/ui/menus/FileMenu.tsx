@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { useEditorRefs } from '@/app/editor/context/editor'
+import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import {
   File,
   FolderDown,
@@ -15,10 +15,10 @@ import { useSceneActions } from '@/app/editor/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/utils/dockview'
 import { useEditorStore } from '@/app/editor/state'
 import { createProjectData } from '@/app/editor/utils/createProjectData'
-import { useKeybind } from '@/app/editor/context/keybinds'
+import { useKeybind } from '@/app/editor/context/KeybindsContext'
 
 export function FileMenu() {
-  const { workspaceRef, sceneRef } = useEditorRefs()
+  const { workspaceRef } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
   const selectedItems = useEditorStore(s => s.selectedItems)
   const objectSnapshots = useEditorStore(s => s.objectSnapshots)

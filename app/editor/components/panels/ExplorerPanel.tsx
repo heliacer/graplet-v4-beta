@@ -11,7 +11,7 @@ import {
   syncDataLoaderFeature
 } from '@headless-tree/core'
 import { useEffect } from 'react'
-import { useEditorRefs } from '../../context/editor'
+import { useEditorRefs } from '../../context/EditorContext'
 import { useEditorStore } from '../../state'
 import { useTree } from '@headless-tree/react'
 import { TreeItem } from '../ui/TreeItem'
