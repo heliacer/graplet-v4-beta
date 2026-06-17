@@ -9,7 +9,7 @@ export class ProcedureSerializer implements serialization.ISerializer {
     const procedures = workspace
       .getProcedureMap()
       .getProcedures() as ProcedureModel[]
-    if (!procedures.length) return null
+    if (procedures.length < 1) return null
     return procedures.map(p => p.saveState())
   }
 

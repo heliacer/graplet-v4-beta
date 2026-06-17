@@ -1,4 +1,4 @@
-import { Camera, Object3D } from 'three'
+import { Object3D } from 'three'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
 import { SObject3D, SObjectSnapshot, Updater } from '../../types'
@@ -13,7 +13,6 @@ type State = {
     rotate: number /* degrees */
     scale: number
   }
-  camera: Camera | null
   autoClose: boolean
 }
 
@@ -29,7 +28,6 @@ type Actions = {
   /** @deprecated, use snapshots */
   invalidateObjectsAll: () => void
   setObjectSnapping: (tool: TransformControlsMode, value: number) => void
-  setCamera: (camera: Camera | null) => void
   setAutoClose: (autoClose: boolean) => void
 }
 
@@ -44,7 +42,6 @@ export const objectInitialState: State = {
     rotate: 45,
     scale: 1
   },
-  camera: null,
   autoClose: false
 }
 
@@ -115,6 +112,5 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
       }
     })),
 
-  setCamera: v => set({ camera: v }),
   setAutoClose: v => set({ autoClose: v })
 })

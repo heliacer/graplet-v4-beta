@@ -4,6 +4,12 @@ import '../styles/dvtheme.css'
 import { DockviewReact, DockviewReadyEvent } from 'dockview-react'
 import { LeftControls, RightControls } from './ui/controls/TabControls'
 import { TabHeader } from './ui/TabHeader'
+import { useEffect } from 'react'
+import { useEditorStore } from '../state'
+import { defaultLayout } from './defaultDockview'
+import { useKeybind } from '../context/KeybindsContext'
+import { useObjectActions } from '../hooks/useObjectActions'
+import CreateFunctionPanel from './panels/CreateFunctionPanel'
 import DebugPanel from './panels/DebugPanel'
 import ScenePanel from './panels/ScenePanel'
 import ExplorerPanel from './panels/ExplorerPanel'
@@ -11,15 +17,6 @@ import CodePanel from './panels/CodePanel'
 import PropertiesPanel from './panels/PropertiesPanel'
 import SettingsPanel from './panels/SettingsPanel'
 import KeybindsPanel from './panels/KeybindsPanel'
-import { useEffect } from 'react'
-import { useEditorStore } from '../state'
-import { defaultLayout } from './defaultDockview'
-import { useKeybind } from '../context/KeybindsContext'
-import { useObjectActions } from '../hooks/useObjectActions'
-import { Object3D } from 'three'
-import { useEditorRefs } from '../context/EditorContext'
-import { NotFoundError } from '../types'
-import CreateFunctionPanel from './panels/CreateFunctionPanel'
 
 const panelComponents = {
   debug: DebugPanel,
@@ -33,7 +30,6 @@ const panelComponents = {
 }
 
 export function GrapletDockview() {
-  const { objectsRef } = useEditorRefs()
   const dvApi = useEditorStore(s => s.dvApi)
   const selectedItems = useEditorStore(s => s.selectedItems)
   const { pasteObjects, copyObjects } = useObjectActions()
@@ -50,13 +46,8 @@ export function GrapletDockview() {
     },
     () => {
       if (!dvApi || !dvApi.activePanel) return
-      if (dvApi.activePanel.id === 'explorer' && selectedItems.length) {
-        const objectsToCopy: Object3D[] = selectedItems.map(item => {
-          const object = objectsRef.current.get(item)
-          if (object === undefined) throw new NotFoundError(item)
-          return object
-        })
-        copyObjects(objectsToCopy)
+      if (dvApi.activePanel.id === 'explorer' && selectedItems.length > 0) {
+        copyObjects(selectedItems)
       }
     }
   )

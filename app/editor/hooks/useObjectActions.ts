@@ -23,18 +23,16 @@ import {
   serializeObjectConfig
 } from '../utils/sobject'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { findTopLevelObject, getObject, moveObject } from '../utils/three'
+import { getObject } from '../utils/three'
 import { useEditorStore } from '../state'
 
 let nextSharedId = 0
 
 export function useObjectActions() {
-  const { sceneRef, objectsRef, workspaceRef, orbitMapRef, canvasRef } =
+  const { objectsRef, cameraRef, workspaceRef, orbitMapRef, canvasRef } =
     useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
-  const camera = useEditorStore(s => s.camera)
-  const setCamera = useEditorStore(s => s.setCamera)
   const invalidateObject = useEditorStore(s => s.invalidateObject)
   const setSnapshots = useEditorStore(s => s.setSnapshots)
   const objectSnapshots = useEditorStore(s => s.objectSnapshots)
@@ -44,6 +42,7 @@ export function useObjectActions() {
    * @private
    */
   function applyHelpers(object: Object3D) {
+    const scene = getObject(objectsRef, 'scene')
     if (object instanceof Camera) {
       const helper = new CameraHelper(object)
       helper.name = 'CameraHelper'
@@ -51,7 +50,7 @@ export function useObjectActions() {
         object instanceof PerspectiveCamera &&
         orbitMapRef.current.size === 0
       ) {
-        setCamera(object)
+        cameraRef.current = object
         const controls = new OrbitControls(object, canvasRef.current)
         controls.mouseButtons = {
           MIDDLE: MOUSE.PAN,
@@ -60,12 +59,12 @@ export function useObjectActions() {
         orbitMapRef.current.set(object.id, controls)
         helper.visible = false
       }
-      sceneRef.current.add(helper)
+      scene.add(helper)
     }
     if (object instanceof DirectionalLight) {
       const helper = new DirectionalLightHelper(object)
       helper.name = 'DirectionalLightHelper'
-      sceneRef.current.add(helper)
+      scene.add(helper)
     }
   }
 
@@ -89,7 +88,8 @@ export function useObjectActions() {
     const snapshot = snapshots[sharedId]
     const { type, childIds } = snapshot
 
-    const object = type === 'Scene' ? sceneRef.current : createObject(snapshot)
+    const object =
+      type === 'Scene' ? getObject(objectsRef, 'scene') : createObject(snapshot)
     object.sharedId = sharedId
     objectsRef.current.set(sharedId, object)
 
@@ -128,7 +128,8 @@ export function useObjectActions() {
       }
     }
 
-    const sharedId = (nextSharedId++).toString()
+    const sharedId =
+      config.type === 'Scene' ? 'scene' : (nextSharedId++).toString()
     object.sharedId = sharedId
 
     const childIds = object.children.map(child => {
@@ -149,16 +150,14 @@ export function useObjectActions() {
    */
   function addObject(
     config: SObjectConfig,
-    target: Object3D = sceneRef.current
+    targetId: string = 'scene'
   ): Object3D {
     const newSnapshots: Record<string, SObjectSnapshot> = {}
+
+    const target = getObject(objectsRef, targetId)
     const object = buildObjectTree(config, target, newSnapshots)
 
     setSnapshots(prev => {
-      const targetId = target.sharedId
-      if (targetId === undefined)
-        throw new ObjectError(target, 'does not have a sharedId')
-
       return {
         ...prev,
         ...newSnapshots,
@@ -215,12 +214,12 @@ export function useObjectActions() {
 
     if (object instanceof Camera) {
       /** If it's the active camera, set another one active instead */
-      if (object === camera) {
-        const nextCamera = sceneRef.current.getObjectByProperty(
-          'isCamera',
-          true
-        ) as Camera
-        setCamera(nextCamera || null)
+      const scene = getObject(objectsRef, 'scene')
+      if (object === cameraRef.current) {
+        const nextCamera = scene.getObjectByProperty('isCamera', true) as
+          | Camera
+          | undefined
+        cameraRef.current = nextCamera || null
       }
       /** If the camera has orbit controls, dispose of them */
       const orbit = orbitMapRef.current.get(object.id)
@@ -238,27 +237,30 @@ export function useObjectActions() {
     rebuildBlocklyUI()
   }
 
-  function cloneObject(object: Object3D) {
+  function cloneObject(sharedId: string) {
+    const object = getObject(objectsRef, sharedId)
     const parent = object.parent
     if (!parent) throw new ParentError(object)
+    const parentId = parent.sharedId
+    if (parentId === undefined) {
+      throw new ObjectError(parent, 'does not have a sharedId')
+    }
 
     const sobject = serializeObjectConfig(object)
-    const clone = addObject(sobject, parent)
+    const clone = addObject(sobject, parentId)
     clone.position.x += 2
   }
 
-  function groupObjects(objects: Object3D[]) {
-    if (objects.length === 0) return
-    const firstParent = objects[0].parent
-    if (!firstParent) throw new ParentError(objects[0])
-    const parent =
-      objects.length === 1
-        ? firstParent
-        : findTopLevelObject(objects, sceneRef.current)
-    const target = addObject({ type: 'Group', name: 'Group' }, parent)
-    for (const object of objects) {
-      moveObject(object, target)
+  function groupObjects(sharedIds: string[]) {
+    /** @todo */
+
+    if (sharedIds.length < 1) return
+    // findTopLevelObject(sharedIds, snapshots) @todo
+    const target = addObject({ type: 'Group', name: 'Group' })
+    if (target.sharedId === undefined) {
+      throw new ObjectError(target, 'does not have a sharedId')
     }
+    moveObjects(sharedIds, target.sharedId)
   }
 
   /**
@@ -270,19 +272,22 @@ export function useObjectActions() {
   function moveObjects(
     itemIds: string[],
     targetId: string,
-    newChildren: string[]
+    newChildren?: string[]
   ) {
     setSnapshots(prev => ({
       ...prev,
-      [targetId]: { ...prev[targetId], childIds: newChildren }
+      [targetId]: {
+        ...prev[targetId],
+        childIds:
+          newChildren === undefined
+            ? [...prev[targetId].childIds, ...itemIds]
+            : newChildren
+      }
     }))
 
     for (const itemId of itemIds) {
       const object = getObject(objectsRef, itemId)
-      const targetObj =
-        targetId === 'scene'
-          ? sceneRef.current
-          : getObject(objectsRef, targetId)
+      const targetObj = getObject(objectsRef, targetId)
 
       const parent = object.parent
       if (!parent) throw new ParentError(object)
@@ -307,21 +312,19 @@ export function useObjectActions() {
     setSelectedItems([])
   }
 
-  function copyObjects(objects: Object3D[]) {
+  function copyObjects(sharedIds: string[]) {
+    const objects = sharedIds.map(sharedId => getObject(objectsRef, sharedId))
     const sobjects = objects.map(object => serializeObjectConfig(object))
     const data = JSON.stringify(sobjects)
     navigator.clipboard.writeText(data)
   }
 
-  async function pasteObjects(target: Object3D = sceneRef.current) {
+  async function pasteObjects(targetId: string = 'scene') {
     const text = await navigator.clipboard.readText()
     try {
       const objects: SObject3D[] = JSON.parse(text)
       for (let i = 0; i < objects.length; i++) {
-        const object = addObject(objects[i], target)
-        if (i + 1 === objects.length) {
-          invalidateObject(object)
-        }
+        addObject(objects[i], targetId)
       }
     } catch (error) {
       if (error instanceof SyntaxError) {
@@ -334,7 +337,7 @@ export function useObjectActions() {
 
   return {
     addObject,
-    loadSnapshot: loadSnapshots,
+    loadSnapshots,
     removeObject,
     cloneObject,
     moveObjects,

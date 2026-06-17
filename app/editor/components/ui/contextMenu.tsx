@@ -49,11 +49,7 @@ export function ContextMenu() {
     const itemIds = selectedItems.includes(targetId)
       ? selectedItems
       : [targetId]
-    const selection: Object3D[] = []
-    for (const itemId of itemIds) {
-      const obj = objectsRef.current.get(itemId)
-      if (obj) selection.push(obj)
-    }
+
     const groups = selection.filter(obj => obj.type === 'Group')
     const groupsWithChildren = groups.filter(obj => obj.children.length > 0)
     const isSingleGroup = groups.length > 0 && selection.length === 1
@@ -63,30 +59,30 @@ export function ContextMenu() {
       {
         label: `Copy ${multipleSuffix}`,
         Icon: ClipboardCopy,
-        onClick: () => copyObjects(selection)
+        onClick: () => copyObjects(itemIds)
       },
       {
         label: 'Paste',
         disabled: !isSingleGroup,
         Icon: ClipboardPaste,
-        onClick: () => pasteObjects(selection[0])
+        onClick: () => pasteObjects(itemIds[0])
       },
       {
         label: 'Clone',
         Icon: Copy,
         disabled: selectedItems.length > 1,
-        onClick: () => cloneObject(selection[0])
+        onClick: () => cloneObject(itemIds[0])
       },
       /** @todo (#47) Fix multiple selection grouping */
       {
         label: `Group ${multipleSuffix}`,
         Icon: Group,
-        onClick: () => groupObjects(selection)
+        onClick: () => groupObjects(itemIds)
       }
     )
 
     if (isSingleGroup) {
-      const objectAddItems = createAddItemsMenu(addObject, selection[0])
+      const objectAddItems = createAddItemsMenu(addObject, itemIds[0])
       menuItems.push({
         label: 'Add to Group',
         Icon: DiamondPlus,

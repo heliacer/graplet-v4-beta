@@ -1,7 +1,6 @@
 import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import { useState } from 'react'
 import { StateFunc } from '@/app/editor/types'
-import { useCurrentObject } from '@/app/editor/hooks/useCurrentObject'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { View } from 'lucide-react'
 import {
@@ -43,7 +42,12 @@ export function ObjectView() {
   /** Helpers, some of them maps for helper n - object 1 */
   const [gridHelper, setGridHelper] = useState<boolean>(true)
 
-  /** @todo (#65) ObjectView: Revamp helpers and bind them to object using sharedId */
+  /** 
+   * @todo (#65) ObjectView: Revamp helpers and bind them to object using sharedId
+   * 
+   * -> now definitely needs to be revamped to sharedId. will use snapshot system, 
+   * what even is this shit.
+   * */
   const [cameraHelpers, setCameraHelpers] = useState(new Map<number, boolean>())
   const [lightHelpers, setLightHelpers] = useState(new Map<number, boolean>())
 

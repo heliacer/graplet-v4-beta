@@ -1,44 +1,7 @@
-import {
-  CameraHelper,
-  DirectionalLightHelper,
-  GridHelper,
-  Object3D,
-  Scene
-} from 'three'
+import { Object3D, Scene } from 'three'
 import { NotFoundError, ParentError } from '../types'
-import {
-  TransformControls,
-  TransformControlsGizmo,
-  TransformControlsMode,
-  TransformControlsPlane
-} from 'three/examples/jsm/controls/TransformControls.js'
+import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { RefObject } from 'react'
-
-declare class TransformControlsRoot extends Object3D {
-  readonly isTransformControlsRoot: true
-
-  controls: TransformControls
-
-  constructor(controls: TransformControls)
-
-  dispose(): void
-}
-
-/**
- * @todo (#65) ObjectView: Revamp helpers
- *
- * Add all helpers to be ignored
- */
-export function isInternalObject(object: Object3D): boolean {
-  return (
-    object instanceof TransformControlsGizmo ||
-    object instanceof TransformControlsPlane ||
-    object instanceof CameraHelper ||
-    object instanceof GridHelper ||
-    object instanceof DirectionalLightHelper ||
-    (object as TransformControlsRoot).isTransformControlsRoot
-  )
-}
 
 /**
  * Removes the object from its parent object and adds it to the target group
@@ -58,6 +21,9 @@ export function isTransformControlsMode(
   return value === 'translate' || value === 'rotate' || value === 'scale'
 }
 
+/**
+ * @todo replace with snapshot-friendly approach
+ */
 export function findTopLevelObject(
   objects: Object3D[],
   scene: Scene

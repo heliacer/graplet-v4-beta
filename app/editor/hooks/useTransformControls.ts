@@ -1,26 +1,28 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useEditorRefs } from '../context/EditorContext'
-import { isInternalObject, isTransformControlsMode } from '../utils/three'
-import { useCurrentObject } from './useCurrentObject'
+import { getObject, isTransformControlsMode } from '../utils/three'
 import { useEditorStore } from '../state'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 
 export function useTransformControls() {
-  const { sceneRef, canvasRef, orbitMapRef, controlsRef } = useEditorRefs()
+  const {
+    objectsRef,
+    sceneRef,
+    canvasRef,
+    cameraRef,
+    orbitMapRef,
+    controlsRef
+  } = useEditorRefs()
 
   const isRunning = useEditorStore(s => s.isRunning)
+  const selectedItems = useEditorStore(s => s.selectedItems)
   const currentTool = useEditorStore(s => s.currentTool)
   const objectSnapping = useEditorStore(s => s.objectSnapping)
   const setObjectSnapping = useEditorStore(s => s.setObjectSnapping)
-  const camera = useEditorStore(s => s.camera)
-  const object = useCurrentObject()
-  const objectRef = useRef(object)
+  const updateSnapshot = useEditorStore(s => s.updateSnapshot)
 
-  const invalidateObject = useEditorStore(s => s.invalidateObject)
-
-  useEffect(() => {
-    objectRef.current = object
-  }, [object])
+  const object =
+    selectedItems.length < 1 ? getObject(objectsRef, selectedItems[0]) : null
 
   useEffect(() => {
     if (!controlsRef.current) return
@@ -30,9 +32,12 @@ export function useTransformControls() {
   }, [objectSnapping, controlsRef])
 
   useEffect(() => {
-    if (!camera || !canvasRef.current) return
+    if (!cameraRef.current || !canvasRef.current) return
     if (!controlsRef.current) {
-      controlsRef.current = new TransformControls(camera, canvasRef.current)
+      controlsRef.current = new TransformControls(
+        cameraRef.current,
+        canvasRef.current
+      )
       controlsRef.current.setTranslationSnap(0.5)
       controlsRef.current.setRotationSnap((45 * Math.PI) / 180)
       controlsRef.current.setScaleSnap(1)
@@ -41,13 +46,16 @@ export function useTransformControls() {
       setObjectSnapping('scale', 1)
 
       const onDraggingChanged = (e: { value: unknown }) => {
-        const orbit = orbitMapRef.current.get(camera.id)
+        if (!cameraRef.current) return
+        const orbit = orbitMapRef.current.get(cameraRef.current.id)
         if (orbit) orbit.enabled = !e.value
       }
 
       const onChange = () => {
-        const obj = objectRef.current
-        if (obj) invalidateObject(obj)
+        if (object) {
+          updateSnapshot(selectedItems[0], prev => ({ ...prev }))
+          // don't know if this'll work
+        }
       }
 
       controlsRef.current.addEventListener(
@@ -60,10 +68,7 @@ export function useTransformControls() {
     }
 
     const shouldAttach =
-      object &&
-      !isInternalObject(object) &&
-      !isRunning &&
-      isTransformControlsMode(currentTool)
+      !isRunning && object && isTransformControlsMode(currentTool)
 
     if (shouldAttach) {
       controlsRef.current.attach(object)
@@ -76,7 +81,7 @@ export function useTransformControls() {
       controlsRef.current?.detach()
     }
   }, [
-    camera,
+    cameraRef,
     currentTool,
     isRunning,
     object,
@@ -84,7 +89,8 @@ export function useTransformControls() {
     controlsRef,
     orbitMapRef,
     sceneRef,
-    invalidateObject,
-    setObjectSnapping
+    selectedItems,
+    setObjectSnapping,
+    updateSnapshot
   ])
 }

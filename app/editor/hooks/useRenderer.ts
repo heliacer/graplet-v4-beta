@@ -12,13 +12,12 @@ import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { sceneRef, canvasRef, orbitMapRef } = useEditorRefs()
+  const { sceneRef, canvasRef, cameraRef, orbitMapRef } = useEditorRefs()
   const isRunning = useEditorStore(s => s.isRunning)
-  const camera = useEditorStore(s => s.camera)
   const rendererRef = useRef<WebGLRenderer | null>(null)
 
   useEffect(() => {
-    if (!camera) return
+    if (!cameraRef.current) return
 
     const renderer = new WebGLRenderer({
       canvas: canvasRef.current,
@@ -30,28 +29,28 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     renderer.setPixelRatio(window.devicePixelRatio)
     rendererRef.current = renderer
 
-    const helper = new ViewHelper(camera, renderer.domElement)
+    const helper = new ViewHelper(cameraRef.current, renderer.domElement)
 
     const resize = () => {
       const { clientWidth: w, clientHeight: h } = canvasRef.current
       renderer.setSize(w, h, false)
       const aspect = w / h
 
-      if (camera instanceof PerspectiveCamera) {
-        camera.aspect = aspect
-        camera.updateProjectionMatrix()
+      if (cameraRef.current instanceof PerspectiveCamera) {
+        cameraRef.current.aspect = aspect
+        cameraRef.current.updateProjectionMatrix()
       }
-      if (camera instanceof OrthographicCamera) {
-        const zoom = camera.zoom
+      if (cameraRef.current instanceof OrthographicCamera) {
+        const zoom = cameraRef.current.zoom
         const halfH = 6 / zoom
         const halfW = aspect * halfH
-        Object.assign(camera, {
+        Object.assign(cameraRef.current, {
           left: -halfW,
           right: halfW,
           top: halfH,
           bottom: -halfH
         })
-        camera.updateProjectionMatrix()
+        cameraRef.current.updateProjectionMatrix()
       }
     }
 
@@ -64,13 +63,19 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       renderer.render(sceneRef.current, camera)
     }
 
-    const orbit = orbitMapRef.current.get(camera.id)
+    const orbit = orbitMapRef.current.get(cameraRef.current.id)
     if (isRunning) {
       helper.visible = false
-      renderer.setAnimationLoop(() => render(camera, orbit))
+      renderer.setAnimationLoop(() => {
+        if (!cameraRef.current) return
+        render(cameraRef.current, orbit)
+      })
     } else {
       helper.visible = true
-      renderer.setAnimationLoop(() => render(camera, orbit))
+      renderer.setAnimationLoop(() => {
+        if (!cameraRef.current) return
+        render(cameraRef.current, orbit)
+      })
     }
 
     const resizeListener = panelApi.onDidDimensionsChange(resize)
@@ -83,5 +88,5 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     }
 
     return cleanup
-  }, [canvasRef, sceneRef, camera, panelApi, orbitMapRef, isRunning])
+  }, [canvasRef, sceneRef, cameraRef, panelApi, orbitMapRef, isRunning])
 }

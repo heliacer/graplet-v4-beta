@@ -11,11 +11,10 @@ import { useKeybind } from '../../context/KeybindsContext'
 import { Vector3 } from 'three'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
-  const { workspaceRef, canvasRef, orbitMapRef } = useEditorRefs()
+  const { workspaceRef, cameraRef, canvasRef, orbitMapRef } = useEditorRefs()
   const currentTool = useEditorStore(s => s.currentTool)
   const autoClose = useEditorStore(s => s.autoClose)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
-  const camera = useEditorStore(s => s.camera)
   const [rightDown, setRightDown] = useState(false)
 
   useProjectLoader()
@@ -23,18 +22,20 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useTransformControls()
 
   const snapCamera = (direction: Vector3) => {
-    if (!camera) return
-    const orbit = orbitMapRef.current.get(camera.id)
+    if (!cameraRef.current) return
+    const orbit = orbitMapRef.current.get(cameraRef.current.id)
     if (!orbit) return
 
-    const distance = camera.position.distanceTo(orbit.target)
-    camera.position.copy(orbit.target).addScaledVector(direction, distance)
+    const distance = cameraRef.current.position.distanceTo(orbit.target)
+    cameraRef.current.position
+      .copy(orbit.target)
+      .addScaledVector(direction, distance)
     orbit.update()
   }
 
   useKeybind({ code: 'Numpad0', modifiers: [] }, () => {
-    if (!camera) return
-    const orbit = orbitMapRef.current.get(camera.id)
+    if (!cameraRef.current) return
+    const orbit = orbitMapRef.current.get(cameraRef.current.id)
     orbit?.target.set(0, 0, 0)
   })
 
