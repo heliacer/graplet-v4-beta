@@ -4,8 +4,6 @@ import { SObject3D, SObjectSnapshot, Updater } from '../../types'
 
 type State = {
   selectedItems: string[]
-  /** @deprecated, use snapshots */
-  objectVersions: Record<string, number>
   objectSnapshots: Record<string, SObjectSnapshot>
   objectSnapping: {
     translate: number
@@ -30,8 +28,14 @@ export type ObjectSlice = State & Actions
 
 export const objectInitialState: State = {
   selectedItems: [],
-  objectVersions: {},
-  objectSnapshots: {},
+  objectSnapshots: {
+    scene: {
+      type: 'Scene',
+      name: 'Scene',
+      sharedId: 'scene',
+      childIds: []
+    }
+  },
   objectSnapping: {
     translate: 0.5,
     rotate: 45,

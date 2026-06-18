@@ -67,8 +67,8 @@ export function useObjectActions() {
     }
   }
 
-  function rebuildBlocklyUI() {
-    const entries = Object.entries(objectSnapshots)
+  function rebuildBlocklyUI(snapshots: Record<string, SObjectSnapshot>) {
+    const entries = Object.entries(snapshots)
     blocklyUI.objectMenu = entries.map(([key, obj]) => [obj.name, key])
     workspaceRef.current?.updateToolbox(
       workspaceRef.current.options.languageTree
@@ -86,9 +86,11 @@ export function useObjectActions() {
   ): Object3D {
     const snapshot = snapshots[sharedId]
     const { type, childIds } = snapshot
+    nextSharedId = Object.keys(snapshots).length
 
     const object =
       type === 'Scene' ? getObject(objectsRef, 'scene') : createObject(snapshot)
+    console.log(type, snapshot)
     object.sharedId = sharedId
     objectsRef.current.set(sharedId, object)
 
@@ -151,10 +153,10 @@ export function useObjectActions() {
     config: SObjectConfig,
     targetId: string = 'scene'
   ): Object3D {
-    const newSnapshots: Record<string, SObjectSnapshot> = {}
+    const addedSnapshots: Record<string, SObjectSnapshot> = {}
 
     const target = getObject(objectsRef, targetId)
-    const object = buildObjectTree(config, target, newSnapshots)
+    const object = buildObjectTree(config, target, addedSnapshots)
 
     setSnapshots(prev => {
       const sobject = prev[targetId]
@@ -164,18 +166,19 @@ export function useObjectActions() {
         throw new ObjectError(object, 'does not have a sharedId')
       }
       childIds.push(sharedId)
-      return {
+      const newSnapshots = {
         ...prev,
-        ...newSnapshots,
+        ...addedSnapshots,
         [targetId]: {
           ...sobject,
           childIds
         }
       }
+      rebuildBlocklyUI(newSnapshots)
+      return newSnapshots
     })
 
     setTreeVersion(v => v + 1)
-
     return object
   }
 
@@ -183,9 +186,14 @@ export function useObjectActions() {
    * Removes an object from its parent and disposes of everything associated with it
    *
    * @todo (#67) ObjectActions: dispose of geometry, material and remove helpers
+   * 
+   * 
+   * @todo todo: batch remove, make removeObjects
+   * less update heavy
    */
   function removeObject(sharedId: string) {
     const object = getObject(objectsRef, sharedId)
+    if (sharedId === 'scene') return
     const parent = object.parent
     if (!parent) throw new ParentError(object)
 
@@ -207,13 +215,15 @@ export function useObjectActions() {
       const rest = { ...prev }
       const sobject = rest[parentId]
       delete rest[sharedId]
-      return {
+      const newSnapshots = {
         ...rest,
         [parentId]: {
           ...sobject,
           childIds: sobject.childIds?.filter(id => id !== sharedId)
         }
       }
+      rebuildBlocklyUI(newSnapshots)
+      return newSnapshots
     })
 
     parent.remove(object)
@@ -237,7 +247,6 @@ export function useObjectActions() {
     }
 
     setTreeVersion(v => v + 1)
-    rebuildBlocklyUI()
   }
 
   function cloneObject(sharedId: string) {

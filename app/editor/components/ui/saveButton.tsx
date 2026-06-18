@@ -8,7 +8,6 @@ import clsx from 'clsx'
 export function SaveButton() {
   const { workspaceRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
-  const objectVersions = useEditorStore(s => s.objectVersions)
   const hasProjectChanges = useEditorStore(s => s.hasProjectChanges)
   const objectSnapshots = useEditorStore(s => s.objectSnapshots)
   const setHasProjectChanges = useEditorStore(s => s.setHasProjectChanges)
@@ -20,7 +19,7 @@ export function SaveButton() {
       return
     }
     setHasProjectChanges(true)
-  }, [setHasProjectChanges, objectVersions])
+  }, [setHasProjectChanges])
 
   function handleSave() {
     if (!workspaceRef.current) throw Error('Missing workspace')

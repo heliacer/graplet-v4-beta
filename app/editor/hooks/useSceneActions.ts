@@ -59,16 +59,16 @@ export function useSceneActions() {
 
       const { snapshots, selectedItems, workspace } = project
 
-      /** 
+      /**
        * @todo for avoiding errors on the client side,
-       * check for every prop if it isn't undefined 
+       * check for every prop if it isn't undefined
        * (check if project data is outdated, or corrupted)
        * then offer to refresh all the project data
        */
 
       loadSnapshots(snapshots, 'scene')
       setSnapshots(snapshots)
-      rebuildBlocklyUI()
+      rebuildBlocklyUI(snapshots)
       setTreeVersion(v => v + 1)
       console.info('%cLoaded snapshot state: ', 'color: salmon;', snapshots)
       if (selectedItems !== undefined) setSelectedItems(selectedItems)
@@ -77,11 +77,7 @@ export function useSceneActions() {
         Events.disable()
         serialization.workspaces.load(workspace, workspaceRef.current)
         Events.enable()
-        console.info(
-          '%cLoaded workspace state:',
-          'color: salmon;',
-          workspace
-        )
+        console.info('%cLoaded workspace state:', 'color: salmon;', workspace)
       })
     } catch (error) {
       console.error('Could not parse JSON data.', error)

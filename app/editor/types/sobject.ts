@@ -27,7 +27,8 @@ export interface SBase {
 }
 
 /** Serialized Scene */
-export interface SScene extends SBase {
+export interface SScene {
+  name: string
   type: 'Scene'
 }
 
