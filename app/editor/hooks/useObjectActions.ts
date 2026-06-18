@@ -33,7 +33,6 @@ export function useObjectActions() {
     useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
-  const invalidateObject = useEditorStore(s => s.invalidateObject)
   const setSnapshots = useEditorStore(s => s.setSnapshots)
   const objectSnapshots = useEditorStore(s => s.objectSnapshots)
   const setTreeVersion = useEditorStore(s => s.setTreeVersion)
@@ -176,39 +175,37 @@ export function useObjectActions() {
    *
    * @todo (#67) ObjectActions: dispose of geometry, material and remove helpers
    */
-  function removeObject(object: Object3D) {
+  function removeObject(sharedId: string) {
+    const object = getObject(objectsRef, sharedId)
     const parent = object.parent
     if (!parent) throw new ParentError(object)
 
-    const sharedId = object.sharedId
-    if (sharedId !== undefined) {
-      /** Remove it from the registry */
-      objectsRef.current.delete(sharedId)
+    /** Remove it from the registry */
+    objectsRef.current.delete(sharedId)
 
-      /** If it's the selection, remove it */
-      if (selectedItems.includes(sharedId)) {
-        setSelectedItems(prev => prev.filter(item => item !== object.sharedId))
-      }
-
-      const parentId = parent.sharedId
-      if (parentId === undefined) {
-        throw new ObjectError(parent, 'does not have a sharedId')
-      }
-
-      /** Remove it from the snapshots and update parent childIds */
-      setSnapshots(prev => {
-        const rest = { ...prev }
-        const sobject = rest[parentId]
-        delete rest[sharedId]
-        return {
-          ...rest,
-          [parentId]: {
-            ...sobject,
-            childIds: sobject.childIds?.filter(id => id !== sharedId)
-          }
-        }
-      })
+    /** If it's the selection, remove it */
+    if (selectedItems.includes(sharedId)) {
+      setSelectedItems(prev => prev.filter(item => item !== sharedId))
     }
+
+    const parentId = parent.sharedId
+    if (parentId === undefined) {
+      throw new ObjectError(parent, 'does not have a sharedId')
+    }
+
+    /** Remove it from the snapshots and update parent childIds */
+    setSnapshots(prev => {
+      const rest = { ...prev }
+      const sobject = rest[parentId]
+      delete rest[sharedId]
+      return {
+        ...rest,
+        [parentId]: {
+          ...sobject,
+          childIds: sobject.childIds?.filter(id => id !== sharedId)
+        }
+      }
+    })
 
     parent.remove(object)
 
@@ -229,9 +226,6 @@ export function useObjectActions() {
         orbitMapRef.current.delete(object.id)
       }
     }
-
-    /** @deprecated */
-    invalidateObject(object)
 
     setTreeVersion(v => v + 1)
     rebuildBlocklyUI()
@@ -293,20 +287,22 @@ export function useObjectActions() {
       if (!parent) throw new ParentError(object)
       parent.remove(object)
       targetObj.add(object)
-
-      invalidateObject(object)
     }
   }
 
-  function unGroupObject(object: Object3D) {
+  function unGroupObject(sharedId: string) {
+    const object = getObject(objectsRef, sharedId)
     const parent = object.parent
     if (!parent) throw new ParentError(object)
-    const children = object.children
-    for (const child of children) {
-      parent.add(child)
+
+    const parentId = parent.sharedId
+    if (parentId === undefined) {
+      throw new ObjectError(parent, 'does not have a sharedId')
     }
-    parent.remove(object)
-    removeObject(object)
+    
+    const sobject = objectSnapshots[sharedId]
+    moveObjects(sobject.childIds, parentId)
+    removeObject(sharedId)
 
     /** @todo (#47) multiselect all children which were previously in the group */
     setSelectedItems([])

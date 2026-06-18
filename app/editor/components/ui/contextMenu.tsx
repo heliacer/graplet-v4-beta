@@ -1,4 +1,3 @@
-import { useEditorRefs } from '../../context/EditorContext'
 import { useState } from 'react'
 import { useEditorStore } from '../../state'
 import {
@@ -18,12 +17,11 @@ import {
   DropdownItemProps
 } from '@/app/ui/components/Dropdown'
 import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
-import { Object3D } from 'three'
 
 /** @todo (#35) Object Context Menu revamp + fix renaming */
 export function ContextMenu() {
-  const { objectsRef } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
+  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
   const contextMenu = useEditorStore(s => s.contextMenu)
   const setContextMenu = useEditorStore(s => s.setContextMenu)
   const [activePath, setActivePath] = useState<number[]>([])
@@ -50,14 +48,18 @@ export function ContextMenu() {
       ? selectedItems
       : [targetId]
 
-    const groups = selection.filter(obj => obj.type === 'Group')
-    const groupsWithChildren = groups.filter(obj => obj.children.length > 0)
-    const isSingleGroup = groups.length > 0 && selection.length === 1
-    const multipleSuffix = selectedItems.length > 1 ? '*' : ''
+    const groups = itemIds.filter(
+      itemId => objectSnapshots[itemId].type === 'Group'
+    )
+    const groupsWithChildren = groups.filter(
+      itemId => objectSnapshots[itemId].childIds.length > 0
+    )
+    const isSingleGroup = groups.length > 0 && itemIds.length === 1
+    const suffix = selectedItems.length > 1 ? '*' : ''
 
     menuItems.push(
       {
-        label: `Copy ${multipleSuffix}`,
+        label: `Copy ${suffix}`,
         Icon: ClipboardCopy,
         onClick: () => copyObjects(itemIds)
       },
@@ -75,7 +77,7 @@ export function ContextMenu() {
       },
       /** @todo (#47) Fix multiple selection grouping */
       {
-        label: `Group ${multipleSuffix}`,
+        label: `Group ${suffix}`,
         Icon: Group,
         onClick: () => groupObjects(itemIds)
       }
@@ -92,7 +94,7 @@ export function ContextMenu() {
 
     menuItems.push(
       {
-        label: `Ungroup ${multipleSuffix}`,
+        label: `Ungroup ${suffix}`,
         Icon: Ungroup,
         disabled: groupsWithChildren.length === 0,
         onClick: () => {
@@ -102,10 +104,10 @@ export function ContextMenu() {
         }
       },
       {
-        label: `Delete ${multipleSuffix}`,
+        label: `Delete ${suffix}`,
         Icon: Trash,
         onClick: async () => {
-          for (const object of selection) {
+          for (const object of itemIds) {
             removeObject(object)
           }
         }

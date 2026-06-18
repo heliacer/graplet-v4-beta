@@ -1,12 +1,12 @@
-import { useState } from 'react'
-import { Color, Mesh, MeshStandardMaterial } from 'three'
-
 /**
+ * @see ObjectPane 
+ * 
+ * 
  * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
  *
  * Every piece of editing UI needs to have proper config path,
  * so that every single material type is supported with it's proper inputs.
- */
+
 
 function MeshStandardMaterialPane({
   material
@@ -47,10 +47,8 @@ function MeshMaterialPane({ mesh }: { mesh: Mesh }) {
   return <p>Unsupported Mesh Material type: {mesh.material.type}</p>
 }
 
-export function MaterialPane() {
-  if (object instanceof Mesh) {
-    return <MeshMaterialPane mesh={object} />
-  }
+ */
 
-  return <p>MaterialPane for {object.name}</p>
+export function MaterialPane() {
+  return <></>
 }

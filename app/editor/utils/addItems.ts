@@ -30,8 +30,8 @@ const cameras: CameraT[] = ['PerspectiveCamera', 'OrthographicCamera']
  * @returns a list of dropdown items with all common object add options
  */
 export function createAddItemsMenu(
-  addObject: (props: SObjectConfig, target?: Object3D) => Object3D,
-  target?: Object3D
+  addObject: (props: SObjectConfig, targetId?: string) => Object3D,
+  targetId?: string
 ) {
   const meshChildren: DropdownItemProps[] = geometries.map(geo => ({
     label: geo.slice(0, -8),
@@ -43,7 +43,7 @@ export function createAddItemsMenu(
           geometry: { type: geo, args: [] },
           material: { type: 'MeshStandardMaterial' }
         },
-        target
+        targetId
       )
   }))
 
@@ -55,7 +55,7 @@ export function createAddItemsMenu(
           name: light,
           type: light
         },
-        target
+        targetId
       )
   }))
 
@@ -68,7 +68,7 @@ export function createAddItemsMenu(
           type: camera,
           position: [0, 0, 10]
         },
-        target
+        targetId
       )
   }))
 
@@ -76,7 +76,7 @@ export function createAddItemsMenu(
     {
       label: 'Group',
       Icon: Component,
-      onClick: () => addObject({ type: 'Group', name: 'Group' }, target)
+      onClick: () => addObject({ type: 'Group', name: 'Group' }, targetId)
     },
     {
       label: 'Mesh',

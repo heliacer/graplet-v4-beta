@@ -26,30 +26,30 @@ type Vec3PaneInput = {
 }
 
 type Vec3AnglePaneInput = {
-  type: 'vec3'
+  type: 'vec3angle'
   property: 'rotation'
 }
 
 type PaneButton = {
   type: 'button'
-  Icon: LucideIcon
-  onClick: () => void
+  Icon?: LucideIcon
+  onClick?: () => void
 }
 
 type PaneCheckbox = {
   type: 'checkbox'
-  checked: boolean
-  onClick: (checked: boolean) => void
+  checked?: boolean
+  onClick?: (checked: boolean) => void
 }
 
 interface Vec3PropertyProps {
   label: string
-  property: 'position' | 'scale'
-  display: (value: number) => number
-  store: (value: number) => number
-  suffix: string
-  step: number
-  decimals: number
+  property: 'position' | 'scale' | 'rotation'
+  display?: (value: number) => number
+  store?: (value: number) => number
+  suffix?: string
+  step?: number
+  decimals?: number
 }
 
 export function Vec3Property({
@@ -156,8 +156,8 @@ export function PropButton({
   onClick
 }: {
   label: string
-  Icon: LucideIcon
-  onClick: () => void
+  Icon?: LucideIcon
+  onClick?: () => void
 }) {
   return (
     <button
@@ -169,7 +169,7 @@ export function PropButton({
       )}
       onClick={onClick}
     >
-      <Icon size={12} />
+      {Icon && <Icon size={12} />}
       <p>{label}</p>
     </button>
   )
@@ -181,8 +181,8 @@ export function CheckBoxProperty({
   onClick
 }: {
   label: string
-  checked: boolean
-  onClick: (checked: boolean) => void
+  checked?: boolean
+  onClick?: (checked: boolean) => void
 }) {
   const uuid = useId()
   return (
@@ -192,9 +192,34 @@ export function CheckBoxProperty({
         className='cursor-pointer'
         type='checkbox'
         checked={checked}
-        onChange={e => onClick(e.target.checked)}
+        onChange={e => onClick?.(e.target.checked)}
       />
       <p>{label}</p>
     </label>
   )
+}
+
+export function renderPaneItem(item: PaneItem) {
+  switch (item.type) {
+    case 'text':
+      return <TextProperty {...item} />
+    case 'vec3':
+      return <Vec3Property {...item} />
+    case 'vec3angle':
+      return (
+        <Vec3Property
+          label={item.label}
+          property='rotation'
+          display={x => (x * 180) / Math.PI}
+          store={x => (x * Math.PI) / 180}
+          suffix='°'
+          step={1}
+          decimals={0}
+        />
+      )
+    case 'button':
+      return <PropButton {...item} />
+    case 'checkbox':
+      return <CheckBoxProperty {...item} />
+  }
 }

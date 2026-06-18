@@ -5,14 +5,8 @@ import { useEditorStore } from '../state'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 
 export function useTransformControls() {
-  const {
-    objectsRef,
-    sceneRef,
-    canvasRef,
-    cameraRef,
-    orbitMapRef,
-    controlsRef
-  } = useEditorRefs()
+  const { objectsRef, canvasRef, cameraRef, orbitMapRef, controlsRef } =
+    useEditorRefs()
 
   const isRunning = useEditorStore(s => s.isRunning)
   const selectedItems = useEditorStore(s => s.selectedItems)
@@ -22,7 +16,7 @@ export function useTransformControls() {
   const updateSnapshot = useEditorStore(s => s.updateSnapshot)
 
   const object =
-    selectedItems.length < 1 ? getObject(objectsRef, selectedItems[0]) : null
+    selectedItems.length > 0 ? getObject(objectsRef, selectedItems[0]) : null
 
   useEffect(() => {
     if (!controlsRef.current) return
@@ -64,7 +58,8 @@ export function useTransformControls() {
       )
       controlsRef.current.addEventListener('mouseUp', onChange)
 
-      sceneRef.current.add(controlsRef.current.getHelper())
+      const scene = getObject(objectsRef, 'scene')
+      scene.add(controlsRef.current.getHelper())
     }
 
     const shouldAttach =
@@ -85,10 +80,10 @@ export function useTransformControls() {
     currentTool,
     isRunning,
     object,
+    objectsRef,
     canvasRef,
     controlsRef,
     orbitMapRef,
-    sceneRef,
     selectedItems,
     setObjectSnapping,
     updateSnapshot

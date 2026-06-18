@@ -1,4 +1,3 @@
-import { Object3D } from 'three'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
 import { SObject3D, SObjectSnapshot, Updater } from '../../types'
@@ -23,10 +22,6 @@ type Actions = {
     sharedId: string,
     updater: Updater<Partial<Omit<SObject3D, 'type'>>>
   ) => void
-  /** @deprecated, use snapshots */
-  invalidateObject: (object: Object3D) => void
-  /** @deprecated, use snapshots */
-  invalidateObjectsAll: () => void
   setObjectSnapping: (tool: TransformControlsMode, value: number) => void
   setAutoClose: (autoClose: boolean) => void
 }
@@ -82,27 +77,6 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
         }
       }
     }),
-
-  invalidateObject: object => {
-    const sharedId = object.sharedId
-    if (sharedId === undefined) return
-    set(state => ({
-      objectVersions: {
-        ...state.objectVersions,
-        [sharedId]: (state.objectVersions[sharedId] || 0) + 1
-      }
-    }))
-  },
-
-  invalidateObjectsAll: () => {
-    set(state => {
-      const objectVersions = { ...state.objectVersions }
-      for (const key in objectVersions) {
-        objectVersions[key]++
-      }
-      return { objectVersions }
-    })
-  },
 
   setObjectSnapping: (tool, value) =>
     set(state => ({

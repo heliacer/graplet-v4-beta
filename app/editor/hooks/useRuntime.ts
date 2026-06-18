@@ -9,7 +9,6 @@ export function useRuntime() {
     useEditorRefs()
   const setRunning = useEditorStore(s => s.setRunning)
   const setPaused = useEditorStore(s => s.setPaused)
-  const invalidateAllObjects = useEditorStore(s => s.invalidateObjectsAll)
   const running = useRef(false)
   const paused = useRef(false)
   const threads = useRef<Thread[]>([])
@@ -19,8 +18,7 @@ export function useRuntime() {
     console.timeEnd('Time elapsed')
     setRunning(false)
     setPaused(false)
-    invalidateAllObjects()
-  }, [setPaused, setRunning, invalidateAllObjects])
+  }, [setPaused, setRunning])
 
   const start = useCallback(
     (

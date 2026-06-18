@@ -1,17 +1,20 @@
 import { Events, serialization } from 'blockly'
 import { useEditorRefs } from '../context/EditorContext'
 import { ProjectData } from '../types'
-import { applyProps } from '../utils/sobject'
 import { useObjectActions } from './useObjectActions'
 import { blocklyUI } from '../blockly/blocks'
 import { GridHelper } from 'three'
 import { useEditorStore } from '../state'
+import { getObject } from '../utils/three'
 
 export function useSceneActions() {
-  const { sceneRef, workspaceRef, orbitMapRef, controlsRef } = useEditorRefs()
-  const { addObject, removeObject, rebuildBlocklyUI } = useObjectActions()
+  const { objectsRef, workspaceRef, orbitMapRef, controlsRef } = useEditorRefs()
+  const { loadSnapshots, addObject, removeObject, rebuildBlocklyUI } =
+    useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setTreeVersion = useEditorStore(s => s.setTreeVersion)
+  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
+  const setSnapshots = useEditorStore(s => s.setSnapshots)
 
   /**
    * Adds Ambient light, Directional light and a Camera
@@ -54,36 +57,40 @@ export function useSceneActions() {
       const project = JSON.parse(data) as ProjectData
       clearScene()
 
-      if (project.scene) {
-        const { children } = project.scene
-        applyProps(sceneRef.current, project.scene)
-        children?.forEach(child => addObject(child, undefined, true))
-        rebuildBlocklyUI()
-        setTreeVersion(v => v + 1)
-        console.info('%cLoaded scene state: ', 'color: salmon;', project.scene)
-        const { selectedItems } = project
-        if (selectedItems !== undefined) setSelectedItems(selectedItems)
-        requestAnimationFrame(() => {
-          if (!workspaceRef.current) throw Error('Missing workspace')
-          Events.disable()
-          serialization.workspaces.load(project.workspace, workspaceRef.current)
-          Events.enable()
-          console.info(
-            '%cLoaded workspace state:',
-            'color: salmon;',
-            project.workspace
-          )
-        })
-      }
+      const { snapshots, selectedItems, workspace } = project
+
+      /** 
+       * @todo for avoiding errors on the client side,
+       * check for every prop if it isn't undefined 
+       * (check if project data is outdated, or corrupted)
+       * then offer to refresh all the project data
+       */
+
+      loadSnapshots(snapshots, 'scene')
+      setSnapshots(snapshots)
+      rebuildBlocklyUI()
+      setTreeVersion(v => v + 1)
+      console.info('%cLoaded snapshot state: ', 'color: salmon;', snapshots)
+      if (selectedItems !== undefined) setSelectedItems(selectedItems)
+      requestAnimationFrame(() => {
+        if (!workspaceRef.current) throw Error('Missing workspace')
+        Events.disable()
+        serialization.workspaces.load(workspace, workspaceRef.current)
+        Events.enable()
+        console.info(
+          '%cLoaded workspace state:',
+          'color: salmon;',
+          workspace
+        )
+      })
     } catch (error) {
       console.error('Could not parse JSON data.', error)
     }
   }
 
   function clearScene() {
-    for (let i = sceneRef.current.children.length - 1; i >= 0; i--) {
-      const child = sceneRef.current.children[i]
-      removeObject(child)
+    for (const sharedId of Object.keys(objectSnapshots)) {
+      removeObject(sharedId)
     }
     setSelectedItems([])
     blocklyUI.objectMenu = []
@@ -93,7 +100,8 @@ export function useSceneActions() {
 
     /** @test initialize scene (I have my doubts if this is a good init place) */
     const gridHelper = new GridHelper()
-    sceneRef.current.add(gridHelper)
+    const scene = getObject(objectsRef, 'scene')
+    scene.add(gridHelper)
   }
 
   return {

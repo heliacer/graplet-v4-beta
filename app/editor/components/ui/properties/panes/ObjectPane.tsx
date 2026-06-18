@@ -1,25 +1,55 @@
-import { useEditorRefs } from '@/app/editor/context/EditorContext'
-import { useEditorStore } from '@/app/editor/state'
-import {
-  AmbientLight,
-  DirectionalLight,
-  Group,
-  Mesh,
-  MOUSE,
-  Object3D,
-  OrthographicCamera,
-  PerspectiveCamera
-} from 'three'
-import {
-  CheckBoxProperty,
-  PropButton,
-  TextProperty,
-  Vec3AngleProperty,
-  Vec3Property
-} from '../PaneItem'
-import { Crosshair, SwitchCamera } from 'lucide-react'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { PaneItem, renderPaneItem } from '../PaneItem'
 
+export function ObjectPane() {
+  /**
+   * @todo more serialization!!!!
+   * 
+   * -> make action registry, so that everything is component level 
+   * and here everything is virtual :D
+   * 
+   * -> action 'orbitCamera'
+   * -> action ...
+   */
+
+
+  const items: PaneItem[] = [
+    {
+      type: 'text',
+      label: 'Name',
+      property: 'name'
+    },
+    {
+      type: 'vec3',
+      label: 'Position',
+      property: 'position'
+    },
+    {
+      type: 'vec3angle',
+      label: 'Rotation',
+      property: 'rotation'
+    },
+    {
+      type: 'vec3',
+      label: 'Scale',
+      property: 'scale'
+    },
+    {
+      type: 'button',
+      label: 'im a button'
+    },
+    {
+      type: 'checkbox',
+      label: 'im a checkbox',
+    }
+  ]
+
+  const panes = items.map(renderPaneItem)
+  return <>{...panes}</>
+}
+
+/**
+ * OLD (kept for camera impl.)
+ * 
 function BaseObjectProps({ object }: { object: Object3D }) {
   return (
     <>
@@ -58,12 +88,12 @@ export function ObjectPane() {
   if (object instanceof PerspectiveCamera) {
     const orbit = orbitMapRef.current.get(object.id)
 
-    /**
+
      * @todo (#57) Propertypanel: serialize inputs & panes and allow multiselect
      *
      * Generalise orbit attach / detach, refactor to an util,
      * other one is in applyHelpers in useObjectActions
-     */
+
     const orbitAction = (checked: boolean) => {
       if (checked) {
         if (orbit)
@@ -81,7 +111,6 @@ export function ObjectPane() {
         orbit.disconnect()
         orbit.dispose()
       }
-      invalidateObject(object)
     }
 
     return (
@@ -114,3 +143,4 @@ export function ObjectPane() {
   }
   return <p>ObjectPane for {object.name}</p>
 }
+*/

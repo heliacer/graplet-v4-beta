@@ -4,14 +4,11 @@ import { ObjectAdd } from '../object/ObjectAdd'
 import { ObjectSnap } from '../object/ObjectSnap'
 import { ObjectTools } from '../object/ObjectTools'
 import { ObjectView } from '../object/ObjectView'
-import { useCurrentObject } from '@/app/editor/hooks/useCurrentObject'
 import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
 
 export function ObjectControls() {
   const isRunning = useEditorStore(s => s.isRunning)
-  const currentTool = useEditorStore(s => s.currentTool)
-
-  const object = useCurrentObject()
+  const currentTool = useEditorStore(s => s.currentTool)  
 
   enum Modes {
     'translate',
@@ -27,7 +24,7 @@ export function ObjectControls() {
       <div className='flex gap-2 h-min'>
         <ObjectAdd />
         <ObjectView />
-        {object && <ObjectActions object={object} />}
+        <ObjectActions />
         {currentTool in Modes && (
           <ObjectSnap mode={currentTool as TransformControlsMode} />
         )}

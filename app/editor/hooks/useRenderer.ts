@@ -10,14 +10,16 @@ import { DockviewPanelApi } from 'dockview-react'
 import { useEditorStore } from '../state'
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { getObject } from '../utils/three'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
-  const { sceneRef, canvasRef, cameraRef, orbitMapRef } = useEditorRefs()
+  const { objectsRef, canvasRef, cameraRef, orbitMapRef } = useEditorRefs()
   const isRunning = useEditorStore(s => s.isRunning)
   const rendererRef = useRef<WebGLRenderer | null>(null)
 
   useEffect(() => {
     if (!cameraRef.current) return
+    const scene = getObject(objectsRef, 'scene')
 
     const renderer = new WebGLRenderer({
       canvas: canvasRef.current,
@@ -60,7 +62,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       orbit?.update()
       renderer.clear()
       helper.render(renderer)
-      renderer.render(sceneRef.current, camera)
+      renderer.render(scene, camera)
     }
 
     const orbit = orbitMapRef.current.get(cameraRef.current.id)
@@ -88,5 +90,5 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     }
 
     return cleanup
-  }, [canvasRef, sceneRef, cameraRef, panelApi, orbitMapRef, isRunning])
+  }, [canvasRef, objectsRef, cameraRef, panelApi, orbitMapRef, isRunning])
 }
