@@ -18,8 +18,10 @@ export function EditorPane() {
         onClick={checked => {
           if (checked) {
             controlsRef.current?.setSpace('local')
+            setIsLocal(checked)
           } else {
             controlsRef.current?.setSpace('world')
+            setIsLocal(checked)
           }
         }}
       />

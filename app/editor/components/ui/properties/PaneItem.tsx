@@ -118,20 +118,16 @@ export function TextProperty({
 }) {
   const { objectsRef } = useEditorRefs()
   const updateSnapshot = useEditorStore(s => s.updateSnapshot)
-  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
-  const selectedItems = useEditorStore(s => s.selectedItems)
-  if (selectedItems.length < 1) return
-  const firstSObject = objectSnapshots[selectedItems[0]]
+  const sharedId = useEditorStore(s => s.selectedItems[0])
+  const name = useEditorStore(s =>
+    sharedId ? s.objectSnapshots[sharedId]?.name : ''
+  )
+  if (sharedId === undefined) return
 
   const update = (newValue: string) => {
-    for (const sharedId of selectedItems) {
-      const object = getObject(objectsRef, sharedId)
-      object[property] = newValue
-      updateSnapshot(sharedId, prev => ({
-        ...prev,
-        [property]: newValue
-      }))
-    }
+    const object = getObject(objectsRef, sharedId)
+    object[property] = newValue
+    updateSnapshot(sharedId, prev => ({ ...prev, [property]: newValue }))
   }
 
   return (
@@ -140,7 +136,8 @@ export function TextProperty({
       <input
         type='text'
         className='rounded border outline-none px-1 w-32'
-        defaultValue={firstSObject[property]}
+        key={name}
+        defaultValue={name}
         onBlur={e => update(e.target.value)}
         onKeyDown={e => {
           if (e.key === 'Enter') update(e.currentTarget.value)
@@ -162,13 +159,14 @@ export function PropButton({
   return (
     <button
       className={clsx(
+        'self-start',
         'flex gap-1 px-1 items-center',
         'border rounded-md',
         'border-ui-700',
         'hover:bg-ui-750 bg-ui-800'
       )}
       onClick={onClick}
-    >
+    > 
       {Icon && <Icon size={12} />}
       <p>{label}</p>
     </button>

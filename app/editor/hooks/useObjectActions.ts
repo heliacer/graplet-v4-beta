@@ -90,7 +90,6 @@ export function useObjectActions() {
 
     const object =
       type === 'Scene' ? getObject(objectsRef, 'scene') : createObject(snapshot)
-    console.log(type, snapshot)
     object.sharedId = sharedId
     objectsRef.current.set(sharedId, object)
 
@@ -186,8 +185,8 @@ export function useObjectActions() {
    * Removes an object from its parent and disposes of everything associated with it
    *
    * @todo (#67) ObjectActions: dispose of geometry, material and remove helpers
-   * 
-   * 
+   *
+   *
    * @todo todo: batch remove, make removeObjects
    * less update heavy
    */

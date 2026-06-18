@@ -1,9 +1,9 @@
 import { serialization, WorkspaceSvg } from 'blockly'
-import { ProjectData, SObject3D } from '../types'
+import { ProjectData, SObjectSnapshot } from '../types'
 
 export function createProjectData(
   workspace: WorkspaceSvg,
-  snapshots: Record<string, SObject3D>,
+  snapshots: Record<string, SObjectSnapshot>,
   selectedItems: string[]
 ): ProjectData {
   return {

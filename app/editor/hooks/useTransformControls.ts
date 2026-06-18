@@ -15,9 +15,6 @@ export function useTransformControls() {
   const setObjectSnapping = useEditorStore(s => s.setObjectSnapping)
   const updateSnapshot = useEditorStore(s => s.updateSnapshot)
 
-  const object =
-    selectedItems.length > 0 ? getObject(objectsRef, selectedItems[0]) : null
-
   useEffect(() => {
     if (!controlsRef.current) return
     controlsRef.current.setTranslationSnap(objectSnapping.translate)
@@ -26,6 +23,9 @@ export function useTransformControls() {
   }, [objectSnapping, controlsRef])
 
   useEffect(() => {
+    const object =
+      selectedItems.length > 0 ? getObject(objectsRef, selectedItems[0]) : null
+
     if (!cameraRef.current || !canvasRef.current) return
     if (!controlsRef.current) {
       controlsRef.current = new TransformControls(
@@ -47,8 +47,15 @@ export function useTransformControls() {
 
       const onChange = () => {
         if (object) {
-          updateSnapshot(selectedItems[0], prev => ({ ...prev }))
-          // don't know if this'll work
+          updateSnapshot(selectedItems[0], prev => {
+            const { position, rotation, scale } = object
+            return {
+              ...prev,
+              position: [position.x, position.y, position.z],
+              rotation: [rotation.x, rotation.y, rotation.z],
+              scale: [scale.x, scale.y, scale.z]
+            }
+          })
         }
       }
 
@@ -79,7 +86,6 @@ export function useTransformControls() {
     cameraRef,
     currentTool,
     isRunning,
-    object,
     objectsRef,
     canvasRef,
     controlsRef,

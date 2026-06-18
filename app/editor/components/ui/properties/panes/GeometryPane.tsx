@@ -1,3 +1,3 @@
 export function GeometryPane() {
-  return <p></p>
+  return <p>Geometry Pane</p>
 }

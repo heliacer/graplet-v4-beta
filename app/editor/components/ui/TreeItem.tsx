@@ -8,6 +8,7 @@ import { getIconT, ItemIcon } from '../../utils/icons'
 import { useEditorRefs } from '../../context/EditorContext'
 import { getObject } from '../../utils/three'
 import clsx from 'clsx'
+import { useSnapshot } from '../../hooks/useSnapshot'
 
 interface RenamingItemProps {
   item: ItemInstance<string>
@@ -70,10 +71,9 @@ interface ItemContentProps {
 
 function ItemContent({ item }: ItemContentProps) {
   const { objectsRef } = useEditorRefs()
-  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
-  const sobject = objectSnapshots[item.getId()]
-  const iconType = getIconT(sobject.type)
   const updateSnapshot = useEditorStore(s => s.updateSnapshot)
+  const sobject = useSnapshot(item.getId())
+  const iconType = getIconT(sobject.type)
 
   return (
     <div

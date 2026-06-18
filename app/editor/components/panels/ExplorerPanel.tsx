@@ -45,8 +45,8 @@ export default function ExplorerPanel() {
     state: { selectedItems },
     setSelectedItems,
     rootItemId: 'scene',
-    getItemName: item => objectSnapshots[item.getId()].name,
-    isItemFolder: item => objectSnapshots[item.getId()].type === 'Group',
+    getItemName: item => objectSnapshots[item.getId()]?.name,
+    isItemFolder: item => objectSnapshots[item.getId()]?.type === 'Group',
     onRename: (item, value) => {
       const sharedId = item.getId()
       const object = getObject(objectsRef, sharedId)
@@ -88,9 +88,10 @@ export default function ExplorerPanel() {
       }}
     >
       <div className='py-1 flex flex-col items-start border-r border-ui-700 min-h-full'>
-        {tree.getItems().map(item => (
-          <TreeItem key={item.getId()} tree={tree} item={item} />
-        ))}
+        {tree.getItems().map(item => {
+          if (objectSnapshots[item.getId()] === undefined) return
+          return <TreeItem key={item.getId()} tree={tree} item={item} />
+        })}
       </div>
       <div
         style={tree.getDragLineStyle()}
