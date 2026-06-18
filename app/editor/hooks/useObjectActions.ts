@@ -157,15 +157,24 @@ export function useObjectActions() {
     const object = buildObjectTree(config, target, newSnapshots)
 
     setSnapshots(prev => {
+      const sobject = prev[targetId]
+      const childIds = sobject ? sobject.childIds : []
+      const sharedId = object.sharedId
+      if (sharedId === undefined) {
+        throw new ObjectError(object, 'does not have a sharedId')
+      }
+      childIds.push(sharedId)
       return {
         ...prev,
         ...newSnapshots,
         [targetId]: {
-          ...prev[targetId],
-          childIds: [...prev[targetId].childIds, object.sharedId!]
+          ...sobject,
+          childIds
         }
       }
     })
+
+    setTreeVersion(v => v + 1)
 
     return object
   }
@@ -299,7 +308,7 @@ export function useObjectActions() {
     if (parentId === undefined) {
       throw new ObjectError(parent, 'does not have a sharedId')
     }
-    
+
     const sobject = objectSnapshots[sharedId]
     moveObjects(sobject.childIds, parentId)
     removeObject(sharedId)

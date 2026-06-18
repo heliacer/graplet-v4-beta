@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  RefObject,
-  useContext,
-  useEffect,
-  useRef
-} from 'react'
+import React, { createContext, RefObject, useContext, useRef } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { FuncEnv, VarEnv } from '../engine/ast'
 import { Camera, Object3D, Scene } from 'three'
@@ -34,19 +28,19 @@ export function EditorProvider({
 }: Readonly<{ children: React.ReactNode }>) {
   const varEnvRef = useRef<VarEnv>(new Map())
   const funcEnvRef = useRef<FuncEnv>(new Map())
-  const objectsRef = useRef(new Map())
+
+  const scene = new Scene()
+  scene.sharedId = 'scene'
+  const objects = new Map()
+  objects.set('scene', scene)
+
+  const objectsRef = useRef(objects)
   const cameraRef = useRef(null)
   const canvasRef = useRef<HTMLCanvasElement>(null!)
   const controlsRef = useRef<TransformControls | null>(null)
   const orbitMapRef = useRef(new Map())
   const workspaceRef = useRef<WorkspaceSvg | null>(null)
   const stepsPerFrameRef = useRef<number>(100)
-
-  useEffect(() => {
-    const scene = new Scene()
-    scene.sharedId = 'scene'
-    objectsRef.current.set('scene', scene)
-  }, [objectsRef])
 
   return (
     <EditorContext.Provider
