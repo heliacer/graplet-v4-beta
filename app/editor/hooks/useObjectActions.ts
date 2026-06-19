@@ -135,7 +135,6 @@ export function useObjectActions() {
     const sharedId =
       config.type === 'Scene' ? 'scene' : (nextSharedId++).toString()
     object.sharedId = sharedId
-    console.log('using sharedId:', sharedId)
 
     const childIds = object.children.map(child => {
       if (child.sharedId === undefined)
@@ -232,12 +231,12 @@ export function useObjectActions() {
 
     parent.remove(object)
 
-    if (object instanceof Camera) {
+    if (object instanceof PerspectiveCamera) {
       /** If it's the active camera, set another one active instead */
       const scene = getObject(objectsRef, 'scene')
       if (object === cameraRef.current) {
-        const nextCamera = scene.getObjectByProperty('isCamera', true) as
-          | Camera
+        const nextCamera = scene.getObjectByProperty('isPerspectiveCamera', true) as
+          | PerspectiveCamera
           | undefined
         cameraRef.current = nextCamera || null
       }
@@ -290,12 +289,10 @@ export function useObjectActions() {
     targetId: string,
     newChildren?: string[]
   ) {
-
-
     /**
      * @todo this is shit,
-     * should get the highest parent in the itemIds selection. 
-     * only move itemIds that are in the childIds of that parent 
+     * should get the highest parent in the itemIds selection.
+     * only move itemIds that are in the childIds of that parent
      */
 
     const itemParentMap: Record<string, string> = {}

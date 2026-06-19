@@ -36,7 +36,8 @@ export function ObjectPane() {
     {
       type: 'button',
       label: 'button button click click',
-      Icon: Star
+      Icon: Star,
+      onClick: () => alert('yo')
     },
     {
       type: 'checkbox',

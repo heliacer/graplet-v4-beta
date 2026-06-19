@@ -21,7 +21,7 @@ export function UserDropdown() {
     {
       label: 'Account',
       Icon: Settings2,
-      onClick: () => router.push('/mystuff')
+      onClick: () => router.push('/account')
     },
     {
       label: 'Sign out',

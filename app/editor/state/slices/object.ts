@@ -13,6 +13,7 @@ type State = {
     scale: number
   }
   autoClose: boolean
+  localTransform: boolean
 }
 
 type Actions = {
@@ -24,6 +25,7 @@ type Actions = {
   ) => void
   setObjectSnapping: (tool: TransformControlsMode, value: number) => void
   setAutoClose: (autoClose: boolean) => void
+  setLocalTransform: (localTransform: boolean) => void
 }
 
 export type ObjectSlice = State & Actions
@@ -42,7 +44,8 @@ export const objectInitialState: State = {
     rotate: 45,
     scale: 1
   },
-  autoClose: false
+  autoClose: false,
+  localTransform: false
 }
 
 export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
@@ -91,5 +94,6 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
       }
     })),
 
-  setAutoClose: v => set({ autoClose: v })
+  setAutoClose: v => set({ autoClose: v }),
+  setLocalTransform: v => set({ localTransform: v })
 })

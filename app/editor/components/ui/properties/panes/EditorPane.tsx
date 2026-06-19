@@ -1,29 +1,16 @@
-import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import { CheckBoxProperty } from '../PaneItem'
-import { useEffect, useState } from 'react'
+import { useEditorStore } from '@/app/editor/state'
 
 export function EditorPane() {
-  const { controlsRef } = useEditorRefs()
-  const [isLocal, setIsLocal] = useState(false)
-
-  useEffect(() => {
-    setIsLocal(controlsRef.current?.space === 'local')
-  }, [setIsLocal, controlsRef])
+  const localTransform = useEditorStore(s => s.localTransform)
+  const setLocalTransform = useEditorStore(s => s.setLocalTransform)
 
   return (
     <>
       <CheckBoxProperty
         label='Local Transforms'
-        checked={isLocal}
-        onClick={checked => {
-          if (checked) {
-            controlsRef.current?.setSpace('local')
-            setIsLocal(checked)
-          } else {
-            controlsRef.current?.setSpace('world')
-            setIsLocal(checked)
-          }
-        }}
+        checked={localTransform}
+        onClick={setLocalTransform}
       />
     </>
   )

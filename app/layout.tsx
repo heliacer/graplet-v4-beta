@@ -7,8 +7,8 @@ import './ui/globals.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Graplet',
-    default: 'Graplet: Create 3D Experiences with Interactive Blocks'
+    template: '%s @ Graplet',
+    default: 'Graplet'
   },
   description:
     'Design interactive 3D scenes using intuitive visual blocks. Graplet combines a block-based editor with real-time rendering to bring your ideas to life — no coding required. Early Access only.'

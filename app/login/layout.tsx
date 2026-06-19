@@ -1,6 +1,11 @@
 import { Suspense } from 'react'
 import { LogoSolid } from '../ui/assets/LogoSolid'
 import { LoginInputSkeleton } from '../ui/components/LoginInputSkeleton'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Login'
+}
 
 export default function LoginLayout({
   children

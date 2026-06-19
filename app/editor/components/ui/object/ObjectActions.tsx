@@ -6,20 +6,25 @@ import { ArrowDownToDot, Hammer } from 'lucide-react'
 
 export function ObjectActions() {
   const selectedItems = useEditorStore(s => s.selectedItems)
+  const updateSnapshot = useEditorStore(s => s.updateSnapshot)
   const { objectsRef } = useEditorRefs()
 
-  const items: DropdownItemProps[] = []
+  if (selectedItems.length < 1) return
 
-  if (selectedItems.length > 0) {
-    items.push({
+  const items: DropdownItemProps[] = [
+    {
       label: 'Center Object',
       Icon: ArrowDownToDot,
       onClick: () => {
         const object = getObject(objectsRef, selectedItems[0])
         object.position.set(0, 0, 0)
+        updateSnapshot(selectedItems[0], prev => ({
+          ...prev,
+          position: [0, 0, 0]
+        }))
       }
-    })
-  }
+    }
+  ]
 
   return (
     <Dropdown

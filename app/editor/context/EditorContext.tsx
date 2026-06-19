@@ -1,7 +1,7 @@
 import React, { createContext, RefObject, useContext, useRef } from 'react'
 import { WorkspaceSvg } from 'blockly'
 import { FuncEnv, VarEnv } from '../engine/ast'
-import { Camera, Object3D, Scene } from 'three'
+import { Object3D, PerspectiveCamera, Scene } from 'three'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
@@ -9,7 +9,7 @@ interface EditorContextType {
   funcEnvRef: RefObject<FuncEnv>
   varEnvRef: RefObject<VarEnv>
   objectsRef: RefObject<Map<string, Object3D>>
-  cameraRef: RefObject<Camera | null>
+  cameraRef: RefObject<PerspectiveCamera | null>
   canvasRef: RefObject<HTMLCanvasElement>
   controlsRef: RefObject<TransformControls | null>
   orbitMapRef: RefObject<Map<number, OrbitControls | null>>
