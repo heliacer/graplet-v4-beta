@@ -1,19 +1,28 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useEditorRefs } from '../context/EditorContext'
 import { getObject, isTransformControlsMode } from '../utils/three'
 import { useEditorStore } from '../state'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
+import { Object3D } from 'three'
+import { ObjectError } from '../types'
 
 export function useTransformControls() {
+  /**
+   * @todo support multiselect
+   * 
+   * -> maybe using three-multi-select
+   */
+
   const { objectsRef, canvasRef, cameraRef, orbitMapRef, controlsRef } =
     useEditorRefs()
+  const objectRef = useRef<null | Object3D>(null)
 
   const isRunning = useEditorStore(s => s.isRunning)
-  const selectedItems = useEditorStore(s => s.selectedItems)
+  const selectedItem = useEditorStore(s => s.selectedItems[0])
   const currentTool = useEditorStore(s => s.currentTool)
-  const objectSnapping = useEditorStore(s => s.objectSnapping)
   const setObjectSnapping = useEditorStore(s => s.setObjectSnapping)
   const updateSnapshot = useEditorStore(s => s.updateSnapshot)
+  const objectSnapping = useEditorStore(s => s.objectSnapping)
 
   useEffect(() => {
     if (!controlsRef.current) return
@@ -23,9 +32,11 @@ export function useTransformControls() {
   }, [objectSnapping, controlsRef])
 
   useEffect(() => {
-    const object =
-      selectedItems.length > 0 ? getObject(objectsRef, selectedItems[0]) : null
+    objectRef.current =
+      selectedItem !== undefined ? getObject(objectsRef, selectedItem) : null
+  }, [selectedItem, objectsRef])
 
+  useEffect(() => {
     if (!cameraRef.current || !canvasRef.current) return
     if (!controlsRef.current) {
       controlsRef.current = new TransformControls(
@@ -46,17 +57,21 @@ export function useTransformControls() {
       }
 
       const onChange = () => {
-        if (object) {
-          updateSnapshot(selectedItems[0], prev => {
-            const { position, rotation, scale } = object
-            return {
-              ...prev,
-              position: [position.x, position.y, position.z],
-              rotation: [rotation.x, rotation.y, rotation.z],
-              scale: [scale.x, scale.y, scale.z]
-            }
-          })
+        const object = objectRef.current
+        if (!object) return
+        const sharedId = object.sharedId
+        if (sharedId === undefined) {
+          throw new ObjectError(object, 'does not have a sharedId')
         }
+        const { position, rotation, scale } = object
+        updateSnapshot(sharedId, prev => {
+          return {
+            ...prev,
+            position: [position.x, position.y, position.z],
+            rotation: [rotation.x, rotation.y, rotation.z],
+            scale: [scale.x, scale.y, scale.z]
+          }
+        })
       }
 
       controlsRef.current.addEventListener(
@@ -69,11 +84,12 @@ export function useTransformControls() {
       scene.add(controlsRef.current.getHelper())
     }
 
-    const shouldAttach =
-      !isRunning && object && isTransformControlsMode(currentTool)
-
-    if (shouldAttach) {
-      controlsRef.current.attach(object)
+    if (
+      !isRunning &&
+      objectRef.current &&
+      isTransformControlsMode(currentTool)
+    ) {
+      controlsRef.current.attach(objectRef.current)
       controlsRef.current.setMode(currentTool)
     } else {
       controlsRef.current.detach()
@@ -90,7 +106,7 @@ export function useTransformControls() {
     canvasRef,
     controlsRef,
     orbitMapRef,
-    selectedItems,
+    selectedItem,
     setObjectSnapping,
     updateSnapshot
   ])

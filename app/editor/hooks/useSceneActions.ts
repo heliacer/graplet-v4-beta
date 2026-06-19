@@ -91,7 +91,7 @@ export function useSceneActions() {
     setSelectedItems([])
     blocklyUI.objectMenu = []
     orbitMapRef.current.clear()
-    controlsRef.current?.dispose()
+    controlsRef.current?.detach()
     controlsRef.current = null
 
     /** @test initialize scene (I have my doubts if this is a good init place) */

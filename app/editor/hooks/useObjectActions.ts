@@ -290,7 +290,15 @@ export function useObjectActions() {
     targetId: string,
     newChildren?: string[]
   ) {
-    const itemParentMap: Record<string, string> = {} // itemId -> parentId
+
+
+    /**
+     * @todo this is shit,
+     * should get the highest parent in the itemIds selection. 
+     * only move itemIds that are in the childIds of that parent 
+     */
+
+    const itemParentMap: Record<string, string> = {}
     for (const itemId of itemIds) {
       const object = getObject(objectsRef, itemId)
       const targetObj = getObject(objectsRef, targetId)
