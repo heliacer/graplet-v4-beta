@@ -86,11 +86,15 @@ export function useObjectActions() {
   ): Object3D {
     const snapshot = snapshots[sharedId]
     const { type, childIds } = snapshot
-    nextSharedId = Object.keys(snapshots).length
 
     const object =
       type === 'Scene' ? getObject(objectsRef, 'scene') : createObject(snapshot)
     object.sharedId = sharedId
+
+    if (Number(sharedId) + 1 > nextSharedId) {
+      nextSharedId = Number(sharedId) + 1
+    }
+
     objectsRef.current.set(sharedId, object)
 
     applyProps(object, snapshot)
@@ -131,6 +135,7 @@ export function useObjectActions() {
     const sharedId =
       config.type === 'Scene' ? 'scene' : (nextSharedId++).toString()
     object.sharedId = sharedId
+    console.log('using sharedId:', sharedId)
 
     const childIds = object.children.map(child => {
       if (child.sharedId === undefined)
@@ -285,26 +290,46 @@ export function useObjectActions() {
     targetId: string,
     newChildren?: string[]
   ) {
-    setSnapshots(prev => ({
-      ...prev,
-      [targetId]: {
-        ...prev[targetId],
-        childIds:
-          newChildren === undefined
-            ? [...prev[targetId].childIds, ...itemIds]
-            : newChildren
-      }
-    }))
-
+    const itemParentMap: Record<string, string> = {} // itemId -> parentId
     for (const itemId of itemIds) {
       const object = getObject(objectsRef, itemId)
       const targetObj = getObject(objectsRef, targetId)
 
       const parent = object.parent
       if (!parent) throw new ParentError(object)
+      const parentId = parent.sharedId
+      if (parentId === undefined) {
+        throw new ObjectError(parent, 'does not have a sharedId')
+      }
+      itemParentMap[itemId] = parentId
       parent.remove(object)
       targetObj.add(object)
     }
+
+    setSnapshots(prev => {
+      const updated = { ...prev }
+
+      for (const [itemId, parentId] of Object.entries(itemParentMap)) {
+        if (parentId === targetId) continue
+        updated[parentId] = {
+          ...updated[parentId],
+          childIds: updated[parentId].childIds.filter(id => id !== itemId)
+        }
+      }
+
+      updated[targetId] = {
+        ...updated[targetId],
+        childIds:
+          newChildren === undefined
+            ? [
+                ...prev[targetId].childIds.filter(id => !itemIds.includes(id)),
+                ...itemIds
+              ]
+            : newChildren
+      }
+
+      return updated
+    })
   }
 
   function unGroupObject(sharedId: string) {
@@ -318,6 +343,7 @@ export function useObjectActions() {
     }
 
     const sobject = objectSnapshots[sharedId]
+
     moveObjects(sobject.childIds, parentId)
     removeObject(sharedId)
 
