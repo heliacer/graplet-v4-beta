@@ -1,7 +1,9 @@
 import {
-  Camera,
+  Object3D,
   OrthographicCamera,
   PerspectiveCamera,
+  Raycaster,
+  Vector2,
   WebGLRenderer
 } from 'three'
 import { useEditorRefs } from '../context/EditorContext'
@@ -9,32 +11,97 @@ import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
 import { useEditorStore } from '../state'
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { getObject } from '../utils/three'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
   const { objectsRef, canvasRef, cameraRef, orbitMapRef } = useEditorRefs()
+  const setHoveredItems = useEditorStore(s => s.setHoveredItems)
   const isRunning = useEditorStore(s => s.isRunning)
+  const treeVersion = useEditorStore(s => s.treeVersion) // invoked when objects get added / removed :D
+
   const rendererRef = useRef<WebGLRenderer | null>(null)
+  const helperRef = useRef<ViewHelper | null>(null)
+  const raycasterRef = useRef(new Raycaster(undefined, undefined, 5, 25))
+  const pointerRef = useRef(new Vector2())
+  const needsRaycastRef = useRef(false)
+  const objectsArrayRef = useRef<Object3D[]>([])
 
   useEffect(() => {
-    if (!cameraRef.current) return
-    const scene = getObject(objectsRef, 'scene')
+    const helper = helperRef.current
+    if (!helper) return
+    helper.visible = !isRunning
+  }, [isRunning])
 
-    const renderer = new WebGLRenderer({
-      canvas: canvasRef.current,
-      antialias: true,
-      alpha: true
-    })
-    renderer.autoClear = false
-    renderer.setClearColor(0x000000, 0)
-    renderer.setPixelRatio(window.devicePixelRatio)
-    rendererRef.current = renderer
+  useEffect(() => {
+    objectsArrayRef.current = Array.from(objectsRef.current.values())
+  }, [objectsRef, treeVersion])
 
-    const helper = new ViewHelper(cameraRef.current, renderer.domElement)
+  useEffect(() => {
+    const camera = cameraRef.current
+    if (!camera) return
+    const canvas = canvasRef.current
 
-    const resize = () => {
-      const { clientWidth: w, clientHeight: h } = canvasRef.current
+    /** WebGLRenderer init */
+    if (!rendererRef.current) {
+      const renderer = new WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true
+      })
+      renderer.autoClear = false
+      renderer.setClearColor(0x000000, 0)
+      renderer.setPixelRatio(window.devicePixelRatio)
+      rendererRef.current = renderer
+
+      const helper = new ViewHelper(camera, renderer.domElement)
+      helperRef.current = helper
+
+      renderer.setAnimationLoop(render)
+      onResize()
+    }
+
+    function render() {
+      const camera = cameraRef.current
+      if (!camera) return
+      const renderer = rendererRef.current
+      if (!renderer) return
+
+      const orbitControls = orbitMapRef.current.get(camera.id)
+      if (orbitControls !== undefined) {
+        orbitControls.update()
+      }
+
+      renderer.clear()
+
+      const helper = helperRef.current
+      if (helper) {
+        helper.render(renderer)
+      }
+
+      const isRunning = useEditorStore.getState().isRunning
+      if (!isRunning && needsRaycastRef.current) {
+        needsRaycastRef.current = false
+        const raycaster = raycasterRef.current
+        raycaster.setFromCamera(pointerRef.current, camera)
+        const objects = objectsArrayRef.current
+        const intersects = raycaster.intersectObjects(objects, false)
+        const hit = intersects[0]
+        const sharedId = hit?.object?.sharedId
+
+        const current = useEditorStore.getState().hoveredItems
+        const next = sharedId === undefined ? [] : [sharedId]
+        const changed = current.length !== next.length || current[0] !== next[0]
+        if (changed) setHoveredItems(next)
+      }
+
+      const scene = getObject(objectsRef, 'scene')
+      renderer.render(scene, camera)
+    }
+
+    function onResize() {
+      const renderer = rendererRef.current
+      if (!renderer) return
+      const { clientWidth: w, clientHeight: h } = canvas
       renderer.setSize(w, h, false)
       const aspect = w / h
 
@@ -56,39 +123,37 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       }
     }
 
-    resize()
+    function onPointerMove(event: MouseEvent) {
+      needsRaycastRef.current = true
+      const rect = canvas.getBoundingClientRect()
 
-    function render(camera: Camera, orbit?: OrbitControls | null) {
-      orbit?.update()
-      renderer.clear()
-      helper.render(renderer)
-      renderer.render(scene, camera)
+      const x = event.clientX - rect.left
+      const y = event.clientY - rect.top
+
+      pointerRef.current.x = (x / rect.width) * 2 - 1
+      pointerRef.current.y = -(y / rect.height) * 2 + 1
     }
 
-    const orbit = orbitMapRef.current.get(cameraRef.current.id)
-    if (isRunning) {
-      helper.visible = false
-      renderer.setAnimationLoop(() => {
-        if (!cameraRef.current) return
-        render(cameraRef.current, orbit)
-      })
-    } else {
-      helper.visible = true
-      renderer.setAnimationLoop(() => {
-        if (!cameraRef.current) return
-        render(cameraRef.current, orbit)
-      })
-    }
+    const resizeListener = panelApi.onDidDimensionsChange(onResize)
+    canvas.addEventListener('mousemove', onPointerMove)
 
-    const resizeListener = panelApi.onDidDimensionsChange(resize)
-
-    function cleanup() {
-      renderer.setAnimationLoop(null)
-      renderer.dispose()
+    return () => {
+      rendererRef.current?.setAnimationLoop(null)
+      rendererRef.current?.dispose()
+      helperRef.current?.dispose()
       resizeListener.dispose()
-      rendererRef.current = null
-    }
+      canvas.removeEventListener('mousemove', onPointerMove)
 
-    return cleanup
-  }, [canvasRef, objectsRef, cameraRef, panelApi, orbitMapRef, isRunning])
+      rendererRef.current = null
+      helperRef.current = null
+    }
+  }, [
+    panelApi,
+    cameraRef,
+    canvasRef,
+    objectsRef,
+    orbitMapRef,
+    rendererRef,
+    setHoveredItems
+  ])
 }

@@ -1,4 +1,4 @@
-import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
+import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
 import { SObject3D, SObjectSnapshot, Updater } from '../../types'
 import { serializeObject } from '../../utils/sobject'
@@ -6,6 +6,7 @@ import { Scene } from 'three'
 
 type State = {
   selectedItems: string[]
+  hoveredItems: string[]
   objectSnapshots: Record<string, SObjectSnapshot>
   objectSnapping: {
     translate: number
@@ -18,6 +19,7 @@ type State = {
 
 type Actions = {
   setSelectedItems: (items: Updater<string[]>) => void
+  setHoveredItems: (items: Updater<string[]>) => void
   setSnapshots: (snapshots: Updater<Record<string, SObjectSnapshot>>) => void
   updateSnapshot: (
     sharedId: string,
@@ -32,6 +34,7 @@ export type ObjectSlice = State & Actions
 
 export const objectInitialState: State = {
   selectedItems: [],
+  hoveredItems: [],
   objectSnapshots: {
     scene: {
       ...serializeObject(new Scene()),
@@ -55,6 +58,13 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
     set(state => ({
       selectedItems:
         typeof items === 'function' ? items(state.selectedItems) : items
+    }))
+  },
+
+  setHoveredItems: items => {
+    set(state => ({
+      hoveredItems:
+        typeof items === 'function' ? items(state.hoveredItems) : items
     }))
   },
 

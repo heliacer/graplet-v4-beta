@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useEditorRefs } from '../context/EditorContext'
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
+import { TransformControls } from 'three/addons/controls/TransformControls.js'
 import { useEditorStore } from '../state'
 import { getObject } from '../utils/three'
 import { Object3D } from 'three'

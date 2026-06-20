@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { MOUSE } from 'three'
 import { ToolItem } from '@/app/editor/types'
-import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
+import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
 import clsx from 'clsx'
 
 interface ToolButtonProps {

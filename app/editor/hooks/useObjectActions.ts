@@ -22,7 +22,7 @@ import {
   serializeObject,
   serializeObjectConfig
 } from '../utils/sobject'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { getObject } from '../utils/three'
 import { useEditorStore } from '../state'
 

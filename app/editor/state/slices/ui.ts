@@ -6,7 +6,7 @@ import {
   Updater
 } from '../../types'
 import { DockviewApi } from 'dockview-react'
-import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
+import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
 
 type State = {
   isRunning: boolean

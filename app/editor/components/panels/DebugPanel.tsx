@@ -2,9 +2,11 @@ import { useEditorStore } from '../../state'
 
 export default function DebugPanel() {
   const objectSnapshots = useEditorStore(s => s.objectSnapshots)
+  const hoveredItems = useEditorStore(s => s.hoveredItems)
 
   return (
     <div className='text-sm h-full overflow-auto p-2'>
+      hovered on: {hoveredItems}
       <p className='mb-1'>Snapshot Registry:</p>
       {Object.entries(objectSnapshots).map(([id, snapshot]) => (
         <div key={id} className='flex gap-4'>

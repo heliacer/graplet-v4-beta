@@ -9,7 +9,6 @@ import { useEditorStore } from '../../state'
 import { ObjectControls } from '../ui/controls/ObjectControls'
 import { useKeybind } from '../../context/KeybindsContext'
 import { Vector3 } from 'three'
-import { useRaycaster } from '../../hooks/useRaycaster'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
   const { workspaceRef, cameraRef, canvasRef, orbitMapRef } = useEditorRefs()
@@ -20,7 +19,6 @@ export default function ScenePanel(props: IDockviewPanelProps) {
 
   useProjectLoader()
   useRenderer(props.api)
-  useRaycaster()
   useTransformControls()
 
   const snapCamera = (direction: Vector3) => {

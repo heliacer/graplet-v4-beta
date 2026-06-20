@@ -1,6 +1,6 @@
 import { Object3D, Scene } from 'three'
 import { NotFoundError, ParentError } from '../types'
-import { TransformControlsMode } from 'three/examples/jsm/controls/TransformControls.js'
+import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
 import { RefObject } from 'react'
 
 /**
