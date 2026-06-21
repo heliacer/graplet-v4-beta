@@ -15,9 +15,9 @@ import { getObject } from '../utils/three'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
   const { objectsRef, canvasRef, cameraRef, orbitMapRef } = useEditorRefs()
-  const setHoveredItems = useEditorStore(s => s.setHoveredItems)
+  const setHoveredItem = useEditorStore(s => s.setHoveredItem)
   const isRunning = useEditorStore(s => s.isRunning)
-  const treeVersion = useEditorStore(s => s.treeVersion) // invoked when objects get added / removed :D
+  const treeVersion = useEditorStore(s => s.treeVersion)
 
   const rendererRef = useRef<WebGLRenderer | null>(null)
   const helperRef = useRef<ViewHelper | null>(null)
@@ -87,11 +87,11 @@ export function useRenderer(panelApi: DockviewPanelApi) {
         const intersects = raycaster.intersectObjects(objects, false)
         const hit = intersects[0]
         const sharedId = hit?.object?.sharedId
-
-        const current = useEditorStore.getState().hoveredItems
-        const next = sharedId === undefined ? [] : [sharedId]
-        const changed = current.length !== next.length || current[0] !== next[0]
-        if (changed) setHoveredItems(next)
+        const current = useEditorStore.getState().hoveredItem
+        const selectedItems = useEditorStore.getState().selectedItems
+        const next = sharedId === undefined ? null : sharedId
+        const isSelected = next && selectedItems.includes(next)
+        if (current !== next && !isSelected) setHoveredItem(next)
       }
 
       const scene = getObject(objectsRef, 'scene')
@@ -154,6 +154,6 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     objectsRef,
     orbitMapRef,
     rendererRef,
-    setHoveredItems
+    setHoveredItem
   ])
 }

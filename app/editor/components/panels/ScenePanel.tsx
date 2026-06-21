@@ -9,16 +9,19 @@ import { useEditorStore } from '../../state'
 import { ObjectControls } from '../ui/controls/ObjectControls'
 import { useKeybind } from '../../context/KeybindsContext'
 import { Vector3 } from 'three'
+import { useSelection } from '../../hooks/useSelection'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
   const { workspaceRef, cameraRef, canvasRef, orbitMapRef } = useEditorRefs()
   const currentTool = useEditorStore(s => s.currentTool)
   const autoClose = useEditorStore(s => s.autoClose)
   const setAutoClose = useEditorStore(s => s.setAutoClose)
+  const setCurrentTool = useEditorStore(s => s.setCurrentTool)
   const [rightDown, setRightDown] = useState(false)
 
   useProjectLoader()
   useRenderer(props.api)
+  useSelection()
   useTransformControls()
 
   const snapCamera = (direction: Vector3) => {
@@ -48,6 +51,11 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useKeybind({ code: 'Numpad3', modifiers: [] }, () =>
     snapCamera(new Vector3(1, 0, 0))
   )
+  useKeybind({ key: 't', modifiers: [] }, () => setCurrentTool('translate'))
+  useKeybind({ key: 'r', modifiers: [] }, () => setCurrentTool('rotate'))
+  useKeybind({ key: 's', modifiers: [] }, () => setCurrentTool('scale'))
+  useKeybind({ key: 'm', modifiers: [] }, () => setCurrentTool('move'))
+  useKeybind({ key: 'p', modifiers: [] }, () => setCurrentTool('path'))
 
   useKeybind(
     {
