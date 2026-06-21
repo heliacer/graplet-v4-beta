@@ -37,6 +37,27 @@ export default function KeybindsPanel() {
       </p>
       <br />
       <p>
+        <code>T</code>
+        <label className='ml-5'>Translate Tool</label>
+      </p>
+      <p>
+        <code>R</code>
+        <label className='ml-5'>Rotate Tool</label>
+      </p>
+      <p>
+        <code>S</code>
+        <label className='ml-5'>Scale Tool</label>
+      </p>
+      <p>
+        <code>M</code>
+        <label className='ml-5'>Move Tool</label>
+      </p>
+      <p>
+        <code>P</code>
+        <label className='ml-5'>Path Tool</label>
+      </p>
+      <br/>
+      <p>
         <code>Shiftclick</code>
         <span className='italic ml-2'>on tab header</span>
         <label className='ml-5'>Float panel</label>
