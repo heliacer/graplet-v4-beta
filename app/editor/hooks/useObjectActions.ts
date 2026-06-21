@@ -1,12 +1,14 @@
 import { useEditorRefs } from '../context/EditorContext'
 import {
+  Box3,
   Camera,
   CameraHelper,
   DirectionalLight,
   DirectionalLightHelper,
   MOUSE,
   Object3D,
-  PerspectiveCamera
+  PerspectiveCamera,
+  Vector3
 } from 'three'
 import { blocklyUI } from '../blockly/blocks'
 import {
@@ -235,9 +237,10 @@ export function useObjectActions() {
       /** If it's the active camera, set another one active instead */
       const scene = getObject(objectsRef, 'scene')
       if (object === cameraRef.current) {
-        const nextCamera = scene.getObjectByProperty('isPerspectiveCamera', true) as
-          | PerspectiveCamera
-          | undefined
+        const nextCamera = scene.getObjectByProperty(
+          'isPerspectiveCamera',
+          true
+        ) as PerspectiveCamera | undefined
         cameraRef.current = nextCamera || null
       }
       /** If the camera has orbit controls, dispose of them */
@@ -267,11 +270,19 @@ export function useObjectActions() {
   }
 
   function groupObjects(sharedIds: string[]) {
-    /** @todo */
-
     if (sharedIds.length < 1) return
-    // findTopLevelObject(sharedIds, snapshots) @todo
+
+    const objects = sharedIds.map(id => getObject(objectsRef, id))
+
+    const box = new Box3()
+    for (const o of objects) box.expandByObject(o)
+    const center = new Vector3()
+    box.getCenter(center)
+
     const target = addObject({ type: 'Group', name: 'Group' })
+    target.position.copy(center)
+    target.updateMatrixWorld(true)
+
     if (target.sharedId === undefined) {
       throw new ObjectError(target, 'does not have a sharedId')
     }
@@ -294,11 +305,11 @@ export function useObjectActions() {
      * should get the highest parent in the itemIds selection.
      * only move itemIds that are in the childIds of that parent
      */
-
     const itemParentMap: Record<string, string> = {}
+    const targetObj = getObject(objectsRef, targetId)
+    targetObj.updateMatrixWorld(true)
     for (const itemId of itemIds) {
       const object = getObject(objectsRef, itemId)
-      const targetObj = getObject(objectsRef, targetId)
 
       const parent = object.parent
       if (!parent) throw new ParentError(object)
@@ -307,8 +318,7 @@ export function useObjectActions() {
         throw new ObjectError(parent, 'does not have a sharedId')
       }
       itemParentMap[itemId] = parentId
-      parent.remove(object)
-      targetObj.add(object)
+      targetObj.attach(object)
     }
 
     setSnapshots(prev => {

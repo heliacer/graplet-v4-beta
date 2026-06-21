@@ -9,7 +9,7 @@ import { useEditorStore } from '../../state'
 import { ObjectControls } from '../ui/controls/ObjectControls'
 import { useKeybind } from '../../context/KeybindsContext'
 import { Vector3 } from 'three'
-import { useSelection } from '../../hooks/useSelection'
+import { useOutline } from '../../hooks/useOutline'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
   const { workspaceRef, cameraRef, canvasRef, orbitMapRef } = useEditorRefs()
@@ -21,7 +21,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
 
   useProjectLoader()
   useRenderer(props.api)
-  useSelection()
+  useOutline()
   useTransformControls()
 
   const snapCamera = (direction: Vector3) => {

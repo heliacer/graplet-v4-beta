@@ -157,7 +157,7 @@ export function TreeItem({ tree, item }: ItemProps) {
         }}
         className={clsx(
           item.isSelected() ? 'bg-teal/20' : isHovered && 'bg-ui-750',
-          'border focus:border-teal/50 border-transparent w-full rounded-l-md px-1'
+          'border focus:border-teal/50 border-transparent w-full rounded-l-md px-1 focus:outline-none'
         )}
       >
         <ItemContent item={item} />

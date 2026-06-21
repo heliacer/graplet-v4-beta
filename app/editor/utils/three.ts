@@ -62,3 +62,23 @@ export function getObject(
   if (object === undefined) throw new NotFoundError(sharedId)
   return object
 }
+
+/**
+ * Given a raycast hit, resolves to the topmost selectable ancestor
+ * (e.g. a Group), since groups have no geometry to be hit directly.
+ *
+ * @todo once "enter group" (double-click) exists, this needs to stop
+ * climbing once it reaches the currently "entered" group instead of
+ * always bubbling all the way to the top.
+ */
+export function resolveSelectionTarget(object: Object3D): string | undefined {
+  let current = object
+  while (
+    current.parent &&
+    current.parent.sharedId !== undefined &&
+    current.parent.sharedId !== 'scene'
+  ) {
+    current = current.parent
+  }
+  return current.sharedId
+}
