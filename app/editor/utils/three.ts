@@ -64,21 +64,18 @@ export function getObject(
 }
 
 /**
- * Given a raycast hit, resolves to the topmost selectable ancestor
- * (e.g. a Group), since groups have no geometry to be hit directly.
- *
- * @todo once "enter group" (double-click) exists, this needs to stop
- * climbing once it reaches the currently "entered" group instead of
- * always bubbling all the way to the top.
+ * Walks up from a raycast hit to find the direct child
+ * of the given level object, returning its sharedId.
+ * Returns undefined if the object is not a descendant of level.
  */
-export function resolveSelectionTarget(object: Object3D): string | undefined {
+export function resolveToLevel(
+  object: Object3D,
+  level: Object3D
+): string | undefined {
   let current = object
-  while (
-    current.parent &&
-    current.parent.sharedId !== undefined &&
-    current.parent.sharedId !== 'scene'
-  ) {
+  while (current.parent !== null) {
+    if (current.parent === level) return current.sharedId
     current = current.parent
   }
-  return current.sharedId
+  return undefined
 }

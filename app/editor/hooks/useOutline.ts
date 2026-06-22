@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useEditorStore } from '../state'
 import { useEditorRefs } from '../context/EditorContext'
-import { getObject } from '../utils/three'
+import { getObject, resolveToLevel } from '../utils/three'
 import {
   Box3,
   BoxGeometry,
@@ -15,13 +15,19 @@ import {
   Vector3
 } from 'three'
 import { SelectionBox } from 'three/examples/jsm/interactive/SelectionBox.js'
+import { TransformControls } from 'three/addons/controls/TransformControls.js'
 
-type SelectableMesh = Mesh & { sharedId?: string }
+export function collectMeshes(object: Object3D): Mesh[] {
+  if (object instanceof Mesh) return [object]
+  const meshes: Mesh[] = []
+  object.traverse(child => {
+    if (child instanceof Mesh) meshes.push(child)
+  })
+  return meshes
+}
 
 function buildOutlineGeometry(meshes: Mesh[]): BufferGeometry {
-  if (meshes.length === 1) {
-    return new EdgesGeometry(meshes[0].geometry, 1)
-  }
+  if (meshes.length === 1) return new EdgesGeometry(meshes[0].geometry, 1)
 
   const box = new Box3()
   for (const m of meshes) box.expandByObject(m)
@@ -36,18 +42,10 @@ function buildOutlineGeometry(meshes: Mesh[]): BufferGeometry {
   return geo
 }
 
-function collectMeshes(object: Object3D): Mesh[] {
-  if (object instanceof Mesh) return [object]
-  const meshes: Mesh[] = []
-  object.traverse(child => {
-    if (child instanceof Mesh) meshes.push(child)
-  })
-  return meshes
-}
-
 function applyOutline(
   outline: LineSegments<BufferGeometry, LineBasicMaterial>,
-  meshes: Mesh[]
+  meshes: Mesh[],
+  color: number
 ) {
   if (meshes.length === 0) {
     outline.visible = false
@@ -55,7 +53,7 @@ function applyOutline(
   }
 
   meshes.forEach(m => m.updateWorldMatrix(true, false))
-
+  outline.material.color.set(color)
   outline.geometry.dispose()
   outline.geometry = buildOutlineGeometry(meshes)
 
@@ -68,6 +66,45 @@ function applyOutline(
   outline.visible = true
 }
 
+function createOutline(color: number) {
+  const outline = new LineSegments(
+    new EdgesGeometry(),
+    new LineBasicMaterial({ color, depthTest: false })
+  )
+  outline.renderOrder = 999
+  outline.visible = false
+  outline.matrixAutoUpdate = false
+  return outline
+}
+
+function createBoxHelper() {
+  const el = document.createElement('div')
+  el.style.cssText = `
+    position: fixed;
+    border: 1px dashed #00ff00;
+    pointer-events: none;
+    display: none;
+    z-index: 9999;
+  `
+  document.body.appendChild(el)
+
+  return {
+    update(x1: number, y1: number, x2: number, y2: number) {
+      el.style.left = `${Math.min(x1, x2)}px`
+      el.style.top = `${Math.min(y1, y2)}px`
+      el.style.width = `${Math.abs(x2 - x1)}px`
+      el.style.height = `${Math.abs(y2 - y1)}px`
+      el.style.display = 'block'
+    },
+    hide() {
+      el.style.display = 'none'
+    },
+    dispose() {
+      el.remove()
+    }
+  }
+}
+
 function toNDC(clientX: number, clientY: number, rect: DOMRect) {
   return {
     x: ((clientX - rect.left) / rect.width) * 2 - 1,
@@ -78,48 +115,80 @@ function toNDC(clientX: number, clientY: number, rect: DOMRect) {
 export function useOutline() {
   const { objectsRef, canvasRef, cameraRef, controlsRef } = useEditorRefs()
   const hoveredItem = useEditorStore(s => s.hoveredItem)
+  const selectedItems = useEditorStore(s => s.selectedItems)
+  const activeLevelId = useEditorStore(s => s.activeLevelId)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setHoveredItem = useEditorStore(s => s.setHoveredItem)
 
-  const outlineRef = useRef<LineSegments<
+  /** Hover and box-select preview (cyan). Hidden when items are selected. */
+  const hoverOutlineRef = useRef<LineSegments<
     BufferGeometry,
     LineBasicMaterial
   > | null>(null)
 
+  /** Permanent selection (yellow). Stays during transform drag. */
+  const selectionOutlineRef = useRef<LineSegments<
+    BufferGeometry,
+    LineBasicMaterial
+  > | null>(null)
+
+  /**
+   * We can't attach the objectChange listener at effect setup time since
+   * TransformControls is lazily created in useTransformControls. We store
+   * the controls instance we've already attached to, for cleanup.
+   */
+  const attachedControlsRef = useRef<TransformControls | null>(null)
+
   const isDraggingRef = useRef(false)
   const dragCandidateRef = useRef(false)
   const dragStartRef = useRef({ x: 0, y: 0 })
-  const lastBoxHitsRef = useRef<SelectableMesh[]>([])
+  const lastBoxHitsRef = useRef<string[]>([])
 
   useEffect(() => {
-    const outline = new LineSegments(
-      new EdgesGeometry(),
-      new LineBasicMaterial({
-        color: 0x22bfa4,
-        depthTest: false
-      })
-    )
-    outline.renderOrder = 999
-    outline.visible = false
-    outline.matrixAutoUpdate = false
-
-    const scene = getObject(objectsRef, 'scene')
-    scene.add(outline)
-    outlineRef.current = outline
-
+    const scene = getObject(objectsRef, 'scene') as Scene
     const canvas = canvasRef.current
 
+    const hoverOutline = createOutline(0x0000ff)
+    const selectionOutline = createOutline(0xffff00)
+    scene.add(hoverOutline)
+    scene.add(selectionOutline)
+    hoverOutlineRef.current = hoverOutline
+    selectionOutlineRef.current = selectionOutline
+
     let selectionBox: SelectionBox | null = null
+    const boxHelper = createBoxHelper()
+
+    function updateSelectionOutline() {
+      const outline = selectionOutlineRef.current
+      if (!outline) return
+      const ids = useEditorStore.getState().selectedItems
+      const meshes = ids.flatMap(id => collectMeshes(getObject(objectsRef, id)))
+      applyOutline(outline, meshes, 0xffff00)
+    }
+
+    function ensureControlsListener() {
+      const controls = controlsRef.current
+      if (attachedControlsRef.current || !controls) return
+      controls.addEventListener('objectChange', updateSelectionOutline)
+      attachedControlsRef.current = controls
+    }
 
     function onPointerDown(event: MouseEvent) {
-      const currentTool = useEditorStore.getState().currentTool
-      if (!['translate', 'rotate', 'scale'].includes(currentTool)) return
+      ensureControlsListener()
+
       if (event.button === 2) return
       if (controlsRef.current?.axis) return
 
       const hoveredItem = useEditorStore.getState().hoveredItem
       if (hoveredItem) {
-        setSelectedItems([hoveredItem])
+        if (event.shiftKey) {
+          const current = useEditorStore.getState().selectedItems
+          setSelectedItems(
+            current.includes(hoveredItem) ? current : [...current, hoveredItem]
+          )
+        } else {
+          setSelectedItems([hoveredItem])
+        }
         setHoveredItem(null)
         return
       }
@@ -127,6 +196,7 @@ export function useOutline() {
       dragCandidateRef.current = true
       dragStartRef.current = { x: event.clientX, y: event.clientY }
     }
+
     function onPointerMove(event: MouseEvent) {
       if (!dragCandidateRef.current) return
 
@@ -140,7 +210,7 @@ export function useOutline() {
       const camera = cameraRef.current
       if (!camera) return
 
-      if (!selectionBox) selectionBox = new SelectionBox(camera, scene as Scene)
+      if (!selectionBox) selectionBox = new SelectionBox(camera, scene)
       selectionBox.camera = camera
 
       const rect = canvas.getBoundingClientRect()
@@ -150,42 +220,77 @@ export function useOutline() {
       selectionBox.startPoint.set(start.x, start.y, 0.5)
       selectionBox.endPoint.set(end.x, end.y, 0.5)
 
-      const hits = selectionBox
-        .select()
-        .filter((o): o is SelectableMesh => o instanceof Mesh && !!o.sharedId)
+      const level = getObject(
+        objectsRef,
+        useEditorStore.getState().activeLevelId
+      )
 
-      lastBoxHitsRef.current = hits
-      const outline = outlineRef.current
-      if (outline) applyOutline(outline, hits)
+      /** Resolve each hit to its direct-child-of-level sharedId, dedup.*/
+      const ids = [
+        ...new Set(
+          selectionBox
+            .select()
+            .map(o => resolveToLevel(o, level))
+            .filter((id): id is string => id !== undefined)
+        )
+      ]
+
+      lastBoxHitsRef.current = ids
+
+      const meshes = ids.flatMap(id => collectMeshes(getObject(objectsRef, id)))
+      applyOutline(hoverOutline, meshes, 0x0000ff)
+      selectionOutline.visible = false
+
+      boxHelper.update(
+        dragStartRef.current.x,
+        dragStartRef.current.y,
+        event.clientX,
+        event.clientY
+      )
     }
 
-    function onPointerUp() {
+    function onPointerUp(event: MouseEvent) {
       if (isDraggingRef.current) {
-        const ids = lastBoxHitsRef.current.map(m => m.sharedId!)
-        setSelectedItems(ids)
-      } else if (dragCandidateRef.current) {
+        const ids = lastBoxHitsRef.current
+        if (event.shiftKey) {
+          const current = useEditorStore.getState().selectedItems
+          setSelectedItems([...new Set([...current, ...ids])])
+        } else {
+          setSelectedItems(ids)
+        }
+        hoverOutline.visible = false
+      } else if (dragCandidateRef.current && !event.shiftKey) {
         setSelectedItems([])
       }
 
       isDraggingRef.current = false
       dragCandidateRef.current = false
       lastBoxHitsRef.current = []
-
-      const outline = outlineRef.current
-      if (outline) outline.visible = false
+      boxHelper.hide()
     }
+
     canvas.addEventListener('pointerdown', onPointerDown)
     canvas.addEventListener('pointermove', onPointerMove)
     window.addEventListener('pointerup', onPointerUp)
 
     return () => {
-      scene.remove(outline)
-      outline.geometry.dispose()
-      outline.material.dispose()
-      outlineRef.current = null
+      scene.remove(hoverOutline)
+      scene.remove(selectionOutline)
+      hoverOutline.geometry.dispose()
+      hoverOutline.material.dispose()
+      selectionOutline.geometry.dispose()
+      selectionOutline.material.dispose()
+      hoverOutlineRef.current = null
+      selectionOutlineRef.current = null
+      attachedControlsRef.current?.removeEventListener(
+        'objectChange',
+        updateSelectionOutline
+      )
+      attachedControlsRef.current = null
       canvas.removeEventListener('pointerdown', onPointerDown)
       canvas.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
+      boxHelper.dispose()
     }
   }, [
     canvasRef,
@@ -196,22 +301,30 @@ export function useOutline() {
     controlsRef
   ])
 
+  /** Hover outline: only when nothing is selected and not mid-drag */
   useEffect(() => {
-    const outline = outlineRef.current
-    if (!outline || isDraggingRef.current) return
+    const outline = hoverOutlineRef.current
+    if (!outline) return
 
-    if (!hoveredItem) {
+    if (selectedItems.length > 0 || isDraggingRef.current || !hoveredItem) {
       outline.visible = false
       return
     }
 
-    const target = getObject(objectsRef, hoveredItem)
-    const meshes = collectMeshes(target)
+    const meshes = collectMeshes(getObject(objectsRef, hoveredItem))
+    applyOutline(outline, meshes, 0x0000ff)
+  }, [hoveredItem, selectedItems, objectsRef])
 
-    if (meshes.length === 0) {
-      outline.visible = false
-      return
-    }
-    applyOutline(outline, meshes)
-  }, [hoveredItem, objectsRef])
+  /**
+   * Selection outline: redraws on selection change.
+   * Transform drag updates go through the objectChange listener set up in the effect above.
+   */
+  useEffect(() => {
+    const outline = selectionOutlineRef.current
+    if (!outline) return
+    const meshes = selectedItems.flatMap(id =>
+      collectMeshes(getObject(objectsRef, id))
+    )
+    applyOutline(outline, meshes, 0xffff00)
+  }, [selectedItems, objectsRef, activeLevelId])
 }

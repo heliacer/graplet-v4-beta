@@ -1,4 +1,5 @@
 import {
+  Mesh,
   Object3D,
   OrthographicCamera,
   PerspectiveCamera,
@@ -11,7 +12,7 @@ import { useEffect, useRef } from 'react'
 import { DockviewPanelApi } from 'dockview-react'
 import { useEditorStore } from '../state'
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
-import { getObject, resolveSelectionTarget } from '../utils/three'
+import { getObject } from '../utils/three'
 
 export function useRenderer(panelApi: DockviewPanelApi) {
   const { objectsRef, canvasRef, cameraRef, orbitMapRef, controlsRef } =
@@ -19,13 +20,21 @@ export function useRenderer(panelApi: DockviewPanelApi) {
   const setHoveredItem = useEditorStore(s => s.setHoveredItem)
   const isRunning = useEditorStore(s => s.isRunning)
   const treeVersion = useEditorStore(s => s.treeVersion)
+  const activeLevelId = useEditorStore(s => s.activeLevelId)
 
   const rendererRef = useRef<WebGLRenderer | null>(null)
   const helperRef = useRef<ViewHelper | null>(null)
   const raycasterRef = useRef(new Raycaster(undefined, undefined, 5, 200))
   const pointerRef = useRef(new Vector2())
   const needsRaycastRef = useRef(false)
-  const objectsArrayRef = useRef<Object3D[]>([])
+
+  /**
+   * Flat array of raycastable meshes at the current selection level.
+   * Each mesh maps back to a direct child's sharedId via raycastMapRef.
+   * Rebuilt whenever the tree or active level changes.
+   */
+  const raycastTargetsRef = useRef<Object3D[]>([])
+  const raycastMapRef = useRef<Map<string, string>>(new Map())
 
   useEffect(() => {
     const helper = helperRef.current
@@ -34,17 +43,36 @@ export function useRenderer(panelApi: DockviewPanelApi) {
   }, [isRunning])
 
   useEffect(() => {
-    objectsArrayRef.current = Array.from(objectsRef.current.values())
-  }, [objectsRef, treeVersion])
+    const level = objectsRef.current.get(activeLevelId)
+    if (!level) return
+
+    const targets: Object3D[] = []
+    const map = new Map<string, string>()
+
+    for (const child of level.children) {
+      const sharedId = child.sharedId
+      if (sharedId === undefined) continue
+
+      /**
+       * Traverse to collect all mesh descendants of this child
+       * Cameras, lights, groups, all resolve to the child's sharedId
+       */
+      child.traverse(o => {
+        if (o instanceof Mesh) {
+          targets.push(o)
+          map.set(o.uuid, sharedId)
+        }
+      })
+    }
+
+    raycastTargetsRef.current = targets
+    raycastMapRef.current = map
+  }, [objectsRef, treeVersion, activeLevelId])
 
   useEffect(() => {
     const canvas = canvasRef.current
 
-    const renderer = new WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true
-    })
+    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
     renderer.autoClear = false
     renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(window.devicePixelRatio)
@@ -66,27 +94,29 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       renderer.clear()
       helperRef.current.render(renderer)
 
-      const isRunning = useEditorStore.getState().isRunning
-      const currentTool = useEditorStore.getState().currentTool
+      const { isRunning, hoveredItem, selectedItems } =
+        useEditorStore.getState()
       const axisActive = !!controlsRef.current?.axis
 
-      if (['translate', 'rotate', 'scale'].includes(currentTool)) {
-        if (axisActive) {
-          if (useEditorStore.getState().hoveredItem !== null)
-            setHoveredItem(null)
-        } else if (!isRunning && needsRaycastRef.current) {
-          needsRaycastRef.current = false
-          const raycaster = raycasterRef.current
-          raycaster.setFromCamera(pointerRef.current, camera)
-          const objects = objectsArrayRef.current
-          const intersects = raycaster.intersectObjects(objects, false)
-          const hit = intersects[0]
-          const sharedId = hit ? resolveSelectionTarget(hit.object) : undefined
-          const current = useEditorStore.getState().hoveredItem
-          const selectedItems = useEditorStore.getState().selectedItems
-          const next = sharedId === undefined ? null : sharedId
-          const isSelected = next && selectedItems.includes(next)
-          if (current !== next && !isSelected) setHoveredItem(next)
+      if (axisActive) {
+        if (hoveredItem !== null) setHoveredItem(null)
+      } else if (!isRunning && needsRaycastRef.current) {
+        needsRaycastRef.current = false
+        const raycaster = raycasterRef.current
+        raycaster.setFromCamera(pointerRef.current, camera)
+        const intersects = raycaster.intersectObjects(
+          raycastTargetsRef.current,
+          false
+        )
+        const hit = intersects[0]
+        const next = hit
+          ? (raycastMapRef.current.get(hit.object.uuid) ?? null)
+          : null
+        if (
+          next !== hoveredItem &&
+          (next === null || !selectedItems.includes(next))
+        ) {
+          setHoveredItem(next)
         }
       }
 
@@ -121,12 +151,8 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     function onPointerMove(event: MouseEvent) {
       needsRaycastRef.current = true
       const rect = canvas.getBoundingClientRect()
-
-      const x = event.clientX - rect.left
-      const y = event.clientY - rect.top
-
-      pointerRef.current.x = (x / rect.width) * 2 - 1
-      pointerRef.current.y = -(y / rect.height) * 2 + 1
+      pointerRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+      pointerRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
     }
 
     renderer.setAnimationLoop(render)
@@ -141,7 +167,6 @@ export function useRenderer(panelApi: DockviewPanelApi) {
       helperRef.current?.dispose()
       resizeListener.dispose()
       canvas.removeEventListener('mousemove', onPointerMove)
-
       rendererRef.current = null
       helperRef.current = null
     }

@@ -58,6 +58,11 @@ export default function KeybindsPanel() {
       </p>
       <br/>
       <p>
+        <code>Del</code>
+        <label className='ml-5'>Delete Object</label>
+      </p>
+      <br/>
+      <p>
         <code>Shiftclick</code>
         <span className='italic ml-2'>on tab header</span>
         <label className='ml-5'>Float panel</label>

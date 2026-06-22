@@ -32,7 +32,7 @@ const panelComponents = {
 export function GrapletDockview() {
   const dvApi = useEditorStore(s => s.dvApi)
   const selectedItems = useEditorStore(s => s.selectedItems)
-  const { pasteObjects, copyObjects } = useObjectActions()
+  const { pasteObjects, copyObjects, removeObject } = useObjectActions()
   const setDvApi = useEditorStore(s => s.setDvApi)
 
   /**
@@ -46,8 +46,29 @@ export function GrapletDockview() {
     },
     () => {
       if (!dvApi || !dvApi.activePanel) return
-      if (dvApi.activePanel.id === 'explorer' && selectedItems.length > 0) {
+      if (
+        (dvApi.activePanel.id === 'explorer' ||
+          dvApi.activePanel.id === 'scene') &&
+        selectedItems.length > 0
+      ) {
         copyObjects(selectedItems)
+      }
+    }
+  )
+  useKeybind(
+    {
+      key: 'Delete'
+    },
+    () => {
+      if (!dvApi || !dvApi.activePanel) return
+      if (
+        (dvApi.activePanel.id === 'explorer' ||
+          dvApi.activePanel.id === 'scene') &&
+        selectedItems.length > 0
+      ) {
+        for (const sharedId of selectedItems) {
+          removeObject(sharedId)
+        }
       }
     }
   )
@@ -58,7 +79,11 @@ export function GrapletDockview() {
     },
     () => {
       if (!dvApi || !dvApi.activePanel) return
-      if (dvApi.activePanel.id === 'explorer') pasteObjects()
+      if (
+        dvApi.activePanel.id === 'explorer' ||
+        dvApi.activePanel.id === 'scene'
+      )
+        pasteObjects()
     }
   )
   useKeybind(

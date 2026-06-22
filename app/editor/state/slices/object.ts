@@ -7,6 +7,7 @@ import { Scene } from 'three'
 type State = {
   selectedItems: string[]
   hoveredItem: string | null
+  activeLevelId: string // default: 'scene'
   objectSnapshots: Record<string, SObjectSnapshot>
   objectSnapping: {
     translate: number
@@ -20,6 +21,7 @@ type State = {
 type Actions = {
   setSelectedItems: (items: Updater<string[]>) => void
   setHoveredItem: (items: Updater<string | null>) => void
+  setActiveLevelId: (sharedId: Updater<string>) => void
   setSnapshots: (snapshots: Updater<Record<string, SObjectSnapshot>>) => void
   updateSnapshot: (
     sharedId: string,
@@ -35,6 +37,7 @@ export type ObjectSlice = State & Actions
 export const objectInitialState: State = {
   selectedItems: [],
   hoveredItem: null,
+  activeLevelId: 'scene',
   objectSnapshots: {
     scene: {
       ...serializeObject(new Scene()),
@@ -65,6 +68,13 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
     set(state => ({
       hoveredItem:
         typeof items === 'function' ? items(state.hoveredItem) : items
+    }))
+  },
+
+  setActiveLevelId: items => {
+    set(state => ({
+      activeLevelId:
+        typeof items === 'function' ? items(state.activeLevelId) : items
     }))
   },
 

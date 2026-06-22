@@ -43,28 +43,33 @@ export function useObjectActions() {
    * @private
    */
   function applyHelpers(object: Object3D) {
+    const sharedId = object.sharedId
+    if (sharedId === undefined)
+      throw new ObjectError(object, 'does not have a sharedId')
+
     const scene = getObject(objectsRef, 'scene')
+
     if (object instanceof Camera) {
       const helper = new CameraHelper(object)
       helper.name = 'CameraHelper'
+      helper.sharedId = sharedId
       if (
         object instanceof PerspectiveCamera &&
         orbitMapRef.current.size === 0
       ) {
         cameraRef.current = object
         const controls = new OrbitControls(object, canvasRef.current)
-        controls.mouseButtons = {
-          MIDDLE: MOUSE.PAN,
-          RIGHT: MOUSE.ROTATE
-        }
+        controls.mouseButtons = { MIDDLE: MOUSE.PAN, RIGHT: MOUSE.ROTATE }
         orbitMapRef.current.set(object.id, controls)
         helper.visible = false
       }
       scene.add(helper)
     }
+
     if (object instanceof DirectionalLight) {
       const helper = new DirectionalLightHelper(object)
       helper.name = 'DirectionalLightHelper'
+      helper.sharedId = sharedId
       scene.add(helper)
     }
   }
@@ -125,7 +130,6 @@ export function useObjectActions() {
 
     const object = createObject(config)
     applyProps(object, config)
-    applyHelpers(object)
     target.add(object)
 
     if (children) {
@@ -137,6 +141,7 @@ export function useObjectActions() {
     const sharedId =
       config.type === 'Scene' ? 'scene' : (nextSharedId++).toString()
     object.sharedId = sharedId
+    applyHelpers(object)
 
     const childIds = object.children.map(child => {
       if (child.sharedId === undefined)
@@ -300,23 +305,17 @@ export function useObjectActions() {
     targetId: string,
     newChildren?: string[]
   ) {
-    /**
-     * @todo this is shit,
-     * should get the highest parent in the itemIds selection.
-     * only move itemIds that are in the childIds of that parent
-     */
     const itemParentMap: Record<string, string> = {}
     const targetObj = getObject(objectsRef, targetId)
     targetObj.updateMatrixWorld(true)
+
     for (const itemId of itemIds) {
       const object = getObject(objectsRef, itemId)
-
       const parent = object.parent
       if (!parent) throw new ParentError(object)
       const parentId = parent.sharedId
-      if (parentId === undefined) {
+      if (parentId === undefined)
         throw new ObjectError(parent, 'does not have a sharedId')
-      }
       itemParentMap[itemId] = parentId
       targetObj.attach(object)
     }
@@ -325,22 +324,28 @@ export function useObjectActions() {
       const updated = { ...prev }
 
       for (const [itemId, parentId] of Object.entries(itemParentMap)) {
-        if (parentId === targetId) continue
-        updated[parentId] = {
-          ...updated[parentId],
-          childIds: updated[parentId].childIds.filter(id => id !== itemId)
+        if (parentId !== targetId) {
+          updated[parentId] = {
+            ...updated[parentId],
+            childIds: updated[parentId].childIds.filter(id => id !== itemId)
+          }
+        }
+
+        const { position, rotation, scale } = getObject(objectsRef, itemId)
+        updated[itemId] = {
+          ...updated[itemId],
+          position: [position.x, position.y, position.z],
+          rotation: [rotation.x, rotation.y, rotation.z],
+          scale: [scale.x, scale.y, scale.z]
         }
       }
 
       updated[targetId] = {
         ...updated[targetId],
-        childIds:
-          newChildren === undefined
-            ? [
-                ...prev[targetId].childIds.filter(id => !itemIds.includes(id)),
-                ...itemIds
-              ]
-            : newChildren
+        childIds: newChildren ?? [
+          ...prev[targetId].childIds.filter(id => !itemIds.includes(id)),
+          ...itemIds
+        ]
       }
 
       return updated
