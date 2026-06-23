@@ -8,7 +8,7 @@ import { TransformControlsMode } from 'three/addons/controls/TransformControls.j
 
 export function ObjectControls() {
   const isRunning = useEditorStore(s => s.isRunning)
-  const currentTool = useEditorStore(s => s.currentTool)  
+  const currentTool = useEditorStore(s => s.currentTool)
 
   enum Modes {
     'translate',

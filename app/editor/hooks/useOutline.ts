@@ -89,11 +89,15 @@ function createBoxHelper() {
   document.body.appendChild(el)
 
   return {
-    update(x1: number, y1: number, x2: number, y2: number) {
-      el.style.left = `${Math.min(x1, x2)}px`
-      el.style.top = `${Math.min(y1, y2)}px`
-      el.style.width = `${Math.abs(x2 - x1)}px`
-      el.style.height = `${Math.abs(y2 - y1)}px`
+    update(x1: number, y1: number, x2: number, y2: number, bounds: DOMRect) {
+      const left = Math.max(Math.min(x1, x2), bounds.left)
+      const top = Math.max(Math.min(y1, y2), bounds.top)
+      const right = Math.min(Math.max(x1, x2), bounds.right)
+      const bottom = Math.min(Math.max(y1, y2), bounds.bottom)
+      el.style.left = `${left}px`
+      el.style.top = `${top}px`
+      el.style.width = `${Math.max(0, right - left)}px`
+      el.style.height = `${Math.max(0, bottom - top)}px`
       el.style.display = 'block'
     },
     hide() {
@@ -177,7 +181,8 @@ export function useOutline() {
       ensureControlsListener()
 
       if (event.button === 2) return
-      if (controlsRef.current?.axis) return
+      const currentTool = useEditorStore.getState().currentTool
+      if (controlsRef.current?.axis || currentTool === 'move') return
 
       const hoveredItem = useEditorStore.getState().hoveredItem
       if (hoveredItem) {
@@ -245,7 +250,8 @@ export function useOutline() {
         dragStartRef.current.x,
         dragStartRef.current.y,
         event.clientX,
-        event.clientY
+        event.clientY,
+        canvas.getBoundingClientRect()
       )
     }
 

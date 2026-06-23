@@ -166,7 +166,7 @@ export function PropButton({
         'hover:bg-ui-750 bg-ui-800'
       )}
       onClick={onClick}
-    > 
+    >
       {Icon && <Icon size={12} />}
       <p>{label}</p>
     </button>

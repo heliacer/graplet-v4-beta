@@ -18,13 +18,14 @@ export function useRenderer(panelApi: DockviewPanelApi) {
   const { objectsRef, canvasRef, cameraRef, orbitMapRef, controlsRef } =
     useEditorRefs()
   const setHoveredItem = useEditorStore(s => s.setHoveredItem)
+  const currentTool = useEditorStore(s => s.currentTool)
   const isRunning = useEditorStore(s => s.isRunning)
   const treeVersion = useEditorStore(s => s.treeVersion)
   const activeLevelId = useEditorStore(s => s.activeLevelId)
 
   const rendererRef = useRef<WebGLRenderer | null>(null)
   const helperRef = useRef<ViewHelper | null>(null)
-  const raycasterRef = useRef(new Raycaster(undefined, undefined, 5, 200))
+  const raycasterRef = useRef(new Raycaster(undefined, undefined))
   const pointerRef = useRef(new Vector2())
   const needsRaycastRef = useRef(false)
 
@@ -98,7 +99,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
         useEditorStore.getState()
       const axisActive = !!controlsRef.current?.axis
 
-      if (axisActive) {
+      if (axisActive || currentTool === 'move') {
         if (hoveredItem !== null) setHoveredItem(null)
       } else if (!isRunning && needsRaycastRef.current) {
         needsRaycastRef.current = false
@@ -177,6 +178,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     objectsRef,
     orbitMapRef,
     setHoveredItem,
-    controlsRef
+    controlsRef,
+    currentTool
   ])
 }

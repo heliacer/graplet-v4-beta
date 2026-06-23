@@ -8,7 +8,6 @@ import {
   Scale3D,
   Spline
 } from 'lucide-react'
-import { MOUSE } from 'three'
 import { ToolItem } from '@/app/editor/types'
 import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
 import clsx from 'clsx'
@@ -27,18 +26,10 @@ function ToolButton({ tool, Icon }: ToolButtonProps) {
     <button
       title={tool}
       onClick={() => {
-        if (cameraRef.current) {
-          const orbit = orbitMapRef.current.get(cameraRef.current.id)
-          if (orbit) {
-            if (currentTool === 'move') {
-              orbit.mouseButtons.LEFT = null
-            }
-            if (tool === 'move') {
-              orbit.mouseButtons.LEFT = MOUSE.PAN
-            }
-          }
-        }
-        setCurrentTool(tool)
+        if (!cameraRef.current) return
+        const orbitControls = orbitMapRef.current.get(cameraRef.current.id)
+        if (!orbitControls) return
+        setCurrentTool(tool, orbitControls)
       }}
       className={clsx(
         'border p-0.5 rounded-md cursor-pointer pointer-events-auto',

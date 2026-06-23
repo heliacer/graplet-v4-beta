@@ -36,6 +36,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
     orbit.update()
   }
 
+  /** @todo move this elsewhere, refactor */
   useKeybind({ code: 'Numpad0', modifiers: [] }, () => {
     if (!cameraRef.current) return
     const orbit = orbitMapRef.current.get(cameraRef.current.id)
@@ -51,11 +52,37 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useKeybind({ code: 'Numpad3', modifiers: [] }, () =>
     snapCamera(new Vector3(1, 0, 0))
   )
-  useKeybind({ key: 't', modifiers: [] }, () => setCurrentTool('translate'))
-  useKeybind({ key: 'r', modifiers: [] }, () => setCurrentTool('rotate'))
-  useKeybind({ key: 's', modifiers: [] }, () => setCurrentTool('scale'))
-  useKeybind({ key: 'm', modifiers: [] }, () => setCurrentTool('move'))
-  useKeybind({ key: 'p', modifiers: [] }, () => setCurrentTool('path'))
+
+  useKeybind({ key: 't', modifiers: [] }, () => {
+    if (!cameraRef.current) return
+    const orbitControls = orbitMapRef.current.get(cameraRef.current.id)
+    if (!orbitControls) return
+    setCurrentTool('translate', orbitControls)
+  })
+  useKeybind({ key: 'r', modifiers: [] }, () => {
+    if (!cameraRef.current) return
+    const orbitControls = orbitMapRef.current.get(cameraRef.current.id)
+    if (!orbitControls) return
+    setCurrentTool('rotate', orbitControls)
+  })
+  useKeybind({ key: 's', modifiers: [] }, () => {
+    if (!cameraRef.current) return
+    const orbitControls = orbitMapRef.current.get(cameraRef.current.id)
+    if (!orbitControls) return
+    setCurrentTool('scale', orbitControls)
+  })
+  useKeybind({ key: 'm', modifiers: [] }, () => {
+    if (!cameraRef.current) return
+    const orbitControls = orbitMapRef.current.get(cameraRef.current.id)
+    if (!orbitControls) return
+    setCurrentTool('move', orbitControls)
+  })
+  useKeybind({ key: 'p', modifiers: [] }, () => {
+    if (!cameraRef.current) return
+    const orbitControls = orbitMapRef.current.get(cameraRef.current.id)
+    if (!orbitControls) return
+    setCurrentTool('path', orbitControls)
+  })
 
   useKeybind(
     {

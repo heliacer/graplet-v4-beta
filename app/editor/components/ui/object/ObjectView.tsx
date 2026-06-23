@@ -29,12 +29,12 @@ export function ObjectView() {
    * Lights > Enable all helpers | Disable all helpers
    *
    * Local Helper (Camera | DirectionalLight)
-   * 
+   *
    * @todo revamp all helpers! need to add them to sobjects.
    * those are treated as normal objects, and here only sobject data
-   * should be accessed in stateful ui. 
-   * 
-   * -> keeping old grid helper as it doesn't 
+   * should be accessed in stateful ui.
+   *
+   * -> keeping old grid helper as it doesn't
    * require any ui, just an action which happens directly on the ref
    */
 

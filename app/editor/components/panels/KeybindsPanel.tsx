@@ -56,12 +56,12 @@ export default function KeybindsPanel() {
         <code>P</code>
         <label className='ml-5'>Path Tool</label>
       </p>
-      <br/>
+      <br />
       <p>
         <code>Del</code>
         <label className='ml-5'>Delete Object</label>
       </p>
-      <br/>
+      <br />
       <p>
         <code>Shiftclick</code>
         <span className='italic ml-2'>on tab header</span>
