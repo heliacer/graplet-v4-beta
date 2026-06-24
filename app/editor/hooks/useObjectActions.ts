@@ -198,8 +198,7 @@ export function useObjectActions() {
    * @todo (#67) ObjectActions: dispose of geometry, material and remove helpers
    *
    *
-   * @todo todo: batch remove, make removeObjects
-   * less update heavy
+   * @todo (#67) batch remove objects: removeObject -> removeObjects
    */
   function removeObject(sharedId: string) {
     const object = getObject(objectsRef, sharedId)
@@ -297,8 +296,6 @@ export function useObjectActions() {
   /**
    * Removes an object from the previous parent and adds it to the new target
    * and updates the snapshots with relative sharedIds (newChildren)
-   *
-   * @todo (#84)
    */
   function moveObjects(
     itemIds: string[],

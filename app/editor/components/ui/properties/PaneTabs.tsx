@@ -14,10 +14,6 @@ interface PaneButtonProps {
 
 /**
  * Sets the current activePane in the PropertiesPanel
- *
- * @todo if the active pane is used somewhere else,
- * move it to editor store, so to avoid prop drilling
- * (should be fine for now)
  */
 export function PaneButton({
   className,

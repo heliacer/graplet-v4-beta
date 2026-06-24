@@ -60,7 +60,8 @@ export function useSceneActions() {
       const { snapshots, selectedItems, workspace } = project
 
       /**
-       * @todo for avoiding errors on the client side,
+       * @todo (#79) useSceneActions: fix project loading
+       * for avoiding errors on the client side,
        * check for every prop if it isn't undefined
        * (check if project data is outdated, or corrupted)
        * then offer to refresh all the project data

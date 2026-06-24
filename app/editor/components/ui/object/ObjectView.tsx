@@ -30,7 +30,7 @@ export function ObjectView() {
    *
    * Local Helper (Camera | DirectionalLight)
    *
-   * @todo revamp all helpers! need to add them to sobjects.
+   * @todo  (#65) revamp all helpers! need to add them to sobjects.
    * those are treated as normal objects, and here only sobject data
    * should be accessed in stateful ui.
    *

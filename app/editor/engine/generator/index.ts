@@ -107,6 +107,18 @@ export class ExpressionGenerator {
 
 export const exprGenerator = new ExpressionGenerator()
 
+/** 
+ * @todo (#76) Create Variable Editor
+ * @deprecated kept for backwards compatibility until
+ * custom variable category is added
+ */
+exprGenerator.forBlock('math_number', function (block: Block): Expression {
+  return {
+    type: 'literal',
+    value: block.getFieldValue('NUM')
+  }
+})
+
 exprGenerator.forBlock('number', function (block: Block): Expression {
   return {
     type: 'literal',

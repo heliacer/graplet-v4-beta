@@ -14,6 +14,12 @@ import { useEditorStore } from '../state'
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
 import { getObject } from '../utils/three'
 
+/** 
+ * @todo (#34) Scene UX Controls
+ * need to completely redo this, this is complete shit
+ * -> need proper structure
+*/
+
 export function useRenderer(panelApi: DockviewPanelApi) {
   const { objectsRef, canvasRef, cameraRef, orbitMapRef, controlsRef } =
     useEditorRefs()

@@ -5,6 +5,7 @@ import { ObjectSnap } from '../object/ObjectSnap'
 import { ObjectTools } from '../object/ObjectTools'
 import { ObjectView } from '../object/ObjectView'
 import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
+import { ObjectSelection } from '../object/ObjectSelection'
 
 export function ObjectControls() {
   const isRunning = useEditorStore(s => s.isRunning)
@@ -25,6 +26,7 @@ export function ObjectControls() {
         <ObjectAdd />
         <ObjectView />
         <ObjectActions />
+        <ObjectSelection/>
         {currentTool in Modes && (
           <ObjectSnap mode={currentTool as TransformControlsMode} />
         )}

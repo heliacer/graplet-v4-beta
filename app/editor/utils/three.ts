@@ -21,39 +21,6 @@ export function isTransformControlsMode(
   return value === 'translate' || value === 'rotate' || value === 'scale'
 }
 
-/**
- * @todo replace with snapshot-friendly approach
- */
-export function findTopLevelObject(
-  objects: Object3D[],
-  scene: Scene
-): Object3D {
-  if (objects.length === 0) throw Error('An Empty object list serves me shit')
-  const objectSet = new Set(objects)
-
-  for (const object of objects) {
-    let parent = object.parent
-    if (!parent) throw new ParentError(object)
-
-    let isTopLevel = true
-
-    while (parent !== scene) {
-      /** another selected object is above us, oh no we lost :< */
-      if (objectSet.has(parent)) {
-        isTopLevel = false
-        break
-      }
-
-      if (!parent.parent) throw new ParentError(parent)
-      parent = parent.parent
-    }
-    if (isTopLevel) {
-      return object
-    }
-  }
-  throw Error('How did we get there?')
-}
-
 export function getObject(
   objectsRef: RefObject<Map<string, Object3D>>,
   sharedId: string
@@ -64,6 +31,9 @@ export function getObject(
 }
 
 /**
+ * @todo (#34) Scene UX Controls
+ * -> redo, see useRenderer
+ * 
  * Walks up from a raycast hit to find the direct child
  * of the given level object, returning its sharedId.
  * Returns undefined if the object is not a descendant of level.

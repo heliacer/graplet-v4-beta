@@ -27,6 +27,10 @@ const KeybindsContext = createContext<KeybindsContextType>({
   unregister: () => {}
 })
 
+/** 
+ * @todo (#36) Keybinds
+ * -> bulk registration method!
+ */
 export function useKeybind(keybind: Keybind, fn: (e: KeyboardEvent) => void) {
   const { register, unregister } = useContext(KeybindsContext)
   const callback = useRef(fn)

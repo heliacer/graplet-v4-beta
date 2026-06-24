@@ -36,7 +36,11 @@ export default function ScenePanel(props: IDockviewPanelProps) {
     orbit.update()
   }
 
-  /** @todo move this elsewhere, refactor */
+  /**
+   * @todo (#36) Keybinds
+   * -> move this elsewhere, refactor
+   * -> bulk registration method!
+   */
   useKeybind({ code: 'Numpad0', modifiers: [] }, () => {
     if (!cameraRef.current) return
     const orbit = orbitMapRef.current.get(cameraRef.current.id)

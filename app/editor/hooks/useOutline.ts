@@ -17,6 +17,13 @@ import {
 import { SelectionBox } from 'three/examples/jsm/interactive/SelectionBox.js'
 import { TransformControls } from 'three/addons/controls/TransformControls.js'
 
+/** 
+ * @todo (#34) Scene UX Controls
+ * need to completely redo this, (next to useRenderer), it's shit
+ * -> refactor
+ * -> also needs better structure
+*/
+
 export function collectMeshes(object: Object3D): Mesh[] {
   if (object instanceof Mesh) return [object]
   const meshes: Mesh[] = []

@@ -3,7 +3,8 @@ import { PaneItem, renderPaneItem } from '../PaneItem'
 
 export function ObjectPane() {
   /**
-   * @todo more serialization!!!!
+   * @todo PropertyPanel: Serialize Inputs (#57)
+   * more serialization!
    *
    * -> make action registry, so that everything is component level
    * and here everything is virtual :D
