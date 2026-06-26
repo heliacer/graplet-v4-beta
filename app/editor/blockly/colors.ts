@@ -5,6 +5,7 @@
 #C57C41
 #7A8DA6
 #D79B3E
+#E2AA00
 */
 
 export const colors = {
@@ -13,5 +14,6 @@ export const colors = {
   LOGIC: '#84cc16', // Light Green
   VARIABLES: '#6366f1', // Indigo
   FUNCTIONS: '#ef4444', // Red
-  MATH: '#06b6d4' // Cyan
+  MATH: '#06b6d4', // Cyan
+  OTHER: '#e2aa00' /// Yellow
 }

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { genSalt, hash } from 'bcrypt'
+import { genSalt, hash } from 'bcryptjs'
 
 interface User {
   email: string

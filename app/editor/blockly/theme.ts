@@ -49,6 +49,9 @@ export const theme: ITheme = {
     },
     functions_category: {
       colour: colors.FUNCTIONS
+    },
+    other_category: {
+      colour: colors.OTHER
     }
   },
   blockStyles: {
@@ -69,6 +72,9 @@ export const theme: ITheme = {
     },
     function_blocks: {
       colourPrimary: colors.FUNCTIONS
+    },
+    other_blocks: {
+      colourPrimary: colors.OTHER
     }
   }
 }

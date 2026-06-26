@@ -3,6 +3,7 @@ import './events'
 import './logic'
 import './math'
 import './functions'
+import './other'
 import { common } from 'blockly'
 
 export const blocklyUI: { objectMenu: string[][] } = { objectMenu: [] }
@@ -26,6 +27,17 @@ const commonBlocks = common.createBlockDefinitionsFromJsonArray([
       {
         type: 'field_number',
         name: 'NUM'
+      }
+    ],
+    output: null
+  },
+  {
+    type: 'literal_string',
+    message0: '%1',
+    args0: [
+      {
+        type: 'field_input',
+        name: 'VALUE'
       }
     ],
     output: null

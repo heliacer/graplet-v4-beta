@@ -9,6 +9,7 @@
 
 # misc
 .vscode
+prisma/migrations
 
 # env
 .env*

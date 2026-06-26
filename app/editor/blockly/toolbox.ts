@@ -504,6 +504,29 @@ export const toolbox: utils.toolbox.ToolboxDefinition = {
       name: 'Functions',
       custom: 'FUNCTIONS',
       categorystyle: 'functions_category'
+    },
+    {
+      kind: 'category',
+      name: 'Other',
+      categorystyle: 'other_category',
+      contents: [
+        {
+          kind: 'block',
+          type: 'send_notification',
+          inputs: {
+            TITLE: {
+              shadow: {
+                type: 'literal_string'
+              }
+            },
+            CONTENT: {
+              shadow: {
+                type: 'literal_string'
+              }
+            }
+          }
+        }
+      ]
     }
   ]
 }

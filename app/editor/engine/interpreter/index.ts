@@ -40,6 +40,9 @@ import {
   handleParam,
   handleVar
 } from './handlers/values'
+import {
+  handleNotification
+} from './handlers/other'
 
 function setFunction(expression: Expression, state: ProgramState) {
   const { args, value, children } = expression
@@ -126,5 +129,6 @@ const handlers: Record<RegularExpressionT, Handler> = {
   translatexyz: handleTranslatexyz,
   setscalexyz: handleSetscalexyz,
   setroteulerxyz: handleSetroteulerxyz,
-  rotatexyz: handleRotatexyz
+  rotatexyz: handleRotatexyz,
+  send_notification: handleNotification
 }

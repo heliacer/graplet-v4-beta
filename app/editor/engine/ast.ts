@@ -85,3 +85,6 @@ export type ExpressionT =
   | 'setscalexyz'
   | 'setroteulerxyz'
   | 'rotatexyz'
+
+  // Other
+  | 'send_notification'

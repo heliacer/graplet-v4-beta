@@ -1,4 +1,4 @@
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 import NextAuth, { User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { CredentialsSignin } from 'next-auth'

@@ -39,6 +39,9 @@ import {
   functionDefGen,
   functionParamGen
 } from './blocks/functions'
+import {
+  send_notificationGen
+} from './blocks/other'
 
 export class ExpressionGenerator {
   private generators: Record<
@@ -136,6 +139,15 @@ exprGenerator.forBlock('string', function (block: Block): Expression {
   }
 })
 
+exprGenerator.forBlock('literal_string', function (block: Block): Expression {
+  const value = block.getFieldValue('VALUE') as Value
+
+  return {
+    type: 'literal',
+    value: value
+  }
+})
+
 /** Events */
 exprGenerator.forBlock('onflagclick', onflagclickGen)
 
@@ -180,6 +192,9 @@ exprGenerator.forBlock('variables_set', variablesSetGen)
 exprGenerator.forBlock('function_def', functionDefGen)
 exprGenerator.forBlock('function_call', functionCallGen)
 exprGenerator.forBlock('function_param', functionParamGen)
+
+/** Other */
+exprGenerator.forBlock('send_notification', send_notificationGen)
 
 export function generateExprsFromInput(
   input: Input | null,
