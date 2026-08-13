@@ -64,7 +64,8 @@ function rebuildParameters(
           })
           newBlock.initSvg()
           newBlock.render()
-          input.connection?.connect(newBlock.outputConnection)
+          const connection = newBlock.outputConnection
+          if (connection) input.connection?.connect(connection)
         }
       }
     }
@@ -117,7 +118,8 @@ Blocks['function_def'] = {
       })
       newBlock.initSvg()
       newBlock.render()
-      input.connection?.connect(newBlock.outputConnection)
+      const connection = newBlock.outputConnection
+      if (connection) input.connection?.connect(connection)
     }
   },
 
