@@ -1,7 +1,6 @@
 import {
   blockRendering,
   common,
-  ContextMenuItems,
   Extensions,
   Options,
   registry,
