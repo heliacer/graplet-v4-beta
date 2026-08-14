@@ -42,6 +42,7 @@ export const objectInitialState: State = {
     scene: {
       ...serializeObject(new Scene()),
       sharedId: 'scene',
+      parentId: '',
       childIds: []
     }
   },

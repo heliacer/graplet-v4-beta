@@ -143,13 +143,23 @@ export function useObjectActions() {
     object.sharedId = sharedId
     applyHelpers(object)
 
+    const parentId = target.sharedId
+    if (parentId === undefined) {
+      throw new ObjectError(target, 'does not have a sharedId')
+    }
+
     const childIds = object.children.map(child => {
       if (child.sharedId === undefined)
         throw new ObjectError(child, 'does not have a sharedId')
       return child.sharedId
     })
 
-    snapshots[sharedId] = { sharedId, ...serializeObject(object), childIds }
+    snapshots[sharedId] = {
+      sharedId,
+      ...serializeObject(object),
+      parentId,
+      childIds
+    }
     objectsRef.current.set(sharedId, object)
 
     return object

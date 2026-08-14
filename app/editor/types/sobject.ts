@@ -116,6 +116,7 @@ export interface SMaterial {
  */
 export type SObjectSnapshot = SObject3D & {
   sharedId: string
+  parentId: string
   childIds: string[]
 }
 
