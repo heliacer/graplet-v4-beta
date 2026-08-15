@@ -28,7 +28,7 @@
     "clsx": "^2.1.1",
     "dockview-react": "^8.1.0",
     "lucide-react": "^1.11.0",
-    "next": "^16.2.9",
+    "next": "^16.3.1",
     "next-auth": "^5.0.0-beta.32",
     "pg": "^8.16.3",
     "react": "^19.2.4",
@@ -38,7 +38,6 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@typescript/native": "npm:typescript@^7.0.2",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^26.2.0",
@@ -53,7 +52,7 @@
     "prettier": "^3.6.2",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
-    "typescript": "npm:@typescript/typescript6@^6.0.2"
+    "typescript": "^7.0.2"
   },
   "allowScripts": {
     "@prisma/engines": true,
