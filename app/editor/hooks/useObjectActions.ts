@@ -343,7 +343,8 @@ export function useObjectActions() {
           ...updated[itemId],
           position: [position.x, position.y, position.z],
           rotation: [rotation.x, rotation.y, rotation.z],
-          scale: [scale.x, scale.y, scale.z]
+          scale: [scale.x, scale.y, scale.z],
+          parentId: targetId
         }
       }
 
