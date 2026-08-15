@@ -8,9 +8,7 @@ import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import clsx from 'clsx'
 
 export type PaneItem = { label: string } & (
-  | PaneInput
-  | PaneButton
-  | PaneCheckbox
+  PaneInput | PaneButton | PaneCheckbox
 )
 
 type PaneInput = TextPaneInput | Vec3PaneInput | Vec3AnglePaneInput

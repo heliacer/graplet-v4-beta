@@ -25,16 +25,14 @@ export function useBlocklyWorkspace(
     workspaceRef.current = ws
 
     function listener(event: Events.Abstract) {
-      if (
-        !(
-          event instanceof Events.ViewportChange ||
-          event instanceof Events.FinishedLoading ||
-          event instanceof Events.ToolboxItemSelect ||
-          event instanceof Events.Selected ||
-          event instanceof Events.BlockDrag ||
-          event instanceof Events.CommentDrag
-        )
-      ) {
+      if (!(
+        event instanceof Events.ViewportChange ||
+        event instanceof Events.FinishedLoading ||
+        event instanceof Events.ToolboxItemSelect ||
+        event instanceof Events.Selected ||
+        event instanceof Events.BlockDrag ||
+        event instanceof Events.CommentDrag
+      )) {
         setHasProjectChanges(true)
       }
       if (

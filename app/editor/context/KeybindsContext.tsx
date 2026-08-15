@@ -27,7 +27,7 @@ const KeybindsContext = createContext<KeybindsContextType>({
   unregister: () => {}
 })
 
-/** 
+/**
  * @todo (#36) Keybinds
  * -> bulk registration method!
  */

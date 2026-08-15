@@ -12,9 +12,9 @@ export function ObjectControls() {
   const currentTool = useEditorStore(s => s.currentTool)
 
   enum Modes {
-    'translate',
-    'rotate',
-    'scale'
+    translate,
+    rotate,
+    scale
   }
 
   if (isRunning) return
@@ -26,7 +26,7 @@ export function ObjectControls() {
         <ObjectAdd />
         <ObjectView />
         <ObjectActions />
-        <ObjectSelection/>
+        <ObjectSelection />
         {currentTool in Modes && (
           <ObjectSnap mode={currentTool as TransformControlsMode} />
         )}

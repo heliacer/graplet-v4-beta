@@ -107,7 +107,7 @@ export class ExpressionGenerator {
 
 export const exprGenerator = new ExpressionGenerator()
 
-/** 
+/**
  * @todo (#76) Create Variable Editor
  * @deprecated kept for backwards compatibility until
  * custom variable category is added

@@ -33,7 +33,7 @@ export function getObject(
 /**
  * @todo (#34) Scene UX Controls
  * -> redo, see useRenderer
- * 
+ *
  * Walks up from a raycast hit to find the direct child
  * of the given level object, returning its sharedId.
  * Returns undefined if the object is not a descendant of level.
