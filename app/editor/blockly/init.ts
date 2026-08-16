@@ -165,6 +165,5 @@ export function initializeBlocklyConfig() {
     keyCodes: [ctrlShiftZKey]
   })
 
-  /** @todo bug contextmenu */
   ContextMenuItems.registerCommentOptions()
 }

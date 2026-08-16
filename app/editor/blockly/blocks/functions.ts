@@ -220,7 +220,7 @@ Blocks['function_param'] = {
     return { ...getExtraState(this.model), index: this.index }
   },
 
-  /** @todo create separate extrastate for params */
+  /** @todo (#14) create separate extrastate for params */
   loadExtraState(this: ParameterBlock, state: { id: string; index: number }) {
     const model = this.workspace.getProcedureMap().get(state.id)
     this.index = state.index
