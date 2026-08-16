@@ -59,7 +59,11 @@ export function useObjectActions() {
       ) {
         cameraRef.current = object
         const controls = new OrbitControls(object, canvasRef.current)
-        controls.mouseButtons = { MIDDLE: MOUSE.PAN, RIGHT: MOUSE.ROTATE }
+        controls.mouseButtons = {
+          LEFT: null,
+          MIDDLE: MOUSE.ROTATE,
+          RIGHT: MOUSE.PAN
+        }
         orbitMapRef.current.set(object.id, controls)
         helper.visible = false
       }

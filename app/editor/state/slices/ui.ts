@@ -62,9 +62,11 @@ export const createUiSlice: StateCreator<UiSlice> = (set, get) => ({
     const currentTool = get().currentTool
     if (currentTool === 'move') {
       orbitControls.mouseButtons.LEFT = null
+      orbitControls.mouseButtons.RIGHT = MOUSE.PAN
     }
     if (tool === 'move') {
       orbitControls.mouseButtons.LEFT = MOUSE.PAN
+      orbitControls.mouseButtons.RIGHT = MOUSE.ROTATE
     }
     set({ currentTool: tool })
   },

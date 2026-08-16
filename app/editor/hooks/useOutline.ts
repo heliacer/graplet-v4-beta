@@ -187,7 +187,7 @@ export function useOutline() {
     function onPointerDown(event: MouseEvent) {
       ensureControlsListener()
 
-      if (event.button === 2) return
+      if (event.button !== 0) return
       const currentTool = useEditorStore.getState().currentTool
       if (controlsRef.current?.axis || currentTool === 'move') return
 

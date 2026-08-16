@@ -1,14 +1,20 @@
 import {
   blockRendering,
   common,
+  ContextMenuItems,
   Extensions,
+  getFocusManager,
   Options,
   registry,
   Scrollbar,
   serialization,
+  ShortcutItems,
+  ShortcutRegistry,
   Toolbox,
   ToolboxCategory,
-  VerticalFlyout
+  utils,
+  VerticalFlyout,
+  WorkspaceSvg
 } from 'blockly'
 import './blocks'
 import {
@@ -134,6 +140,31 @@ export function initializeBlocklyConfig() {
   )
   blockRendering.register('graplet', GrapletRenderer)
 
-  /** @todo bug */
-  // ContextMenuItems.registerCommentOptions()
+  /** remove ctrl + y from redo, only keep ctrl + shift + z */
+  const ctrlShiftZKey = ShortcutRegistry.registry.createSerializedKey(
+    utils.KeyCodes.Z,
+    [utils.KeyCodes.CTRL_CMD, utils.KeyCodes.SHIFT]
+  )
+  
+  ShortcutRegistry.registry.unregister(ShortcutItems.names.REDO)
+  ShortcutRegistry.registry.register({
+    name: ShortcutItems.names.REDO,
+    preconditionFn(workspace) {
+      return (
+        !workspace.isReadOnly() &&
+        !workspace.isDragging() &&
+        !getFocusManager().ephemeralFocusTaken()
+      )
+    },
+    callback(workspace, e) {
+      workspace.hideChaff()
+      workspace.undo(true)
+      e.preventDefault()
+      return true
+    },
+    keyCodes: [ctrlShiftZKey]
+  })
+
+  /** @todo bug contextmenu */
+  ContextMenuItems.registerCommentOptions()
 }
