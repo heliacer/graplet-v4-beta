@@ -136,12 +136,13 @@ export function GrapletDockview() {
         name: 'graplet',
         className: 'dv-theme'
       }}
-      className='w-full h-full'
       onReady={mount}
       components={panelComponents}
       defaultTabComponent={TabHeader}
       rightHeaderActionsComponent={RightControls}
       leftHeaderActionsComponent={LeftControls}
+      floatingGroupBounds='boundedWithinViewport'
+      floatingGroupDragHandle='tabbar'
     />
   )
 }

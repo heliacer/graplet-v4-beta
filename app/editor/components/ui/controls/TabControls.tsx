@@ -57,7 +57,7 @@ export function LeftControls(props: IDockviewHeaderActionsProps) {
     props.containerApi.addPanel({
       id: crypto.randomUUID(),
       component: 'debug',
-      title: `New`,
+      title: `Debug`,
       position: {
         referenceGroup: props.group
       },
