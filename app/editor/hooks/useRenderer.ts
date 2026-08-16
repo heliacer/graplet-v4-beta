@@ -13,74 +13,71 @@ import { DockviewPanelApi } from 'dockview-react'
 import { useEditorStore } from '../state'
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js'
 import { getObject } from '../utils/three'
+import { ObjectError } from '../types'
 
 /**
  * @todo (#34) Scene UX Controls
- * need to completely redo this, this is complete shit
- * -> need proper structure
+ * -> need proper structure, revamp and clean up
  */
 
 export function useRenderer(panelApi: DockviewPanelApi) {
+  /** all refs used */
   const { objectsRef, canvasRef, cameraRef, orbitMapRef, controlsRef } =
     useEditorRefs()
+
+  /** used in the outline later */
   const setHoveredItem = useEditorStore(s => s.setHoveredItem)
+
+  /** used for skipping raycasting / set hover on move mode, as no outline selecting is needed  */
   const currentTool = useEditorStore(s => s.currentTool)
+
+  /** when running, it is entirely skipped */
   const isRunning = useEditorStore(s => s.isRunning)
+
+  /** triggers update when object added/removed, so targets need an update */
   const treeVersion = useEditorStore(s => s.treeVersion)
-  const activeLevelId = useEditorStore(s => s.activeLevelId)
+
+  /** snapshots to be raycasted, on the actively selected layer */
+  const targetIds = useEditorStore(
+    s => s.objectSnapshots[s.activeLevelId].childIds
+  )
+
+  /** targets ready for raycasting */
+  const raycastTargetsRef = useRef<Object3D[]>([])
 
   const rendererRef = useRef<WebGLRenderer | null>(null)
-  const helperRef = useRef<ViewHelper | null>(null)
   const raycasterRef = useRef(new Raycaster(undefined, undefined))
+
+  /** octahedral "orientation" viewhelper, shows 3 colors and stuff */
+  const helperRef = useRef<ViewHelper | null>(null)
+
+  /** used for raycasting the exact pointer */
   const pointerRef = useRef(new Vector2())
+
+  /** triggered only when pointer changes */
   const needsRaycastRef = useRef(false)
 
-  /**
-   * Flat array of raycastable meshes at the current selection level.
-   * Each mesh maps back to a direct child's sharedId via raycastMapRef.
-   * Rebuilt whenever the tree or active level changes.
-   */
-  const raycastTargetsRef = useRef<Object3D[]>([])
-  const raycastMapRef = useRef<Map<string, string>>(new Map())
-
+  /** when running, make the octahedral viewhelper invisible */
   useEffect(() => {
     const helper = helperRef.current
     if (!helper) return
     helper.visible = !isRunning
   }, [isRunning])
 
+  /** update targets for raycasting */
   useEffect(() => {
-    const level = objectsRef.current.get(activeLevelId)
-    if (!level) return
-
-    const targets: Object3D[] = []
-    const map = new Map<string, string>()
-
-    for (const child of level.children) {
-      const sharedId = child.sharedId
-      if (sharedId === undefined) continue
-
-      /**
-       * Traverse to collect all mesh descendants of this child
-       * Cameras, lights, groups, all resolve to the child's sharedId
-       */
-      child.traverse(o => {
-        if (o instanceof Mesh) {
-          targets.push(o)
-          map.set(o.uuid, sharedId)
-        }
-      })
-    }
-
-    raycastTargetsRef.current = targets
-    raycastMapRef.current = map
-  }, [objectsRef, treeVersion, activeLevelId])
+    raycastTargetsRef.current = targetIds.map(sharedId =>
+      getObject(objectsRef, sharedId)
+    )
+  }, [objectsRef, treeVersion, targetIds])
 
   useEffect(() => {
     const canvas = canvasRef.current
 
     const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
     renderer.autoClear = false
+
+    /** transparent bg */
     renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(window.devicePixelRatio)
     rendererRef.current = renderer
@@ -95,18 +92,22 @@ export function useRenderer(panelApi: DockviewPanelApi) {
         helperRef.current.visible = !useEditorStore.getState().isRunning
       }
 
+      /** editor always has some sort of orbit controls */
       const orbitControls = orbitMapRef.current.get(camera.id)
       orbitControls?.update()
 
       renderer.clear()
       helperRef.current.render(renderer)
 
-      const { isRunning, hoveredItem, selectedItems } =
-        useEditorStore.getState()
+      /** freshly get the isrunning and hovereditem state */
+      const { isRunning, hoveredItem } = useEditorStore.getState()
       const axisActive = !!controlsRef.current?.axis
 
+      /** only update raycasting if the controls aren't being used atm, and it isn't the move tool (skipped) */
       if (axisActive || currentTool === 'move') {
         if (hoveredItem !== null) setHoveredItem(null)
+
+        /** if running, skipped entirely, and only if the pointer did update */
       } else if (!isRunning && needsRaycastRef.current) {
         needsRaycastRef.current = false
         const raycaster = raycasterRef.current
@@ -115,15 +116,20 @@ export function useRenderer(panelApi: DockviewPanelApi) {
           raycastTargetsRef.current,
           false
         )
+        
         const hit = intersects[0]
-        const next = hit
-          ? (raycastMapRef.current.get(hit.object.uuid) ?? null)
-          : null
-        if (
-          next !== hoveredItem &&
-          (next === null || !selectedItems.includes(next))
-        ) {
-          setHoveredItem(next)
+        if (hit) {
+          const object = hit.object
+          if (!object.sharedId) {
+            throw new ObjectError(object, 'does not have a sharedId')
+          }
+          if (hoveredItem !== object.sharedId) {
+            setHoveredItem(object.sharedId)
+          }
+        } else {
+          if (hoveredItem !== null) {
+            setHoveredItem(null)
+          }
         }
       }
 
