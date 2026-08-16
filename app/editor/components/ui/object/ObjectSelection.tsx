@@ -1,31 +1,26 @@
+import { useEditorStore } from '@/app/editor/state'
 import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
 import { SquareDashed } from 'lucide-react'
 
 export function ObjectSelection() {
+  const { meshes, cameras, lights } = useEditorStore(s => s.objectSelections)
+  const toggleObjectSelection = useEditorStore(s => s.toggleObjectSelection)
+
   const items: DropdownItemProps[] = [
     {
       label: 'Meshes',
-      checked: true,
-      onClick: () => {
-        /**
-         * @todo (#34 Scene UX Controls)
-         * -> update selection state
-         */
-      }
+      checked: meshes,
+      onClick: () => toggleObjectSelection('meshes')
     },
     {
       label: 'Cameras',
-      checked: true,
-      onClick: () => {
-        /** @todo (#34 Scene UX Controls */
-      }
+      checked: cameras,
+      onClick: () => toggleObjectSelection('cameras')
     },
     {
       label: 'Lights',
-      checked: true,
-      onClick: () => {
-        /** @todo (#34 Scene UX Controls */
-      }
+      checked: lights,
+      onClick: () => toggleObjectSelection('lights')
     }
     /** ... */
   ]

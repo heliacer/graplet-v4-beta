@@ -68,6 +68,7 @@ export const createUiSlice: StateCreator<UiSlice> = (set, get) => ({
     }
     set({ currentTool: tool })
   },
+  
   setNotifications: v => set({ notifications: v }),
   setDvApi: v => set({ dvApi: v }),
   setContextMenu: v => set({ contextMenu: v }),

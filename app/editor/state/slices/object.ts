@@ -10,9 +10,14 @@ type State = {
   activeLevelId: string // default: 'scene'
   objectSnapshots: Record<string, SObjectSnapshot>
   objectSnapping: {
+    scale: number
     translate: number
     rotate: number /* degrees */
-    scale: number
+  }
+  objectSelections: {
+    meshes: boolean
+    cameras: boolean
+    lights: boolean
   }
   autoClose: boolean
   localTransform: boolean
@@ -23,6 +28,7 @@ type Actions = {
   setHoveredItem: (items: Updater<string | null>) => void
   setActiveLevelId: (sharedId: Updater<string>) => void
   setSnapshots: (snapshots: Updater<Record<string, SObjectSnapshot>>) => void
+  toggleObjectSelection: (selection: keyof State['objectSelections']) => void
   updateSnapshot: (
     sharedId: string,
     updater: Updater<Partial<Omit<SObject3D, 'type'>>>
@@ -45,6 +51,11 @@ export const objectInitialState: State = {
       parentId: '',
       childIds: []
     }
+  },
+  objectSelections: {
+    meshes: true,
+    cameras: false,
+    lights: false
   },
   objectSnapping: {
     translate: 0.5,
@@ -79,7 +90,7 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
     }))
   },
 
-  setSnapshots: (snapshots: Updater<Record<string, SObjectSnapshot>>) =>
+  setSnapshots: snapshots =>
     set(state => ({
       objectSnapshots:
         typeof snapshots === 'function'
@@ -87,15 +98,12 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
           : snapshots
     })),
 
-  updateSnapshot: (
-    sharedId: string,
-    updater: Updater<Partial<Omit<SObject3D, 'type'>>>
-  ) =>
+  updateSnapshot: (sharedId, snapshot) =>
     set(state => {
       const update =
-        typeof updater === 'function'
-          ? updater(state.objectSnapshots[sharedId])
-          : updater
+        typeof snapshot === 'function'
+          ? snapshot(state.objectSnapshots[sharedId])
+          : snapshot
       return {
         objectSnapshots: {
           ...state.objectSnapshots,
@@ -106,6 +114,14 @@ export const createObjectSlice: StateCreator<ObjectSlice> = set => ({
         }
       }
     }),
+
+  toggleObjectSelection: selection =>
+    set(state => ({
+      objectSelections: {
+        ...state.objectSelections,
+        [selection]: !state.objectSelections[selection]
+      }
+    })),
 
   setObjectSnapping: (tool, value) =>
     set(state => ({
