@@ -10,6 +10,7 @@ import { ObjectControls } from '../ui/controls/ObjectControls'
 import { useKeybind } from '../../context/KeybindsContext'
 import { Vector3 } from 'three'
 import { useOutline } from '../../hooks/useOutline'
+import { useVerticeTest } from '../../hooks/useVerticeTest'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
   const { workspaceRef, cameraRef, canvasRef, orbitMapRef } = useEditorRefs()
@@ -23,6 +24,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useRenderer(props.api)
   useOutline()
   useTransformControls()
+  useVerticeTest()
 
   const snapCamera = (direction: Vector3) => {
     if (!cameraRef.current) return

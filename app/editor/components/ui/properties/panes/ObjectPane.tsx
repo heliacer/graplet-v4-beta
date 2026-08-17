@@ -33,7 +33,8 @@ export function ObjectPane() {
       type: 'vec3',
       label: 'Scale',
       property: 'scale'
-    },
+    }
+    /*     
     {
       type: 'button',
       label: 'button button click click',
@@ -43,7 +44,7 @@ export function ObjectPane() {
     {
       type: 'checkbox',
       label: 'im a checkbox yo'
-    }
+    } */
   ]
 
   const panes = items.map(renderPaneItem)

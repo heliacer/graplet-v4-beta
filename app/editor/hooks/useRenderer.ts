@@ -64,7 +64,10 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     helper.visible = !isRunning
   }, [isRunning])
 
-  /** update targets for raycasting */
+  /** 
+   * update targets for raycasting
+   * -> @todo bug when resetting dockview: object not found error 
+   */
   useEffect(() => {
     raycastTargetsRef.current = targetIds.map(sharedId =>
       getObject(objectsRef, sharedId)
