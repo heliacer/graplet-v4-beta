@@ -19,6 +19,9 @@ export function useVerticeTest() {
         color: 0xff0000,
         size: 0.2,
       })
+
+
+      /** gotta intersect points in the renderer in order to select them, as selectedVertex (idk) */
       const points = new Points(object.geometry, material)
       object.add(points)
       console.log('added points wohoo')
