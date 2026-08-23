@@ -5,13 +5,22 @@ import { cookies } from 'next/headers'
 import { Suspense } from 'react'
 import './ui/globals.css'
 
+const description = `An Interactive 3D Editor and collaborative Platform for Creative Arts, Digital Assets and Game Design.`
+
 export const metadata: Metadata = {
   title: {
     template: '%s @ Graplet',
     default: 'Graplet'
   },
-  description:
-    'Design interactive 3D scenes using intuitive visual blocks. Graplet combines a block-based editor with real-time rendering to bring your ideas to life — no coding required. Early Access only.'
+  openGraph: {
+    type: 'website',
+    url: 'https://graplet.vercel.app',
+    title: 'Graplet',
+    siteName: 'Graplet',
+    images: [{ url: "/og-image.png" }],
+    description,
+  },
+  description
 }
 
 async function Layout({ children }: { children: Readonly<React.ReactNode> }) {
