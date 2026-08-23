@@ -12,13 +12,17 @@ export const metadata: Metadata = {
     template: '%s @ Graplet',
     default: 'Graplet'
   },
+  metadataBase: new URL('https://graplet.vercel.app'),
+  alternates: {
+    canonical: '/'
+  },
   openGraph: {
     type: 'website',
     url: 'https://graplet.vercel.app',
     title: 'Graplet',
     siteName: 'Graplet',
-    images: [{ url: "/og-image.png" }],
-    description,
+    images: [{ url: '/og-image.png' }],
+    description
   },
   description
 }
