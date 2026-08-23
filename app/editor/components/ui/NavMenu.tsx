@@ -43,7 +43,7 @@ export function NavMenu() {
       >
         notification!
       </button>
-      <p className='text-sm italic'>steps per frame:</p>
+      <p className='text-sm italic'>SPF</p>
       <DragNumberInput
         className='text-xs rounded border outline-none w-10 text-center'
         decimals={0}

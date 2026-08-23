@@ -10,7 +10,8 @@ import { ObjectError } from '../types'
 /**
  * @todo (#34) Scene UX Controls
  * - refactor and simplify (study whatever this does)
- * - add one side scaling
+ * -> vertex / edge multiselect
+ * - keep scale tool, make one sided scaling vertex/edge's job
  */
 
 interface ObjectBinding {

@@ -19,6 +19,20 @@ export function ObjectView() {
         helper.visible = !gridHelper
         setGridHelper(prev => !prev)
       }
+    },
+    {
+      label: 'Controls',
+      children: [
+        {
+          label: 'Move with WASD',
+
+          checked: false
+        },
+        {
+          label: 'Orbit around',
+          checked: true
+        }
+      ]
     }
   ]
 
@@ -36,6 +50,16 @@ export function ObjectView() {
    *
    * -> keeping old grid helper as it doesn't
    * require any ui, just an action which happens directly on the ref
+   */
+
+  /**
+   * @todo  (#34) Scene UX Controls
+   *
+   * Add controls (wasd / orbit to View options)
+   * Controls > WASD Controls | Orbit Controls
+   *
+   * + Save control method to project data,
+   * with its relative positioning (e.g for orbit / wasd)
    */
 
   return (
