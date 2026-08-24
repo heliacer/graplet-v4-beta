@@ -1,7 +1,7 @@
 import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import { useEditorStore } from '@/app/editor/state'
 import { getObject } from '@/app/editor/utils/three'
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { Dropdown, DropdownItemProps } from '@/app/lib/components/Dropdown'
 import { ArrowDownToDot, Hammer } from 'lucide-react'
 
 export function ObjectActions() {

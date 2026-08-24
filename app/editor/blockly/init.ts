@@ -145,7 +145,7 @@ export function initializeBlocklyConfig() {
     utils.KeyCodes.Z,
     [utils.KeyCodes.CTRL_CMD, utils.KeyCodes.SHIFT]
   )
-  
+
   ShortcutRegistry.registry.unregister(ShortcutItems.names.REDO)
   ShortcutRegistry.registry.register({
     name: ShortcutItems.names.REDO,

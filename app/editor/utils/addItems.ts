@@ -1,4 +1,4 @@
-import { DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { DropdownItemProps } from '@/app/lib/components/Dropdown'
 import { SGeometryT, SObjectConfig } from '../types'
 import { Box, Camera, Component, Lightbulb } from 'lucide-react'
 import { Object3D } from 'three'

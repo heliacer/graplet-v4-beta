@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import { LogoSolid } from '../ui/assets/LogoSolid'
-import { LoginInputSkeleton } from '../ui/components/LoginInputSkeleton'
+import { LogoSolid } from '../lib/components/LogoSolid'
+import { LoginInputSkeleton } from '../lib/components/oldLogin/LoginInputSkeleton'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

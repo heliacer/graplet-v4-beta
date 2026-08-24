@@ -6,7 +6,6 @@ import { getObject } from '../utils/three'
 import { Matrix4, Object3D, Vector3 } from 'three'
 import { ObjectError } from '../types'
 
-
 /**
  * @todo (#34) Scene UX Controls
  * - refactor and simplify (study whatever this does)

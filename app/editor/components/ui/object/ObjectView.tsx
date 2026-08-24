@@ -1,6 +1,6 @@
 import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import { useState } from 'react'
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { Dropdown, DropdownItemProps } from '@/app/lib/components/Dropdown'
 import { View } from 'lucide-react'
 import { getObject } from '@/app/editor/utils/three'
 

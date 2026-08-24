@@ -1,5 +1,5 @@
 import { useEditorStore } from '@/app/editor/state'
-import { DragNumberInput } from '@/app/ui/components/DragNumberInput'
+import { DragNumberInput } from '@/app/lib/components/oldLogin/DragNumberInput'
 import { RulerDimensionLine } from 'lucide-react'
 import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
 

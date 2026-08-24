@@ -1,6 +1,6 @@
 import { useObjectActions } from '@/app/editor/hooks/useObjectActions'
 import { createAddItemsMenu } from '@/app/editor/utils/addItems'
-import { Dropdown } from '@/app/ui/components/Dropdown'
+import { Dropdown } from '@/app/lib/components/Dropdown'
 import { DiamondPlus } from 'lucide-react'
 
 export function ObjectAdd() {

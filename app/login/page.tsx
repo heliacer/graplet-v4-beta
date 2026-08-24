@@ -3,9 +3,9 @@
 import { AlertTriangle, Mail } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
-import { SubmitButton } from '../ui/components/SubmitButton'
-import { CredentialsInput } from '../ui/components/CredentialsInput'
-import { checkEmail } from '../lib/actions'
+import { SubmitButton } from '../lib/components/oldLogin/SubmitButton'
+import { CredentialsInput } from '../lib/components/oldLogin/CredentialsInput'
+import { checkEmail } from '../lib/server/actions'
 
 export default function Login() {
   const searchParams = useSearchParams()

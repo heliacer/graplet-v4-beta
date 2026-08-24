@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { Logo } from '@/app/ui/assets/Logo'
-import { UserDropdown } from '@/app/ui/components/UserDropdown'
+import { Logo } from '@/app/lib/components/Logo'
+import { UserDropdown } from '@/app/lib/components/UserDropdown'
 import { NavMenu } from './ui/NavMenu'
 import { RunControls } from './ui/controls/RunControls'
 import { SaveButton } from './ui/SaveButton'

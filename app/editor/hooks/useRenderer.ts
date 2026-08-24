@@ -64,9 +64,9 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     helper.visible = !isRunning
   }, [isRunning])
 
-  /** 
+  /**
    * update targets for raycasting
-   * -> @todo bug when resetting dockview: object not found error 
+   * -> @todo bug when resetting dockview: object not found error
    */
   useEffect(() => {
     raycastTargetsRef.current = targetIds.map(sharedId =>
@@ -119,7 +119,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
           raycastTargetsRef.current,
           false
         )
-        
+
         const hit = intersects[0]
         if (hit) {
           const object = hit.object

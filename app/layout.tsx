@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
-import { nunito } from './ui/fonts'
+import type { Metadata, Viewport } from 'next'
+import { nunito } from './lib/fonts'
 import { SessionProvider } from 'next-auth/react'
 import { cookies } from 'next/headers'
 import { Suspense } from 'react'
-import './ui/globals.css'
+import './lib/globals.css'
 
 const description = `An Interactive 3D Editor and collaborative platform for creative Arts, Digital Assets and Game Design.`
 

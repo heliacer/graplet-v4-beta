@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Cuboid, LogOut, ToolCase } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
-import { LogoSolid } from '../ui/assets/LogoSolid'
+import { LogoSolid } from '../lib/components/LogoSolid'
 
 export default function MyStuff() {
   const { data: session } = useSession()

@@ -10,7 +10,7 @@ import {
   Settings2
 } from 'lucide-react'
 import { serialization } from 'blockly'
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { Dropdown, DropdownItemProps } from '@/app/lib/components/Dropdown'
 import { useSceneActions } from '@/app/editor/hooks/useSceneActions'
 import { upsertPanel } from '@/app/editor/utils/dockview'
 import { useEditorStore } from '@/app/editor/state'

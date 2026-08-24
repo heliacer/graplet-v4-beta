@@ -2,8 +2,8 @@ import { compare } from 'bcrypt'
 import NextAuth, { User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { CredentialsSignin } from 'next-auth'
-import { credentialsSchema } from './app/lib/zod'
-import { getUserByEmail } from './app/lib/data'
+import { credentialsSchema } from './app/lib/server/zod'
+import { getUserByEmail } from './app/lib/server/data'
 
 class InvalidCredentialsError extends CredentialsSignin {
   code = 'invalid_credentials'

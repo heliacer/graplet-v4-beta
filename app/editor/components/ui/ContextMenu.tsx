@@ -15,8 +15,8 @@ import {
   DropdownContext,
   DropdownItemList,
   DropdownItemProps
-} from '@/app/ui/components/Dropdown'
-import { useClickOutside } from '@/app/ui/hooks/useClickOutside'
+} from '@/app/lib/components/Dropdown'
+import { useClickOutside } from '@/app/lib/hooks/useClickOutside'
 
 /** @todo (#35) Object Context Menu revamp + fix renaming */
 export function ContextMenu() {

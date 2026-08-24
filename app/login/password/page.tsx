@@ -2,8 +2,8 @@
 
 import clsx from 'clsx'
 import { signIn } from 'next-auth/react'
-import { CredentialsInput } from '@/app/ui/components/CredentialsInput'
-import { SubmitButton } from '@/app/ui/components/SubmitButton'
+import { CredentialsInput } from '@/app/lib/components/oldLogin/CredentialsInput'
+import { SubmitButton } from '@/app/lib/components/oldLogin/SubmitButton'
 import { AlertTriangle, Award, Eye, EyeClosed, Pen } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'

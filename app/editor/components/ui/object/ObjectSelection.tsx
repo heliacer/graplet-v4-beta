@@ -1,5 +1,5 @@
 import { useEditorStore } from '@/app/editor/state'
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { Dropdown, DropdownItemProps } from '@/app/lib/components/Dropdown'
 import { SquareDashed } from 'lucide-react'
 
 export function ObjectSelection() {

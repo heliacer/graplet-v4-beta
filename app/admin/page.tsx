@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import { Folder, LogOut, Plus } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import { CredentialsInput } from '../ui/components/CredentialsInput'
+import { CredentialsInput } from '../lib/components/oldLogin/CredentialsInput'
 import { FormEvent, useEffect, useState } from 'react'
-import { signUp } from '../lib/actions'
+import { signUp } from '../lib/server/actions'
 
 export default function Admin() {
   const [message, setMessage] = useState('')

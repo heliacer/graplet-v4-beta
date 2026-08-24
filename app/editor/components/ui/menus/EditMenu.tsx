@@ -1,4 +1,4 @@
-import { Dropdown, DropdownItemProps } from '@/app/ui/components/Dropdown'
+import { Dropdown, DropdownItemProps } from '@/app/lib/components/Dropdown'
 import { PenLine } from 'lucide-react'
 
 export function EditMenu() {

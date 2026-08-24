@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Folder, LogOut } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import { LogoSolid } from '../ui/assets/LogoSolid'
+import { LogoSolid } from '../lib/components/LogoSolid'
 
 export default function Account() {
   return (
