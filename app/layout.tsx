@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 import { Suspense } from 'react'
 import './ui/globals.css'
 
-const description = `An Interactive 3D Editor and collaborative Platform for Creative Arts, Digital Assets and Game Design.`
+const description = `An Interactive 3D Editor and collaborative platform for creative Arts, Digital Assets and Game Design.`
 
 export const metadata: Metadata = {
   title: {
