@@ -10,7 +10,7 @@
 
 # misc
 .vscode
-/generated/prisma
+app/lib/seed.ts
 
 # env
 .env*
@@ -18,3 +18,6 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# drizzle
+/drizzle

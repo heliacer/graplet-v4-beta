@@ -7,6 +7,9 @@ export function UserDropdown() {
   const { data: session } = useSession()
   const router = useRouter()
 
+  const user = session?.user
+  if (user === undefined) return <>Not logged in</>
+
   const items: DropdownItemProps[] = [
     {
       label: 'My Stuff',
@@ -16,7 +19,7 @@ export function UserDropdown() {
     {
       label: 'Profile',
       Icon: User,
-      onClick: () => router.push(`/users/${session?.user?.id}`)
+      onClick: () => router.push(`/users/${user.id}`)
     },
     {
       label: 'Account',
@@ -31,6 +34,10 @@ export function UserDropdown() {
   ]
 
   return (
-    <Dropdown label={session?.user?.name || ''} Icon={User} items={items} />
+    <Dropdown
+      label={user.name || 'Guest'}
+      Icon={User}
+      items={items}
+    />
   )
 }

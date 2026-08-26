@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import { Folder, LogOut, Plus } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import { CredentialsInput } from '../lib/components/oldLogin/CredentialsInput'
+import { CredentialsInput } from '../../.old-login/oldLogin/CredentialsInput'
 import { FormEvent, useEffect, useState } from 'react'
-import { signUp } from '../lib/server/actions'
+import { credentialsSignUp } from '../lib/actions'
 
 export default function Admin() {
   const [message, setMessage] = useState('')
@@ -23,12 +23,12 @@ export default function Admin() {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const data = Object.fromEntries(formData)
-    const response = await signUp({
-      email: data.email as string,
-      name: data.name as string,
-      password: data.password as string
-    })
-    setMessage(response.message)
+    const response = await credentialsSignUp(
+      data.email as string,
+      data.username as string,
+      data.name as string
+    )
+    setMessage(response.success ? 'Success' : 'Error')
   }
 
   return (

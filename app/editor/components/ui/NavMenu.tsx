@@ -1,4 +1,4 @@
-import { DragNumberInput } from '@/app/lib/components/oldLogin/DragNumberInput'
+import { DragNumberInput } from '@/.old-login/oldLogin/DragNumberInput'
 import { useEditorStore } from '../../state'
 import { EditMenu } from './menus/EditMenu'
 import { FileMenu } from './menus/FileMenu'

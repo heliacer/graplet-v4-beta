@@ -1,5 +1,4 @@
 import {
-  Mesh,
   Object3D,
   OrthographicCamera,
   PerspectiveCamera,

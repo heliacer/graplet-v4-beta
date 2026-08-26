@@ -1,79 +1,47 @@
-import { compare } from 'bcrypt'
-import NextAuth, { User } from 'next-auth'
+import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import { CredentialsSignin } from 'next-auth'
-import { credentialsSchema } from './app/lib/server/zod'
-import { getUserByEmail } from './app/lib/server/data'
+import { getUser } from './app/lib/data'
+import { signInSchema } from './app/lib/zod'
+import { compare } from 'bcrypt'
 
-class InvalidCredentialsError extends CredentialsSignin {
-  code = 'invalid_credentials'
-}
+async function validateUser(identifier: string, password: string) {
+  const user = await getUser(identifier)
+  /** User not found */
+  if (!user) return null
+  /** No password registered */
+  if (!user.passwordHash) return null
 
-class UserNotFoundError extends CredentialsSignin {
-  code = 'user_not_found'
-}
+  const valid = compare(password, user.passwordHash)
+  /** Passwords don't match */
+  if (!valid) return null
 
-class IncorrectPasswordError extends CredentialsSignin {
-  code = 'incorrect_password'
-}
-
-interface SessionUser extends User {
-  createdAt: Date
-}
-
-declare module 'next-auth' {
-  interface Session {
-    user: SessionUser
-  }
-}
-
-function omit<T extends object, K extends keyof T>(
-  obj: T,
-  ...keys: K[]
-): Omit<T, K> {
-  const result = { ...obj }
-  for (const key of keys) delete result[key]
-  return result
+  return user
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        email: {},
-        password: {}
+        identifier: {
+          label: 'Username or Email'
+        },
+        password: {
+          type: 'password',
+          label: 'Password'
+        }
       },
       authorize: async credentials => {
-        const parsedCredentials = credentialsSchema.safeParse(credentials)
-        if (!parsedCredentials.success) {
-          throw new InvalidCredentialsError()
+        const parse = signInSchema.safeParse(credentials)
+
+        if (parse.success) {
+          const { identifier, password } = parse.data
+          const user = validateUser(identifier, password)
+          if (!user) throw Error('Invalid credentials.')
+          return user
         }
 
-        const { email, password } = parsedCredentials.data
-        const user = await getUserByEmail(email)
-
-        if (!user) {
-          throw new UserNotFoundError()
-        }
-
-        const passwordsMatch = await compare(password, user.password)
-        if (!passwordsMatch) {
-          throw new IncorrectPasswordError()
-        }
-
-        return omit(user, 'password')
+        return null
       }
     })
-  ],
-  callbacks: {
-    jwt({ token }) {
-      return token
-    },
-    session({ session, token }) {
-      if (token.user) {
-        session.user = token.user as typeof session.user
-      }
-      return session
-    }
-  }
+  ]
 })

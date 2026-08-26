@@ -1,5 +1,5 @@
 import { LucideIcon } from 'lucide-react'
-import { DragNumberInput } from '@/app/lib/components/oldLogin/DragNumberInput'
+import { DragNumberInput } from '@/.old-login/oldLogin/DragNumberInput'
 import { useId } from 'react'
 import { useEditorStore } from '@/app/editor/state'
 import { Vec3 } from '@/app/editor/types'

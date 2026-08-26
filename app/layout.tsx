@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from 'next'
+import type { Metadata } from 'next'
 import { nunito } from './lib/fonts'
 import { SessionProvider } from 'next-auth/react'
 import { cookies } from 'next/headers'

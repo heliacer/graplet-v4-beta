@@ -1,4 +1,3 @@
-import { Star } from 'lucide-react'
 import { PaneItem, renderPaneItem } from '../PaneItem'
 
 export function ObjectPane() {

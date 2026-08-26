@@ -25,5 +25,5 @@ export function useVerticeTest() {
       object.add(points)
       console.log('added points wohoo')
     }
-  }, [sobject])
+  }, [sobject, objectsRef])
 }
