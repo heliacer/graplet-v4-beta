@@ -17,7 +17,7 @@ export default function Editor() {
   }, [])
 
   return (
-    <div className='h-screen flex flex-col overflow-hidden'>
+    <main className='h-screen flex flex-col overflow-hidden'>
       <KeybindProvider>
         <EditorProvider>
           <EditorHeader />
@@ -27,6 +27,6 @@ export default function Editor() {
           <ContextMenu />
         </EditorProvider>
       </KeybindProvider>
-    </div>
+    </main>
   )
 }

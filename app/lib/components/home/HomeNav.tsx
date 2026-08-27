@@ -10,26 +10,27 @@ export function HomeNav() {
       </Link>
       <div className='flex items-start gap-2'>
         <Link
+          href='/login'
           draggable='false'
           className={clsx(
             'border border-ui-600',
             'rounded-md py-0.5 px-4',
             'hover:bg-ui-750 select-none'
           )}
-          href='/login'
         >
           Sign in
         </Link>
-        {/** @todo (#91) sign up with a <Link>, other <a> -> convert to link */}
-        <div
+        <Link
+          href='/signup'
+          draggable='false'
           className={clsx(
             'border border-ui-600 bg-ui-800',
             'rounded-md py-0.5 px-4 select-none',
-            'hover:bg-ui-750 cursor-not-allowed'
+            'hover:bg-ui-750'
           )}
         >
           Sign up
-        </div>
+        </Link>
       </div>
     </nav>
   )

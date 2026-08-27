@@ -15,7 +15,7 @@ export default function MyStuff() {
         <div className='flex min-h-52 flex-col gap-4'>
           <p className='text-xl'>My Stuff</p>
           <p>Welcome, {session?.user?.name}</p>
-          <Link className='flex items-center gap-2' href='/editor'>
+          <Link href='/editor' className='flex items-center gap-2'>
             <Cuboid size={18} />
             <p>Go to Editor</p>
           </Link>
@@ -27,7 +27,7 @@ export default function MyStuff() {
             <p>Sign Out</p>
           </button>
           {isAdmin && (
-            <Link className='flex items-center gap-2' href='/admin'>
+            <Link href='/admin' className='flex items-center gap-2'>
               <ToolCase size={18} />
               Go to Admin
             </Link>

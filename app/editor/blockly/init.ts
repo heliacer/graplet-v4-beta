@@ -1,7 +1,6 @@
 import {
   blockRendering,
   common,
-  ContextMenuItems,
   Extensions,
   getFocusManager,
   Options,
@@ -13,7 +12,7 @@ import {
   Toolbox,
   ToolboxCategory,
   utils,
-  VerticalFlyout,
+  VerticalFlyout
 } from 'blockly'
 import './blocks'
 import {
@@ -164,5 +163,6 @@ export function initializeBlocklyConfig() {
     keyCodes: [ctrlShiftZKey]
   })
 
-  ContextMenuItems.registerCommentOptions()
+  /** @todo fix duplicate register error */
+  /* ContextMenuItems.registerCommentOptions() */
 }

@@ -18,6 +18,7 @@ export default function Home() {
         <div className='flex flex-col gap-4 items-center mx-auto select-none'>
           <p className='text-xl'>Graplet v4 prototype 1 </p>
           <Link
+            href='/editor'
             draggable='false'
             className={clsx(
               'border border-teal bg-teal/60',
@@ -25,13 +26,13 @@ export default function Home() {
               'hover:bg-teal/50 active:scale-95',
               'flex gap-2 items-center'
             )}
-            href='/editor'
           >
             <Blocks size={16} />
             <p>Open the Editor</p>
           </Link>
         </div>
       </div>
+
       <footer className='flex gap-4 p-4 justify-center items-center text-ui-400'>
         <p>&copy; 2026 Graplet</p>
         <Link
