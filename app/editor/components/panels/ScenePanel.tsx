@@ -10,7 +10,6 @@ import { ObjectControls } from '../ui/controls/ObjectControls'
 import { useKeybind } from '../../context/KeybindsContext'
 import { Vector3 } from 'three'
 import { useOutline } from '../../hooks/useOutline'
-import { useVerticeTest } from '../../hooks/useVerticeTest'
 
 export default function ScenePanel(props: IDockviewPanelProps) {
   const { workspaceRef, cameraRef, canvasRef, orbitMapRef } = useEditorRefs()
@@ -24,7 +23,13 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useRenderer(props.api)
   useOutline()
   useTransformControls()
-  useVerticeTest()
+
+  /** 
+   * @todo (#34) Scene UX Controls, disabled for now 
+   * -> errors unsupported object in utils/sobject
+   * 
+   * useVerticeTest()
+   */
 
   const snapCamera = (direction: Vector3) => {
     if (!cameraRef.current) return
