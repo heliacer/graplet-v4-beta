@@ -142,15 +142,15 @@ export function useObjectActions() {
       }
     }
 
-    const sharedId =
+    /** @bobisbilly fix */
+    let sharedId =
       config.type === 'Scene' ? 'scene' : (nextSharedId++).toString()
 
     object.sharedId = sharedId
     applyHelpers(object)
 
-    /** bobisbilly fix, prevent back-and-forth crashing */
-    if (!objectsRef.current.has('0')) {
-      object.sharedId = '0'
+    if (objectsRef.current.get('0') === undefined) {
+      sharedId = '0'
       nextSharedId = 1
     }
 

@@ -46,7 +46,7 @@ export default function Login() {
         <input
           id='password'
           className={clsx(
-            'border rounded-md py-2.75 w-90 px-2.5 text-xs mb-1',
+            'border rounded-md py-2.75 w-90 px-2.5 mb-1',
             'focus-visible:outline-1 focus-visible:outline-teal'
           )}
           type='password'
@@ -63,7 +63,7 @@ export default function Login() {
           pending && 'opacity-80',
           'border rounded-md py-1.75 w-90 px-2.5',
           'border-teal bg-teal/60 hover:bg-teal/50',
-          'cursor-pointer active:scale-95',
+          'cursor-pointer',
         )}
       >
         {pending ? 'Signing in…' : 'Sign in'}

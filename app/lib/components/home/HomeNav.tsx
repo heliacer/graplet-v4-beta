@@ -5,7 +5,7 @@ import { Logo } from '../Logo'
 export function HomeNav() {
   return (
     <nav className='fixed w-full flex justify-between p-4'>
-      <Link href='/' className='active:scale-90'>
+      <Link href='/' className='active:scale-90' aria-label='Home'>
         <Logo size={30} />
       </Link>
       <div className='flex items-start gap-2'>

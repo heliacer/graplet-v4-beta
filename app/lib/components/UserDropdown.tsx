@@ -3,12 +3,14 @@ import { signOut, useSession } from 'next-auth/react'
 import { Dropdown, DropdownItemProps } from './Dropdown'
 import { useRouter } from 'next/navigation'
 
+/** @todo (#91) Revamp login: mix NEW user dropdown with login/signup on permanent nav! */
 export function UserDropdown() {
   const { data: session } = useSession()
   const router = useRouter()
 
   const user = session?.user
-  if (user === undefined) return <>Not logged in</>
+
+  if (user === undefined) return <></>
 
   const items: DropdownItemProps[] = [
     {
@@ -33,11 +35,5 @@ export function UserDropdown() {
     }
   ]
 
-  return (
-    <Dropdown
-      label={user.name || 'Guest'}
-      Icon={User}
-      items={items}
-    />
-  )
+  return <Dropdown label={user.name || 'Guest'} Icon={User} items={items} />
 }
