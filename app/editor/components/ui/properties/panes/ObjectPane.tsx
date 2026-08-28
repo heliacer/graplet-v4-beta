@@ -2,7 +2,7 @@ import { PaneItem, renderPaneItem } from '../PaneItem'
 
 export function ObjectPane() {
   /**
-   * @todo PropertyPanel: Serialize Inputs (#57)
+   * @todo (#57) PropertyPanel: Serialize Inputs
    * more serialization!
    *
    * -> make action registry, so that everything is component level

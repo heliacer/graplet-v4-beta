@@ -163,6 +163,6 @@ export function initializeBlocklyConfig() {
     keyCodes: [ctrlShiftZKey]
   })
 
-  /** @todo fix duplicate register error */
+  /** @todo (#14) fix duplicate register error */
   /* ContextMenuItems.registerCommentOptions() */
 }
