@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForDev: true,
     useTypeScriptCli: false
   },
+  images: {
+    remotePatterns: [new URL('https://gravatar.com/avatar/*')]
+  },
   reactCompiler: true,
   cacheComponents: true
 }

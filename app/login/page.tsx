@@ -66,7 +66,7 @@ export default function Login() {
           pending && 'opacity-80',
           'border rounded-md py-1.75 w-90 px-2.5',
           'border-teal bg-teal/60 hover:bg-teal/50',
-          'cursor-pointer active:translate-y-0.5'
+          'cursor-pointer active:scale-95'
         )}
       >
         {pending ? 'Signing in…' : 'Sign in'}

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Logo } from '@/app/lib/components/Logo'
-import { UserDropdown } from '@/app/lib/components/UserDropdown'
+import { UserMenu } from '@/app/lib/components/UserMenu'
 import { NavMenu } from './ui/NavMenu'
 import { RunControls } from './ui/controls/RunControls'
 import { SaveButton } from './ui/SaveButton'
@@ -18,7 +18,7 @@ export function EditorHeader() {
       <div className='w-full h-full flex items-center justify-end'>
         <div className='flex gap-4'>
           <SaveButton />
-          <UserDropdown />
+          <UserMenu />
         </div>
       </div>
     </nav>

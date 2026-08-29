@@ -5,12 +5,12 @@ import { Folder, LogOut } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { LogoSolid } from '../lib/components/LogoSolid'
 
-export default function Account() {
+export default function Settings() {
   return (
     <main className='flex justify-center items-center min-h-screen'>
       <div className='w-xl flex flex-wrap-reverse items-end justify-between gap-6 mx-10'>
         <div className='flex min-h-52 flex-col gap-4'>
-          <p className='text-xl'>Account</p>
+          <p className='text-xl'>Settings</p>
           <Link href='/mystuff' className='flex items-center gap-2'>
             <Folder size={18} />
             <p>Go to My Stuff</p>
