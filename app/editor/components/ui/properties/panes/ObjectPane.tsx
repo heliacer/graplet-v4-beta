@@ -1,3 +1,4 @@
+import { Star } from 'lucide-react'
 import { PaneItem, renderPaneItem } from '../PaneItem'
 
 export function ObjectPane() {
@@ -15,35 +16,30 @@ export function ObjectPane() {
   const items: PaneItem[] = [
     {
       type: 'text',
-      label: 'Name',
       property: 'name'
     },
     {
       type: 'vec3',
-      label: 'Position',
       property: 'position'
     },
     {
       type: 'vec3angle',
-      label: 'Rotation',
       property: 'rotation'
     },
     {
       type: 'vec3',
-      label: 'Scale',
       property: 'scale'
-    }
-    /*     
+    },
     {
       type: 'button',
-      label: 'button button click click',
+      label: 'nuclear launch button',
       Icon: Star,
-      onClick: () => alert('yo')
+      onClick: () => alert('kaboom')
     },
     {
       type: 'checkbox',
-      label: 'im a checkbox yo'
-    } */
+      label: `I'm a checkbox and what's up`
+    }
   ]
 
   const panes = items.map(renderPaneItem)

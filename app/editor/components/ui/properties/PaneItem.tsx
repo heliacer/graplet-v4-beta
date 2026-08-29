@@ -7,11 +7,12 @@ import { getObject } from '@/app/editor/utils/three'
 import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import clsx from 'clsx'
 
-export type PaneItem = { label: string } & (
-  PaneInput | PaneButton | PaneCheckbox
-)
-
-type PaneInput = TextPaneInput | Vec3PaneInput | Vec3AnglePaneInput
+export type PaneItem =
+  | TextPaneInput
+  | Vec3PaneInput
+  | Vec3AnglePaneInput
+  | ButtonPaneInput
+  | CheckboxPaneInput
 
 type TextPaneInput = {
   type: 'text'
@@ -28,20 +29,21 @@ type Vec3AnglePaneInput = {
   property: 'rotation'
 }
 
-type PaneButton = {
+type ButtonPaneInput = {
+  label: string
   type: 'button'
   Icon?: LucideIcon
   onClick?: () => void
 }
 
-type PaneCheckbox = {
+type CheckboxPaneInput = {
+  label: string
   type: 'checkbox'
   checked?: boolean
   onClick?: (checked: boolean) => void
 }
 
 interface Vec3PropertyProps {
-  label: string
   property: 'position' | 'scale' | 'rotation'
   display?: (value: number) => number
   store?: (value: number) => number
@@ -50,8 +52,41 @@ interface Vec3PropertyProps {
   decimals?: number
 }
 
-export function Vec3Property({
-  label,
+function TextProperty({ property }: { property: 'name' }) {
+  const { objectsRef } = useEditorRefs()
+  const updateSnapshot = useEditorStore(s => s.updateSnapshot)
+  const sharedId = useEditorStore(s => s.selectedItems[0])
+  const objectName = useEditorStore(s =>
+    sharedId ? s.objectSnapshots[sharedId]?.name : ''
+  )
+  if (sharedId === undefined) return
+
+  const update = (newValue: string) => {
+    const object = getObject(objectsRef, sharedId)
+    object[property] = newValue
+    updateSnapshot(sharedId, prev => ({ ...prev, [property]: newValue }))
+  }
+
+  return (
+    <label className='flex justify-between'>
+      <span className='text-nowrap'>
+        ({sharedId})-{property.charAt(0).toUpperCase() + property.slice(1)}
+      </span>
+      <input
+        type='text'
+        className='rounded border outline-none px-1 w-32'
+        key={objectName}
+        defaultValue={objectName}
+        onBlur={e => update(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') update(e.currentTarget.value)
+        }}
+      />
+    </label>
+  )
+}
+
+function Vec3Property({
   property,
   display = (x: number) => x,
   store = (x: number) => x,
@@ -68,7 +103,9 @@ export function Vec3Property({
 
   return (
     <div className='flex justify-between w-full'>
-      <p className='text-nowrap'>{label}</p>
+      <p className='text-nowrap'>
+        {property.charAt(0).toUpperCase() + property.slice(1)}
+      </p>
       <div className='flex gap-1'>
         {[0, 1, 2].map(axis => (
           <label key={axis} className='relative'>
@@ -107,45 +144,7 @@ export function Vec3Property({
   )
 }
 
-export function TextProperty({
-  label,
-  property
-}: {
-  label: string
-  property: 'name'
-}) {
-  const { objectsRef } = useEditorRefs()
-  const updateSnapshot = useEditorStore(s => s.updateSnapshot)
-  const sharedId = useEditorStore(s => s.selectedItems[0])
-  const name = useEditorStore(s =>
-    sharedId ? s.objectSnapshots[sharedId]?.name : ''
-  )
-  if (sharedId === undefined) return
-
-  const update = (newValue: string) => {
-    const object = getObject(objectsRef, sharedId)
-    object[property] = newValue
-    updateSnapshot(sharedId, prev => ({ ...prev, [property]: newValue }))
-  }
-
-  return (
-    <label className='flex justify-between'>
-      <span className='text-nowrap'>{label}</span>
-      <input
-        type='text'
-        className='rounded border outline-none px-1 w-32'
-        key={name}
-        defaultValue={name}
-        onBlur={e => update(e.target.value)}
-        onKeyDown={e => {
-          if (e.key === 'Enter') update(e.currentTarget.value)
-        }}
-      />
-    </label>
-  )
-}
-
-export function PropButton({
+function PropButton({
   label,
   Icon,
   onClick
@@ -204,7 +203,6 @@ export function renderPaneItem(item: PaneItem) {
     case 'vec3angle':
       return (
         <Vec3Property
-          label={item.label}
           property='rotation'
           display={x => (x * 180) / Math.PI}
           store={x => (x * Math.PI) / 180}

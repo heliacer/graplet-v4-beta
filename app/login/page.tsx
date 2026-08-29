@@ -4,7 +4,7 @@ import { LogoSolid } from '../lib/components/LogoSolid'
 import { clsx } from 'clsx'
 import Link from 'next/link'
 import { useActionState } from 'react'
-import { credentialsSignIn } from '@/app/lib/actions'
+import { credentialsSignIn } from '@/app/lib/data/actions'
 
 export default function Login() {
   const [state, formAction, pending] = useActionState(credentialsSignIn, {
@@ -63,7 +63,7 @@ export default function Login() {
           pending && 'opacity-80',
           'border rounded-md py-1.75 w-90 px-2.5',
           'border-teal bg-teal/60 hover:bg-teal/50',
-          'cursor-pointer',
+          'cursor-pointer'
         )}
       >
         {pending ? 'Signing in…' : 'Sign in'}

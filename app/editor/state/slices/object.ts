@@ -1,8 +1,6 @@
 import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
 import { StateCreator } from 'zustand'
 import { SObject3D, SObjectSnapshot, Updater } from '../../types'
-import { serializeObject } from '../../utils/sobject'
-import { Scene } from 'three'
 
 type State = {
   selectedItems: string[]
@@ -46,7 +44,12 @@ export const objectInitialState: State = {
   activeLevelId: 'scene',
   objectSnapshots: {
     scene: {
-      ...serializeObject(new Scene()),
+      type: 'Scene',
+      name: 'Scene',
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [0, 0, 0],
+      visible: true,
       sharedId: 'scene',
       parentId: '',
       childIds: []

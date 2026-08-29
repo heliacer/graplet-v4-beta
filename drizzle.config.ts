@@ -8,7 +8,7 @@ if (url === undefined) throw Error('no env.DATABASE_URL')
 
 export default defineConfig({
   out: './drizzle',
-  schema: './app/lib/schema.ts',
+  schema: './app/lib/data/schema.ts',
   dialect: 'postgresql',
   dbCredentials: { url }
 })

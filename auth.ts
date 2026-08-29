@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import { getUser } from './app/lib/data'
-import { signInSchema } from './app/lib/zod'
+import { getUser } from './app/lib/data/op'
+import { signInSchema } from './app/lib/data/zod'
 import { compare } from 'bcrypt'
 
 async function validateUser(identifier: string, password: string) {

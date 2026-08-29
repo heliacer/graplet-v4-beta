@@ -8,8 +8,8 @@ export class ObjectError extends Error {
 }
 
 export class NotFoundError extends Error {
-  constructor(objectId?: string) {
-    super(`Object ${objectId} was not found in the registry`)
+  constructor(sharedId?: string) {
+    super(`Object ${sharedId} was not found in the registry`)
     this.name = 'NotFoundError'
   }
 }

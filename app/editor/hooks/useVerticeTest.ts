@@ -23,7 +23,6 @@ export function useVerticeTest() {
       /** gotta intersect points in the renderer in order to select them, as selectedVertex (idk) */
       const points = new Points(object.geometry, material)
       object.add(points)
-      console.log('added points wohoo')
     }
   }, [sobject, objectsRef])
 }

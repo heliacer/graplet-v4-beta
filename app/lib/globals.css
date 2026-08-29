@@ -30,18 +30,6 @@
     --ui-850: oklch(24.2% 0.006 285.959);
     --ui-900: oklch(21% 0.006 285.885);
     --ui-950: oklch(14.1% 0.005 285.823);
-    --blue: oklch(0.6163 0.1663 265.82);
-    --orange: oklch(0.6623 0.1327 71.06);
-    --teal: oklch(0.6292 0.1145 175.84);
-    --cyan: oklch(0.6853 0.1183 234.63);
-    --purple: oklch(0.5498 0.1983 298.34);
-    --red: oklch(0.5819 0.1452 25.66);
-    --rose: oklch(0.6499 0.1893 323.97);
-    --amber: oklch(0.7309 0.1287 74.81);
-    --green: oklch(0.7354 0.1708 132.6);
-    --indigo: oklch(0.5424 0.1695 277.59);
-    --mint: oklch(0.706 0.0935 210.72);
-    --copper: oklch(0.6522 0.1175 57.54);
   }
 
   /* Built-in Theme (light) */
@@ -65,23 +53,12 @@
     --ui-850: oklch(94.5% 0.004 286.3);
     --ui-900: oklch(96.7% 0.001 286.375);
     --ui-950: oklch(98.5% 0 0);
-    --blue: #4565b7;
-    --orange: #956215;
-    --teal: #128571;
-    --cyan: #3587b1;
-    --purple: #6937b1;
-    --red: #923530;
-    --rose: #9d49a6;
-    --amber: #b67f30;
-    --green: #5d8f2d;
-    --indigo: #3e429c;
-    --mint: #3c8794;
-    --copper: #955b2c;
   }
 }
 
 @theme {
   --color-*: initial;
+  
   /* UI */
   --color-ui-50: var(--ui-50);
   --color-ui-100: var(--ui-100);
@@ -102,19 +79,20 @@
   --color-ui-850: var(--ui-850);
   --color-ui-900: var(--ui-900);
   --color-ui-950: var(--ui-950);
+
   /* Accent Colors */
-  --color-blue: var(--blue);
-  --color-orange: var(--orange);
-  --color-teal: var(--teal);
-  --color-cyan: var(--cyan);
-  --color-purple: var(--purple);
-  --color-red: var(--red);
-  --color-rose: var(--rose);
-  --color-amber: var(--amber);
-  --color-green: var(--green);
-  --color-indigo: var(--indigo);
-  --color-mint: var(--mint);
-  --color-copper: var(--copper);
+  --color-blue: oklch(0.6163 0.1663 265.82);
+  --color-orange: oklch(0.6623 0.1327 71.06);
+  --color-teal: oklch(0.6292 0.1145 175.84);
+  --color-cyan: oklch(0.6853 0.1183 234.63);
+  --color-purple: oklch(0.5498 0.1983 298.34);
+  --color-red: oklch(0.5819 0.1452 25.66);
+  --color-rose: oklch(0.6499 0.1893 323.97);
+  --color-amber: oklch(0.7309 0.1287 74.81);
+  --color-green: oklch(0.7354 0.1708 132.6);
+  --color-indigo: oklch(0.5424 0.1695 277.59);
+  --color-mint: oklch(0.706 0.0935 210.72);
+  --color-copper: oklch(0.6522 0.1175 57.54);
 }
 
 input {

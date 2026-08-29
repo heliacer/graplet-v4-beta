@@ -22,7 +22,7 @@ export function FileMenu() {
   const dvApi = useEditorStore(s => s.dvApi)
   const selectedItems = useEditorStore(s => s.selectedItems)
   const objectSnapshots = useEditorStore(s => s.objectSnapshots)
-  const { loadProjectData, loadDefaultScene } = useSceneActions()
+  const { loadProjectData, loadDefaultScene, resetScene } = useSceneActions()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -68,6 +68,7 @@ export function FileMenu() {
     )
     if (isConfirmed) {
       serialization.workspaces.load({}, workspaceRef.current)
+      resetScene()
       loadDefaultScene()
     }
   }

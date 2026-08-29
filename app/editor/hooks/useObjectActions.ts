@@ -21,18 +21,22 @@ import {
 import {
   applyProps,
   createObject,
-  serializeObject,
-  serializeObjectConfig
+  createObjectSnapshot,
+  snapshotToConfig
 } from '../utils/sobject'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { getObject } from '../utils/three'
 import { useEditorStore } from '../state'
 
-let nextSharedId = 0
-
 export function useObjectActions() {
-  const { objectsRef, cameraRef, workspaceRef, orbitMapRef, canvasRef } =
-    useEditorRefs()
+  const {
+    objectsRef,
+    cameraRef,
+    workspaceRef,
+    orbitMapRef,
+    canvasRef,
+    nextSharedIdRef
+  } = useEditorRefs()
   const selectedItems = useEditorStore(s => s.selectedItems)
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setSnapshots = useEditorStore(s => s.setSnapshots)
@@ -102,8 +106,8 @@ export function useObjectActions() {
       type === 'Scene' ? getObject(objectsRef, 'scene') : createObject(snapshot)
     object.sharedId = sharedId
 
-    if (Number(sharedId) + 1 > nextSharedId) {
-      nextSharedId = Number(sharedId) + 1
+    if (Number(sharedId) + 1 > nextSharedIdRef.current) {
+      nextSharedIdRef.current = Number(sharedId) + 1
     }
 
     objectsRef.current.set(sharedId, object)
@@ -136,22 +140,17 @@ export function useObjectActions() {
     applyProps(object, config)
     target.add(object)
 
+    console.log(nextSharedIdRef.current)
+    const sharedId =
+      config.type === 'Scene' ? 'scene' : String(nextSharedIdRef.current++)
+    console.log(nextSharedIdRef.current)
+    object.sharedId = sharedId
+    applyHelpers(object)
+
     if (children) {
       for (const child of children) {
         buildObjectTree(child, object, snapshots)
       }
-    }
-
-    /** @bobisbilly fix */
-    let sharedId =
-      config.type === 'Scene' ? 'scene' : (nextSharedId++).toString()
-
-    object.sharedId = sharedId
-    applyHelpers(object)
-
-    if (objectsRef.current.get('0') === undefined) {
-      sharedId = '0'
-      nextSharedId = 1
     }
 
     const parentId = target.sharedId
@@ -165,12 +164,12 @@ export function useObjectActions() {
       return child.sharedId
     })
 
-    snapshots[sharedId] = {
+    snapshots[sharedId] = createObjectSnapshot(
+      config,
       sharedId,
-      ...serializeObject(object),
       parentId,
       childIds
-    }
+    )
     objectsRef.current.set(sharedId, object)
 
     return object
@@ -289,7 +288,7 @@ export function useObjectActions() {
       throw new ObjectError(parent, 'does not have a sharedId')
     }
 
-    const sobject = serializeObjectConfig(object)
+    const sobject = snapshotToConfig(sharedId, objectSnapshots)
     const clone = addObject(sobject, parentId)
     clone.position.x += 2
   }
@@ -391,13 +390,14 @@ export function useObjectActions() {
   }
 
   function copyObjects(sharedIds: string[]) {
-    const objects = sharedIds.map(sharedId => getObject(objectsRef, sharedId))
-    const sobjects = objects.map(object => serializeObjectConfig(object))
+    const sobjects = sharedIds.map(sharedId =>
+      snapshotToConfig(sharedId, objectSnapshots)
+    )
     const data = JSON.stringify(sobjects)
     navigator.clipboard.writeText(data)
   }
 
-  async function pasteObjects(targetId: string = 'scene') {
+  async function pasteObjects(targetId?: string) {
     const text = await navigator.clipboard.readText()
     try {
       const objects: SObject3D[] = JSON.parse(text)

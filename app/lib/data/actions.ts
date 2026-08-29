@@ -1,7 +1,7 @@
 'use server'
 
 import { signUpSchema } from './zod'
-import { createUser } from './data'
+import { createUser } from './op'
 import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
 

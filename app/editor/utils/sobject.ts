@@ -1,10 +1,15 @@
-import { SGeometry, SObject3D, SMaterial, SBase, SObjectConfig } from '../types'
+import {
+  SGeometry,
+  SObject3D,
+  SMaterial,
+  SObjectConfig,
+  SObjectSnapshot
+} from '../types'
 import {
   AmbientLight,
   BoxGeometry,
   BufferGeometry,
   CircleGeometry,
-  Color,
   ConeGeometry,
   CylinderGeometry,
   DirectionalLight,
@@ -130,95 +135,108 @@ function createMaterial(material: SMaterial): Material {
   }
 }
 
-export function serializeObject(object: Object3D): SObject3D {
-  /** Common props */
-  const { name, position, rotation, scale } = object
-  const base: SBase = {
-    name,
-    position: [position.x, position.y, position.z],
-    rotation: [rotation.x, rotation.y, rotation.z],
-    scale: [scale.x, scale.y, scale.z],
-    visible: object.visible
+export function createObjectSnapshot(
+  config: SObjectConfig,
+  sharedId: string,
+  parentId: string,
+  childIds: string[]
+): SObjectSnapshot {
+  const base = {
+    sharedId,
+    parentId,
+    childIds,
+
+    name: config.name,
+    position: config.position ?? [0, 0, 0],
+    rotation: config.rotation ?? [0, 0, 0],
+    scale: config.scale ?? [1, 1, 1],
+    visible: config.visible ?? true
   }
 
-  /** Specific Props */
-  if (object instanceof Scene) {
-    return {
-      type: 'Scene',
-      ...base
-    }
+  switch (config.type) {
+    case 'Scene':
+      return {
+        ...base,
+        type: 'Scene'
+      }
+
+    case 'Group':
+      return {
+        ...base,
+        type: 'Group'
+      }
+
+    case 'Mesh':
+      return {
+        ...base,
+        type: 'Mesh',
+        geometry: config.geometry,
+        material: config.material
+      }
+
+    case 'DirectionalLight':
+      return {
+        ...base,
+        type: 'DirectionalLight',
+        color: config.color ?? '#ffffff',
+        intensity: config.intensity ?? 1
+      }
+
+    case 'AmbientLight':
+      return {
+        ...base,
+        type: 'AmbientLight',
+        color: config.color ?? '#ffffff',
+        intensity: config.intensity ?? 1
+      }
+
+    case 'PerspectiveCamera':
+      return {
+        ...base,
+        type: 'PerspectiveCamera',
+        fov: config.fov ?? 50,
+        near: config.near ?? 0.1,
+        far: config.far ?? 2000
+      }
+
+    case 'OrthographicCamera':
+      return {
+        ...base,
+        type: 'OrthographicCamera',
+        near: config.near ?? 0.1,
+        far: config.far ?? 2000
+      }
   }
-  if (object instanceof Group) {
-    return {
-      type: 'Group',
-      ...base
-    }
-  }
-  if (object instanceof Mesh) {
-    /** @todo (#71) expand serialization on material and allow multiple */
-    const color = object.material.color as Color
-    return {
-      type: 'Mesh',
-      material: {
-        type: object.material.type,
-        color: `#${color.getHexString()}`
-      },
-      geometry: {
-        type: object.geometry.type,
-        args: Object.values(object.geometry.parameters)
-      },
-      ...base
-    }
-  }
-  if (object instanceof AmbientLight) {
-    return {
-      type: 'AmbientLight',
-      intensity: object.intensity,
-      color: `#${object.color.getHexString()}`,
-      ...base
-    }
-  }
-  if (object instanceof DirectionalLight) {
-    return {
-      type: 'DirectionalLight',
-      intensity: object.intensity,
-      color: `#${object.color.getHexString()}`,
-      ...base
-    }
-  }
-  if (object instanceof PerspectiveCamera) {
-    const { fov, near, far } = object
-    return {
-      type: 'PerspectiveCamera',
-      fov,
-      near,
-      far,
-      ...base
-    }
-  }
-  if (object instanceof OrthographicCamera) {
-    const { near, far } = object
-    return {
-      type: 'OrthographicCamera',
-      near,
-      far,
-      ...base
-    }
-  }
-  throw new Error(
-    `Unsupported Object3D: ${object.constructor.name} ${object.type}`
-  )
 }
 
-export function serializeObjectConfig(
-  object: Object3D
-): Required<SObjectConfig> {
-  const sobject: Required<SObjectConfig> = {
-    ...serializeObject(object),
+export function snapshotToConfig(
+  sharedId: string,
+  snapshots: Record<string, SObjectSnapshot>
+): SObjectConfig {
+  const snapshot = snapshots[sharedId]
+
+  if (!snapshot) {
+    const msg = `snapshotToConfig: sharedId "${sharedId}" doesn't exist in snapshots`
+    throw Error(msg)
+  }
+
+  /** Strip metadata from snapshot */
+  const sobject = Object.fromEntries(
+    Object.entries(snapshot).filter(
+      ([key]) => key !== 'sharedId' && key !== 'parentId' && key !== 'childIds'
+    )
+  ) as SObject3D
+
+  const config: SObjectConfig = {
+    ...sobject,
     children: []
   }
-  for (const child of object.children) {
-    sobject.children.push(serializeObjectConfig(child))
+
+  if (snapshot.childIds.length) {
+    config.children = snapshot.childIds.map(childId =>
+      snapshotToConfig(childId, snapshots)
+    )
   }
-  return sobject
+
+  return config
 }

@@ -3,12 +3,12 @@ import { useEditorRefs } from '../context/EditorContext'
 import { ProjectData } from '../types'
 import { useObjectActions } from './useObjectActions'
 import { blocklyUI } from '../blockly/blocks'
-import { GridHelper } from 'three'
 import { useEditorStore } from '../state'
-import { getObject } from '../utils/three'
+import { GridHelper, Scene } from 'three'
 
 export function useSceneActions() {
-  const { objectsRef, workspaceRef, orbitMapRef, controlsRef } = useEditorRefs()
+  const { workspaceRef, orbitMapRef, controlsRef, objectsRef } =
+    useEditorRefs()
   const { loadSnapshots, addObject, removeObject, rebuildBlocklyUI } =
     useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
@@ -20,7 +20,6 @@ export function useSceneActions() {
    * Adds Ambient light, Directional light and a Camera
    */
   function loadDefaultScene() {
-    clearScene()
     addObject({
       type: 'Mesh',
       name: 'Box',
@@ -55,8 +54,6 @@ export function useSceneActions() {
   function loadProjectData(data: string) {
     try {
       const project = JSON.parse(data) as ProjectData
-      clearScene()
-
       const { snapshots, selectedItems, workspace } = project
 
       /**
@@ -85,7 +82,7 @@ export function useSceneActions() {
     }
   }
 
-  function clearScene() {
+  function resetScene() {
     for (const sharedId of Object.keys(objectSnapshots)) {
       removeObject(sharedId)
     }
@@ -94,16 +91,22 @@ export function useSceneActions() {
     orbitMapRef.current.clear()
     controlsRef.current?.detach()
     controlsRef.current = null
+  }
 
-    /** @test initialize scene (I have my doubts if this is a good init place) */
-    const gridHelper = new GridHelper()
-    const scene = getObject(objectsRef, 'scene')
-    scene.add(gridHelper)
+  function setupScene() {
+    if (!objectsRef.current.has('scene')) {
+      const scene = new Scene()
+      scene.sharedId = 'scene'
+      const gridHelper = new GridHelper()
+      scene.add(gridHelper)
+      objectsRef.current.set('scene', scene)
+    }
   }
 
   return {
     loadDefaultScene,
     loadProjectData,
-    clearScene
+    resetScene,
+    setupScene
   }
 }

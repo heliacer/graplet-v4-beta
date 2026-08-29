@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   const res = NextResponse.json({ ok: true })
   res.cookies.set('theme', theme, {
     path: '/',
-    httpOnly: true,
+    httpOnly: false,
     maxAge: 2 ** 25
   })
   return res
