@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+/** future asset library for models, samples and etc. */
 export default function AssetsPanel() {
   const [manifestData, setManifestData] = useState(null)
 

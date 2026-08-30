@@ -10,7 +10,7 @@
 
 # misc
 .vscode
-app/lib/seed.ts
+NOTES.md
 
 # env
 .env*

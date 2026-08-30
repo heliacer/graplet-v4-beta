@@ -66,7 +66,13 @@ const configs: SObjectConfig[] = [
 ]
 
 export function useSceneActions() {
-  const { workspaceRef, orbitMapRef, controlsRef, objectsRef } = useEditorRefs()
+  const {
+    workspaceRef,
+    orbitMapRef,
+    controlsRef,
+    objectsRef,
+    nextSharedIdRef
+  } = useEditorRefs()
   const { loadSnapshots, addObject, removeObject, rebuildBlocklyUI } =
     useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
@@ -119,6 +125,7 @@ export function useSceneActions() {
       removeObject(sharedId)
     }
     setSelectedItems([])
+    nextSharedIdRef.current = 0
     blocklyUI.objectMenu = []
     orbitMapRef.current.clear()
     controlsRef.current?.detach()

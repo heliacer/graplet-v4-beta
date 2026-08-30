@@ -13,11 +13,11 @@ export const usersTable = pgTable('user', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   email: text().notNull().unique(),
-  name: text().notNull(),
+  name: text(),
   passwordHash: text(),
   emailVerified: timestamp(),
   image: text(),
-  createdAt: timestamp().defaultNow()
+  createdAt: timestamp().notNull().defaultNow()
 })
 
 export const accountsTable = pgTable(
@@ -45,14 +45,6 @@ export const accountsTable = pgTable(
     }
   ]
 )
-
-export const sessionsTable = pgTable('session', {
-  sessionToken: text().primaryKey(),
-  userId: text()
-    .notNull()
-    .references(() => usersTable.id, { onDelete: 'cascade' }),
-  expires: timestamp({ mode: 'date' }).notNull()
-})
 
 export const verificationTokensTable = pgTable(
   'verificationToken',
