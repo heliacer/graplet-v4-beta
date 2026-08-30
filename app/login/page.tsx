@@ -127,7 +127,9 @@ export default function Login() {
       </button>
       <div className='flex gap-1 text-sm'>
         <p className='text-ui-300'>New to Graplet?</p>
-        <Link href='/signup' className='text-teal hover:underline'>Create an account</Link>
+        <Link href='/signup' className='text-teal hover:underline'>
+          Create an account
+        </Link>
       </div>
     </form>
   )

@@ -9,7 +9,7 @@ export function useProjectLoader() {
     if (hasLoaded.current) return
     hasLoaded.current = true
     setupScene()
-    
+
     /** @todo (#79) Fix project loading: add zod schema */
     const data = localStorage.getItem('projectData')
     if (data) loadProjectData(data)

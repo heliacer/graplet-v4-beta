@@ -24,13 +24,14 @@ export default function ScenePanel(props: IDockviewPanelProps) {
   useOutline()
   useTransformControls()
 
-  /** 
-   * @todo (#34) Scene UX Controls, disabled for now 
-   * -> errors unsupported object in utils/sobject
-   * 
+  /**
+   * @todo (#34) Scene UX Controls, disabled for now
+   * -> errors: unsupported object in utils/sobject
+   *
    * useVerticeTest()
    */
 
+  /** camera util */
   const snapCamera = (direction: Vector3) => {
     if (!cameraRef.current) return
     const orbit = orbitMapRef.current.get(cameraRef.current.id)
@@ -45,7 +46,7 @@ export default function ScenePanel(props: IDockviewPanelProps) {
 
   /**
    * @todo (#36) Keybinds
-   * -> move this elsewhere, refactor
+   * -> move this elsewhere, refactor (including camera util)
    * -> bulk registration method!
    */
   useKeybind({ code: 'Numpad0', modifiers: [] }, () => {

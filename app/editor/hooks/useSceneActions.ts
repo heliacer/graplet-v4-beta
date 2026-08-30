@@ -7,8 +7,7 @@ import { useEditorStore } from '../state'
 import { GridHelper, Scene } from 'three'
 
 export function useSceneActions() {
-  const { workspaceRef, orbitMapRef, controlsRef, objectsRef } =
-    useEditorRefs()
+  const { workspaceRef, orbitMapRef, controlsRef, objectsRef } = useEditorRefs()
   const { loadSnapshots, addObject, removeObject, rebuildBlocklyUI } =
     useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
