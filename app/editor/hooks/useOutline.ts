@@ -22,6 +22,9 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js'
  * need to completely redo this, (next to useRenderer), it's shit
  * -> refactor
  * -> also needs better structure
+ * 
+ * bug: another reason to scrap this: on project file load,
+ * old data is stuck in refs used here.
  */
 
 export function collectMeshes(object: Object3D): Mesh[] {

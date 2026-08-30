@@ -1,10 +1,76 @@
 import { Events, serialization } from 'blockly'
 import { useEditorRefs } from '../context/EditorContext'
-import { ProjectData } from '../types'
+import { ProjectData, SObjectConfig } from '../types'
 import { useObjectActions } from './useObjectActions'
 import { blocklyUI } from '../blockly/blocks'
 import { useEditorStore } from '../state'
 import { GridHelper, Scene } from 'three'
+
+const configs: SObjectConfig[] = [
+  {
+    type: 'Mesh',
+    name: 'Box (red)',
+    position: [-1, 0, 0],
+    geometry: {
+      type: 'BoxGeometry',
+      args: [1, 1, 1]
+    },
+    material: {
+      type: 'MeshStandardMaterial',
+      color: '#ff0000'
+    }
+  },
+  {
+    type: 'Mesh',
+    name: 'Box (green)',
+    geometry: {
+      type: 'BoxGeometry',
+      args: [1, 1, 1]
+    },
+    material: {
+      type: 'MeshStandardMaterial',
+      color: '#00ff00'
+    }
+  },
+  {
+    type: 'Mesh',
+    name: 'Box (blue)',
+    position: [1, 0, 0],
+    geometry: {
+      type: 'BoxGeometry',
+      args: [1, 1, 1]
+    },
+    material: {
+      type: 'MeshStandardMaterial',
+      color: '#0000ff'
+    }
+  },
+  {
+    type: 'PerspectiveCamera',
+    name: 'Main Camera',
+    position: [0, 8, 14],
+    rotation: [0, 0, 0],
+    far: 5000
+  },
+  {
+    type: 'PerspectiveCamera',
+    name: 'Main Camera',
+    position: [0, 8, 14],
+    rotation: [0, 0, 0],
+    far: 5000
+  },
+  {
+    name: 'Ambient Light',
+    type: 'AmbientLight',
+    intensity: 1
+  },
+  {
+    name: 'Directional Light',
+    type: 'DirectionalLight',
+    position: [0, 5, 0],
+    intensity: 2
+  }
+]
 
 export function useSceneActions() {
   const { workspaceRef, orbitMapRef, controlsRef, objectsRef } = useEditorRefs()
@@ -16,38 +82,12 @@ export function useSceneActions() {
   const setSnapshots = useEditorStore(s => s.setSnapshots)
 
   /**
-   * Adds Ambient light, Directional light and a Camera
+   * Adds 3 Boxes, an Ambient light, a Directional light and a Camera
    */
   function loadDefaultScene() {
-    addObject({
-      type: 'Mesh',
-      name: 'Box',
-      geometry: {
-        type: 'BoxGeometry',
-        args: [1, 1, 1]
-      },
-      material: {
-        type: 'MeshStandardMaterial'
-      }
-    })
-    addObject({
-      type: 'PerspectiveCamera',
-      name: 'Main Camera',
-      position: [0, 8, 14],
-      rotation: [0, 0, 0],
-      far: 5000
-    })
-    addObject({
-      name: 'Ambient Light',
-      type: 'AmbientLight',
-      intensity: 1
-    })
-    addObject({
-      name: 'Directional Light',
-      type: 'DirectionalLight',
-      position: [0, 5, 0],
-      intensity: 2
-    })
+    for (const config of configs) {
+      addObject(config)
+    }
   }
 
   function loadProjectData(data: string) {

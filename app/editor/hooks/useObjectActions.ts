@@ -140,10 +140,8 @@ export function useObjectActions() {
     applyProps(object, config)
     target.add(object)
 
-    console.log(nextSharedIdRef.current)
     const sharedId =
       config.type === 'Scene' ? 'scene' : String(nextSharedIdRef.current++)
-    console.log(nextSharedIdRef.current)
     object.sharedId = sharedId
     applyHelpers(object)
 

@@ -13,6 +13,12 @@ import { objectInitialState } from './state/slices/object'
 export default function Editor() {
   useLayoutEffect(() => {
     return () => {
+      /** 
+       * @todo (#34) Scene UX - actually use the cache
+       * -> snapshots can be recycled
+       * hold project id info, so that marked dirty if 
+       * not the same project. 
+      */
       useEditorStore.setState({ ...objectInitialState })
     }
   }, [])

@@ -75,7 +75,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
 
   useEffect(() => {
     const canvas = canvasRef.current
-
+    
     const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
     renderer.autoClear = false
 
@@ -83,7 +83,7 @@ export function useRenderer(panelApi: DockviewPanelApi) {
     renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(window.devicePixelRatio)
     rendererRef.current = renderer
-
+    
     function render() {
       const camera = cameraRef.current
       const renderer = rendererRef.current

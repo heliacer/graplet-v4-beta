@@ -48,7 +48,7 @@ export const objectInitialState: State = {
       name: 'Scene',
       position: [0, 0, 0],
       rotation: [0, 0, 0],
-      scale: [0, 0, 0],
+      scale: [1, 1, 1],
       visible: true,
       sharedId: 'scene',
       parentId: '',
