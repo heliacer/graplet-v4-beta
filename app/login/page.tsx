@@ -9,6 +9,7 @@ import { KeyRound, Mail } from 'lucide-react'
 import { Github } from '../lib/components/icons/Github'
 import { Google } from '../lib/components/icons/Google'
 
+/** @todo (#91) Revamp Login - UX */
 export default function Login() {
   const [state, formAction, pending] = useActionState(credentialsSignIn, {
     success: true

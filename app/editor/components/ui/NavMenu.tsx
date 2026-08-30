@@ -1,9 +1,9 @@
-import { DragNumberInput } from '@/.old-login/oldLogin/DragNumberInput'
+import { useEditorRefs } from '../../context/EditorContext'
 import { useEditorStore } from '../../state'
 import { EditMenu } from './menus/EditMenu'
 import { FileMenu } from './menus/FileMenu'
-import { useEditorRefs } from '../../context/EditorContext'
 import { useEffect, useState } from 'react'
+import { DragNumberInput } from './DragNumberInput'
 import clsx from 'clsx'
 
 const lorem = `

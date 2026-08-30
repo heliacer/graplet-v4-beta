@@ -1,11 +1,11 @@
 import { LucideIcon } from 'lucide-react'
-import { DragNumberInput } from '@/.old-login/oldLogin/DragNumberInput'
 import { useId } from 'react'
 import { useEditorStore } from '@/app/editor/state'
 import { Vec3 } from '@/app/editor/types'
 import { getObject } from '@/app/editor/utils/three'
 import { useEditorRefs } from '@/app/editor/context/EditorContext'
 import clsx from 'clsx'
+import { DragNumberInput } from '../DragNumberInput'
 
 export type PaneItem =
   | TextPaneInput

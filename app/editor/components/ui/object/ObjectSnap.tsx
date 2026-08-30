@@ -1,7 +1,7 @@
 import { useEditorStore } from '@/app/editor/state'
-import { DragNumberInput } from '@/.old-login/oldLogin/DragNumberInput'
 import { RulerDimensionLine } from 'lucide-react'
 import { TransformControlsMode } from 'three/addons/controls/TransformControls.js'
+import { DragNumberInput } from '../DragNumberInput'
 
 /** @todo (#63) Modify Object Snapping */
 export function ObjectSnap({ mode }: { mode: TransformControlsMode }) {
