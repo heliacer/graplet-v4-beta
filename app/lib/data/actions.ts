@@ -40,7 +40,7 @@ export async function credentialsSignIn(
   formData: FormData
 ): Promise<AuthResponse> {
   try {
-    await signIn('credentials', formData)
+    await signIn('credentials', formData, { redirectTo: '/editor' })
     return { success: true }
   } catch (error) {
     if (error instanceof AuthError) {
