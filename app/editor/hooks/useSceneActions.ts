@@ -53,13 +53,6 @@ const configs: SObjectConfig[] = [
     far: 5000
   },
   {
-    type: 'PerspectiveCamera',
-    name: 'Main Camera',
-    position: [0, 8, 14],
-    rotation: [0, 0, 0],
-    far: 5000
-  },
-  {
     name: 'Ambient Light',
     type: 'AmbientLight',
     intensity: 1
