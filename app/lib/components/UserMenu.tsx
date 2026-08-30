@@ -38,12 +38,26 @@ export function UserMenu() {
           isOpen ? 'block' : 'hidden'
         )}
       >
-        <h2 className='text-md font-bold mx-3 mb-1'>{session?.user?.name}</h2>
+        {session?.user ? (
+          <div className='flex gap-2 items-center mx-2 mb-2'>
+            <Image
+              height={24}
+              width={24}
+              className='rounded-full'
+              src='https://gravatar.com/avatar/97228600f711ecc42ed47e5af95988462a151ad9b9edf81c0a1f3d1f53b463f5'
+              alt='user profile picture'
+            />
+            <h2 className='font-bold'>{session?.user?.name}</h2>
+          </div>
+        ) : (
+          <p>this pmo</p>
+        )}
+        <hr className=' my-1.5 border-ui-750' />
 
         {items.map(({ href, label, icon: Icon }) => (
           <div
             key={href}
-            className='mx-2 border border-transparent rounded hover:bg-ui-750 active:border-ui-600'
+            className='mx-2 border border-transparent rounded-md hover:bg-ui-800'
           >
             <Link
               href={href}
@@ -55,9 +69,9 @@ export function UserMenu() {
           </div>
         ))}
 
-        <hr className='mx-3 my-1.5 border-ui-700' />
+        <hr className='my-1.5 border-ui-750' />
 
-        <div className='mx-2 border border-transparent rounded hover:bg-ui-750'>
+        <div className='mx-2 border border-transparent rounded-md hover:bg-ui-800'>
           <button
             className='py-0.5 w-full px-1 flex gap-2 items-center cursor-pointer'
             onClick={() => signOut({ callbackUrl: '/' })}
