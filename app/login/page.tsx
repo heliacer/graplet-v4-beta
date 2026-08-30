@@ -8,6 +8,7 @@ import { credentialsSignIn } from '@/app/lib/data/actions'
 import { KeyRound, Mail } from 'lucide-react'
 import { Github } from '../lib/components/icons/Github'
 import { Google } from '../lib/components/icons/Google'
+import { signIn } from 'next-auth/react'
 
 /** @todo (#91) Revamp Login - UX */
 export default function Login() {
@@ -93,22 +94,22 @@ export default function Login() {
         </button>
         <button
           type='button'
+          onClick={() => signIn('github')}
           className={clsx(
-            'flex gap-2 items-center',
+            'flex gap-2 items-center cursor-pointer',
             'border rounded-md py-1.75 px-4',
             'border-ui-600 bg-ui-800 hover:border-ui-550',
-            'cursor-not-allowed'
           )}
         >
           <Github size={22} />
         </button>
         <button
           type='button'
+          onClick={() => signIn('google')}
           className={clsx(
-            'flex gap-2 items-center',
+            'flex gap-2 items-center cursor-pointer',
             'border rounded-md py-1.75 px-4',
-            'border-ui-600 bg-ui-800 hover:border-ui-550',
-            'cursor-not-allowed'
+            'border-ui-600 bg-ui-800 hover:border-ui-550'
           )}
         >
           <Google size={22} />
