@@ -78,8 +78,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     })
   ],
   callbacks: {
+    jwt({ token, user }) {
+      if (user) token.id = user.id
+      return token
+    },
+
     session({ session, token }) {
-      session.user.emailHash = hash('sha-256', session.user.email)
+      session.user.emailHash = hash('sha-256', session.user.email!)
       session.user.id = token.id as string
 
       return session
