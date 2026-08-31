@@ -35,6 +35,13 @@ export async function credentialsSignUp(
   }
 }
 
+export async function signInAction(state: AuthResponse, formData: FormData) {
+  const action = formData.get('action')
+  if (action === 'credentials') return await credentialsSignIn(state, formData)
+  if (action === 'resend') return await resendSignIn(state, formData)
+  throw Error(`unknown action: "${action}"`)
+}
+
 export async function credentialsSignIn(
   _state: AuthResponse,
   formData: FormData
@@ -47,6 +54,27 @@ export async function credentialsSignIn(
       if (error.type === 'CredentialsSignin') {
         return { success: false, message: INVALID_MSG }
       }
+      return { success: false, message: ERROR_MSG }
+    }
+    throw error
+  }
+}
+
+export async function resendSignIn(
+  _state: AuthResponse,
+  formData: FormData
+): Promise<AuthResponse> {
+  const identifier = formData.get('identifier')
+
+  if (typeof identifier !== 'string' || !identifier) {
+    return { success: false, message: 'Please enter your email.' }
+  }
+
+  try {
+    await signIn('resend', { email: identifier, redirectTo: '/editor' })
+    return { success: true }
+  } catch (error) {
+    if (error instanceof AuthError) {
       return { success: false, message: ERROR_MSG }
     }
     throw error

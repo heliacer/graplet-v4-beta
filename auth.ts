@@ -2,6 +2,7 @@ import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 import GitHub from 'next-auth/providers/github'
+import Resend from 'next-auth/providers/resend'
 import type { DefaultSession } from 'next-auth'
 import { getUser } from './app/lib/data/op'
 import { signInSchema } from './app/lib/data/zod'
@@ -36,7 +37,7 @@ async function validateUser(identifier: string, password: string) {
   /** No password registered */
   if (!user.passwordHash) return null
 
-  const valid = compare(password, user.passwordHash)
+  const valid = await compare(password, user.passwordHash)
   /** Passwords don't match */
   if (!valid) return null
 
@@ -49,6 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'jwt'
   },
   providers: [
+    Resend({ from: 'noreply@heliacer.ch' }),
     Google({ allowDangerousEmailAccountLinking: true }),
     GitHub({ allowDangerousEmailAccountLinking: true }),
     Credentials({

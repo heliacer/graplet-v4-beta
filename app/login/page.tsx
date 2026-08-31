@@ -4,7 +4,7 @@ import { LogoSolid } from '../lib/components/LogoSolid'
 import { clsx } from 'clsx'
 import Link from 'next/link'
 import { useActionState } from 'react'
-import { credentialsSignIn } from '@/app/lib/data/actions'
+import { signInAction } from '@/app/lib/data/actions'
 import { KeyRound, Mail } from 'lucide-react'
 import { Github } from '../lib/components/icons/Github'
 import { Google } from '../lib/components/icons/Google'
@@ -12,7 +12,12 @@ import { signIn } from 'next-auth/react'
 
 /** @todo (#91) Revamp Login - UX */
 export default function Login() {
-  const [state, formAction, pending] = useActionState(credentialsSignIn, {
+  /**
+   * @todo: for send email button, switch  to send email ui,
+   * then go back with "Use my password" button, which was "Send me an Email" before
+   */
+
+  const [state, formAction, pending] = useActionState(signInAction, {
     success: true
   })
 
@@ -63,6 +68,8 @@ export default function Login() {
 
       <button
         type='submit'
+        name='action'
+        value='credentials'
         disabled={pending}
         className={clsx(
           pending && 'opacity-80',
@@ -81,12 +88,13 @@ export default function Login() {
       </div>
       <div className='flex gap-4 w-90 mb-2'>
         <button
-          type='button'
+          type='submit'
+          name='action'
+          value='resend'
           className={clsx(
-            'flex gap-2 items-center w-full',
+            'flex gap-2 items-center w-full cursor-pointer',
             'border rounded-md py-1.75 px-2.5',
-            'border-ui-600 bg-ui-800 hover:border-ui-550',
-            'cursor-not-allowed'
+            'border-ui-600 bg-ui-800 hover:border-ui-550'
           )}
         >
           <Mail size={20} />
@@ -98,7 +106,7 @@ export default function Login() {
           className={clsx(
             'flex gap-2 items-center cursor-pointer',
             'border rounded-md py-1.75 px-4',
-            'border-ui-600 bg-ui-800 hover:border-ui-550',
+            'border-ui-600 bg-ui-800 hover:border-ui-550'
           )}
         >
           <Github size={22} />
