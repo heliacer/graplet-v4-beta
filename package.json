@@ -21,6 +21,8 @@
     "@headless-tree/react": "^1.5.1",
     "@neondatabase/serverless": "^1.1.0",
     "@next/env": "^16.3.3",
+    "@simplewebauthn/browser": "^9.0.1",
+    "@simplewebauthn/server": "^9.0.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "bcrypt": "^6.0.0",
     "blockly": "^13.2.1",

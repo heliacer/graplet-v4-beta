@@ -3,6 +3,7 @@ import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 import GitHub from 'next-auth/providers/github'
 import Resend from 'next-auth/providers/resend'
+import Passkey from 'next-auth/providers/passkey'
 import type { DefaultSession } from 'next-auth'
 import { getUser } from './app/lib/data/op'
 import { signInSchema } from './app/lib/data/zod'
@@ -51,7 +52,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     verifyRequest: '/'
   },
+  experimental: { enableWebAuthn: true },
   providers: [
+    Passkey,
     Resend({ from: 'noreply@heliacer.ch' }),
     Google({ allowDangerousEmailAccountLinking: true }),
     GitHub({ allowDangerousEmailAccountLinking: true }),

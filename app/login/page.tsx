@@ -9,6 +9,7 @@ import { KeyRound, Mail } from 'lucide-react'
 import { Github } from '../lib/components/icons/Github'
 import { Google } from '../lib/components/icons/Google'
 import { signIn } from 'next-auth/react'
+import { signIn as waSignIn } from 'next-auth/webauthn'
 
 export default function Login() {
   const [state, formAction, pending] = useActionState(signInAction, {
@@ -135,11 +136,11 @@ export default function Login() {
       </div>
       <button
         type='button'
+        onClick={() => waSignIn('passkey')}
         className={clsx(
-          'flex gap-2 items-center justify-center',
-          'border rounded-md py-1.75 px-2.5 w-90',
-          'border-ui-600 bg-ui-800 hover:border-ui-550',
-          'cursor-not-allowed mb-1'
+          'flex gap-2 items-center justify-center cursor-pointer',
+          'border rounded-md py-1.75 px-2.5 w-90 mb-1',
+          'border-ui-600 bg-ui-800 hover:border-ui-550'
         )}
       >
         <KeyRound size={20} />
