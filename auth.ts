@@ -49,6 +49,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: 'jwt'
   },
+  pages: {
+    verifyRequest: '/'
+  },
   providers: [
     Resend({ from: 'noreply@heliacer.ch' }),
     Google({ allowDangerousEmailAccountLinking: true }),
@@ -64,16 +67,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
       authorize: async credentials => {
-        const parse = signInSchema.safeParse(credentials)
+        const result = signInSchema.safeParse(credentials)
+        if (!result.success) return null
 
-        if (parse.success) {
-          const { identifier, password } = parse.data
-          const user = await validateUser(identifier, password)
-          if (!user) throw Error('Invalid credentials.')
-          return user
-        }
-
-        return null
+        const { identifier, password } = result.data
+        return await validateUser(identifier, password)
       }
     })
   ],

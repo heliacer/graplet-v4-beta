@@ -3,33 +3,39 @@
 import { LogoSolid } from '../lib/components/LogoSolid'
 import { clsx } from 'clsx'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { signInAction } from '@/app/lib/data/actions'
 import { KeyRound, Mail } from 'lucide-react'
 import { Github } from '../lib/components/icons/Github'
 import { Google } from '../lib/components/icons/Google'
 import { signIn } from 'next-auth/react'
 
-/** @todo (#91) Revamp Login - UX */
 export default function Login() {
-  /**
-   * @todo: for send email button, switch  to send email ui,
-   * then go back with "Use my password" button, which was "Send me an Email" before
-   */
-
   const [state, formAction, pending] = useActionState(signInAction, {
     success: true
   })
 
+  const [activeAction, setActiveAction] = useState<string | null>(null)
+
   return (
     <form
+      onSubmit={({ currentTarget, nativeEvent: { submitter } }) => {
+        const action = (submitter as HTMLButtonElement).value
+        const password = currentTarget.elements.namedItem(
+          'password'
+        ) as HTMLInputElement
+        /** either 'credentials' or 'resend' */
+        setActiveAction(
+          action === 'credentials' && !password.value ? 'resend' : action
+        )
+      }}
       action={formAction}
       className='w-full mt-20 flex flex-col gap-2 items-center'
     >
       <LogoSolid size={60} />
       <h1 className='text-xl mb-4'>Sign in to Graplet</h1>
       <label>
-        <p className='text-sm mb-1'>Username or Email</p>
+        <p className='text-sm mb-1'>Username or Email*</p>
         <input
           autoFocus
           className={clsx(
@@ -78,7 +84,7 @@ export default function Login() {
           'cursor-pointer active:scale-95'
         )}
       >
-        {pending ? 'Signing in…' : 'Sign in'}
+        {pending && activeAction === 'credentials' ? 'Signing in…' : 'Sign in'}
       </button>
 
       <div className='flex items-center gap-2'>
@@ -98,7 +104,11 @@ export default function Login() {
           )}
         >
           <Mail size={20} />
-          <p>Send me an Email</p>
+          <p>
+            {pending && activeAction === 'resend'
+              ? 'Sending Email…'
+              : 'Send me an Email'}
+          </p>
         </button>
         <button
           type='button'
