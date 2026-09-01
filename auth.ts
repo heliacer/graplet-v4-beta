@@ -13,7 +13,6 @@ import { hash } from 'crypto'
 const Allowlist = [
   'link.grob@outlook.de',
   'indominustobler@gmail.com',
-  'francisco.engler@gmx.ch',
   'malamalazz169@gmail.com',
   'saykatorvideos@gmail.com',
   'heliacer@gmx.ch',
