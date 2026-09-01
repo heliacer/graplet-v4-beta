@@ -2,11 +2,11 @@
 
 import clsx from 'clsx'
 import Link from 'next/link'
-import { Logo } from '../Logo'
+import { Logo } from './Logo'
 import { useSession } from 'next-auth/react'
-import { UserMenu } from '../UserMenu'
+import { UserMenu } from './UserMenu'
 
-export function HomeNav() {
+export function SiteNav() {
   const { status } = useSession()
 
   return (

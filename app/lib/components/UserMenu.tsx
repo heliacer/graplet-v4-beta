@@ -2,7 +2,7 @@ import Image from 'next/image'
 import clsx from 'clsx'
 import { useLayoutEffect, useState } from 'react'
 import Link from 'next/link'
-import { Folder, LogOut, Settings, User2, UserRound } from 'lucide-react'
+import { Folder, LogOut, Settings, UserRound } from 'lucide-react'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { signOut, useSession } from 'next-auth/react'
 
@@ -16,14 +16,6 @@ export function UserMenu({ userIconSize = 24 }: { userIconSize?: number }) {
     { href: '/mystuff', label: 'My Stuff', icon: Folder },
     { href: '/settings', label: 'Settings', icon: Settings }
   ]
-  
-  if (session?.user) {
-    items.push({
-      href: `/users/${session.user.id}`,
-      label: 'Profile',
-      icon: User2
-    })
-  }
 
   useLayoutEffect(() => () => setIsOpen(false), [])
 
@@ -54,12 +46,18 @@ export function UserMenu({ userIconSize = 24 }: { userIconSize?: number }) {
       <div
         className={clsx(
           'w-52 absolute z-10 right-0 mt-1.5 rounded-lg',
-          'border border-ui-700 shadow-xl bg-ui-900 py-2 text-sm',
+          'border border-ui-700 shadow-xl bg-ui-900 pb-2 pt-1.5 text-sm',
           isOpen ? 'block' : 'hidden'
         )}
       >
         {status === 'authenticated' ? (
-          <div className='flex gap-2 items-center mx-2 mb-2'>
+          <Link
+            href={`/users/${session.user.id}`}
+            className={clsx(
+              'flex items-center gap-2 mx-1.5 mb-1',
+              'rounded-md hover:bg-ui-800 p-1'
+            )}
+          >
             <Image
               height={24}
               width={24}
@@ -67,8 +65,8 @@ export function UserMenu({ userIconSize = 24 }: { userIconSize?: number }) {
               src={`https://gravatar.com/avatar/${session.user.emailHash}`}
               alt='user profile picture'
             />
-            <h2 className='font-bold'>{session.user.name}</h2>
-          </div>
+            <h2>{session.user.name}</h2>
+          </Link>
         ) : (
           <div className='mx-2 ml-3 flex justify-between items-center'>
             <p className='font-bold'>Guest</p>

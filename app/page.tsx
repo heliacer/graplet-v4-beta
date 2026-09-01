@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import clsx from 'clsx'
 import { Blocks } from 'lucide-react'
-import { HomeNav } from './lib/components/home/HomeNav'
+import { SiteNav } from './lib/components/SiteNav'
 import { Github } from './lib/components/icons/Github'
 
 export default function Home() {
   return (
-    <div className='h-screen overflow-x-hidden'>
-      <HomeNav />
+    <main className='h-screen'>
+      <SiteNav />
       <div
         className={clsx(
           'w-full flex lg:flex-row flex-col gap-16 p-4',
@@ -43,6 +43,6 @@ export default function Home() {
           <Github size={18} />
         </Link>
       </footer>
-    </div>
+    </main>
   )
 }

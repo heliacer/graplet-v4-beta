@@ -1,29 +1,41 @@
 'use client'
 
-import Link from 'next/link'
-import { Folder, LogOut } from 'lucide-react'
-import { signOut } from 'next-auth/react'
-import { LogoSolid } from '../lib/components/LogoSolid'
+import { useSession } from 'next-auth/react'
+import { SiteNav } from '../lib/components/SiteNav'
+import { accountDelete } from '../lib/data/actions'
 
 export default function Settings() {
+  const { data: session } = useSession()
+
+  /**
+   * @todo (#91) Revamp Login - figure out what to do precisely on signout on other page
+   * -> info beacon? redirect to home?
+   */
+  function handleDelete() {
+    if (!session?.user.id) {
+      alert('You are signed out')
+      return
+    }
+
+    const isSure = confirm('Are you sure?')
+    if (isSure) {
+      accountDelete(session.user.id)
+    }
+  }
+
   return (
-    <main className='flex justify-center items-center min-h-screen'>
-      <div className='w-xl flex flex-wrap-reverse items-end justify-between gap-6 mx-10'>
-        <div className='flex min-h-52 flex-col gap-4'>
-          <p className='text-xl'>Settings</p>
-          <Link href='/mystuff' className='flex items-center gap-2'>
-            <Folder size={18} />
-            <p>Go to My Stuff</p>
-          </Link>
+    <main className='h-screen'>
+      <SiteNav />
+      <div className='flex w-full h-full justify-center items-center'>
+        <div className='flex items-center gap-2'>
+          <h1 className='text-xl m-2'>Settings</h1>
           <button
-            className='cursor-pointer flex items-center gap-2'
-            onClick={() => signOut({ callbackUrl: '/' })}
+            onClick={handleDelete}
+            className='cursor-pointer hover:bg-ui-800 rounded px-1 self-center'
           >
-            <LogOut size={18} />
-            <p>Sign Out</p>
+            Delete account
           </button>
         </div>
-        <LogoSolid size={90} />
       </div>
     </main>
   )

@@ -1,11 +1,11 @@
 'use server'
 
 import { emailSchema, signUpSchema } from './zod'
-import { createUser } from './op'
+import { createUser, deleteUser } from './op'
 import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
 
-interface AuthResponseError {
+interface ResponseError {
   success: false
   message: string
 }
@@ -14,13 +14,13 @@ const ERROR_MSG = 'Something went wrong.'
 const INVALID_MSG = 'Invalid credentials.'
 const ACCESS_DENIED = 'Access denied, ask our discord to join.'
 
-type AuthResponse = { success: true } | AuthResponseError
+type Response = { success: true } | ResponseError
 
 export async function credentialsSignUp(
   email: string,
   name: string,
   password?: string
-): Promise<AuthResponse> {
+): Promise<Response> {
   const result = signUpSchema.safeParse({ email, name, password })
   if (!result.success) {
     return {
@@ -39,9 +39,9 @@ export async function credentialsSignUp(
 }
 
 export async function signInAction(
-  state: AuthResponse,
+  state: Response,
   formData: FormData
-): Promise<AuthResponse> {
+): Promise<Response> {
   const action = formData.get('action')
   if (action === 'credentials' && !formData.get('password')) {
     return resendSignIn(state, formData)
@@ -53,9 +53,9 @@ export async function signInAction(
   throw Error(`unknown action: "${action}"`)
 }
 export async function credentialsSignIn(
-  _state: AuthResponse,
+  _state: Response,
   formData: FormData
-): Promise<AuthResponse> {
+): Promise<Response> {
   try {
     await signIn('credentials', formData, { redirectTo: '/editor' })
     return { success: true }
@@ -71,9 +71,9 @@ export async function credentialsSignIn(
 }
 
 export async function resendSignIn(
-  _state: AuthResponse,
+  _state: Response,
   formData: FormData
-): Promise<AuthResponse> {
+): Promise<Response> {
   const email = formData.get('identifier')
   const result = emailSchema.safeParse(email)
 
@@ -92,5 +92,15 @@ export async function resendSignIn(
       return { success: false, message: ERROR_MSG }
     }
     throw error
+  }
+}
+
+export async function accountDelete(id: string): Promise<Response> {
+  try {
+    await deleteUser(id)
+    return { success: true }
+  } catch (error) {
+    console.error(error)
+    return { success: false, message: ERROR_MSG }
   }
 }

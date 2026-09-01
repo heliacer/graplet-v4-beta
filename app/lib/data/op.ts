@@ -1,6 +1,7 @@
 import { genSalt, hash } from 'bcrypt'
 import { usersTable } from './schema'
 import { db } from './db'
+import { eq } from 'drizzle-orm'
 
 const saltRounds = 10
 
@@ -23,4 +24,8 @@ export async function createUser(
   }
 
   return await db.insert(usersTable).values(user)
+}
+
+export async function deleteUser(id: string) {
+  await db.delete(usersTable).where(eq(usersTable.id, id))
 }
