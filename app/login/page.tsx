@@ -16,19 +16,32 @@ export default function Login() {
     success: true
   })
 
-  const [activeAction, setActiveAction] = useState<string | null>(null)
+  const [action, setAction] = useState<string | null>(null)
+
+  async function handlePasskeySignIn() {
+    setAction('passkey')
+    try {
+      await waSignIn('passkey', { redirectTo: '/editor' })
+    } catch {
+      setAction(null)
+      return
+    }
+  }
+
+  async function handleOAuth(provider: 'github' | 'google') {
+    setAction(provider)
+    await signIn(provider)
+  }
 
   return (
     <form
       onSubmit={({ currentTarget, nativeEvent: { submitter } }) => {
         const action = (submitter as HTMLButtonElement).value
-        const password = currentTarget.elements.namedItem(
-          'password'
-        ) as HTMLInputElement
-        /** either 'credentials' or 'resend' */
-        setActiveAction(
-          action === 'credentials' && !password.value ? 'resend' : action
-        )
+        const password = (
+          currentTarget.elements.namedItem('password') as HTMLInputElement
+        ).value
+
+        setAction(!password && action === 'credentials' ? 'resend' : action)
       }}
       action={formAction}
       className='w-full mt-20 flex flex-col gap-2 items-center'
@@ -77,15 +90,15 @@ export default function Login() {
         type='submit'
         name='action'
         value='credentials'
-        disabled={pending}
         className={clsx(
-          pending && 'opacity-80',
+          pending && action === 'credentials'
+            ? 'opacity-80'
+            : 'cursor-pointer hover:bg-teal/50',
           'border rounded-md py-1.75 w-90 px-2.5',
-          'border-teal bg-teal/60 hover:bg-teal/50',
-          'cursor-pointer active:scale-95'
+          'border-teal bg-teal/60'
         )}
       >
-        {pending && activeAction === 'credentials' ? 'Signing in…' : 'Sign in'}
+        {pending && action === 'credentials' ? 'Signing in…' : 'Sign in'}
       </button>
 
       <div className='flex items-center gap-2'>
@@ -99,36 +112,43 @@ export default function Login() {
           name='action'
           value='resend'
           className={clsx(
-            'flex gap-2 items-center w-full cursor-pointer',
+            pending && action === 'resend'
+              ? 'opacity-80'
+              : 'cursor-pointer hover:border-ui-550',
+            'flex gap-2 items-center w-full ',
             'border rounded-md py-1.75 px-2.5',
-            'border-ui-600 bg-ui-800 hover:border-ui-550'
+            'border-ui-600 bg-ui-800'
           )}
         >
           <Mail size={20} />
           <p>
-            {pending && activeAction === 'resend'
+            {pending && action === 'resend'
               ? 'Sending Email…'
               : 'Send me an Email'}
           </p>
         </button>
         <button
           type='button'
-          onClick={() => signIn('github')}
+          onClick={() => handleOAuth('github')}
           className={clsx(
-            'flex gap-2 items-center cursor-pointer',
-            'border rounded-md py-1.75 px-4',
-            'border-ui-600 bg-ui-800 hover:border-ui-550'
+            action === 'github'
+              ? 'opacity-80'
+              : 'cursor-pointer hover:border-ui-550',
+            'flex gap-2 items-center border rounded-md',
+            'border-ui-600 py-1.75 px-4 bg-ui-800'
           )}
         >
           <Github size={22} />
         </button>
         <button
           type='button'
-          onClick={() => signIn('google')}
+          onClick={() => handleOAuth('google')}
           className={clsx(
-            'flex gap-2 items-center cursor-pointer',
-            'border rounded-md py-1.75 px-4',
-            'border-ui-600 bg-ui-800 hover:border-ui-550'
+            action === 'google'
+              ? 'opacity-80'
+              : 'cursor-pointer hover:border-ui-550',
+            'flex gap-2 items-center border rounded-md',
+            'border-ui-600 py-1.75 px-4 bg-ui-800'
           )}
         >
           <Google size={22} />
@@ -136,15 +156,22 @@ export default function Login() {
       </div>
       <button
         type='button'
-        onClick={() => waSignIn('passkey')}
+        onClick={handlePasskeySignIn}
         className={clsx(
-          'flex gap-2 items-center justify-center cursor-pointer',
+          action === 'passkey'
+            ? 'opacity-80'
+            : 'cursor-pointer hover:border-ui-550',
+          'flex gap-2 items-center justify-center',
           'border rounded-md py-1.75 px-2.5 w-90 mb-1',
-          'border-ui-600 bg-ui-800 hover:border-ui-550'
+          'border-ui-600 bg-ui-800'
         )}
       >
         <KeyRound size={20} />
-        <p>Continue with Passkey</p>
+        <p>
+          {action === 'passkey'
+            ? 'Waiting for external interaction...'
+            : 'Continue with Passkey'}
+        </p>
       </button>
       <div className='flex gap-1 text-sm'>
         <p className='text-ui-300'>New to Graplet?</p>

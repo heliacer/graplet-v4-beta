@@ -10,17 +10,15 @@ export default function ForgotPassword() {
           Enter your verified email address and we&apos;ll send you a password
           reset link.
         </p>
-        <div className='flex gap-1 justify-center'>
-          <p>For the next time, consider using a</p>
+        <div className='flex gap-1 justify-center '>
+          <p>Consider using a</p>
           <Link
             href='https://bitwarden.com/'
             target='_blank'
             rel='noopener noreferrer'
-            className='flex gap-1 items-center text-blue'
+            className='flex gap-1 items-center text-blue hover:underline'
           >
-            <p className='bg-linear-to-r from-blue to-cyan bg-clip-text text-transparent'>
-              password manager
-            </p>
+            <p>password manager</p>
             <SquareArrowOutUpRight size={14} />
           </Link>
         </div>

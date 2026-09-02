@@ -50,7 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'jwt'
   },
   pages: {
-    verifyRequest: '/'
+    signIn: '/login'
   },
   experimental: { enableWebAuthn: true },
   providers: [
