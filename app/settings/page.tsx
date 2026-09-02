@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react'
 import { signIn } from 'next-auth/webauthn'
 import { SiteNav } from '../lib/components/SiteNav'
 import { accountDelete } from '../lib/data/actions'
-import { KeyRound, Trash2, UserRound } from 'lucide-react'
+import { KeyRound, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import clsx from 'clsx'
 
