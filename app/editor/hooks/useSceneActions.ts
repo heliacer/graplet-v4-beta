@@ -77,13 +77,14 @@ export function useSceneActions() {
     useObjectActions()
   const setSelectedItems = useEditorStore(s => s.setSelectedItems)
   const setTreeVersion = useEditorStore(s => s.setTreeVersion)
-  const objectSnapshots = useEditorStore(s => s.objectSnapshots)
   const setSnapshots = useEditorStore(s => s.setSnapshots)
 
   /**
    * Adds 3 Boxes, an Ambient light, a Directional light and a Camera
    */
   function loadDefaultScene() {
+    /** @todo (#34) Scene UX: temporary fix, should use allocation */
+    resetScene()
     for (const config of configs) {
       addObject(config)
     }
@@ -102,6 +103,9 @@ export function useSceneActions() {
        * then offer to refresh all the project data
        */
 
+      /** @todo (#34) Scene UX: temporary fix, should use allocation */
+      resetScene()
+      
       loadSnapshots(snapshots, 'scene')
       setSnapshots(snapshots)
       rebuildBlocklyUI(snapshots)
@@ -121,7 +125,7 @@ export function useSceneActions() {
   }
 
   function resetScene() {
-    for (const sharedId of Object.keys(objectSnapshots)) {
+    for (const sharedId of objectsRef.current.keys()) {
       removeObject(sharedId)
     }
     setSelectedItems([])
