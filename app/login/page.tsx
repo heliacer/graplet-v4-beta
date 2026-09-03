@@ -44,16 +44,16 @@ export default function Login() {
         setAction(!password && action === 'credentials' ? 'resend' : action)
       }}
       action={formAction}
-      className='w-full mt-20 flex flex-col gap-2 items-center'
+      className='w-84 mx-auto mt-20 flex flex-col gap-2 items-center'
     >
       <LogoSolid size={60} />
       <h1 className='text-xl mb-4'>Sign in to Graplet</h1>
-      <label>
+      <label className='w-full'>
         <p className='text-sm mb-1'>Username or Email*</p>
         <input
           autoFocus
           className={clsx(
-            'border rounded-md py-1.75 w-90 px-2.5',
+            'border rounded-md py-1.75 px-2.5 w-full',
             'focus-visible:outline-1 focus-visible:outline-teal'
           )}
           type='text'
@@ -61,13 +61,13 @@ export default function Login() {
           autoComplete='username webauthn'
         />
       </label>
-      <div>
+      <div className='w-full'>
         <div className='flex justify-between'>
           <label htmlFor='password' className='text-sm mb-1'>
             Password
           </label>
           <Link
-            href='/forgot-password'
+            href='/change-password'
             className='text-sm mb-1 text-teal hover:underline'
           >
             Forgot password?
@@ -76,7 +76,7 @@ export default function Login() {
         <input
           id='password'
           className={clsx(
-            'border rounded-md py-1.75 w-90 px-2.5 mb-3',
+            'border rounded-md py-1.75 w-full px-2.5 mb-3',
             'focus-visible:outline-1 focus-visible:outline-teal'
           )}
           type='password'
@@ -94,7 +94,7 @@ export default function Login() {
           pending && action === 'credentials'
             ? 'opacity-80'
             : 'cursor-pointer hover:bg-teal/50',
-          'border rounded-md py-1.75 w-90 px-2.5',
+          'border rounded-md py-1.75 w-full px-2.5',
           'border-teal bg-teal/60'
         )}
       >
@@ -106,7 +106,7 @@ export default function Login() {
         <p>or</p>
         <hr className='w-6 border-ui-600' />
       </div>
-      <div className='flex gap-4 w-90 mb-2'>
+      <div className='flex gap-4 w-full mb-2'>
         <button
           type='submit'
           name='action'
@@ -115,7 +115,7 @@ export default function Login() {
             pending && action === 'resend'
               ? 'opacity-80'
               : 'cursor-pointer hover:border-ui-550',
-            'flex gap-2 items-center w-full ',
+            'flex gap-2 items-center text-center w-full ',
             'border rounded-md py-1.75 px-2.5',
             'border-ui-600 bg-ui-800'
           )}
@@ -162,7 +162,7 @@ export default function Login() {
             ? 'opacity-80'
             : 'cursor-pointer hover:border-ui-550',
           'flex gap-2 items-center justify-center',
-          'border rounded-md py-1.75 px-2.5 w-90 mb-1',
+          'border rounded-md py-1.75 px-2.5 w-full mb-1',
           'border-ui-600 bg-ui-800'
         )}
       >
@@ -173,7 +173,7 @@ export default function Login() {
             : 'Continue with Passkey'}
         </p>
       </button>
-      <div className='flex gap-1 text-sm'>
+      <div className='flex gap-1.5 text-sm'>
         <p className='text-ui-300'>New to Graplet?</p>
         <Link href='/signup' className='text-teal hover:underline'>
           Create an account
